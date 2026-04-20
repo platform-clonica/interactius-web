@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 import { ContactHero } from '@/components/contact/ContactHero'
 import { ContactForm } from '@/components/contact/ContactForm'
@@ -24,13 +25,14 @@ export async function generateMetadata({
 }
 
 export default async function ContactoPage({ params }: PageProps) {
-  await params
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'contacto' })
 
   return (
     <ContactHero
-      title="Antes de escribirnos… No somos para todo el mundo."
-      copy="Trabajamos con organizaciones dispuestas a cuestionar lo que dan por sentado. Que buscan decisiones con criterio y no solo velocidad. Que entienden que el brief rara vez contiene la pregunta correcta. Si buscas ejecución rápida, hay otras opciones. Si lo que necesitas es pensar desde el margen, escríbenos."
-      altEmail="info@interactius.com"
+      title={t('contacto.title')}
+      copy={t('contacto.copy')}
+      altEmail={t('contacto.altEmail')}
     >
       <ContactForm variant="contacto" />
     </ContactHero>

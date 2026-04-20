@@ -30,5 +30,6 @@
     "readCase": "View project",
     "back": "Back",
     "viewAll": "View all"
-  }
+  },
+  "newWindow": "(opens in new window)"
 }

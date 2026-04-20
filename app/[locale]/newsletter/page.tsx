@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 import { ContactHero } from '@/components/contact/ContactHero'
 import { ContactForm } from '@/components/contact/ContactForm'
@@ -15,8 +16,6 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { locale } = await params
-  // Newsletter reutiliza el copy SEO de contacto como baseline.
-  // Se puede añadir entrada propia en PAGE_COPY cuando se quiera customizar.
   return buildPageMetadata({
     locale,
     routeId: '/contacto',
@@ -32,12 +31,13 @@ export async function generateMetadata({
 }
 
 export default async function NewsletterPage({ params }: PageProps) {
-  await params
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'contacto' })
 
   return (
     <ContactHero
-      title="Suscríbete a nuestra newsletter"
-      copy="A menudo, el problema no es la falta de respuestas, sino no saber qué preguntas merece la pena hacerse. Cada mes enviamos nuestra newsletter con aprendizajes que unen la reflexión con la acción, sin ruido y con intención."
+      title={t('newsletter.title')}
+      copy={t('newsletter.copy')}
     >
       <ContactForm variant="newsletter" />
     </ContactHero>

@@ -1,1 +1,48 @@
-{}
+{
+  "validation": {
+    "name": "Introduce tu nombre",
+    "lastName": "Introduce tu apellido",
+    "company": "Introduce el nombre de tu empresa",
+    "email": "Introduce un email válido",
+    "messageMin": "El mensaje debe tener al menos 10 caracteres",
+    "profession": "Introduce tu profesión",
+    "city": "Introduce tu ciudad",
+    "birthdate": "Introduce tu fecha de nacimiento",
+    "privacy": "Debes aceptar la política para continuar"
+  },
+  "labels": {
+    "name": "Nombre",
+    "lastName": "Apellido",
+    "company": "Tu empresa",
+    "companyOptional": "Tu empresa (opcional)",
+    "workEmail": "Tu email de trabajo",
+    "email": "Tu email",
+    "message": "Tu mensaje",
+    "profession": "Profesión",
+    "gender": "Género (opcional)",
+    "city": "Ciudad",
+    "birthdate": "Fecha de nacimiento"
+  },
+  "genderOptions": {
+    "female": "Mujer",
+    "male": "Hombre",
+    "nonBinary": "No binario",
+    "other": "Otro",
+    "preferNotToSay": "Prefiero no decirlo"
+  },
+  "submit": "Enviar",
+  "submitting": "Enviando…",
+  "success": {
+    "title": "Mensaje enviado.",
+    "body": "Gracias por escribirnos. Te responderemos en breve."
+  },
+  "errors": {
+    "contacto": "No hemos podido enviar el mensaje. Inténtalo de nuevo o escríbenos a hola@interactius.com.",
+    "newsletter": "No hemos podido suscribir tu email. Inténtalo de nuevo en unos minutos.",
+    "testers": "No hemos podido registrar tus datos. Inténtalo de nuevo en unos minutos."
+  },
+  "privacy": {
+    "prefix": "He leído y acepto la",
+    "link": "política de privacidad"
+  }
+}

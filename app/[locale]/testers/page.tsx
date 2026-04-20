@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 import { ContactHero } from '@/components/contact/ContactHero'
 import { ContactForm } from '@/components/contact/ContactForm'
@@ -30,12 +31,13 @@ export async function generateMetadata({
 }
 
 export default async function TestersPage({ params }: PageProps) {
-  await params
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'contacto' })
 
   return (
     <ContactHero
-      title="Tu voz importa y queremos escucharla"
-      copy="Un espacio para personas que quieren participar y aportar su experiencia en la mejora de productos y servicios. No buscamos perfiles ideales. Buscamos realidades. Aquí tu voz se convierte en parte del proceso: entrevistas, tests y dinámicas donde lo importante no es opinar, sino ayudar a entender mejor lo que está pasando. Porque las mejores decisiones no se toman sin escuchar a las personas."
+      title={t('testers.title')}
+      copy={t('testers.copy')}
     >
       <ContactForm variant="testers" />
     </ContactHero>

@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslations } from 'next-intl'
 
 import { FormField } from '@/components/ui/FormField'
 import { Checkbox } from '@/components/ui/Checkbox'
@@ -11,63 +12,44 @@ import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
 import { Link } from '@/lib/i18n/routing'
 
 /* ==========================================================================
-   Schemas por variant
+   Types
    ========================================================================== */
 
-const contactoSchema = z.object({
-  name: z.string().min(2, 'Introduce tu nombre'),
-  company: z.string().min(1, 'Introduce el nombre de tu empresa'),
-  email: z.string().email('Introduce un email válido'),
-  message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
-  privacy: z.literal(true, {
-    errorMap: () => ({ message: 'Debes aceptar la política para continuar' }),
-  }),
-})
+type ContactoData = {
+  name: string
+  company: string
+  email: string
+  message: string
+  privacy: true
+}
 
-const newsletterSchema = z.object({
-  firstName: z.string().min(2, 'Introduce tu nombre'),
-  lastName: z.string().min(2, 'Introduce tu apellido'),
-  company: z.string().optional(),
-  email: z.string().email('Introduce un email válido'),
-  privacy: z.literal(true, {
-    errorMap: () => ({ message: 'Debes aceptar la política para continuar' }),
-  }),
-})
+type NewsletterData = {
+  firstName: string
+  lastName: string
+  company?: string
+  email: string
+  privacy: true
+}
 
-const testersSchema = z.object({
-  firstName: z.string().min(2, 'Introduce tu nombre'),
-  lastName: z.string().min(2, 'Introduce tu apellido'),
-  email: z.string().email('Introduce un email válido'),
-  profession: z.string().min(2, 'Introduce tu profesión'),
-  gender: z.string().optional(),
-  city: z.string().min(2, 'Introduce tu ciudad'),
-  birthdate: z.string().min(1, 'Introduce tu fecha de nacimiento'),
-  privacy: z.literal(true, {
-    errorMap: () => ({ message: 'Debes aceptar la política para continuar' }),
-  }),
-})
-
-type ContactoData = z.infer<typeof contactoSchema>
-type NewsletterData = z.infer<typeof newsletterSchema>
-type TestersData = z.infer<typeof testersSchema>
+type TestersData = {
+  firstName: string
+  lastName: string
+  email: string
+  profession: string
+  gender?: string
+  city: string
+  birthdate: string
+  privacy: true
+}
 
 /* ==========================================================================
    Config por variant
    ========================================================================== */
 
 const VARIANT_CONFIG = {
-  contacto: {
-    endpoint: '/api/contact',
-    schema: contactoSchema,
-  },
-  newsletter: {
-    endpoint: '/api/newsletter',
-    schema: newsletterSchema,
-  },
-  testers: {
-    endpoint: '/api/testers',
-    schema: testersSchema,
-  },
+  contacto: { endpoint: '/api/contact' },
+  newsletter: { endpoint: '/api/newsletter' },
+  testers: { endpoint: '/api/testers' },
 } as const
 
 type Variant = keyof typeof VARIANT_CONFIG
@@ -127,21 +109,29 @@ export function ContactForm({ variant }: ContactFormProps) {
 interface FormShellProps {
   status: FormStatus
   errorMessage: string | null
+  successTitle: string
+  successBody: string
+  submitLabel: string
+  submittingLabel: string
   onSubmit: (e: React.FormEvent) => void
   children: React.ReactNode
 }
 
-function FormShell({ status, errorMessage, onSubmit, children }: FormShellProps) {
+function FormShell({
+  status,
+  errorMessage,
+  successTitle,
+  successBody,
+  submitLabel,
+  submittingLabel,
+  onSubmit,
+  children,
+}: FormShellProps) {
   if (status === 'success') {
     return (
-      <div
-        role="status"
-        className="bg-warm-light p-8 font-mono text-body-sm text-fg"
-      >
-        <p className="font-medium">Mensaje enviado.</p>
-        <p className="mt-3 text-fg/70">
-          Gracias por escribirnos. Te responderemos en breve.
-        </p>
+      <div role="status" className="bg-warm-light p-8 font-mono text-body-sm text-fg">
+        <p className="font-medium">{successTitle}</p>
+        <p className="mt-3 text-fg/70">{successBody}</p>
       </div>
     )
   }
@@ -156,10 +146,7 @@ function FormShell({ status, errorMessage, onSubmit, children }: FormShellProps)
       {children}
 
       {errorMessage && status === 'error' && (
-        <p
-          role="alert"
-          className="font-mono text-micro text-alert"
-        >
+        <p role="alert" className="font-mono text-micro text-alert">
           {errorMessage}
         </p>
       )}
@@ -171,7 +158,7 @@ function FormShell({ status, errorMessage, onSubmit, children }: FormShellProps)
           variant="dark"
           disabled={status === 'submitting'}
         >
-          {status === 'submitting' ? 'Enviando…' : 'Enviar'}{' '}
+          {status === 'submitting' ? submittingLabel : submitLabel}{' '}
           <span aria-hidden="true">↗</span>
         </ButtonPrimary>
       </div>
@@ -190,18 +177,12 @@ function PrivacyCheckbox({
   register: ReturnType<ReturnType<typeof useForm>['register']> | object
   error?: string
 }) {
+  const t = useTranslations('forms')
   return (
-    <Checkbox
-      {...(register as object)}
-      error={error}
-      required
-    >
-      He leído y acepto la{' '}
-      <Link
-        href="/aviso-legal"
-        className="underline underline-offset-4 hover:opacity-70"
-      >
-        política de privacidad
+    <Checkbox {...(register as object)} error={error} required>
+      {t('privacy.prefix')}{' '}
+      <Link href="/aviso-legal" className="underline underline-offset-4 hover:opacity-70">
+        {t('privacy.link')}
       </Link>
       .
     </Checkbox>
@@ -219,20 +200,28 @@ interface SubFormProps {
   setErrorMessage: (m: string | null) => void
 }
 
-function ContactoForm({
-  status,
-  setStatus,
-  errorMessage,
-  setErrorMessage,
-}: SubFormProps) {
+function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormProps) {
+  const t = useTranslations('forms')
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        name: z.string().min(2, t('validation.name')),
+        company: z.string().min(1, t('validation.company')),
+        email: z.string().email(t('validation.email')),
+        message: z.string().min(10, t('validation.messageMin')),
+        privacy: z.literal(true, {
+          errorMap: () => ({ message: t('validation.privacy') }),
+        }),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<ContactoData>({
-    resolver: zodResolver(contactoSchema),
-    mode: 'onBlur',
-  })
+  } = useForm<ContactoData>({ resolver: zodResolver(schema), mode: 'onBlur' })
 
   const onSubmit: SubmitHandler<ContactoData> = async (data) => {
     setStatus('submitting')
@@ -247,9 +236,7 @@ function ContactoForm({
       setStatus('success')
     } catch {
       setStatus('error')
-      setErrorMessage(
-        'No hemos podido enviar el mensaje. Inténtalo de nuevo o escríbenos a hola@interactius.com.',
-      )
+      setErrorMessage(t('errors.contacto'))
     }
   }
 
@@ -257,11 +244,15 @@ function ContactoForm({
     <FormShell
       status={status}
       errorMessage={errorMessage}
+      successTitle={t('success.title')}
+      successBody={t('success.body')}
+      submitLabel={t('submit')}
+      submittingLabel={t('submitting')}
       onSubmit={handleSubmit(onSubmit)}
     >
       <FormField
         {...register('name')}
-        label="Nombre"
+        label={t('labels.name')}
         name="name"
         type="text"
         autoComplete="name"
@@ -270,7 +261,7 @@ function ContactoForm({
       />
       <FormField
         {...register('company')}
-        label="Tu empresa"
+        label={t('labels.company')}
         name="company"
         type="text"
         autoComplete="organization"
@@ -279,7 +270,7 @@ function ContactoForm({
       />
       <FormField
         {...register('email')}
-        label="Tu email de trabajo"
+        label={t('labels.workEmail')}
         name="email"
         type="email"
         autoComplete="email"
@@ -289,34 +280,39 @@ function ContactoForm({
       <FormField
         {...register('message')}
         as="textarea"
-        label="Tu mensaje"
+        label={t('labels.message')}
         name="message"
         error={errors.message?.message}
         required
         autoResize
       />
-      <PrivacyCheckbox
-        register={register('privacy')}
-        error={errors.privacy?.message}
-      />
+      <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )
 }
 
-function NewsletterForm({
-  status,
-  setStatus,
-  errorMessage,
-  setErrorMessage,
-}: SubFormProps) {
+function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormProps) {
+  const t = useTranslations('forms')
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        firstName: z.string().min(2, t('validation.name')),
+        lastName: z.string().min(2, t('validation.lastName')),
+        company: z.string().optional(),
+        email: z.string().email(t('validation.email')),
+        privacy: z.literal(true, {
+          errorMap: () => ({ message: t('validation.privacy') }),
+        }),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<NewsletterData>({
-    resolver: zodResolver(newsletterSchema),
-    mode: 'onBlur',
-  })
+  } = useForm<NewsletterData>({ resolver: zodResolver(schema), mode: 'onBlur' })
 
   const onSubmit: SubmitHandler<NewsletterData> = async (data) => {
     setStatus('submitting')
@@ -331,9 +327,7 @@ function NewsletterForm({
       setStatus('success')
     } catch {
       setStatus('error')
-      setErrorMessage(
-        'No hemos podido suscribir tu email. Inténtalo de nuevo en unos minutos.',
-      )
+      setErrorMessage(t('errors.newsletter'))
     }
   }
 
@@ -341,11 +335,15 @@ function NewsletterForm({
     <FormShell
       status={status}
       errorMessage={errorMessage}
+      successTitle={t('success.title')}
+      successBody={t('success.body')}
+      submitLabel={t('submit')}
+      submittingLabel={t('submitting')}
       onSubmit={handleSubmit(onSubmit)}
     >
       <FormField
         {...register('firstName')}
-        label="Nombre"
+        label={t('labels.name')}
         name="firstName"
         type="text"
         autoComplete="given-name"
@@ -354,7 +352,7 @@ function NewsletterForm({
       />
       <FormField
         {...register('lastName')}
-        label="Apellido"
+        label={t('labels.lastName')}
         name="lastName"
         type="text"
         autoComplete="family-name"
@@ -363,7 +361,7 @@ function NewsletterForm({
       />
       <FormField
         {...register('company')}
-        label="Tu empresa (opcional)"
+        label={t('labels.companyOptional')}
         name="company"
         type="text"
         autoComplete="organization"
@@ -371,35 +369,43 @@ function NewsletterForm({
       />
       <FormField
         {...register('email')}
-        label="Tu email de trabajo"
+        label={t('labels.workEmail')}
         name="email"
         type="email"
         autoComplete="email"
         error={errors.email?.message}
         required
       />
-      <PrivacyCheckbox
-        register={register('privacy')}
-        error={errors.privacy?.message}
-      />
+      <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )
 }
 
-function TestersForm({
-  status,
-  setStatus,
-  errorMessage,
-  setErrorMessage,
-}: SubFormProps) {
+function TestersForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormProps) {
+  const t = useTranslations('forms')
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        firstName: z.string().min(2, t('validation.name')),
+        lastName: z.string().min(2, t('validation.lastName')),
+        email: z.string().email(t('validation.email')),
+        profession: z.string().min(2, t('validation.profession')),
+        gender: z.string().optional(),
+        city: z.string().min(2, t('validation.city')),
+        birthdate: z.string().min(1, t('validation.birthdate')),
+        privacy: z.literal(true, {
+          errorMap: () => ({ message: t('validation.privacy') }),
+        }),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TestersData>({
-    resolver: zodResolver(testersSchema),
-    mode: 'onBlur',
-  })
+  } = useForm<TestersData>({ resolver: zodResolver(schema), mode: 'onBlur' })
 
   const onSubmit: SubmitHandler<TestersData> = async (data) => {
     setStatus('submitting')
@@ -414,9 +420,7 @@ function TestersForm({
       setStatus('success')
     } catch {
       setStatus('error')
-      setErrorMessage(
-        'No hemos podido registrar tus datos. Inténtalo de nuevo en unos minutos.',
-      )
+      setErrorMessage(t('errors.testers'))
     }
   }
 
@@ -424,11 +428,15 @@ function TestersForm({
     <FormShell
       status={status}
       errorMessage={errorMessage}
+      successTitle={t('success.title')}
+      successBody={t('success.body')}
+      submitLabel={t('submit')}
+      submittingLabel={t('submitting')}
       onSubmit={handleSubmit(onSubmit)}
     >
       <FormField
         {...register('firstName')}
-        label="Nombre"
+        label={t('labels.name')}
         name="firstName"
         type="text"
         autoComplete="given-name"
@@ -437,7 +445,7 @@ function TestersForm({
       />
       <FormField
         {...register('lastName')}
-        label="Apellido"
+        label={t('labels.lastName')}
         name="lastName"
         type="text"
         autoComplete="family-name"
@@ -446,7 +454,7 @@ function TestersForm({
       />
       <FormField
         {...register('email')}
-        label="Tu email"
+        label={t('labels.email')}
         name="email"
         type="email"
         autoComplete="email"
@@ -455,7 +463,7 @@ function TestersForm({
       />
       <FormField
         {...register('profession')}
-        label="Profesión"
+        label={t('labels.profession')}
         name="profession"
         type="text"
         error={errors.profession?.message}
@@ -464,20 +472,20 @@ function TestersForm({
       <FormField
         {...register('gender')}
         as="select"
-        label="Género (opcional)"
+        label={t('labels.gender')}
         name="gender"
         error={errors.gender?.message}
       >
         <option value=""></option>
-        <option value="female">Mujer</option>
-        <option value="male">Hombre</option>
-        <option value="non-binary">No binario</option>
-        <option value="other">Otro</option>
-        <option value="prefer-not-to-say">Prefiero no decirlo</option>
+        <option value="female">{t('genderOptions.female')}</option>
+        <option value="male">{t('genderOptions.male')}</option>
+        <option value="non-binary">{t('genderOptions.nonBinary')}</option>
+        <option value="other">{t('genderOptions.other')}</option>
+        <option value="prefer-not-to-say">{t('genderOptions.preferNotToSay')}</option>
       </FormField>
       <FormField
         {...register('city')}
-        label="Ciudad"
+        label={t('labels.city')}
         name="city"
         type="text"
         autoComplete="address-level2"
@@ -486,17 +494,14 @@ function TestersForm({
       />
       <FormField
         {...register('birthdate')}
-        label="Fecha de nacimiento"
+        label={t('labels.birthdate')}
         name="birthdate"
         type="date"
         autoComplete="bday"
         error={errors.birthdate?.message}
         required
       />
-      <PrivacyCheckbox
-        register={register('privacy')}
-        error={errors.privacy?.message}
-      />
+      <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )
 }

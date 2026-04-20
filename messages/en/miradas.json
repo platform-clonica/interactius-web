@@ -1,0 +1,24 @@
+{
+  "hero": {
+    "subtitlePrefix": "/",
+    "subtitleBold": "Perspectives",
+    "subtitleSuffix": "/ that tackle real problems, challenge the status quo, and connect design, business, technology, and people."
+  },
+  "grid": {
+    "superTitle": "Perspectives",
+    "searchPlaceholder": "Search by keyword",
+    "searchAriaLabel": "Search articles",
+    "noResults": "No articles match your search.",
+    "interstitialQuote": "We work in the space where a business decision and a human truth have to meet.",
+    "loadMore": "I want <u>more</u>.",
+    "categories": {
+      "design": "Design",
+      "ia": "AI",
+      "ux": "UX",
+      "research": "Research",
+      "estrategia": "Strategy",
+      "workshops": "Workshops",
+      "diseno-inclusivo": "Inclusive Design"
+    }
+  }
+}

@@ -3,33 +3,40 @@ import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
 import { getAlternates, localizedPath } from '@/lib/i18n/routing'
 import { type Locale } from '@/lib/i18n/config'
+import { IdentidadHero } from '@/components/identidad/IdentidadHero'
+import { IdentidadIntro } from '@/components/identidad/IdentidadIntro'
+import { IdentidadValores } from '@/components/identidad/IdentidadValores'
+import { IdentidadLiminal } from '@/components/identidad/IdentidadLiminal'
+import { IdentidadMetodologia } from '@/components/identidad/IdentidadMetodologia'
+import { IdentidadGente } from '@/components/identidad/IdentidadGente'
+import { IdentidadJoinUs } from '@/components/identidad/IdentidadJoinUs'
 
 interface PageProps {
   params: Promise<{ locale: Locale }>
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params
   return buildPageMetadata({
     locale,
     routeId: '/identidad',
-    title: 'Identidad',
     pathname: localizedPath('/identidad', locale),
     alternates: getAlternates('/identidad'),
   })
 }
 
-export default async function Page() {
+export default async function Identidad({ params }: PageProps) {
+  await params
+
   return (
-    <section className="section-inner py-section">
-      <h1 className="font-serif text-title font-light text-fg">
-        Identidad
-      </h1>
-      <p className="mt-8 font-mono text-body-sm text-fg/70">
-        Página en construcción.
-      </p>
-    </section>
+    <>
+      <IdentidadHero />
+      <IdentidadIntro />
+      <IdentidadValores />
+      <IdentidadLiminal />
+      <IdentidadMetodologia />
+      <IdentidadGente />
+      <IdentidadJoinUs />
+    </>
   )
 }

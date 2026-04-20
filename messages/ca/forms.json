@@ -1,1 +1,48 @@
-{}
+{
+  "validation": {
+    "name": "Introdueix el teu nom",
+    "lastName": "Introdueix el teu cognom",
+    "company": "Introdueix el nom de la teva empresa",
+    "email": "Introdueix un email vàlid",
+    "messageMin": "El missatge ha de tenir almenys 10 caràcters",
+    "profession": "Introdueix la teva professió",
+    "city": "Introdueix la teva ciutat",
+    "birthdate": "Introdueix la teva data de naixement",
+    "privacy": "Has d'acceptar la política per continuar"
+  },
+  "labels": {
+    "name": "Nom",
+    "lastName": "Cognom",
+    "company": "La teva empresa",
+    "companyOptional": "La teva empresa (opcional)",
+    "workEmail": "El teu email de feina",
+    "email": "El teu email",
+    "message": "El teu missatge",
+    "profession": "Professió",
+    "gender": "Gènere (opcional)",
+    "city": "Ciutat",
+    "birthdate": "Data de naixement"
+  },
+  "genderOptions": {
+    "female": "Dona",
+    "male": "Home",
+    "nonBinary": "No binari",
+    "other": "Altre",
+    "preferNotToSay": "Prefereixo no dir-ho"
+  },
+  "submit": "Enviar",
+  "submitting": "Enviant…",
+  "success": {
+    "title": "Missatge enviat.",
+    "body": "Gràcies per escriure'ns. Et respondrem aviat."
+  },
+  "errors": {
+    "contacto": "No hem pogut enviar el missatge. Torna-ho a intentar o escriu-nos a hola@interactius.com.",
+    "newsletter": "No hem pogut subscriure el teu email. Torna-ho a intentar en uns minuts.",
+    "testers": "No hem pogut registrar les teves dades. Torna-ho a intentar en uns minuts."
+  },
+  "privacy": {
+    "prefix": "He llegit i accepto la",
+    "link": "política de privacitat"
+  }
+}

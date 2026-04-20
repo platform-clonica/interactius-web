@@ -1,0 +1,191 @@
+{
+  "sections": {
+    "services": "Services",
+    "otherCapacities": "Other capabilities"
+  },
+  "pensamiento": {
+    "hero": {
+      "title": "Strategic thinking",
+      "lead": "We are curious, analytical and critical minds. We inhabit the space that is yet to be defined. We integrate judgement and future vision to make decisions in complex environments."
+    },
+    "intro": {
+      "statement": "We bring / clarity / to identify relevant opportunities and build value propositions that endure over time.",
+      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo"
+    },
+    "services": [
+      {
+        "name": "Strategic design",
+        "description": "We define the problem before solving it. We analyse the business context, people's needs and market opportunities to build a clear strategic direction.",
+        "deliverables": [
+          "Business and customer experience diagnosis",
+          "Vision and strategic direction definition",
+          "Decision-making process facilitation",
+          "Risk and business opportunity identification"
+        ]
+      },
+      {
+        "name": "Strategic foresight",
+        "description": "We navigate the complexity of the present to design possible futures. We identify signals of change to build plausible and desirable scenarios and transform them into concrete product, business and experience opportunities.",
+        "deliverables": [
+          "Signal and trend analysis",
+          "Futures scenarios and narrative design",
+          "Backcasting — Planning from the future",
+          "Futures radar",
+          "Future Lab — Strategic vision facilitation"
+        ]
+      },
+      {
+        "name": "Brand strategy",
+        "description": "We communicate with clarity. We define purpose, positioning and narratives to translate them consistently into brands' language, design and experience.",
+        "deliverables": [
+          "Brand audit",
+          "Brand architecture",
+          "Visual identity",
+          "Narrative and verbal identity development"
+        ]
+      },
+      {
+        "name": "Innovation strategies",
+        "description": "We build strategies connected to real business objectives. We identify value opportunities and design viable exploration models so that innovation generates measurable impact.",
+        "deliverables": [
+          "Opportunity identification and prioritisation",
+          "Innovation process and model design",
+          "Ideation and strategy workshop facilitation",
+          "Concept validation and testing"
+        ]
+      }
+    ],
+    "others": [
+      {
+        "title": "Experience design",
+        "description": "We help organisations relate to the future.",
+        "href": "/activacion-de-soluciones"
+      },
+      {
+        "title": "Cultural transformation",
+        "description": "AI adoption, organisational change and training.",
+        "href": "/transformacion-cultural"
+      }
+    ]
+  },
+  "activacion": {
+    "hero": {
+      "title": "Experience design",
+      "lead": "We research, design and validate. We operate the ground where ideas become tangible. We bring evidence and methodological rigour to scale solutions with judgement."
+    },
+    "intro": {
+      "statement": "We activate / authentic / and coherent solutions based on our own methodologies and artificial intelligence tools applied with human judgement.",
+      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh"
+    },
+    "services": [
+      {
+        "name": "Product and Service Design",
+        "description": "We understand people, we design for them. We design digital, physical and hybrid experiences, from concept definition to interaction detail, ensuring that every design decision responds to a real need and a clear business objective.",
+        "deliverables": [
+          "Qualitative and quantitative user research",
+          "User flow and experience design",
+          "Attitudinal segments — Archetypes",
+          "Iterative prototyping and validation"
+        ]
+      },
+      {
+        "name": "Product validation",
+        "description": "Validate to decide with confidence. We validate products and services at any stage — from concept to production — to reduce risk before scaling. We replace assumptions with evidence, optimising resources and ensuring every correction happens at the right moment.",
+        "deliverables": [
+          "Concept and prototype validation",
+          "Heuristic analysis",
+          "Usability analysis",
+          "A/B testing"
+        ]
+      },
+      {
+        "name": "Clonica© — Research with synthetic users",
+        "description": "Research with people is the origin; artificial intelligence is the accelerator. Clonica© is our proprietary platform of synthetic users trained on real primary research. They reflect behaviours, contexts and contradictions with 93% similarity. They don't replace people: they expand our capacity to understand them, enabling validation and testing at any stage without the time and cost barriers of traditional research.",
+        "deliverables": [
+          "Attitudinal archetypes and segments with AI",
+          "AI-assisted continuous discovery",
+          "Dataset curation and management",
+          "Democratisation of user data"
+        ]
+      },
+      {
+        "name": "Insight Panel© — User recruitment for research",
+        "description": "Immediate access to real people. Our own user acquisition and management service for qualitative and quantitative studies. We handle the entire process: identification, recruitment and coordination so your team can focus on extracting learnings, not managing logistics.",
+        "deliverables": [
+          "User profiling (screener)",
+          "Acquisition and recruitment",
+          "Comprehensive panel management",
+          "Research session coordination"
+        ]
+      }
+    ],
+    "others": [
+      {
+        "title": "Strategic thinking",
+        "description": "We integrate future vision to make decisions in complex environments.",
+        "href": "/pensamiento-estrategico"
+      },
+      {
+        "title": "Cultural transformation",
+        "description": "AI adoption, organisational change and training.",
+        "href": "/transformacion-cultural"
+      }
+    ]
+  },
+  "transformacion": {
+    "hero": {
+      "title": "Cultural transformation",
+      "lead": "We facilitate, drive and disseminate. We inhabit change from within to help organisations think, work and relate to the future. The hardest change isn't technological or structural — it's cultural."
+    },
+    "intro": {
+      "statement": "We drive real and sustained change by integrating new mindsets and artificial intelligence tools that / amplify / talent. We develop the internal capacity needed for teams to advance autonomously.",
+      "clients": "Novartis — Adeslas — Nestlé — MWC"
+    },
+    "services": [
+      {
+        "name": "Organisational Culture",
+        "description": "Organisations change when the people who form them change, not just processes or tools. We accompany teams and organisations in cultural transformation processes, from defining a new way of working to activating change in the day-to-day. An accompaniment that respects what already exists and builds on it, without imposing external models that don't fit the internal reality.",
+        "deliverables": [
+          "Organisational culture diagnosis",
+          "Change process design",
+          "Shared narrative design"
+        ]
+      },
+      {
+        "name": "Augmented Organisations",
+        "description": "Amplify talent, don't replace it. An augmented organisation isn't an automated organisation: it's one where people work better because artificial intelligence amplifies their capacity to think, decide and create. We help organisations make that leap, not from technology, but from people.",
+        "deliverables": [
+          "AI maturity diagnosis",
+          "AI learning pathway design",
+          "Generative AI training",
+          "AI adoption accompaniment"
+        ]
+      },
+      {
+        "name": "Bootcamps and workshops",
+        "description": "Learning by doing is the fastest way for a team to change how it thinks and works. We design and facilitate intensive bespoke experiences for companies that need to activate specific capabilities, explore innovation opportunities, anticipate futures or integrate generative AI into their way of working.",
+        "deliverables": [
+          "Disruptive innovation — Exploring unconventional opportunities",
+          "Futures design — Applied foresight for long-term decisions",
+          "Applied generative AI — Practical sessions connected to real problems"
+        ]
+      }
+    ],
+    "manifiesto": {
+      "title": "AI Manifesto",
+      "body": "We understand AI not as an end, but as a responsibility. We use it to expand judgement, not to replace it; to explore and design better, not faster."
+    },
+    "others": [
+      {
+        "title": "Strategic thinking",
+        "description": "We integrate future vision to make decisions in complex environments.",
+        "href": "/pensamiento-estrategico"
+      },
+      {
+        "title": "Experience design",
+        "description": "We help organisations relate to the future.",
+        "href": "/activacion-de-soluciones"
+      }
+    ]
+  }
+}

@@ -3,8 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 
-import { Link } from '@/lib/i18n/routing'
-import type { RouteId } from '@/lib/i18n/routing'
+import { Link, type RouteId } from '@/lib/i18n/routing'
 import { useMenuStore } from '@/lib/store/menu'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 
@@ -55,18 +54,11 @@ export function MenuOverlay() {
       aria-modal="true"
       aria-label={t('common.menu.label')}
       aria-hidden={!isOpen}
-      // `inert` evita foco cuando está cerrado incluso si está en el DOM.
-      {...(!isOpen ? { inert: '' } : {})}
+      {...(!isOpen ? { inert: true } : {})}
       className={`fixed inset-0 z-menu-overlay overflow-hidden bg-warm-light
-                  transition-[height] ease-expo
-                  duration-[var(--t-line-reveal)]
-                  ${isOpen ? 'h-screen' : 'h-0'}`}
+                  ${isOpen ? '' : 'hidden'}`}
     >
-      <div
-        className={`section-inner h-full pt-32 pb-16 lg:pt-40 lg:pb-20
-                    transition-opacity duration-mid ease-expo
-                    ${isOpen ? 'opacity-100 delay-[600ms]' : 'opacity-0 delay-0'}`}
-      >
+      <div className="section-inner h-full pt-32 pb-16 lg:pt-40 lg:pb-20">
         <div className="grid h-full grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-grid-gutter">
           {/* ----- Columna izquierda: navegación principal ----- */}
           <nav
@@ -74,26 +66,13 @@ export function MenuOverlay() {
             className="lg:col-span-8"
           >
             <ul className="flex flex-col gap-4 lg:gap-6">
-              {NAV_ITEMS.map(({ route, labelKey }, i) => (
-                <li
-                  key={route}
-                  className={`transition-[opacity,transform] duration-mid ease-expo
-                              ${isOpen
-                                ? 'opacity-100 translate-y-0'
-                                : 'opacity-0 translate-y-4'
-                              }`}
-                  style={{
-                    transitionDelay: isOpen
-                      ? `${700 + i * 60}ms`
-                      : '0ms',
-                  }}
-                >
+              {NAV_ITEMS.map(({ route, labelKey }) => (
+                <li key={route}>
                   <Link
-                    href={route}
+                    href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
                     onClick={close}
                     className="inline-block font-serif text-title-sm lg:text-section
-                               text-fg transition-opacity duration-fast ease-expo
-                               hover:opacity-60 focus-visible:opacity-60"
+                               text-fg hover:opacity-60 focus-visible:opacity-60"
                   >
                     {t(labelKey)}
                   </Link>
@@ -104,9 +83,7 @@ export function MenuOverlay() {
 
           {/* ----- Columna derecha: info, social, locale switcher ----- */}
           <aside
-            className={`flex flex-col justify-between gap-12 lg:col-span-4
-                        transition-opacity duration-mid ease-expo
-                        ${isOpen ? 'opacity-100 delay-[1100ms]' : 'opacity-0 delay-0'}`}
+            className="flex flex-col justify-between gap-12 lg:col-span-4"
             aria-label={t('common.menu.contactInfo')}
           >
             {/* Dirección + contacto */}
@@ -146,7 +123,7 @@ export function MenuOverlay() {
                   className="transition-opacity duration-fast ease-expo hover:opacity-60"
                 >
                   LinkedIn
-                  <span className="sr-only"> (abre en nueva ventana)</span>
+                  <span className="sr-only"> {t('common.newWindow')}</span>
                   <span aria-hidden="true"> ↗</span>
                 </a>
               </li>
@@ -158,7 +135,7 @@ export function MenuOverlay() {
                   className="transition-opacity duration-fast ease-expo hover:opacity-60"
                 >
                   Instagram
-                  <span className="sr-only"> (abre en nueva ventana)</span>
+                  <span className="sr-only"> {t('common.newWindow')}</span>
                   <span aria-hidden="true"> ↗</span>
                 </a>
               </li>
@@ -170,7 +147,7 @@ export function MenuOverlay() {
                   className="transition-opacity duration-fast ease-expo hover:opacity-60"
                 >
                   YouTube
-                  <span className="sr-only"> (abre en nueva ventana)</span>
+                  <span className="sr-only"> {t('common.newWindow')}</span>
                   <span aria-hidden="true"> ↗</span>
                 </a>
               </li>

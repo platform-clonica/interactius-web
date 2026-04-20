@@ -6,10 +6,8 @@
    2. CSS custom properties (--vars)
    3. Reset y estilos base de elementos nativos
    4. Layout utilities (.section-inner, .grid-12)
-   5. Reveal primitives (.reveal-*)
-   6. Componentes específicos (hero tagline, marquee, ken-burns)
-   7. Reduced-motion global
-   8. Print styles
+   5. Reduced-motion global
+   6. Print styles
    ========================================================================== */
 
 @tailwind base;
@@ -26,7 +24,7 @@
     --grid-margin: clamp(20px, 12vw - 45px, 128px);
     --grid-gutter: clamp(16px, 2.2vw, 32px);
     --grid-max-w: 1440px;
-    --sidebar-w: 60px;
+    --sidebar-w: 128px;
 
     /* ----- Section spacing fluido ----- */
     --s-section: clamp(80px, 10vw, 120px);
@@ -233,135 +231,11 @@
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--grid-gutter);
   }
-
-  .line-mask {
-    display: block;
-    overflow: hidden;
-  }
 }
 
-/* ==========================================================================
-   5. Reveal primitives
-   ========================================================================== */
-
-@layer components {
-  .reveal-clip-lateral {
-    clip-path: inset(0 100% 0 0);
-    transition: clip-path var(--t-slow) var(--ease);
-    will-change: clip-path;
-  }
-  .reveal-clip-lateral.is-revealed {
-    clip-path: inset(0 0% 0 0);
-  }
-
-  .reveal-clip-lateral-inverse {
-    clip-path: inset(0 0 0 100%);
-    transition: clip-path var(--t-slow) var(--ease);
-    will-change: clip-path;
-  }
-  .reveal-clip-lateral-inverse.is-revealed {
-    clip-path: inset(0 0 0 0%);
-  }
-
-  .reveal-clip-vertical {
-    clip-path: inset(100% 0 0 0);
-    transition: clip-path var(--t-slow) var(--ease);
-    will-change: clip-path;
-  }
-  .reveal-clip-vertical.is-revealed {
-    clip-path: inset(0% 0 0 0);
-  }
-
-  .reveal-fade {
-    opacity: 0;
-    transition: opacity var(--t-mid) var(--ease);
-    will-change: opacity;
-  }
-  .reveal-fade.is-revealed {
-    opacity: 1;
-  }
-
-  .reveal-fade-up {
-    opacity: 0;
-    transform: translateY(24px);
-    transition:
-      opacity var(--t-mid) var(--ease),
-      transform var(--t-mid) var(--ease);
-    will-change: opacity, transform;
-  }
-  .reveal-fade-up.is-revealed {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 /* ==========================================================================
-   6. Componentes específicos
-   ========================================================================== */
-
-@layer components {
-  /* ----- Hero tagline / IntroQuote line reveal ----- */
-  .hero-tagline .line-inner {
-    display: inline-block;
-    will-change: transform;
-    transform: translateY(100%);
-    transition: transform var(--t-line-reveal) var(--ease);
-    transition-delay: 0ms;
-  }
-
-  .hero-tagline[data-revealed='true'] .line-inner {
-    transform: translateY(0);
-    transition-delay: calc(200ms + var(--i, 0) * 80ms);
-  }
-
-  /* ----- Ken-Burns sutil para poster del hero cuando no hay video ----- */
-  .hero-poster-kenburns {
-    animation: hero-kenburns 12s ease-in-out infinite alternate;
-    will-change: transform;
-  }
-
-  @keyframes hero-kenburns {
-    from {
-      transform: scale(1) translateY(0);
-    }
-    to {
-      transform: scale(1.03) translateY(-0.5%);
-    }
-  }
-
-  /* ----- Marquee track para ClientsMarquee ----- */
-  .marquee-track {
-    animation-name: marquee-scroll;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    will-change: transform;
-  }
-
-  .marquee-track.marquee-reverse {
-    animation-name: marquee-scroll-reverse;
-  }
-
-  @keyframes marquee-scroll {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
-  @keyframes marquee-scroll-reverse {
-    from {
-      transform: translateX(-50%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
-}
-
-/* ==========================================================================
-   7. Reduced motion — agresivo y global
+   5. Reduced motion — agresivo y global
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -375,42 +249,10 @@
     transition-delay: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-
-  .reveal-clip-lateral,
-  .reveal-clip-lateral-inverse,
-  .reveal-clip-vertical {
-    clip-path: inset(0 0 0 0) !important;
-  }
-
-  .reveal-fade,
-  .reveal-fade-up {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .line-mask > * {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  .hero-tagline .line-inner {
-    transform: translateY(0) !important;
-  }
-
-  .hero-poster-kenburns {
-    animation: none !important;
-    transform: none !important;
-  }
-
-  .marquee-track {
-    transform: translateX(0) !important;
-    animation: none !important;
-    animation-play-state: paused !important;
-  }
 }
 
 /* ==========================================================================
-   8. Print styles
+   6. Print styles
    ========================================================================== */
 
 @media print {

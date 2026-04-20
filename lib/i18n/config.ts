@@ -83,6 +83,10 @@ export const NAMESPACES = [
   'forms', // labels, placeholders, errors
   'meta', // SEO fallbacks por página (title, description default)
   'home', // copy específico de la página home
+  'identidad', // copy de la página identidad
+  'miradas', // copy de la página miradas
+  'contacto', // copy de las páginas de contacto
+  'capacidades', // copy de las páginas de capacidades
 ] as const
 
 export type Namespace = (typeof NAMESPACES)[number]

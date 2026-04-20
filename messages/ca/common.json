@@ -30,5 +30,6 @@
     "readCase": "Veure el projecte",
     "back": "Tornar",
     "viewAll": "Veure tot"
-  }
+  },
+  "newWindow": "(obre en una nova finestra)"
 }
