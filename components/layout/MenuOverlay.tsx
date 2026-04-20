@@ -1,27 +1,38 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
+import gsap from 'gsap'
+import SplitType from 'split-type'
 
 import { Link, type RouteId } from '@/lib/i18n/routing'
 import { useMenuStore } from '@/lib/store/menu'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
-
-import { LocaleSwitcher } from './LocaleSwitcher'
+import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { Logo } from '@/components/ui/Logo'
 
 /* ==========================================================================
-   Navegación principal — 7 items canónicos en orden de aparición
+   Nav item definitions
    ========================================================================== */
 
-const NAV_ITEMS: { route: RouteId; labelKey: string }[] = [
-  { route: '/pensamiento-estrategico', labelKey: 'nav.pensamiento' },
-  { route: '/activacion-de-soluciones', labelKey: 'nav.activacion' },
-  { route: '/transformacion-cultural', labelKey: 'nav.transformacion' },
-  { route: '/identidad', labelKey: 'nav.identidad' },
+const PRIMARY_ITEMS = [
+  { route: '/pensamiento-estrategico', labelKey: 'nav.pensamiento', num: '1' },
+  { route: '/activacion-de-soluciones', labelKey: 'nav.activacion', num: '2' },
+  { route: '/transformacion-cultural', labelKey: 'nav.transformacion', num: '3' },
+] as const
+
+const SECONDARY_ITEMS = [
   { route: '/miradas', labelKey: 'nav.miradas' },
+  { route: '/identidad', labelKey: 'nav.identidad' },
   { route: '/contacto', labelKey: 'nav.contacto' },
-  { route: '/aviso-legal', labelKey: 'nav.legal' },
-]
+] as const
+
+const SOCIAL_LINKS = [
+  { href: 'https://www.linkedin.com/company/interactius', label: 'Linkedin' },
+  { href: 'https://www.instagram.com/interactius', label: 'Instagram' },
+  { href: 'https://www.youtube.com/@interactius', label: 'YouTube' },
+] as const
 
 /* ==========================================================================
    MenuOverlay
@@ -31,20 +42,105 @@ export function MenuOverlay() {
   const t = useTranslations()
   const isOpen = useMenuStore((s) => s.isOpen)
   const close = useMenuStore((s) => s.close)
-  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Focus trap + Escape handler — solo activos cuando está abierto.
+  // isVisible controls DOM presence — lags behind isOpen to allow close animation
+  const [isVisible, setIsVisible] = useState(false)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const splitsRef = useRef<SplitType[]>([])
+  const tlRef = useRef<gsap.core.Timeline | null>(null)
+
   useFocusTrap(containerRef, isOpen, close)
 
-  // Auto-close en cambio de pathname (ver PageTransition o navegación manual).
-  // Si el usuario clica un link y la URL cambia, cerramos. Lo forzamos aquí
-  // para cubrir el caso en que el Link no triggeree el onClick.
+  // Manage DOM visibility (mount immediately on open, unmount after close animation)
+  useEffect(() => {
+    if (isOpen) {
+      clearTimeout(closeTimerRef.current)
+      setIsVisible(true)
+    } else {
+      closeTimerRef.current = setTimeout(() => setIsVisible(false), 450)
+    }
+    return () => clearTimeout(closeTimerRef.current)
+  }, [isOpen])
+
+  // GSAP animations — runs after DOM is visible
+  useEffect(() => {
+    if (!isVisible || !containerRef.current) return
+    const container = containerRef.current
+
+    if (isOpen) {
+      tlRef.current?.kill()
+      splitsRef.current.forEach((s) => s.revert())
+      splitsRef.current = []
+
+      const reduced = getReducedMotion()
+      const tl = gsap.timeline()
+      tlRef.current = tl
+
+      // Primary nav: line-mask reveal (SplitType + GSAP)
+      const primaryLinks = container.querySelectorAll<HTMLElement>('[data-primary-link]')
+      primaryLinks.forEach((link, i) => {
+        if (reduced) {
+          gsap.set(link, { opacity: 1 })
+          return
+        }
+        const split = new SplitType(link, { types: 'lines' })
+        splitsRef.current.push(split)
+        const lines = split.lines ?? []
+        gsap.set(lines, { y: 60, opacity: 0 })
+        tl.to(
+          lines,
+          { y: 0, opacity: 1, duration: 1, ease: 'power4.out', stagger: 0.08 },
+          0.48 + i * 0.12,
+        )
+      })
+
+      // Secondary links: opacity fade at t=860ms
+      const secondaryLinks = container.querySelectorAll<HTMLElement>('[data-secondary-link]')
+      gsap.set(secondaryLinks, { opacity: 0 })
+      tl.to(
+        secondaryLinks,
+        { opacity: 1, duration: reduced ? 0 : 0.5, stagger: reduced ? 0 : 0.06 },
+        reduced ? 0 : 0.86,
+      )
+
+      // Social links: opacity fade at t=980ms
+      const socialLinks = container.querySelectorAll<HTMLElement>('[data-social-link]')
+      gsap.set(socialLinks, { opacity: 0 })
+      tl.to(
+        socialLinks,
+        { opacity: 1, duration: reduced ? 0 : 0.4, stagger: reduced ? 0 : 0.04 },
+        reduced ? 0 : 0.98,
+      )
+    } else {
+      // Close: fade all content (200ms), panel clips via CSS (400ms)
+      tlRef.current?.kill()
+      const allLinks = container.querySelectorAll<HTMLElement>(
+        '[data-primary-link], [data-secondary-link], [data-social-link]',
+      )
+      gsap.to(allLinks, { opacity: 0, duration: 0.2, ease: 'none', overwrite: true })
+    }
+  }, [isOpen, isVisible])
+
+  // Popstate: close menu on navigation
   useEffect(() => {
     if (!isOpen) return
     const handlePopState = () => close()
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [isOpen, close])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      tlRef.current?.kill()
+      splitsRef.current.forEach((s) => s.revert())
+      clearTimeout(closeTimerRef.current)
+    }
+  }, [])
+
+  if (!isVisible) return null
 
   return (
     <div
@@ -55,111 +151,161 @@ export function MenuOverlay() {
       aria-label={t('common.menu.label')}
       aria-hidden={!isOpen}
       {...(!isOpen ? { inert: true } : {})}
-      className={`fixed inset-0 z-menu-overlay overflow-hidden bg-warm-light
-                  ${isOpen ? '' : 'hidden'}`}
+      className="fixed inset-0 z-menu-overlay overflow-hidden"
     >
-      <div className="section-inner h-full pt-32 pb-16 lg:pt-40 lg:pb-20">
-        <div className="grid h-full grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-grid-gutter">
-          {/* ----- Columna izquierda: navegación principal ----- */}
-          <nav
-            aria-label={t('common.menu.primaryNav')}
-            className="lg:col-span-8"
+      {/* ── Background: flipped landscape image + blur overlay ── */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0" style={{ transform: 'scaleY(-1)' }}>
+          <Image
+            src="/menu/bg.jpg"
+            alt=""
+            fill
+            className="object-cover object-bottom"
+            priority
+          />
+        </div>
+        <div
+          className={`absolute inset-0 backdrop-blur-[20px] bg-[rgba(232,230,227,0.2)]
+                      transition-opacity ease-expo
+                      ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+          style={{ transitionDuration: isOpen ? '600ms' : '400ms' }}
+        />
+      </div>
+
+      {/* ── Left warm panel — clip-path reveal (TÉCNICA LATERAL canónica) ── */}
+      <div
+        className="absolute inset-y-0 left-0 w-1/2 bg-warm-light transition-[clip-path] ease-expo"
+        style={{
+          clipPath: isOpen ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
+          transitionDuration: isOpen ? '600ms' : '400ms',
+        }}
+      />
+
+      {/* ── Sidebar column: X close button + vertical logo ── */}
+      <div className="absolute inset-y-0 left-0 z-10 hidden w-sidebar lg:block">
+        <div className="absolute left-1/2 top-[26px] -translate-x-1/2">
+          <button
+            type="button"
+            onClick={close}
+            aria-label={t('common.menu.close')}
+            className="flex size-10 items-center justify-center text-fg
+                       transition-opacity duration-fast ease-expo hover:opacity-70"
           >
-            <ul className="flex flex-col gap-4 lg:gap-6">
-              {NAV_ITEMS.map(({ route, labelKey }) => (
-                <li key={route}>
-                  <Link
-                    href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
-                    onClick={close}
-                    className="inline-block font-serif text-title-sm lg:text-section
-                               text-fg hover:opacity-60 focus-visible:opacity-60"
-                  >
-                    {t(labelKey)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+            <CloseIcon />
+          </button>
+        </div>
 
-          {/* ----- Columna derecha: info, social, locale switcher ----- */}
-          <aside
-            className="flex flex-col justify-between gap-12 lg:col-span-4"
-            aria-label={t('common.menu.contactInfo')}
+        <Link
+          href="/"
+          onClick={close}
+          className="absolute left-1/2 top-20 -translate-x-1/2
+                     transition-opacity duration-fast ease-expo hover:opacity-70"
+          aria-label={t('common.logo.home')}
+        >
+          <span
+            className="flex items-center justify-center"
+            style={{ width: '30.975px', height: '219.195px' }}
           >
-            {/* Dirección + contacto */}
-            <div className="flex flex-col gap-6 font-mono text-body-sm">
-              <address className="not-italic">
-                <p>Pau Claris, 100 Planta 2</p>
-                <p>08009 Barcelona</p>
-              </address>
+            <span className="-rotate-90 flex-none">
+              <Logo variant="wordmark" className="h-[30.975px] w-auto" />
+            </span>
+          </span>
+        </Link>
+      </div>
 
-              <ul className="flex flex-col gap-2">
-                <li>
-                  <a
-                    href="mailto:hola@interactius.com"
-                    className="transition-opacity duration-fast ease-expo hover:opacity-60"
-                  >
-                    hola@interactius.com
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="tel:+34936243913"
-                    className="transition-opacity duration-fast ease-expo hover:opacity-60"
-                  >
-                    +34 936 24 39 13
-                  </a>
-                </li>
-              </ul>
+      {/* ── Nav content — positioned after sidebar + grid margin ── */}
+      <div
+        className="absolute inset-y-0 z-10"
+        style={{ left: 'calc(var(--sidebar-w) + var(--grid-margin))' }}
+      >
+        {/* Primary nav: 3 capacity routes, serif light 42px, numbered with border dividers */}
+        <nav
+          aria-label={t('common.menu.primaryNav')}
+          className="absolute"
+          style={{ top: '27.7vh' }}
+        >
+          {PRIMARY_ITEMS.map(({ route, labelKey, num }) => (
+            <div
+              key={route}
+              className="border-t border-fg/20"
+              style={{
+                width: 'calc(50vw - var(--sidebar-w) - 2 * var(--grid-margin))',
+              }}
+            >
+              <span className="block pt-[9px] font-mono text-card-sm text-fg leading-none">
+                {num}
+              </span>
+              <Link
+                href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+                onClick={close}
+                data-primary-link=""
+                className="block mt-[14px] pb-[9px] overflow-hidden
+                           font-serif font-light text-section text-fg
+                           transition-opacity duration-fast ease-expo
+                           hover:opacity-60 focus-visible:opacity-60"
+              >
+                {t(labelKey)}
+              </Link>
             </div>
+          ))}
+        </nav>
 
-            {/* Social */}
-            <ul className="flex flex-col gap-2 font-mono text-body-sm">
-              <li>
-                <a
-                  href="https://www.linkedin.com/company/interactius"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-opacity duration-fast ease-expo hover:opacity-60"
-                >
-                  LinkedIn
-                  <span className="sr-only"> {t('common.newWindow')}</span>
-                  <span aria-hidden="true"> ↗</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.instagram.com/interactius"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-opacity duration-fast ease-expo hover:opacity-60"
-                >
-                  Instagram
-                  <span className="sr-only"> {t('common.newWindow')}</span>
-                  <span aria-hidden="true"> ↗</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.youtube.com/@interactius"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-opacity duration-fast ease-expo hover:opacity-60"
-                >
-                  YouTube
-                  <span className="sr-only"> {t('common.newWindow')}</span>
-                  <span aria-hidden="true"> ↗</span>
-                </a>
-              </li>
-            </ul>
+        {/* Secondary nav: Miradas / Identidad / Contacto — mono 20px underlined */}
+        <div
+          className="absolute flex flex-col gap-[60px]"
+          style={{ top: '64vh' }}
+        >
+          {SECONDARY_ITEMS.map(({ route, labelKey }) => (
+            <Link
+              key={route}
+              href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+              onClick={close}
+              data-secondary-link=""
+              className="font-mono text-body-sm text-fg underline underline-offset-4
+                         transition-opacity duration-fast ease-expo
+                         hover:opacity-60 focus-visible:opacity-60"
+            >
+              {t(labelKey)}
+            </Link>
+          ))}
+        </div>
 
-            {/* Locale switcher */}
-            <div className="mt-auto">
-              <LocaleSwitcher />
-            </div>
-          </aside>
+        {/* Social links: Linkedin / Instagram / YouTube — mono 18px opacity-40 */}
+        <div
+          className="absolute flex items-center gap-[100px]"
+          style={{ top: '93.9vh' }}
+        >
+          {SOCIAL_LINKS.map(({ href, label }) => (
+            <a
+              key={href}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-social-link=""
+              className="font-mono text-label text-fg/40 underline underline-offset-4
+                         transition-opacity duration-fast ease-expo hover:opacity-70"
+            >
+              {label}
+              <span className="sr-only"> {t('common.newWindow')}</span>
+            </a>
+          ))}
         </div>
       </div>
     </div>
+  )
+}
+
+/* ==========================================================================
+   Close icon (X) — static version, hamburger→X is handled by MenuTrigger
+   ========================================================================== */
+
+function CloseIcon() {
+  return (
+    <span className="relative block size-6" aria-hidden="true">
+      <span className="absolute inset-0 flex items-center justify-center">
+        <span className="absolute h-[1.5px] w-6 bg-current rotate-45" />
+        <span className="absolute h-[1.5px] w-6 bg-current -rotate-45" />
+      </span>
+    </span>
   )
 }
