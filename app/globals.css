@@ -1,0 +1,440 @@
+/* ==========================================================================
+   Interactius — globals.css
+   --------------------------------------------------------------------------
+   Estructura:
+   1. Tailwind layers
+   2. CSS custom properties (--vars)
+   3. Reset y estilos base de elementos nativos
+   4. Layout utilities (.section-inner, .grid-12)
+   5. Reveal primitives (.reveal-*)
+   6. Componentes específicos (hero tagline, marquee, ken-burns)
+   7. Reduced-motion global
+   8. Print styles
+   ========================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   2. CSS custom properties
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* ----- Grid y layout ----- */
+    --grid-margin: clamp(20px, 12vw - 45px, 128px);
+    --grid-gutter: clamp(16px, 2.2vw, 32px);
+    --grid-max-w: 1440px;
+    --sidebar-w: 60px;
+
+    /* ----- Section spacing fluido ----- */
+    --s-section: clamp(80px, 10vw, 120px);
+
+    /* ----- Motion ----- */
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --t-fast: 200ms;
+    --t-mid: 550ms;
+    --t-slow: 1100ms;
+    --t-line-reveal: 1200ms;
+
+    /* ----- Colors (mirror de tailwind.config.ts) ----- */
+    --c-dark: #1c1a17;
+    --c-pure-white: #ffffff;
+    --c-grey: #e8e6e3;
+    --c-warm-light: #f5f2ed;
+    --c-warm-dark: #e0dad2;
+    --c-opal: #b0b5b0;
+    --c-lavender: #ab8cd9;
+    --c-bordeaux: #99335f;
+    --c-emerald: #5999a6;
+    --c-purple: #8a38f5;
+    --c-alert: #f01111;
+
+    /* Semánticos */
+    --c-fg: var(--c-dark);
+    --c-bg: var(--c-warm-light);
+    --c-surface: var(--c-pure-white);
+    --c-muted: var(--c-grey);
+  }
+
+  /* ≤ 900px — sidebar oculto */
+  @media (max-width: 900px) {
+    :root {
+      --sidebar-w: 0px;
+      --s-section: 80px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --s-section: 64px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    :root {
+      --s-section: 48px;
+    }
+  }
+}
+
+/* ==========================================================================
+   3. Reset y base
+   ========================================================================== */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+  }
+
+  html {
+    scroll-behavior: auto;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+  }
+
+  body {
+    min-height: 100vh;
+    background: var(--c-bg);
+    color: var(--c-fg);
+    font-family: var(--font-ibm-plex-mono), ui-monospace, 'SFMono-Regular',
+      monospace;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    padding-left: var(--sidebar-w);
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-ibm-plex-serif), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  img,
+  video {
+    height: auto;
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-dark);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  input,
+  textarea,
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  ::selection {
+    background: var(--c-dark);
+    color: var(--c-pure-white);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* ==========================================================================
+   4. Layout utilities
+   ========================================================================== */
+
+@layer components {
+  .section-inner {
+    width: 100%;
+    max-width: calc(var(--grid-max-w) + 2 * var(--grid-margin));
+    margin-inline: auto;
+    padding-inline: var(--grid-margin);
+  }
+
+  .grid-12 {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+  }
+
+  .line-mask {
+    display: block;
+    overflow: hidden;
+  }
+}
+
+/* ==========================================================================
+   5. Reveal primitives
+   ========================================================================== */
+
+@layer components {
+  .reveal-clip-lateral {
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path var(--t-slow) var(--ease);
+    will-change: clip-path;
+  }
+  .reveal-clip-lateral.is-revealed {
+    clip-path: inset(0 0% 0 0);
+  }
+
+  .reveal-clip-lateral-inverse {
+    clip-path: inset(0 0 0 100%);
+    transition: clip-path var(--t-slow) var(--ease);
+    will-change: clip-path;
+  }
+  .reveal-clip-lateral-inverse.is-revealed {
+    clip-path: inset(0 0 0 0%);
+  }
+
+  .reveal-clip-vertical {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path var(--t-slow) var(--ease);
+    will-change: clip-path;
+  }
+  .reveal-clip-vertical.is-revealed {
+    clip-path: inset(0% 0 0 0);
+  }
+
+  .reveal-fade {
+    opacity: 0;
+    transition: opacity var(--t-mid) var(--ease);
+    will-change: opacity;
+  }
+  .reveal-fade.is-revealed {
+    opacity: 1;
+  }
+
+  .reveal-fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity var(--t-mid) var(--ease),
+      transform var(--t-mid) var(--ease);
+    will-change: opacity, transform;
+  }
+  .reveal-fade-up.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   6. Componentes específicos
+   ========================================================================== */
+
+@layer components {
+  /* ----- Hero tagline / IntroQuote line reveal ----- */
+  .hero-tagline .line-inner {
+    display: inline-block;
+    will-change: transform;
+    transform: translateY(100%);
+    transition: transform var(--t-line-reveal) var(--ease);
+    transition-delay: 0ms;
+  }
+
+  .hero-tagline[data-revealed='true'] .line-inner {
+    transform: translateY(0);
+    transition-delay: calc(200ms + var(--i, 0) * 80ms);
+  }
+
+  /* ----- Ken-Burns sutil para poster del hero cuando no hay video ----- */
+  .hero-poster-kenburns {
+    animation: hero-kenburns 12s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  @keyframes hero-kenburns {
+    from {
+      transform: scale(1) translateY(0);
+    }
+    to {
+      transform: scale(1.03) translateY(-0.5%);
+    }
+  }
+
+  /* ----- Marquee track para ClientsMarquee ----- */
+  .marquee-track {
+    animation-name: marquee-scroll;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+  }
+
+  .marquee-track.marquee-reverse {
+    animation-name: marquee-scroll-reverse;
+  }
+
+  @keyframes marquee-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes marquee-scroll-reverse {
+    from {
+      transform: translateX(-50%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+}
+
+/* ==========================================================================
+   7. Reduced motion — agresivo y global
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-clip-lateral,
+  .reveal-clip-lateral-inverse,
+  .reveal-clip-vertical {
+    clip-path: inset(0 0 0 0) !important;
+  }
+
+  .reveal-fade,
+  .reveal-fade-up {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .line-mask > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-tagline .line-inner {
+    transform: translateY(0) !important;
+  }
+
+  .hero-poster-kenburns {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .marquee-track {
+    transform: translateX(0) !important;
+    animation: none !important;
+    animation-play-state: paused !important;
+  }
+}
+
+/* ==========================================================================
+   8. Print styles
+   ========================================================================== */
+
+@media print {
+  body {
+    padding-left: 0;
+    background: white;
+    color: black;
+    overflow: visible;
+  }
+
+  aside,
+  header[role='banner'],
+  nav,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.9em;
+  }
+}

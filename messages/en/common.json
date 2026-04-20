@@ -1,0 +1,34 @@
+{
+  "sidebar": {
+    "label": "Main navigation"
+  },
+  "logo": {
+    "home": "Back to home"
+  },
+  "menu": {
+    "label": "Menu",
+    "primaryNav": "Main navigation",
+    "contactInfo": "Contact information",
+    "open": "Open menu",
+    "close": "Close menu"
+  },
+  "nav": {
+    "pensamiento": "Strategic thinking",
+    "activacion": "Solution activation",
+    "transformacion": "Cultural transformation",
+    "identidad": "Identity",
+    "miradas": "Thoughts",
+    "contacto": "Contact",
+    "legal": "Legal notice"
+  },
+  "header": {
+    "cta": "Let's talk"
+  },
+  "skipToContent": "Skip to main content",
+  "actions": {
+    "readMore": "Read more",
+    "readCase": "View project",
+    "back": "Back",
+    "viewAll": "View all"
+  }
+}
