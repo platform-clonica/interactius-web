@@ -1,0 +1,20 @@
+{
+  "newsletter": {
+    "tagline": "People first. Technology after. Our newsletter is a space to pause, think and question.",
+    "subtitle": "We share real learnings on design, strategy and AI with judgement.",
+    "cta": "Subscribe"
+  },
+  "social": {
+    "label": "Social networks",
+    "linkedin": "Interactius on LinkedIn",
+    "instagram": "Interactius on Instagram",
+    "youtube": "Interactius on YouTube"
+  },
+  "legal": {
+    "label": "Legal links",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie settings",
+    "terms": "Terms and conditions",
+    "notice": "Legal Notice"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "newsletter": {
+    "tagline": "Primero las personas. Después la tecnología. Nuestra newsletter es un espacio para parar, pensar y cuestionar.",
+    "subtitle": "Compartimos aprendizajes reales sobre diseño, estrategia e IA con criterio.",
+    "cta": "Suscribirme"
+  },
+  "social": {
+    "label": "Redes sociales",
+    "linkedin": "Interactius en LinkedIn",
+    "instagram": "Interactius en Instagram",
+    "youtube": "Interactius en YouTube"
+  },
+  "legal": {
+    "label": "Enlaces legales",
+    "privacy": "Política de Privacidad",
+    "cookies": "Configuración de cookies",
+    "terms": "Términos y condiciones",
+    "notice": "Aviso Legal"
+  }
+}

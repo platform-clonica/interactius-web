@@ -1,0 +1,20 @@
+{
+  "altEmailText": "Or write to us at",
+  "contacto": {
+    "title": "Before you write… We're not for everyone.",
+    "copy": "We work with organisations willing to question what they take for granted. That look for decisions made with judgement, not just speed. That understand the brief rarely contains the right question. If you're looking for fast execution, there are other options. If what you need is to think from the edge, write to us.",
+    "altEmail": "info@interactius.com"
+  },
+  "newsletter": {
+    "title": "Subscribe to our newsletter",
+    "copy": "Often, the problem isn't a lack of answers, but not knowing which questions are worth asking. Each month we send our newsletter with learnings that connect reflection with action — without noise, with intention."
+  },
+  "testers": {
+    "title": "Your voice matters and we want to hear it",
+    "copy": "A space for people who want to participate and contribute their experience to improving products and services. We're not looking for ideal profiles. We're looking for realities. Here your voice becomes part of the process: interviews, tests and dynamics where what matters isn't giving opinions, but helping us better understand what's happening. Because the best decisions aren't made without listening to people."
+  },
+  "avisoLegal": {
+    "title": "Legal notice",
+    "stub": "Page under construction."
+  }
+}

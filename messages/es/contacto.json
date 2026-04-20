@@ -1,0 +1,20 @@
+{
+  "altEmailText": "O escríbenos a",
+  "contacto": {
+    "title": "Antes de escribirnos… No somos para todo el mundo.",
+    "copy": "Trabajamos con organizaciones dispuestas a cuestionar lo que dan por sentado. Que buscan decisiones con criterio y no solo velocidad. Que entienden que el brief rara vez contiene la pregunta correcta. Si buscas ejecución rápida, hay otras opciones. Si lo que necesitas es pensar desde el margen, escríbenos.",
+    "altEmail": "info@interactius.com"
+  },
+  "newsletter": {
+    "title": "Suscríbete a nuestra newsletter",
+    "copy": "A menudo, el problema no es la falta de respuestas, sino no saber qué preguntas merece la pena hacerse. Cada mes enviamos nuestra newsletter con aprendizajes que unen la reflexión con la acción, sin ruido y con intención."
+  },
+  "testers": {
+    "title": "Tu voz importa y queremos escucharla",
+    "copy": "Un espacio para personas que quieren participar y aportar su experiencia en la mejora de productos y servicios. No buscamos perfiles ideales. Buscamos realidades. Aquí tu voz se convierte en parte del proceso: entrevistas, tests y dinámicas donde lo importante no es opinar, sino ayudar a entender mejor lo que está pasando. Porque las mejores decisiones no se toman sin escuchar a las personas."
+  },
+  "avisoLegal": {
+    "title": "Aviso legal",
+    "stub": "Página en construcción."
+  }
+}

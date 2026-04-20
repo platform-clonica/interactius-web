@@ -1,0 +1,48 @@
+{
+  "validation": {
+    "name": "Please enter your name",
+    "lastName": "Please enter your last name",
+    "company": "Please enter your company name",
+    "email": "Please enter a valid email",
+    "messageMin": "Message must be at least 10 characters",
+    "profession": "Please enter your profession",
+    "city": "Please enter your city",
+    "birthdate": "Please enter your date of birth",
+    "privacy": "You must accept the policy to continue"
+  },
+  "labels": {
+    "name": "Name",
+    "lastName": "Last name",
+    "company": "Your company",
+    "companyOptional": "Your company (optional)",
+    "workEmail": "Your work email",
+    "email": "Your email",
+    "message": "Your message",
+    "profession": "Profession",
+    "gender": "Gender (optional)",
+    "city": "City",
+    "birthdate": "Date of birth"
+  },
+  "genderOptions": {
+    "female": "Female",
+    "male": "Male",
+    "nonBinary": "Non-binary",
+    "other": "Other",
+    "preferNotToSay": "Prefer not to say"
+  },
+  "submit": "Send",
+  "submitting": "Sending…",
+  "success": {
+    "title": "Message sent.",
+    "body": "Thank you for reaching out. We'll get back to you shortly."
+  },
+  "errors": {
+    "contacto": "We couldn't send your message. Please try again or email us at hola@interactius.com.",
+    "newsletter": "We couldn't subscribe your email. Please try again in a few minutes.",
+    "testers": "We couldn't register your details. Please try again in a few minutes."
+  },
+  "privacy": {
+    "prefix": "I have read and accept the",
+    "link": "privacy policy"
+  }
+}

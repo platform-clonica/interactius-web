@@ -1,0 +1,56 @@
+{
+  "hero": {
+    "title": "Estrategia y diseño para habitar el cambio.",
+    "imageAlt": "Equipo Interactius",
+    "body1": "Interactius nace en <strong>2013</strong> de la mano de un profesor de bellas artes, Josep, y un alumno de ingeniería informática, Carlos.",
+    "body2": "Aquellos dos mundos pronto evolucionaron a una sencilla esencia sobre lo que hoy somos: un compañero, un cómplice, un <strong>partner</strong>.",
+    "body3": "Tras todos estos años, solo tenemos una certeza: no esperamos a que el cambio pase ni permitimos que nos arrastre; <strong>el cambio es lo que nos mueve</strong>."
+  },
+  "intro": {
+    "quote": "Existimos para evitar que las <strong>decisiones</strong> de diseño se tomen ignorando la realidad y el contexto de las personas."
+  },
+  "valores": {
+    "0": {
+      "title": "Nosotros frente al yo",
+      "body": "Trabajamos desde la colaboración y la confianza, entendiendo que los mejores resultados nacen cuando las personas se sienten parte de un propósito común.",
+      "closing": "El talento suma, la tribu multiplica."
+    },
+    "1": {
+      "title": "La verdad antes que la comodidad",
+      "body": "Trabajamos desde la claridad, incluso cuando incomoda. Nombramos lo que está pasando, no lo que sería más fácil escuchar. No maquillamos diagnósticos ni diseñamos para complacer.",
+      "closing": "Decimos lo que otros suavizan."
+    },
+    "2": {
+      "title": "Cuestionar es nuestra forma de avanzar",
+      "body": "No nos conformamos con la primera respuesta ni con la solución evidente. Desafiamos supuestos, ampliamos el marco y revisamos nuestras propias ideas cuando aparecen mejores evidencias.",
+      "closing": "Nada es intocable."
+    },
+    "3": {
+      "title": "La complejidad humana como punto de partida",
+      "body": "Diseñamos para personas conscientes de que cada decisión impacta en vidas reales. Escuchamos antes de decidir y comprendemos antes de simplificar.",
+      "closing": "Escuchamos antes de decidir."
+    }
+  },
+  "liminal": {
+    "title": "Liminal Thinkers",
+    "body": "En el centro no pasa nada nuevo. El centro es previsible, es seguro y, hoy en día, es el lugar más rápido para volverse irrelevante. Lo importante rara vez ocurre donde todos miran. Nosotros diseñamos en el margen, en la ambigüedad, en lo incierto. Donde existen tensiones no nombradas, usuarios con voz y futuros por dibujar. <strong>Trabajamos donde todavía no hay respuesta. Ahí elegimos estar</strong>.",
+    "quote": "Habitamos en el margen para vivir en el cambio."
+  },
+  "metodologia": {
+    "title": "Metodología",
+    "pasos": {
+      "0": { "label": "Pensar", "description": "Nombramos lo que aún no tiene forma." },
+      "1": { "label": "Activar", "description": "Ponemos en movimiento lo que importa." },
+      "2": { "label": "Transformar", "description": "Damos forma al cambio para que perdure." }
+    }
+  },
+  "gente": {
+    "title": "Nuestra gente",
+    "description": "Somos un colectivo de mentes inquietas que diseñan, investigan y ejecutan productos para el mundo de hoy.",
+    "imageAlt": "Miembro del equipo"
+  },
+  "joinUs": {
+    "cta": "¿Quieres unirte al equipo?",
+    "email": "rrhh@interactius.com"
+  }
+}

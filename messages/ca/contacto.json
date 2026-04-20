@@ -1,0 +1,20 @@
+{
+  "altEmailText": "O escriu-nos a",
+  "contacto": {
+    "title": "Abans d'escriure'ns… No som per a tothom.",
+    "copy": "Treballem amb organitzacions disposades a qüestionar el que donen per fet. Que busquen decisions amb criteri i no només velocitat. Que entenen que el brief rarament conté la pregunta correcta. Si busques execució ràpida, hi ha altres opcions. Si el que necessites és pensar des del marge, escriu-nos.",
+    "altEmail": "info@interactius.com"
+  },
+  "newsletter": {
+    "title": "Subscriu-te a la nostra newsletter",
+    "copy": "Sovint, el problema no és la manca de respostes, sinó no saber quines preguntes val la pena fer-se. Cada mes enviem la nostra newsletter amb aprenentatges que uneixen la reflexió amb l'acció, sense soroll i amb intenció."
+  },
+  "testers": {
+    "title": "La teva veu importa i volem escoltar-la",
+    "copy": "Un espai per a persones que volen participar i aportar la seva experiència en la millora de productes i serveis. No busquem perfils ideals. Busquem realitats. Aquí la teva veu es converteix en part del procés: entrevistes, tests i dinàmiques on l'important no és opinar, sinó ajudar a entendre millor el que està passant. Perquè les millors decisions no es prenen sense escoltar les persones."
+  },
+  "avisoLegal": {
+    "title": "Avís legal",
+    "stub": "Pàgina en construcció."
+  }
+}

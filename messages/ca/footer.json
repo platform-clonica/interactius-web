@@ -1,0 +1,20 @@
+{
+  "newsletter": {
+    "tagline": "Primer les persones. Després la tecnologia. La nostra newsletter és un espai per aturar-se, pensar i qüestionar.",
+    "subtitle": "Compartim aprenentatges reals sobre disseny, estratègia i IA amb criteri.",
+    "cta": "Subscriure'm"
+  },
+  "social": {
+    "label": "Xarxes socials",
+    "linkedin": "Interactius a LinkedIn",
+    "instagram": "Interactius a Instagram",
+    "youtube": "Interactius a YouTube"
+  },
+  "legal": {
+    "label": "Enllaços legals",
+    "privacy": "Política de Privacitat",
+    "cookies": "Configuració de galetes",
+    "terms": "Termes i condicions",
+    "notice": "Avís Legal"
+  }
+}

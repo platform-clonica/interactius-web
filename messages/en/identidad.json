@@ -1,0 +1,56 @@
+{
+  "hero": {
+    "title": "Strategy and design to inhabit change.",
+    "imageAlt": "Interactius team",
+    "body1": "Interactius was born in <strong>2013</strong> from a collaboration between a fine arts professor, Josep, and a computer engineering student, Carlos.",
+    "body2": "Those two worlds soon evolved into a simple essence of what we are today: a companion, a collaborator, a <strong>partner</strong>.",
+    "body3": "After all these years, we have only one certainty: we don't wait for change to happen, nor do we allow it to sweep us away; <strong>change is what drives us</strong>."
+  },
+  "intro": {
+    "quote": "We exist to prevent design <strong>decisions</strong> from being made while ignoring the reality and context of people."
+  },
+  "valores": {
+    "0": {
+      "title": "We over I",
+      "body": "We work from collaboration and trust, understanding that the best results emerge when people feel part of a shared purpose.",
+      "closing": "Talent adds, the tribe multiplies."
+    },
+    "1": {
+      "title": "Truth before comfort",
+      "body": "We work with clarity, even when it's uncomfortable. We name what's happening, not what would be easier to hear. We don't dress up diagnoses or design to please.",
+      "closing": "We say what others soften."
+    },
+    "2": {
+      "title": "Questioning is how we move forward",
+      "body": "We don't settle for the first answer or the obvious solution. We challenge assumptions, expand the frame, and revisit our own ideas when better evidence emerges.",
+      "closing": "Nothing is untouchable."
+    },
+    "3": {
+      "title": "Human complexity as the starting point",
+      "body": "We design for people, aware that every decision impacts real lives. We listen before deciding and understand before simplifying.",
+      "closing": "We listen before we decide."
+    }
+  },
+  "liminal": {
+    "title": "Liminal Thinkers",
+    "body": "Nothing new happens at the center. The center is predictable, safe, and today the fastest place to become irrelevant. What matters rarely happens where everyone looks. We design at the margin, in ambiguity, in the uncertain. Where unnamed tensions exist, users with a voice and futures to be drawn. <strong>We work where there is still no answer. That's where we choose to be</strong>.",
+    "quote": "We inhabit the margin to live within change."
+  },
+  "metodologia": {
+    "title": "Methodology",
+    "pasos": {
+      "0": { "label": "Think", "description": "We name what has no shape yet." },
+      "1": { "label": "Activate", "description": "We set in motion what matters." },
+      "2": { "label": "Transform", "description": "We shape change so it endures." }
+    }
+  },
+  "gente": {
+    "title": "Our people",
+    "description": "We are a collective of restless minds who design, research, and build products for today's world.",
+    "imageAlt": "Team member"
+  },
+  "joinUs": {
+    "cta": "Want to join the team?",
+    "email": "rrhh@interactius.com"
+  }
+}

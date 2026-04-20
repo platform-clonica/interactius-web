@@ -1,0 +1,35 @@
+{
+  "sidebar": {
+    "label": "Navegación principal"
+  },
+  "logo": {
+    "home": "Volver al inicio"
+  },
+  "menu": {
+    "label": "Menú",
+    "primaryNav": "Navegación principal",
+    "contactInfo": "Información de contacto",
+    "open": "Abrir menú",
+    "close": "Cerrar menú"
+  },
+  "nav": {
+    "pensamiento": "Pensamiento estratégico",
+    "activacion": "Activación de soluciones",
+    "transformacion": "Transformación cultural",
+    "identidad": "Identidad",
+    "miradas": "Miradas",
+    "contacto": "Contacto",
+    "legal": "Aviso legal"
+  },
+  "header": {
+    "cta": "Hablemos"
+  },
+  "skipToContent": "Saltar al contenido principal",
+  "actions": {
+    "readMore": "Leer más",
+    "readCase": "Ver el proyecto",
+    "back": "Volver",
+    "viewAll": "Ver todo"
+  },
+  "newWindow": "(abre en nueva ventana)"
+}

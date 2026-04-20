@@ -1,0 +1,35 @@
+{
+  "sidebar": {
+    "label": "Navegació principal"
+  },
+  "logo": {
+    "home": "Tornar a l'inici"
+  },
+  "menu": {
+    "label": "Menú",
+    "primaryNav": "Navegació principal",
+    "contactInfo": "Informació de contacte",
+    "open": "Obrir menú",
+    "close": "Tancar menú"
+  },
+  "nav": {
+    "pensamiento": "Pensament estratègic",
+    "activacion": "Activació de solucions",
+    "transformacion": "Transformació cultural",
+    "identidad": "Identitat",
+    "miradas": "Mirades",
+    "contacto": "Contacte",
+    "legal": "Avís legal"
+  },
+  "header": {
+    "cta": "Parlem"
+  },
+  "skipToContent": "Saltar al contingut principal",
+  "actions": {
+    "readMore": "Llegir més",
+    "readCase": "Veure el projecte",
+    "back": "Tornar",
+    "viewAll": "Veure tot"
+  },
+  "newWindow": "(obre en una nova finestra)"
+}
