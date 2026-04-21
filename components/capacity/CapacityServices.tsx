@@ -37,10 +37,10 @@ function ServiceItem({
 
 interface CapacityServicesProps {
   services: CapacityService[]
-  sectionLabel?: string
+  sectionLabel: string
 }
 
-export function CapacityServices({ services, sectionLabel = 'Servicios' }: CapacityServicesProps) {
+export function CapacityServices({ services, sectionLabel }: CapacityServicesProps) {
   return (
     <section className="w-full bg-surface" aria-label={sectionLabel}>
       <div className="section-inner py-section">

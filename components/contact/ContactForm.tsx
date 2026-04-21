@@ -179,12 +179,12 @@ function PrivacyCheckbox({
 }) {
   const t = useTranslations('forms')
   return (
-    <Checkbox {...(register as object)} error={error} required>
+    <Checkbox {...(register as object)} error={error} required labelClassName="font-mono text-micro text-fg/40 leading-snug">
       {t('privacy.prefix')}{' '}
       <Link href="/aviso-legal" className="underline underline-offset-4 hover:opacity-70">
         {t('privacy.link')}
       </Link>
-      .
+      {t('privacy.suffix')}
     </Checkbox>
   )
 }

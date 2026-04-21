@@ -56,18 +56,18 @@ export default getRequestConfig(async ({ requestLocale }) => {
    Loader de mensajes
    ========================================================================== */
 
-async function loadMessages(locale: Locale): Promise<Record<string, unknown>> {
-  const merged: Record<string, unknown> = {}
+async function loadMessages(locale: Locale): Promise<Record<string, Record<string, string>>> {
+  const merged: Record<string, Record<string, string>> = {}
 
   await Promise.all(
     NAMESPACES.map(async (ns) => {
       try {
         const mod = await import(`./messages/${locale}/${ns}.json`)
-        merged[ns] = mod.default
+        merged[ns] = mod.default as Record<string, string>
       } catch {
         // Namespace faltante → se trata como {}.
         // En dev veremos warnings de next-intl si alguna key está ausente.
-        merged[ns] = {}
+        merged[ns] = {} as Record<string, string>
       }
     }),
   )

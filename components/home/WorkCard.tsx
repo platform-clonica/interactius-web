@@ -1,9 +1,7 @@
-'use client'
-
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
 
 import { Link } from '@/lib/i18n/routing'
+import type { RouteId } from '@/lib/i18n/routing'
 
 /* ==========================================================================
    Types
@@ -17,16 +15,11 @@ export interface WorkCardData {
   title: string
   bgColor: WorkBgColor
   aspectRatio: WorkAspect
-  /** Columna inicial del grid 12 (desktop). Undefined en tablet/mobile. */
   gridStart?: number
-  /** Número de columnas que ocupa (desktop). Undefined en tablet/mobile. */
   gridSpan?: number
-  /** Offset vertical px para romper el grid regular (desktop). */
   marginTop: number
-  /** Opcional Fase 2 — URL de la imagen del proyecto. */
   imageUrl?: string
-  /** Opcional Fase 2 — URL del detalle del proyecto. */
-  href?: string
+  href?: RouteId
 }
 
 interface WorkCardProps {
@@ -54,33 +47,8 @@ const ASPECT_CLASS: Record<WorkAspect, string> = {
   '16/9': 'aspect-[16/9]',
 }
 
-export function WorkCard({ data, index, responsive = 'desktop' }: WorkCardProps) {
-  const ref = useRef<HTMLElement>(null)
-  const [revealed, setRevealed] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el || revealed) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          // Stagger leve por posición — cada card entra con 80ms de delay
-          // respecto a la anterior. Solo aplica a cards que todavía no
-          // se han visto (primer viewport).
-          setTimeout(() => setRevealed(true), index * 40)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -5% 0px' },
-    )
-
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [revealed, index])
-
-  // Props del wrapper — condicional según href existe
-  const Wrapper = data.href ? Link : 'article'
+export function WorkCard({ data, responsive = 'desktop' }: WorkCardProps) {
+  const Wrapper = (data.href ? Link : 'article') as React.ElementType
   const wrapperProps: Record<string, unknown> = data.href
     ? { href: data.href }
     : {}
@@ -98,24 +66,16 @@ export function WorkCard({ data, index, responsive = 'desktop' }: WorkCardProps)
       : undefined
 
   return (
-    <article
-      ref={ref}
-      style={gridStyle}
-      className={`
-        reveal-clip-lateral
-        ${revealed ? 'is-revealed' : ''}
-      `}
-    >
+    <article style={gridStyle}>
       <Wrapper
         {...wrapperProps}
         className={`
           relative block overflow-hidden
           ${BG_COLOR_CLASS[data.bgColor]}
           ${ASPECT_CLASS[data.aspectRatio]}
-          ${data.href ? 'transition-opacity duration-fast ease-expo hover:opacity-95' : ''}
+          ${data.href ? 'hover:opacity-95' : ''}
         `}
       >
-        {/* Imagen opcional — Fase 2 */}
         {data.imageUrl && (
           <Image
             src={data.imageUrl}
@@ -126,7 +86,6 @@ export function WorkCard({ data, index, responsive = 'desktop' }: WorkCardProps)
           />
         )}
 
-        {/* Label cliente — pill blanco top-left */}
         <span
           className="absolute left-0 top-0 inline-flex items-center
                      bg-surface px-3 py-[6px]
@@ -135,13 +94,12 @@ export function WorkCard({ data, index, responsive = 'desktop' }: WorkCardProps)
           {data.client}
         </span>
 
-        {/* Título proyecto — panel blanco bottom-left */}
         <div
           className="absolute bottom-0 left-0
                      max-w-[392px] w-full
                      bg-surface p-5 sm:p-6"
         >
-          <h3 className="font-serif font-light text-fg text-title-sm lg:text-subtitle">
+          <h3 className="font-serif font-light text-fg text-subtitle leading-none">
             {data.title}
           </h3>
         </div>

@@ -28,10 +28,18 @@ export default async function ContactoPage({ params }: PageProps) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'contacto' })
 
+  const copy = (
+    <>
+      <p>{t('contacto.copy1')}</p>
+      <p>{t('contacto.copy2')}</p>
+      <p className="font-semibold">{t('contacto.copy3')}</p>
+    </>
+  )
+
   return (
     <ContactHero
       title={t('contacto.title')}
-      copy={t('contacto.copy')}
+      copy={copy}
       altEmail={t('contacto.altEmail')}
     >
       <ContactForm variant="contacto" />

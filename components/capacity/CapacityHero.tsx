@@ -33,11 +33,11 @@ export function CapacityHero({
         <div className="pt-32 pb-section lg:pt-40 lg:max-w-[55%]">
           <h1
             id="capacity-hero-title"
-            className="font-serif font-light text-fg text-title lg:text-display"
+            className="font-serif font-light text-fg text-display"
           >
             {title}
           </h1>
-          <p className="mt-8 max-w-[44ch] font-mono text-body-sm text-fg/70 lg:text-body">
+          <p className="mt-8 max-w-[44ch] font-mono text-body text-fg/70">
             {lead}
           </p>
         </div>

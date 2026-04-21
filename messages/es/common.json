@@ -31,5 +31,14 @@
     "back": "Volver",
     "viewAll": "Ver todo"
   },
-  "newWindow": "(abre en nueva ventana)"
+  "newWindow": "(abre en nueva ventana)",
+  "error": {
+    "title": "Algo ha ido mal",
+    "body": "Ha ocurrido un error inesperado. Puedes intentarlo de nuevo o volver al inicio.",
+    "retry": "Intentar de nuevo"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "body": "La página que buscas no existe o ha sido movida."
+  }
 }

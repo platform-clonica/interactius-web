@@ -1,0 +1,7 @@
+# robots.txt — staging.interactius.com — Staging
+# Bloqueo total de indexación en entorno de desarrollo
+
+User-agent: *
+Disallow: /
+
+# Sitemap no expuesto en staging

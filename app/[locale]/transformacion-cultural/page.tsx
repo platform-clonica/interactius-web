@@ -62,7 +62,7 @@ export default async function TransformacionCultural({ params }: PageProps) {
               </h2>
             </div>
             <div className="col-span-12 lg:col-span-7 lg:col-start-6">
-              <p className="font-mono text-body-sm text-pure-white/80 lg:text-body max-w-[52ch]">
+              <p className="font-mono text-body text-pure-white/80 max-w-[52ch]">
                 {t('transformacion.manifiesto.body')}
               </p>
             </div>

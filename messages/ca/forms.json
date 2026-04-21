@@ -42,7 +42,8 @@
     "testers": "No hem pogut registrar les teves dades. Torna-ho a intentar en uns minuts."
   },
   "privacy": {
-    "prefix": "He llegit i accepto la",
-    "link": "política de privacitat"
+    "prefix": "Accepto rebre missatges d'Interactius i la seva",
+    "link": "Política de privacitat",
+    "suffix": ". Permeto que Interactius pugui emmagatzemar i processar les meves dades personals."
   }
 }

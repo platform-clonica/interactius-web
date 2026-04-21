@@ -31,5 +31,14 @@
     "back": "Tornar",
     "viewAll": "Veure tot"
   },
-  "newWindow": "(obre en una nova finestra)"
+  "newWindow": "(obre en una nova finestra)",
+  "error": {
+    "title": "Alguna cosa ha anat malament",
+    "body": "S'ha produït un error inesperat. Pots tornar-ho a intentar o tornar a l'inici.",
+    "retry": "Tornar-ho a intentar"
+  },
+  "notFound": {
+    "title": "Pàgina no trobada",
+    "body": "La pàgina que busques no existeix o ha estat moguda."
+  }
 }

@@ -3,14 +3,16 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import gsap from 'gsap'
-import SplitType from 'split-type'
 
 import { Link, type RouteId } from '@/lib/i18n/routing'
 import { useMenuStore } from '@/lib/store/menu'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
-import { Logo } from '@/components/ui/Logo'
+import { RotatedLogo } from '@/components/ui/RotatedLogo'
+
+// gsap + SplitType se importan de forma lazy dentro del useEffect para que
+// no engrosen el bundle del layout (critical path). Solo se cargan la primera
+// vez que el menú se abre.
 
 /* ==========================================================================
    Nav item definitions
@@ -48,8 +50,10 @@ export function MenuOverlay() {
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const splitsRef = useRef<SplitType[]>([])
-  const tlRef = useRef<gsap.core.Timeline | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const splitsRef = useRef<any[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tlRef = useRef<any>(null)
 
   useFocusTrap(containerRef, isOpen, close)
 
@@ -65,61 +69,71 @@ export function MenuOverlay() {
   }, [isOpen])
 
   // GSAP animations — runs after DOM is visible
+  // gsap + SplitType se importan lazy para no engrosar el bundle del layout.
   useEffect(() => {
     if (!isVisible || !containerRef.current) return
     const container = containerRef.current
 
     if (isOpen) {
-      tlRef.current?.kill()
-      splitsRef.current.forEach((s) => s.revert())
-      splitsRef.current = []
+      void (async () => {
+        const [{ default: gsap }, { default: SplitType }] = await Promise.all([
+          import('gsap'),
+          import('split-type'),
+        ])
 
-      const reduced = getReducedMotion()
-      const tl = gsap.timeline()
-      tlRef.current = tl
+        tlRef.current?.kill()
+        splitsRef.current.forEach((s) => s.revert())
+        splitsRef.current = []
 
-      // Primary nav: line-mask reveal (SplitType + GSAP)
-      const primaryLinks = container.querySelectorAll<HTMLElement>('[data-primary-link]')
-      primaryLinks.forEach((link, i) => {
-        if (reduced) {
-          gsap.set(link, { opacity: 1 })
-          return
-        }
-        const split = new SplitType(link, { types: 'lines' })
-        splitsRef.current.push(split)
-        const lines = split.lines ?? []
-        gsap.set(lines, { y: 60, opacity: 0 })
+        const reduced = getReducedMotion()
+        const tl = gsap.timeline()
+        tlRef.current = tl
+
+        // Primary nav: line-mask reveal (SplitType + GSAP)
+        const primaryLinks = container.querySelectorAll<HTMLElement>('[data-primary-link]')
+        primaryLinks.forEach((link, i) => {
+          if (reduced) {
+            gsap.set(link, { opacity: 1 })
+            return
+          }
+          const split = new SplitType(link, { types: 'lines' })
+          splitsRef.current.push(split)
+          const lines = split.lines ?? []
+          gsap.set(lines, { y: 60, opacity: 0 })
+          tl.to(
+            lines,
+            { y: 0, opacity: 1, duration: 1, ease: 'power4.out', stagger: 0.08 },
+            0.48 + i * 0.12,
+          )
+        })
+
+        // Secondary links: opacity fade at t=860ms
+        const secondaryLinks = container.querySelectorAll<HTMLElement>('[data-secondary-link]')
+        gsap.set(secondaryLinks, { opacity: 0 })
         tl.to(
-          lines,
-          { y: 0, opacity: 1, duration: 1, ease: 'power4.out', stagger: 0.08 },
-          0.48 + i * 0.12,
+          secondaryLinks,
+          { opacity: 1, duration: reduced ? 0 : 0.5, stagger: reduced ? 0 : 0.06 },
+          reduced ? 0 : 0.86,
         )
-      })
 
-      // Secondary links: opacity fade at t=860ms
-      const secondaryLinks = container.querySelectorAll<HTMLElement>('[data-secondary-link]')
-      gsap.set(secondaryLinks, { opacity: 0 })
-      tl.to(
-        secondaryLinks,
-        { opacity: 1, duration: reduced ? 0 : 0.5, stagger: reduced ? 0 : 0.06 },
-        reduced ? 0 : 0.86,
-      )
-
-      // Social links: opacity fade at t=980ms
-      const socialLinks = container.querySelectorAll<HTMLElement>('[data-social-link]')
-      gsap.set(socialLinks, { opacity: 0 })
-      tl.to(
-        socialLinks,
-        { opacity: 1, duration: reduced ? 0 : 0.4, stagger: reduced ? 0 : 0.04 },
-        reduced ? 0 : 0.98,
-      )
+        // Social links: opacity fade at t=980ms
+        const socialLinks = container.querySelectorAll<HTMLElement>('[data-social-link]')
+        gsap.set(socialLinks, { opacity: 0 })
+        tl.to(
+          socialLinks,
+          { opacity: 1, duration: reduced ? 0 : 0.4, stagger: reduced ? 0 : 0.04 },
+          reduced ? 0 : 0.98,
+        )
+      })()
     } else {
       // Close: fade all content (200ms), panel clips via CSS (400ms)
-      tlRef.current?.kill()
-      const allLinks = container.querySelectorAll<HTMLElement>(
-        '[data-primary-link], [data-secondary-link], [data-social-link]',
-      )
-      gsap.to(allLinks, { opacity: 0, duration: 0.2, ease: 'none', overwrite: true })
+      void import('gsap').then(({ default: gsap }) => {
+        tlRef.current?.kill()
+        const allLinks = container.querySelectorAll<HTMLElement>(
+          '[data-primary-link], [data-secondary-link], [data-social-link]',
+        )
+        gsap.to(allLinks, { opacity: 0, duration: 0.2, ease: 'none', overwrite: true })
+      })
     }
   }, [isOpen, isVisible])
 
@@ -167,17 +181,16 @@ export function MenuOverlay() {
         <div
           className={`absolute inset-0 backdrop-blur-[20px] bg-[rgba(232,230,227,0.2)]
                       transition-opacity ease-expo
-                      ${isOpen ? 'opacity-100' : 'opacity-0'}`}
-          style={{ transitionDuration: isOpen ? '600ms' : '400ms' }}
+                      ${isOpen ? 'opacity-100 duration-menu-in' : 'opacity-0 duration-menu-out'}`}
         />
       </div>
 
       {/* ── Left warm panel — clip-path reveal (TÉCNICA LATERAL canónica) ── */}
       <div
-        className="absolute inset-y-0 left-0 w-1/2 bg-warm-light transition-[clip-path] ease-expo"
+        className={`absolute inset-y-0 left-0 w-1/2 bg-warm-light transition-[clip-path] ease-expo
+                    ${isOpen ? 'duration-menu-in' : 'duration-menu-out'}`}
         style={{
           clipPath: isOpen ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
-          transitionDuration: isOpen ? '600ms' : '400ms',
         }}
       />
 
@@ -202,14 +215,7 @@ export function MenuOverlay() {
                      transition-opacity duration-fast ease-expo hover:opacity-70"
           aria-label={t('common.logo.home')}
         >
-          <span
-            className="flex items-center justify-center"
-            style={{ width: '30.975px', height: '219.195px' }}
-          >
-            <span className="-rotate-90 flex-none">
-              <Logo variant="wordmark" className="h-[30.975px] w-auto" />
-            </span>
-          </span>
+          <RotatedLogo />
         </Link>
       </div>
 
@@ -252,7 +258,7 @@ export function MenuOverlay() {
 
         {/* Secondary nav: Miradas / Identidad / Contacto — mono 20px underlined */}
         <div
-          className="absolute flex flex-col gap-[60px]"
+          className="absolute flex flex-col gap-menu-col"
           style={{ top: '64vh' }}
         >
           {SECONDARY_ITEMS.map(({ route, labelKey }) => (
@@ -272,7 +278,7 @@ export function MenuOverlay() {
 
         {/* Social links: Linkedin / Instagram / YouTube — mono 18px opacity-40 */}
         <div
-          className="absolute flex items-center gap-[100px]"
+          className="absolute flex items-center gap-menu-social"
           style={{ top: '93.9vh' }}
         >
           {SOCIAL_LINKS.map(({ href, label }) => (

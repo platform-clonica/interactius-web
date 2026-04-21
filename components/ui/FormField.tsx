@@ -12,7 +12,6 @@ import {
    Types
    ========================================================================== */
 
-type FieldAs = 'input' | 'textarea' | 'select'
 
 interface BaseProps {
   /**

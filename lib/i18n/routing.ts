@@ -68,8 +68,11 @@ const PATHNAMES = {
     ca: '/contacte',
     en: '/contact',
   },
-  // TODO Sprint 3 — añadir cuando se implementen:
-  // '/newsletter': { es: '/newsletter', ca: '/newsletter', en: '/newsletter' },
+  '/newsletter': {
+    es: '/newsletter',
+    ca: '/newsletter',
+    en: '/newsletter',
+  },
   // '/testers':    { es: '/testers',    ca: '/testers',    en: '/testers' },
 
   // Miradas
@@ -152,10 +155,9 @@ export function localizedPath(
   locale: Locale,
   { params }: LocalizedPathParams = {},
 ): string {
-  return getPathname({
-    href: params ? { pathname: route, params } : { pathname: route },
-    locale,
-  })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const href: any = params ? { pathname: route, params } : route
+  return getPathname({ href, locale })
 }
 
 /**

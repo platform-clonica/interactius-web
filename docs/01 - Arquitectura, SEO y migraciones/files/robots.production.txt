@@ -1,0 +1,16 @@
+# robots.txt — interactius.com — Producción
+# https://www.interactius.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Excluir rutas técnicas y de API
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Excluir páginas legales de indexación prioritaria (se indexan pero no se rastrean con frecuencia)
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://www.interactius.com/sitemap.xml

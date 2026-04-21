@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 
 import { Link } from '@/lib/i18n/routing'
-import { Logo } from '@/components/ui/Logo'
+import { RotatedLogo } from '@/components/ui/RotatedLogo'
 
 import { MenuTrigger } from './MenuTrigger'
 
@@ -41,19 +41,7 @@ export async function Sidebar() {
                    transition-opacity duration-fast ease-expo hover:opacity-70"
         aria-label={t('logo.home')}
       >
-        {/*
-          Container matches post-rotation visual dimensions:
-          w = logo height (30.975px), h = logo width (219.195px)
-          flex centers the rotated logo within this box.
-        */}
-        <span
-          className="flex items-center justify-center"
-          style={{ width: '30.975px', height: '219.195px' }}
-        >
-          <span className="-rotate-90 flex-none">
-            <Logo variant="wordmark" className="h-[30.975px] w-auto" />
-          </span>
-        </span>
+        <RotatedLogo />
       </Link>
     </aside>
   )

@@ -59,7 +59,7 @@ export default async function ArticlePage({ params }: PageProps) {
               <p className="font-mono text-micro text-fg/40 uppercase tracking-wider mb-4">
                 {article.cat.replace(/-/g, ' ')}
               </p>
-              <h1 className="font-serif font-light text-title lg:text-display text-fg leading-tight">
+              <h1 className="font-serif font-light text-display text-fg leading-tight">
                 {article.title}
               </h1>
               <p className="mt-6 font-mono text-body-sm text-fg/60 max-w-[52ch]">

@@ -1,4 +1,7 @@
+import { getTranslations } from 'next-intl/server'
+
 import { ServiceRow } from './ServiceRow'
+import type { RouteId } from '@/lib/i18n/routing'
 
 /**
  * ServicesRows — sección "Lo que hacemos" en la Home.
@@ -20,7 +23,7 @@ interface PillarData {
   description: string
   services: string[]
   /** Href opcional — si existe, toda la fila es clickable. */
-  href?: string
+  href?: RouteId
 }
 
 const PILLARS: PillarData[] = [
@@ -39,14 +42,14 @@ const PILLARS: PillarData[] = [
   },
   {
     number: '2',
-    name: 'Activación de soluciones',
+    name: 'Diseño de experiencias',
     description:
       'Convertimos la estrategia en productos y servicios validados, reduciendo riesgo y acelerando impacto.',
     services: [
       'Diseño de productos y servicios',
       'Validación de producto',
-      'Clónica® Usuarios sintéticos',
-      'Insight Panel® Reclutamiento',
+      'Clonica® Usuarios sintéticos',
+      'Insight Panel® Reclutamiento de usuarios',
     ],
     href: '/activacion-de-soluciones',
   },
@@ -65,9 +68,8 @@ const PILLARS: PillarData[] = [
 ]
 
 export async function ServicesRows() {
-  // Título hardcoded por ahora — vendrá de messages/home.json cuando
-  // se materialice el namespace en Sprint 2.6.
-  const title = 'Lo que hacemos'
+  const t = await getTranslations('home')
+  const title = t('services.title')
 
   return (
     <section
@@ -77,8 +79,7 @@ export async function ServicesRows() {
       <div className="section-inner py-section">
         <h2
           id="services-heading"
-          className="font-serif text-section font-light text-fg
-                     lg:text-title"
+          className="font-serif text-section font-normal text-fg"
         >
           {title}
         </h2>

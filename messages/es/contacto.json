@@ -1,8 +1,10 @@
 {
-  "altEmailText": "O escríbenos a",
+  "altEmailText": "O bien, escríbenos un email a",
   "contacto": {
     "title": "Antes de escribirnos… No somos para todo el mundo.",
-    "copy": "Trabajamos con organizaciones dispuestas a cuestionar lo que dan por sentado. Que buscan decisiones con criterio y no solo velocidad. Que entienden que el brief rara vez contiene la pregunta correcta. Si buscas ejecución rápida, hay otras opciones. Si lo que necesitas es pensar desde el margen, escríbenos.",
+    "copy1": "Trabajamos con organizaciones dispuestas a cuestionar lo que dan por sentado. Que buscan decisiones con criterio y no solo velocidad. Que entienden que el brief rara vez contiene la pregunta correcta.",
+    "copy2": "Si buscas ejecución rápida, hay otras opciones.",
+    "copy3": "Si lo que necesitas es pensar desde el margen, escríbenos.",
     "altEmail": "info@interactius.com"
   },
   "newsletter": {

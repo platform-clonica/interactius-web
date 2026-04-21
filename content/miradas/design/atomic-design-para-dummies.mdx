@@ -1,0 +1,53 @@
+---
+title: "Atomic Design para dummies"
+description: "El Atomic Design consiste en aplicar un modelo mental para crear un Design System de forma eficiente, partiendo de los elementos más pequeños hasta llegar a las páginas completas."
+publishedAt: "2019-07-16"
+author: "Aleix Martí"
+category: "design"
+---
+
+¿Cómo se construye un sistema de diseño sin volverse loco? La respuesta de Brad Frost lleva años siendo la más citada en la industria: Atomic Design. Un modelo mental que toma prestada la metáfora de la química para estructurar interfaces de la misma manera que la materia se organiza en la naturaleza.
+
+## Design Systems
+
+Un design system es un conjunto de componentes reutilizables que se pueden combinar de múltiples formas, permitiendo escalar fácilmente el diseño de interfaces digitales.
+
+Esta práctica no es nueva. LEGO© demuestra el concepto: solo 6 piezas de 4×2 del mismo color generan 915.103.765 combinaciones distintas. Las pizzerías también aplican este modelo al permitir personalizar pizzas combinando tamaños de masa e ingredientes.
+
+### Ventajas de los Design Systems
+
+- **Escalabilidad**: Reutilizar componentes evita diseñar desde cero en proyectos con múltiples pantallas
+- **Consistencia**: Mantener elementos uniformes previene inconsistencias visuales a medida que crece el proyecto
+- **Eficiencia**: Una guía unificada acelera el trabajo colaborativo entre diseñadores y desarrolladores
+- **Trabajo en equipo**: Todos los implicados contribuyen a crear un sistema integral
+
+Ejemplos destacados incluyen Material Design de Google, Atlassian Design Language, Polaris de Shopify e IBM Design Language.
+
+## Atomic Design
+
+Atomic Design es una metodología ideada por Brad Frost que propone un modelo mental para crear design systems eficientemente. Se inspira en varios conceptos: la cadena de montaje de Henry Ford, UI Frameworks como Bootstrap, guías de estilo digitales, y la química de los átomos.
+
+### Los cinco niveles
+
+**Átomos**: Elementos funcionales mínimos que no pueden desglosarse sin perder funcionalidad. Incluyen elementos HTML básicos como `<label>`, `<input>`, `<button>`. Son los bloques de construcción más pequeños del sistema.
+
+**Moléculas**: Grupos simples de elementos UI que actúan como unidad funcional. Ejemplo: un buscador con etiqueta, campo de entrada y botón. Las moléculas toman vida cuando combinan átomos con un propósito específico.
+
+**Organismos**: Componentes complejos formados por moléculas, átomos u otros organismos que crean secciones de interfaz. Ejemplo: header con logo, menú y buscador. Son las primeras piezas que empiezan a parecerse a algo reconocible en una interfaz real.
+
+**Templates**: Objetos a nivel de página que sitúan componentes en un layout, enfocándose en estructura más que contenido final. Permiten probar tamaños de imágenes y longitudes de texto con contenido dinámico simulado.
+
+**Páginas**: Instancias específicas de templates que muestran la interfaz final con contenido real. Contemplan variantes según tipo de usuario o estado de la aplicación.
+
+## De la teoría a la práctica
+
+La belleza del Atomic Design no está en los niveles en sí, sino en el cambio de mentalidad que propone:
+
+1. **Piensa en componentes antes que en páginas**: Una página es solo una combinación de organismos
+2. **Diseña de lo pequeño a lo grande**: Resuelve los átomos antes de montar los templates
+3. **Documenta en el proceso**: Cada componente debe llevar su propia guía de uso
+4. **Involucra a desarrollo desde el principio**: Los componentes de diseño deben mapear directamente con los de código
+
+## Conclusión
+
+El Atomic Design no es una metodología rígida, es un vocabulario compartido. Su mayor valor no está en seguir los cinco niveles al pie de la letra, sino en conseguir que diseñadores y desarrolladores hablen el mismo idioma cuando construyen un sistema. Cuando eso ocurre, los proyectos escalan de forma natural.

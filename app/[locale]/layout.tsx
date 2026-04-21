@@ -10,7 +10,7 @@ import { MenuOverlay } from '@/components/layout/MenuOverlay'
 import { Footer } from '@/components/layout/Footer'
 import { PageTransition } from '@/components/layout/PageTransition'
 
-import { SITE_CONFIG, buildRootMetadata } from '@/lib/seo/metadata.config'
+import { buildRootMetadata } from '@/lib/seo/metadata.config'
 import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/seo/schema'
 import { LOCALES, type Locale } from '@/lib/i18n/config'
 
@@ -67,14 +67,15 @@ export const viewport: Viewport = {
    Metadata — se genera por locale. Cada page.tsx sobrescribe lo específico.
    ========================================================================== */
 
-type LayoutParams = { locale: Locale }
+type LayoutParams = { locale: string }
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<LayoutParams>
 }): Promise<Metadata> {
-  const { locale } = await params
+  const { locale: rawLocale } = await params
+  const locale = rawLocale as Locale
 
   if (!LOCALES.includes(locale)) {
     return {}
@@ -96,7 +97,8 @@ export default async function RootLayout({
   children,
   params,
 }: RootLayoutProps) {
-  const { locale } = await params
+  const { locale: rawLocale } = await params
+  const locale = rawLocale as Locale
 
   // Hard-validate locale — middleware debería prevenir esto, pero por seguridad.
   if (!LOCALES.includes(locale)) {

@@ -26,6 +26,8 @@ interface CheckboxProps
   /** Id del input. Si no se pasa, se genera con useId. */
   id?: string
   className?: string
+  /** Override de clases del span del label (para tamaño/color específico). */
+  labelClassName?: string
 }
 
 /* ==========================================================================
@@ -43,6 +45,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       required,
       disabled,
       className,
+      labelClassName,
       ...rest
     },
     ref,
@@ -105,7 +108,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
           {/* Label text */}
           <span
-            className={`font-mono text-body-sm leading-snug ${labelColorClass}`}
+            className={labelClassName ?? `font-mono text-body-sm leading-snug ${labelColorClass}`}
           >
             {children ?? label}
             {required && !children && (

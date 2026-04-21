@@ -9,10 +9,10 @@ export interface CapacityOtherItem {
 
 export function CapacityOthers({
   items,
-  sectionLabel = 'Otras capacidades',
+  sectionLabel,
 }: {
   items: [CapacityOtherItem, CapacityOtherItem]
-  sectionLabel?: string
+  sectionLabel: string
 }) {
   return (
     <section
@@ -33,7 +33,7 @@ export function CapacityOthers({
               `}
             >
               <span aria-hidden="true" className="font-mono text-micro text-fg/40">→</span>
-              <span className="font-serif font-light text-fg text-section lg:text-title">
+              <span className="font-serif font-light text-fg text-title">
                 {item.title}
               </span>
               <span className="font-mono text-body-sm text-fg/60 max-w-[40ch]">

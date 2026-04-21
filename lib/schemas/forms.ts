@@ -1,0 +1,44 @@
+/**
+ * Esquemas Zod compartidos para validación server-side.
+ *
+ * Arquitectura:
+ * - Estos esquemas son la FUENTE DE VERDAD para la validación del servidor.
+ * - Los componentes de formulario del cliente importan estos esquemas y
+ *   añaden mensajes de error i18n por encima (usando .superRefine o
+ *   el segundo argumento de los métodos Zod).
+ * - Así se garantiza que server y client siempre validan con las mismas reglas,
+ *   evitando divergencias silenciosas.
+ *
+ * IMPORTANTE: No importar next-intl aquí — este archivo se ejecuta en el servidor
+ * sin contexto de locale.
+ */
+
+import { z } from 'zod'
+
+/* ==========================================================================
+   Contacto — /api/contact
+   ========================================================================== */
+
+export const contactSchema = z.object({
+  name: z.string().min(2),
+  company: z.string().min(1),
+  email: z.string().email(),
+  message: z.string().min(10),
+  privacy: z.literal(true),
+})
+
+export type ContactInput = z.infer<typeof contactSchema>
+
+/* ==========================================================================
+   Newsletter — /api/newsletter
+   ========================================================================== */
+
+export const newsletterSchema = z.object({
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  company: z.string().optional(),
+  email: z.string().email(),
+  privacy: z.literal(true),
+})
+
+export type NewsletterInput = z.infer<typeof newsletterSchema>

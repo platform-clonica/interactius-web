@@ -42,7 +42,8 @@
     "testers": "We couldn't register your details. Please try again in a few minutes."
   },
   "privacy": {
-    "prefix": "I have read and accept the",
-    "link": "privacy policy"
+    "prefix": "I agree to receive messages from Interactius and its",
+    "link": "Privacy Policy",
+    "suffix": ". I allow Interactius to store and process my personal data."
   }
 }

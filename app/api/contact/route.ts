@@ -1,18 +1,11 @@
 import { NextResponse } from 'next/server'
-import { z } from 'zod'
+
+import { contactSchema as contactoSchema } from '@/lib/schemas/forms'
 
 /* ==========================================================================
-   Schema — debe coincidir con el del ContactForm.
-   Duplicación intencional: server-side no puede confiar en el cliente.
+   Schema — importado desde lib/schemas/forms.ts (fuente de verdad compartida).
+   El cliente añade mensajes i18n por encima; el servidor usa la forma base.
    ========================================================================== */
-
-const contactoSchema = z.object({
-  name: z.string().min(2),
-  company: z.string().min(1),
-  email: z.string().email(),
-  message: z.string().min(10),
-  privacy: z.literal(true),
-})
 
 /* ==========================================================================
    POST /api/contact — envío a Hubspot (stub funcional)

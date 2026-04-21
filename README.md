@@ -2,7 +2,7 @@
 
 Nueva web corporativa de Interactius construida con Next.js 15 + TypeScript + Tailwind CSS 3.
 
-Estado actual: **Sprints 1–2 completados.** Shell global + Homepage funcional. Resto de plantillas con stubs.
+Estado actual: **Sprints 1–5 completados.** Shell global, Homepage, Formularios, Capacidades + Identidad y Miradas (MDX) funcionales.
 
 ---
 
@@ -26,7 +26,7 @@ Las variables más relevantes para dev local:
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-El resto de variables (Hubspot, GSC, Newsletter provider) solo son necesarias en producción / Sprint 3.
+El resto de variables (Hubspot, GSC, Newsletter provider) solo son necesarias en producción / Sprint 6.
 
 ### 3. Arrancar en desarrollo
 
@@ -39,7 +39,10 @@ Abre http://localhost:3000 — verás la home en español.
 Prueba también:
 - http://localhost:3000/ca — home en catalán
 - http://localhost:3000/en — home en inglés
-- http://localhost:3000/pensamiento-estrategico — stub página capacidad
+- http://localhost:3000/pensamiento-estrategico — capacidad 1
+- http://localhost:3000/identidad — página sobre Interactius
+- http://localhost:3000/miradas — listado de artículos
+- http://localhost:3000/miradas/design/atomic-design-para-dummies — artículo MDX
 
 ### 4. Build de producción
 
@@ -76,7 +79,7 @@ interactius-web/
 ├── app/
 │   ├── [locale]/            # Todas las rutas localizadas
 │   │   ├── layout.tsx       # RootLayout con i18n, fuentes, SEO
-│   │   ├── page.tsx         # Home (las 5 secciones)
+│   │   ├── page.tsx         # Home (5 secciones scroll-driven)
 │   │   ├── pensamiento-estrategico/page.tsx
 │   │   ├── activacion-de-soluciones/page.tsx
 │   │   ├── transformacion-cultural/page.tsx
@@ -84,28 +87,42 @@ interactius-web/
 │   │   ├── contacto/page.tsx
 │   │   ├── newsletter/page.tsx
 │   │   ├── testers/page.tsx
-│   │   ├── miradas/page.tsx
+│   │   ├── miradas/
+│   │   │   ├── page.tsx             # Listado de artículos
+│   │   │   └── [cat]/[slug]/page.tsx # Artículo MDX
 │   │   └── aviso-legal/page.tsx
-│   ├── api/                 # API routes
+│   ├── api/                 # API routes (contact, newsletter, testers)
 │   └── globals.css          # CSS vars, reset, reveal primitives
 │
 ├── components/
 │   ├── layout/              # Sidebar, Header, MenuOverlay, Footer, PageTransition
 │   ├── ui/                  # Button*, Form*, Logo, Wordmark, Checkbox
 │   ├── motion/              # useReducedMotion, useScrollDirection, useFocusTrap
-│   └── home/                # Hero*, Intro*, Services*, Work*, ClientsMarquee
+│   ├── home/                # Hero*, Intro*, Services*, Work*, ClientsMarquee
+│   ├── capacity/            # CapacityHero, CapacityIntro, CapacityServices, CapacityOthers
+│   ├── identidad/           # IdentidadHero, Intro, Valores, Liminal, Metodologia, Gente, JoinUs
+│   ├── contact/             # ContactHero, ContactForm
+│   └── miradas/             # MiradasGrid, MDXContent
 │
 ├── lib/
 │   ├── i18n/                # config.ts (locales), routing.ts (mapping)
 │   ├── seo/                 # metadata.config.ts, schema.ts
-│   └── store/               # menu.ts (Zustand)
+│   ├── store/               # menu.ts (Zustand)
+│   └── content/             # miradas.ts (fs + gray-matter reader)
+│
+├── content/
+│   └── miradas/             # Artículos MDX por categoría
+│       ├── design/          # 4 artículos
+│       ├── ux/              # 1 artículo
+│       ├── research/        # 2 artículos
+│       ├── estrategia/      # 1 artículo
+│       ├── diseno-inclusivo/ # 1 artículo
+│       └── ia/              # 3 artículos
 │
 ├── messages/                # UI strings por locale × namespace
 │   ├── es/ {common, footer, nav, forms, meta, home}.json
 │   ├── ca/ {common, footer, nav, forms, meta, home}.json
 │   └── en/ {common, footer, nav, forms, meta, home}.json
-│
-├── content/miradas/         # MDX artículos (Sprint 5)
 │
 ├── public/
 │   ├── home/hero-poster.webp   # ⚠ PLACEHOLDER — reemplazar con asset real
@@ -133,11 +150,11 @@ interactius-web/
 | Internacionalización | next-intl | 3.x |
 | Formularios | react-hook-form + zod | 7.54 + 3.24 |
 | Estado ligero | Zustand | 5.x |
-| Contenido editorial | MDX + gray-matter | Sprint 5 |
+| Contenido editorial | MDX + gray-matter + @mdx-js/mdx | Sprint 5 ✅ |
 
 ---
 
-## Qué está implementado (Sprint 1–2)
+## Qué está implementado (Sprints 1–5)
 
 ### Sprint 1 — Shell global ✅
 - Sistema de tokens visual (colores, tipografía, spacing, grid).
@@ -156,17 +173,42 @@ interactius-web/
 - ClientsMarquee CSS puro con 5 filas alternadas.
 
 ### Sprint 3 — Formularios transaccionales ✅
-- `ContactHero` reutilizable con imagen fullscreen + panel blanco + reveals A18/A19.
+- `ContactHero` reutilizable con imagen fullscreen + panel blanco + reveals.
 - `ContactForm` polymorphic con 3 variants (contacto/newsletter/testers).
-- Validación client-side + server-side con zod (schemas duplicados intencionadamente).
-- 3 endpoints API: `/api/contact`, `/api/newsletter`, `/api/testers` — stubs funcionales que validan y loguean; listos para swap con Hubspot/provider cuando haya credenciales.
-- Checkbox GDPR obligatorio en los 3 forms, con link a aviso legal.
-- Estados `idle | submitting | success | error` con feedback AA (role=status, role=alert).
+- Validación client-side + server-side con zod.
+- 3 endpoints API: `/api/contact`, `/api/newsletter`, `/api/testers` — stubs funcionales listos para Hubspot.
+- Checkbox GDPR obligatorio en los 3 forms.
+- Estados `idle | submitting | success | error` con feedback accesible.
 
-### No implementado todavía
-- Sprint 4 — Capacidades e Identidad (contenido real).
-- Sprint 5 — Miradas (MDX).
-- Sprint 6 — SEO avanzado, redirects 301, sitemap, aviso legal.
+### Sprint 4 — Capacidades e Identidad ✅
+- 4 componentes compartidos: `CapacityHero`, `CapacityIntro`, `CapacityServices`, `CapacityOthers`.
+- 3 páginas de capacidad con contenido real extraído de Figma:
+  - `/pensamiento-estrategico` — 4 servicios, clientes reales
+  - `/activacion-de-soluciones` — 4 servicios incl. Clonica© e Insight Panel©
+  - `/transformacion-cultural` — 3 servicios + Manifiesto IA inline
+- Página `/identidad` con 7 secciones: Hero, Intro, Valores (×4), Liminal Thinkers, Metodología, Nuestra gente, JoinUs.
+
+### Sprint 5 — Miradas (MDX) ✅
+- 12 artículos reales migrados del site actual (`content/miradas/[cat]/[slug].mdx`).
+- 6 categorías: `design`, `ux`, `research`, `estrategia`, `diseno-inclusivo`, `ia`.
+- `lib/content/miradas.ts` — reader tipado con `fs` + `gray-matter`.
+- `MDXContent` — server component que compila MDX con `@mdx-js/mdx` evaluate.
+- Listing `/miradas` con grid 3 columnas + stagger reveal.
+- Artículo `/miradas/[cat]/[slug]` con layout editorial 8 columnas.
+- `generateStaticParams` para prerender en build.
+- `LocaleSwitcher` corregido para rutas dinámicas (pasa `{ pathname, params }` en vez del path concreto).
+
+---
+
+## Pendiente (Sprint 6)
+
+- Redirects 301 desde `interactius_redirects_301_FINAL.xlsx` (108 URLs) → `next.config.mjs`
+- Sitemap dinámico (`app/sitemap.ts`) incluyendo todas las Miradas
+- `robots.txt` diferenciado prod/staging
+- Aviso legal con contenido real
+- Migración de los 96 artículos restantes de Miradas (se migraron 12 de 108)
+- GSC verification tag (`NEXT_PUBLIC_GSC_VERIFICATION`)
+- Swap endpoints API → Hubspot/provider real
 
 ---
 
@@ -178,7 +220,9 @@ interactius-web/
 | `public/home/hero-poster.webp` | Placeholder gradiente | Reemplazar con poster real 1649×550 WebP |
 | `components/ui/Logo.tsx` | Placeholder tipográfico SVG | Reemplazar paths SVG con asset real |
 | `components/ui/Wordmark.tsx` | Placeholder tipográfico SVG | Reemplazar paths SVG con asset real |
-| OG image (referenciada en metadata) | Placeholder `/og-default.png` | Crear 1200×630 o generar con `app/opengraph-image.tsx` |
+| OG image `/og-default.png` | No existe | Crear 1200×630 o usar `app/opengraph-image.tsx` |
+| `components/identidad/IdentidadGente.tsx` | 5 placeholders de foto | Reemplazar con fotos reales del equipo |
+| `content/miradas/` | 12 de 108 artículos migrados | Migrar los 96 restantes |
 
 ---
 
@@ -190,64 +234,36 @@ ES es default sin prefijo (`/contacto`). CA y EN con prefijo (`/ca/contacte`, `/
 
 ### Slugs de categorías Miradas — idénticos en los 3 idiomas
 
-Decisión consciente para preservar los 108 redirects 301 ya preparados (`interactius_redirects_301.xlsx`).
+Decisión consciente para preservar los 108 redirects 301 ya preparados (`interactius_redirects_301_FINAL.xlsx`).
+
+### LocaleSwitcher en rutas dinámicas
+
+En páginas de artículo (`/miradas/[cat]/[slug]`), next-intl necesita recibir `{ pathname: '/miradas/[cat]/[slug]', params: { cat, slug } }` — no el path concreto. El componente detecta si está en una ruta dinámica por la presencia de `cat` + `slug` en `useParams()`.
+
+### MDX rendering — server component
+
+Los artículos se compilan en el servidor con `@mdx-js/mdx` `evaluate`. No usa `next-mdx-remote` (no instalado). Los frontmatter se leen con `gray-matter` en `lib/content/miradas.ts`.
 
 ### Reduced-motion
 
 Hook `useReducedMotion` + regla CSS global agresiva. Animaciones JS quedan gated. Animaciones CSS declarativas se neutralizan por `@media (prefers-reduced-motion)`.
 
-### Scroll-driven vs. IntersectionObserver
-
-Hero e Intro usan scroll-driven (RAF throttle) por su complejidad de clip-path y timing preciso. Services, Work y Footer usan IntersectionObserver one-shot (más ligero, suficiente).
-
 ### Robots — producción vs. staging
 
-`SITE_CONFIG.isProduction` detecta el host canónico (`www.interactius.com`). En cualquier otro host se activa `robots: noindex, nofollow` automáticamente. Previene indexación accidental de staging/preview.
+`SITE_CONFIG.isProduction` detecta el host canónico (`www.interactius.com`). En cualquier otro host se activa `robots: noindex, nofollow` automáticamente.
 
 ---
 
 ## Problemas conocidos / deuda técnica
 
-1. **WorkCard masonry offsets** son interpretación sin Figma. Revisar contra el diseño cuando esté accesible.
-2. **IntroScroll composition** (col-7 + col-12 + col-6) es interpretación. Validar con Figma node 377:2394.
-3. **Traducciones CA/EN** — primera pasada razonable. Requiere revisión de hablante nativo antes de lanzamiento.
-4. **Social URLs** (LinkedIn, Instagram, YouTube) son placeholders en `lib/seo/metadata.config.ts` — confirmar handles reales.
-5. **GSC verification** — pendiente de pegar código al deploy (`NEXT_PUBLIC_GSC_VERIFICATION`).
-6. **Font loading** — IBM Plex via `next/font/google` funciona pero si la red de build falla, falla el build. Considerar self-host con woff2 local si hay problemas.
-7. **iPad Pro landscape** (1024×1366) entra en rango desktop y ve el pin scroll-driven. Validar rendimiento en dispositivo real.
-
----
-
-## Testing manual recomendado (primera sesión)
-
-1. `npm run dev` → abre http://localhost:3000
-2. Comprueba que la home renderiza sin errores en consola.
-3. Haz scroll → observa el comportamiento del hero (fase 1 apertura → fase 2 fullscreen → fase 3 cierre vertical).
-4. Continúa scroll → intro aparece con 4 fases.
-5. Continúa → services con 3 filas reveal.
-6. Continúa → work grid masonry.
-7. Continúa → clients marquee animado.
-8. Continúa → footer aparece con reveal vertical.
-9. Click en hamburger (sidebar izquierdo) → menu overlay abre con animación.
-10. Click en un link del menu → page transition wipe → llega a página stub.
-11. Cambia locale desde el menu (ES / CA / EN) → comprueba slugs localizados.
-12. Resize a < 900px → sidebar se oculta, hero queda estático, masonry pasa a 2 cols.
-13. Resize a < 480px → todo en una columna.
-14. Activa `prefers-reduced-motion` en el OS → reload → verifica que animaciones quedan desactivadas, contenido visible.
-15. Tab-navigation → verifica focus visible AA, focus trap en menu overlay, skip-link funcional.
-
----
-
-## Lighthouse esperado en home
-
-Sin optimizaciones adicionales, con assets placeholder:
-- **Performance:** 85–95 (LCP depende del poster real).
-- **Accessibility:** 95–100.
-- **Best Practices:** 100.
-- **SEO:** 90–100 (depende de metadata por página).
-
-Tras sustituir assets reales y activar preload crítico:
-- **Performance:** >95 target.
+1. **WorkCard masonry offsets** — interpretación sin Figma. Revisar contra diseño final.
+2. **IntroScroll composition** — validar con Figma node 377:2394.
+3. **Traducciones CA/EN** — primera pasada. Requiere revisión de hablante nativo.
+4. **Social URLs** (LinkedIn, Instagram, YouTube) — confirmar handles reales en `lib/seo/metadata.config.ts`.
+5. **GSC verification** — pendiente de pegar código al deploy.
+6. **Miradas — 96 artículos pendientes** — solo se migraron los 12 más visitados.
+7. **Imágenes en artículos MDX** — sin soporte todavía (el `MDXContent` no mapea `img` a `next/image`).
+8. **iPad Pro landscape** (1024×1366) — validar rendimiento del hero scroll-driven.
 
 ---
 

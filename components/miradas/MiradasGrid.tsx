@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useMemo, Fragment } from 'react'
+import { useState, Fragment, useTransition } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import { Link } from '@/lib/i18n/routing'
+import { articleHref } from '@/lib/i18n/article-href'
 import type { MiradaMeta } from '@/lib/content/miradas'
 
 /* ─── Cover images ─────────────────────────────────────────── */
@@ -41,8 +42,7 @@ function ArticleCard({
 }) {
   return (
     <Link
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      href={{ pathname: '/miradas/[cat]/[slug]', params: { cat: article.cat, slug: article.slug } } as any}
+      href={articleHref(article.cat, article.slug)}
       className="group relative flex flex-col bg-pure-white overflow-hidden"
     >
       {/* Image area */}
@@ -95,8 +95,7 @@ function FeaturedCard({
 }) {
   return (
     <Link
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      href={{ pathname: '/miradas/[cat]/[slug]', params: { cat: article.cat, slug: article.slug } } as any}
+      href={articleHref(article.cat, article.slug)}
       className="group relative col-span-12 lg:col-start-2 lg:col-span-10 flex flex-col bg-pure-white overflow-hidden"
     >
       {/* Image area */}
@@ -151,28 +150,25 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
   const t = useTranslations('miradas')
   const [search, setSearch] = useState('')
   const [activeCategories, setActiveCategories] = useState<string[]>([])
+  const [, startTransition] = useTransition()
 
-  const categories = useMemo(
-    () => [...new Set(articles.map((a) => a.cat))].sort(),
-    [articles],
-  )
+  // Las categorías se derivan de articles (prop estable del server) — sin useMemo
+  const categories = [...new Set(articles.map((a) => a.cat))].sort()
 
-  const filtered = useMemo(() => {
-    let result = articles
-    if (activeCategories.length > 0) {
-      result = result.filter((a) => activeCategories.includes(a.cat))
-    }
-    if (search.trim()) {
-      const q = search.trim().toLowerCase()
-      result = result.filter(
-        (a) =>
-          a.title.toLowerCase().includes(q) ||
-          a.description.toLowerCase().includes(q) ||
-          a.author.toLowerCase().includes(q),
-      )
-    }
-    return result
-  }, [articles, activeCategories, search])
+  // El filtrado es O(n) sobre una lista pequeña — sin useMemo
+  let filtered = articles
+  if (activeCategories.length > 0) {
+    filtered = filtered.filter((a) => activeCategories.includes(a.cat))
+  }
+  if (search.trim()) {
+    const q = search.trim().toLowerCase()
+    filtered = filtered.filter(
+      (a) =>
+        a.title.toLowerCase().includes(q) ||
+        a.description.toLowerCase().includes(q) ||
+        a.author.toLowerCase().includes(q),
+    )
+  }
 
   function toggleCategory(cat: string) {
     setActiveCategories((prev) =>
@@ -217,7 +213,10 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
             <input
               type="search"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value
+                startTransition(() => setSearch(val))
+              }}
               placeholder={t('grid.searchPlaceholder')}
               className="w-full bg-transparent font-mono text-body-sm text-fg placeholder:text-fg/20 outline-none"
               aria-label={t('grid.searchAriaLabel')}

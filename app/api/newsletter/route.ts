@@ -1,13 +1,6 @@
 import { NextResponse } from 'next/server'
-import { z } from 'zod'
 
-const newsletterSchema = z.object({
-  firstName: z.string().min(2),
-  lastName: z.string().min(2),
-  company: z.string().optional(),
-  email: z.string().email(),
-  privacy: z.literal(true),
-})
+import { newsletterSchema } from '@/lib/schemas/forms'
 
 /**
  * POST /api/newsletter — suscripción a la newsletter (stub funcional).
