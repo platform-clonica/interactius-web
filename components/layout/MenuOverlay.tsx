@@ -279,7 +279,7 @@ export function MenuOverlay() {
         {/* Social links: Linkedin / Instagram / YouTube — mono 18px opacity-40 */}
         <div
           className="absolute flex items-center gap-menu-social"
-          style={{ top: '93.9vh' }}
+          style={{ top: 'min(93.9vh, calc(100vh - env(safe-area-inset-bottom, 0px) - 40px))' }}
         >
           {SOCIAL_LINKS.map(({ href, label }) => (
             <a

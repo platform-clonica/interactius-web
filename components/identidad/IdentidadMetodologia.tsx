@@ -71,7 +71,8 @@ export function IdentidadMetodologia() {
               once: true,
             },
           })
-          if (tw.scrollTrigger) cleanups.push(() => tw.scrollTrigger!.kill())
+          const twSt = tw.scrollTrigger
+          if (twSt) cleanups.push(() => twSt.kill())
           cleanups.push(() => tw.kill())
         }
       }
@@ -123,7 +124,8 @@ export function IdentidadMetodologia() {
             // ">" after desc naturally queues the next card clip after all texts complete
           })
 
-          if (tl.scrollTrigger) cleanups.push(() => tl.scrollTrigger!.kill())
+          const tlSt = tl.scrollTrigger
+          if (tlSt) cleanups.push(() => tlSt.kill())
           cleanups.push(() => tl.kill())
         }
       }
@@ -159,7 +161,8 @@ export function IdentidadMetodologia() {
 
       {/* "Metodología" super-title — line-mask reveal, overflows left edge */}
       <div
-        className="absolute top-[247px] -translate-y-1/2 left-0 right-0 overflow-hidden pointer-events-none"
+        className="absolute -translate-y-1/2 left-0 right-0 overflow-hidden pointer-events-none"
+        style={{ top: 'clamp(120px, 17vw, 247px)' }}
         aria-hidden="true"
       >
         <h2
@@ -177,9 +180,9 @@ export function IdentidadMetodologia() {
       {/* Cards */}
       <div
         className="relative z-content section-inner pb-section"
-        style={{ paddingTop: 'clamp(280px,37.4vh,404px)' }}
+        style={{ paddingTop: 'clamp(200px, 28vw, 404px)' }}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-grid-gutter">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-grid-gutter">
           {([0, 1, 2] as const).map((i) => (
             <div
               key={i}

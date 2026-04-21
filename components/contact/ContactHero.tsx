@@ -42,8 +42,8 @@ export async function ContactHero({
         />
       </div>
 
-      {/* Outer container: vertical centering + right card margin (mirrors sidebar on right) */}
-      <div className="relative z-content min-h-screen flex items-center py-section pr-grid-margin">
+      {/* Outer container: vertical centering + right card margin on desktop (mirrors sidebar on right) */}
+      <div className="relative z-content min-h-screen flex items-center py-section lg:pr-grid-margin">
         {/* Warm-light card — full remaining content width */}
         <div className="w-full bg-warm-light">
           <div className="section-inner py-section">

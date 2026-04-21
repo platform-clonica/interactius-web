@@ -129,7 +129,7 @@ export function IdentidadValores() {
     <section ref={sectionRef} className="relative w-full bg-warm-light" aria-label="Valores">
 
       {/* Mobile: stacked image + text panels */}
-      <div className="lg:hidden">
+      <div className="md:hidden">
         {([0, 1, 2, 3] as const).map((i) => (
           <div key={i}>
             <div className="relative w-full aspect-[3/2] overflow-hidden">
@@ -151,7 +151,7 @@ export function IdentidadValores() {
       </div>
 
       {/* Desktop: sticky image left + scrolling text right */}
-      <div className="hidden lg:flex">
+      <div className="hidden md:flex">
 
         {/* Sticky image panel */}
         <div

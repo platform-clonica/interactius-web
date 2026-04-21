@@ -1,5 +1,58 @@
 {
+  "hero": {
+    "tagline": "Hi ha un lloc entre l\u2019an\u00e0lisi i la <em>intu\u00efci\u00f3</em>, entre l\u2019estrat\u00e8gia i les persones, entre el que les dades diuen i el que les organitzacions senten."
+  },
+  "intro": {
+    "ariaLabel": "Introducci\u00f3",
+    "p1": "Aquest lloc no t\u00e9 nom en cap cat\u00e0leg de serveis.",
+    "p2": "Portem anys construint aqu\u00ed.",
+    "p3": "Combinem disseny estrat\u00e8gic, criteri hum\u00e0 i tecnologia per ajudar les organitzacions a prendre millors decisions.",
+    "quote": "Treballem en l\u2018entre\u2019.",
+    "p4": "Convertim l\u2019estrat\u00e8gia en productes i serveis validats per activar canvis culturals sostenibles."
+  },
   "services": {
-    "title": "El que fem"
+    "title": "El que fem",
+    "pillars": [
+      {
+        "number": "1",
+        "name": "Pensament estrat\u00e8gic",
+        "description": "Dissenyem l\u2019arquitectura de decisions que orienten les organitzacions en contextos d\u2019incertesa.",
+        "services": [
+          "Disseny estrat\u00e8gic",
+          "Estrat\u00e8gies de marca",
+          "Estrat\u00e8gies d\u2019innovaci\u00f3",
+          "Prospectiva estrat\u00e8gica"
+        ],
+        "href": "/pensamiento-estrategico"
+      },
+      {
+        "number": "2",
+        "name": "Disseny d\u2019experi\u00e8ncies",
+        "description": "Convertim l\u2019estrat\u00e8gia en productes i serveis validats, reduint el risc i accelerant l\u2019impacte.",
+        "services": [
+          "Disseny de productes i serveis",
+          "Validaci\u00f3 de producte",
+          "Clonica\u00ae Usuaris sint\u00e8tics",
+          "Insight Panel\u00ae Reclutament d\u2019usuaris"
+        ],
+        "href": "/activacion-de-soluciones"
+      },
+      {
+        "number": "3",
+        "name": "Transformaci\u00f3 cultural",
+        "description": "Acompanyem l\u2019evoluci\u00f3 organitzativa alineant cultura, capacitats i tecnologia per transformar la manera en qu\u00e8 l\u2019organitzaci\u00f3 decideix i actua.",
+        "services": [
+          "Cultura organitzacional",
+          "Intel\u00b7lig\u00e8ncia Artificial Aplicada",
+          "Bootcamps i Workshops per a empreses"
+        ],
+        "href": "/transformacion-cultural"
+      }
+    ]
+  },
+  "work": {
+    "ariaLabel": "Treballs i clients",
+    "heading": "Els nostres clients",
+    "description": "Treballem amb organitzacions que operen en contextos complexos i entenen que avan\u00e7ar no \u00e9s qu\u00fcesti\u00f3 de fer m\u00e9s, sin\u00f3 de decidir millor."
   }
 }

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { getTranslations } from 'next-intl/server'
 
 import { WorkCard, type WorkCardData } from './WorkCard'
 
@@ -77,11 +78,14 @@ const WORK_DATA: WorkCardData[] = [
   },
 ]
 
-export function WorkGrid() {
+export async function WorkGrid() {
+  const t = await getTranslations('home')
+
   return (
     <section
       aria-labelledby="work-heading"
-      className="relative z-content w-full bg-surface"
+      aria-label={t('work.ariaLabel')}
+      className="relative z-content w-full"
     >
       {/* Imagen apertura */}
       <div
@@ -106,12 +110,10 @@ export function WorkGrid() {
             className="font-serif text-section font-normal text-fg
                        lg:col-span-5"
           >
-            Nuestros clientes
+            {t('work.heading')}
           </h2>
           <p className="font-mono text-body text-fg/80 lg:col-span-8 lg:col-start-4">
-            Trabajamos con organizaciones que operan en contextos complejos y
-            entienden que avanzar no es cuestión de hacer más, sino de decidir
-            mejor.
+            {t('work.description')}
           </p>
         </header>
 

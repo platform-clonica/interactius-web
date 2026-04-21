@@ -53,7 +53,7 @@ export function IdentidadJoinUs() {
 
   return (
     <section className="w-full bg-dark" aria-label="Únete al equipo">
-      <div className="section-inner py-section flex items-center justify-center min-h-[540px]">
+      <div className="section-inner py-section flex items-center justify-center min-h-[280px] md:min-h-[400px] lg:min-h-[540px]">
         <div ref={contentRef} className="text-center flex flex-col gap-0">
           <p
             data-join-el=""

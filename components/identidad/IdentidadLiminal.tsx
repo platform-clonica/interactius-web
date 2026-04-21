@@ -135,48 +135,65 @@ export function IdentidadLiminal() {
               ref={bodyRef}
               className="font-mono text-body-sm text-fg leading-[1.5]"
             >
-              {t('liminal.body')}
+              {t.rich('liminal.body', { strong: (chunks) => <strong>{chunks}</strong> })}
             </p>
           </div>
         </div>
       </div>
 
       {/* Bottom image area */}
-      <div className="relative mt-section h-[533px] w-full overflow-hidden">
+      {/*
+        Mobile:  imagen full-width (300px) + panel cita debajo (full-width)
+        Desktop: imagen full-width (533px) con panel cita superpuesto en el tercio derecho
+      */}
+      <div className="mt-section w-full">
 
-        {/* Blurred background image — clip-path reveal */}
-        <div
-          ref={imageRef}
-          className="absolute inset-x-0 top-0 bottom-0 will-change-[clip-path]"
-          aria-hidden="true"
-        >
-          <div className="absolute inset-[-8%]">
-            <Image
-              src="/identidad/liminal-bg.jpg"
-              alt=""
-              fill
-              sizes="100vw"
-              className="object-cover object-center blur-[15px]"
-            />
+        {/* Image + desktop panel wrapper */}
+        <div className="relative h-[300px] lg:h-[533px] w-full overflow-hidden">
+
+          {/* Blurred background image — clip-path reveal */}
+          <div
+            ref={imageRef}
+            className="absolute inset-x-0 top-0 bottom-0 will-change-[clip-path]"
+            aria-hidden="true"
+          >
+            <div className="absolute inset-[-8%]">
+              <Image
+                src="/identidad/liminal-bg.jpg"
+                alt=""
+                fill
+                sizes="100vw"
+                className="object-cover object-center blur-[15px]"
+              />
+            </div>
+          </div>
+
+          {/* Warm-light panel (right side, desktop only) — clip-path reveal, +300ms */}
+          <div
+            ref={panelRef}
+            className="hidden lg:block absolute bottom-0 top-0 bg-warm-light will-change-[clip-path]"
+            style={{ left: 'calc(50% + 18.4%)', right: 0 }}
+            aria-hidden="true"
+          />
+
+          {/* Quote desktop — line-mask reveal after panel completes */}
+          <div
+            className="hidden lg:flex absolute top-1/2 -translate-y-1/2 items-center justify-center text-center"
+            style={{ left: 'calc(50% + 18.4%)', right: 0 }}
+          >
+            <p
+              ref={quoteRef}
+              className="font-serif font-light text-section text-fg leading-[1.2] tracking-[-0.02em] px-8 max-w-[24ch]"
+            >
+              {t('liminal.quote')}
+            </p>
           </div>
         </div>
 
-        {/* Warm-light panel (right side) — clip-path reveal, +300ms */}
-        <div
-          ref={panelRef}
-          className="absolute bottom-0 top-0 bg-warm-light will-change-[clip-path]"
-          style={{ left: 'calc(50% + 18.4%)', right: 0 }}
-          aria-hidden="true"
-        />
-
-        {/* Quote — line-mask reveal after panel completes */}
-        <div
-          className="absolute top-1/2 -translate-y-1/2 flex items-center justify-center text-center"
-          style={{ left: 'calc(50% + 18.4%)', right: 0 }}
-        >
+        {/* Quote mobile — visible below image on small screens */}
+        <div className="lg:hidden bg-warm-light flex items-center justify-center text-center px-grid-margin py-12">
           <p
-            ref={quoteRef}
-            className="font-serif font-light text-section text-fg leading-[1.2] tracking-[-0.02em] px-8 max-w-[24ch]"
+            className="font-serif font-light text-section text-fg leading-[1.2] tracking-[-0.02em] max-w-[24ch]"
           >
             {t('liminal.quote')}
           </p>

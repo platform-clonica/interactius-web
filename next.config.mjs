@@ -1,7 +1,6 @@
 import createNextIntlPlugin from 'next-intl/plugin'
 
-// next-intl auto-descubre `./i18n.ts` — no pasamos path al plugin.
-const withNextIntl = createNextIntlPlugin()
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

@@ -1,17 +1,20 @@
 import Image from 'next/image'
+import { getTranslations } from 'next-intl/server'
 
-export function IntroScroll() {
+export async function IntroScroll() {
+  const t = await getTranslations('home')
+
   return (
-    <section aria-label="Introducción" className="relative w-full bg-bg">
+    <section aria-label={t('intro.ariaLabel')} className="relative w-full bg-bg">
 
       {/* Texto 1 — lado derecho */}
       <div className="section-inner pt-28 lg:pt-32">
         <div className="grid grid-cols-12 gap-grid-gutter">
           <div className="col-span-12 lg:col-span-6 lg:col-start-7">
             <div className="flex flex-col gap-6 font-mono text-body text-fg max-w-[34ch]">
-              <p>Ese lugar no tiene nombre en ningún catálogo de servicios.</p>
-              <p className="font-semibold">Llevamos años construyendo ahí.</p>
-              <p>Combinamos diseño estratégico, criterio humano y tecnología para ayudar a las organizaciones a tomar mejores decisiones.</p>
+              <p>{t('intro.p1')}</p>
+              <p className="font-semibold">{t('intro.p2')}</p>
+              <p>{t('intro.p3')}</p>
             </div>
           </div>
         </div>
@@ -43,7 +46,7 @@ export function IntroScroll() {
           }}
         >
           <p className="font-serif font-light text-section text-fg leading-tight tracking-tight">
-            Trabajamos en el &lsquo;entre&rsquo;.
+            {t('intro.quote')}
           </p>
         </div>
       </div>
@@ -73,8 +76,7 @@ export function IntroScroll() {
         <div className="grid grid-cols-12 gap-grid-gutter">
           <div className="col-span-12 lg:col-span-4 lg:col-start-2">
             <p className="font-mono text-body text-fg max-w-[32ch]">
-              Convertimos la estrategia en productos y servicios validados para
-              activar cambios culturales sostenibles.
+              {t('intro.p4')}
             </p>
           </div>
         </div>

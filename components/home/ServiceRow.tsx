@@ -23,7 +23,7 @@ export function ServiceRow({ data, isFirst }: ServiceRowProps) {
       <InnerWrapper
         {...wrapperProps}
         className={`
-          grid grid-cols-12 gap-grid-gutter py-10 lg:py-12
+          grid grid-cols-12 gap-grid-gutter py-10 md:py-11 lg:py-12
           ${data.href ? 'hover:opacity-70 focus-visible:opacity-70' : ''}
         `}
       >

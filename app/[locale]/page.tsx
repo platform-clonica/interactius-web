@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 import { HeroScroll } from '@/components/home/HeroScroll'
 import { IntroScroll } from '@/components/home/IntroScroll'
@@ -44,9 +45,8 @@ export async function generateMetadata({
    ========================================================================== */
 
 export default async function HomePage({ params }: PageProps) {
-  // Locale await (Next 15 API), se reserva por si en el futuro queremos
-  // pasar contenido localizado a los componentes directamente.
   await params
+  const t = await getTranslations('home')
 
   return (
     <>
@@ -54,7 +54,11 @@ export default async function HomePage({ params }: PageProps) {
         posterSrc="/home/hero-poster.webp"
         posterAlt=""
         // videoSrc: undefined — Fase 1 usa Ken-Burns del poster como fallback.
-      />
+      >
+        <h1 className="max-w-[20ch] font-serif text-section font-light text-fg lg:max-w-[22ch]">
+          {t.rich('hero.tagline', { em: (chunks) => <em>{chunks}</em> })}
+        </h1>
+      </HeroScroll>
 
       <IntroScroll />
 

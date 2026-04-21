@@ -267,9 +267,9 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
 
           {/* Two-column grid */}
           {rest.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-grid-gutter items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-grid-gutter items-start">
               {/* Left column */}
-              <div className="lg:col-start-2 lg:col-span-5 flex flex-col gap-grid-gutter">
+              <div className="md:col-span-1 lg:col-start-2 lg:col-span-5 flex flex-col gap-grid-gutter">
                 {leftCol.map((article, i) => (
                   <ArticleCard
                     key={`${article.cat}/${article.slug}`}
@@ -281,7 +281,7 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
               </div>
 
               {/* Right column — offset to create visual rhythm */}
-              <div className="lg:col-start-7 lg:col-span-5 flex flex-col gap-grid-gutter lg:mt-20">
+              <div className="md:col-span-1 lg:col-start-7 lg:col-span-5 flex flex-col gap-grid-gutter lg:mt-20">
                 {rightCol.map((article, i) => (
                   <Fragment key={`${article.cat}/${article.slug}`}>
                     <ArticleCard

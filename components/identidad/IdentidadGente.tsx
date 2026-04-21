@@ -8,12 +8,36 @@ import { getReducedMotion } from '@/components/motion/useReducedMotion'
 
 // Team members — placeholder data; replace with CMS data when available
 const TEAM = [
-  { src: '/identidad/team-01.jpg', name: 'Josep Martínez', role: 'Co-founder & Strategy' },
-  { src: '/identidad/team-02.jpg', name: 'Carlos Ruiz', role: 'Co-founder & Design' },
-  { src: '/identidad/team-03.jpg', name: 'Martina Gentile', role: 'Head of Marketing' },
-  { src: '/identidad/team-04.jpg', name: 'Laura Torres', role: 'UX Research' },
-  { src: '/identidad/team-05.jpg', name: 'Pau Sánchez', role: 'Creative Direction' },
+{ src: '/identidad/fotos-team/team-Tom.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Adrian.png', name: 'Adrián Yanes', role: '' }, 
+{ src: '/identidad/fotos-team/team-Ale.png', name: 'Alejandro Madeira', role: '' }, 
+{ src: '/identidad/fotos-team/team-Aleix.png', name: 'Aleix Martí', role: '' }, 
+{ src: '/identidad/fotos-team/team-Alex.png', name: 'Alex Cuadrado', role: '' }, 
+{ src: '/identidad/fotos-team/team-Alexa.png', name: 'Alexa ', role: '' }, 
+{ src: '/identidad/fotos-team/team-Berta.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Carlos.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Diana.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Diego.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Edmond.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Elena_C.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Elena_S.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Eli.png', name: 'Eli López', role: '' }, 
+{ src: '/identidad/fotos-team/team-Francesc.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Isaac.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Joha.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Josep.png', name: 'Tomas Modroño', role: '' },
+{ src: '/identidad/fotos-team/team-Lucho.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Marce.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-María.png', name: 'Tomas Modroño', role: '' },
+{ src: '/identidad/fotos-team/team-Martina.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Oscar.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Pamela_B.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Pamela_C.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Pol.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Riccardo.png', name: 'Tomas Modroño', role: '' }, 
+{ src: '/identidad/fotos-team/team-Sara.png', name: 'Tomas Modroño', role: '' }
 ] as const
+
 
 // Staggered heights for depth effect (matching Figma proportions)
 const HEIGHTS = ['h-[clamp(180px,29vh,317px)]', 'h-[clamp(160px,26vh,280px)]', 'h-[clamp(200px,32vh,350px)]', 'h-[clamp(170px,27vh,295px)]', 'h-[clamp(185px,30vh,325px)]'] as const
@@ -127,8 +151,11 @@ export function IdentidadGente() {
           {loopItems.map((member, i) => (
             <div
               key={i}
-              className={`group relative flex-shrink-0 cursor-pointer overflow-hidden ${HEIGHTS[i % HEIGHTS.length]} w-[clamp(160px,15.8vw,303px)]`}
-              style={{ marginBottom: i % 3 === 0 ? '6rem' : i % 3 === 1 ? '0' : '4rem' }}
+              className={`group relative flex-shrink-0 cursor-pointer overflow-hidden ${HEIGHTS[i % HEIGHTS.length]} w-[clamp(160px,15.8vw,303px)] ${
+                i % 3 === 0 ? 'mb-12 md:mb-24'
+                : i % 3 === 1 ? 'mb-0'
+                : 'mb-8 md:mb-16'
+              }`}
             >
               <Image
                 src={member.src}

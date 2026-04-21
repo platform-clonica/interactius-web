@@ -1,5 +1,58 @@
 {
+  "hero": {
+    "tagline": "Hay un lugar entre el análisis y la <em>intuición</em>, entre la estrategia y las personas, entre lo que los datos dicen y lo que las organizaciones sienten."
+  },
+  "intro": {
+    "ariaLabel": "Introducción",
+    "p1": "Ese lugar no tiene nombre en ningún catálogo de servicios.",
+    "p2": "Llevamos años construyendo ahí.",
+    "p3": "Combinamos diseño estratégico, criterio humano y tecnología para ayudar a las organizaciones a tomar mejores decisiones.",
+    "quote": "Trabajamos en el \u2018entre\u2019.",
+    "p4": "Convertimos la estrategia en productos y servicios validados para activar cambios culturales sostenibles."
+  },
   "services": {
-    "title": "Lo que hacemos"
+    "title": "Lo que hacemos",
+    "pillars": [
+      {
+        "number": "1",
+        "name": "Pensamiento estratégico",
+        "description": "Diseñamos la arquitectura de decisiones que orientan a las organizaciones en contextos de incertidumbre.",
+        "services": [
+          "Diseño estratégico",
+          "Estrategias de marca",
+          "Estrategias de innovación",
+          "Prospectiva estratégica"
+        ],
+        "href": "/pensamiento-estrategico"
+      },
+      {
+        "number": "2",
+        "name": "Diseño de experiencias",
+        "description": "Convertimos la estrategia en productos y servicios validados, reduciendo riesgo y acelerando impacto.",
+        "services": [
+          "Diseño de productos y servicios",
+          "Validación de producto",
+          "Clonica® Usuarios sintéticos",
+          "Insight Panel® Reclutamiento de usuarios"
+        ],
+        "href": "/activacion-de-soluciones"
+      },
+      {
+        "number": "3",
+        "name": "Transformación cultural",
+        "description": "Acompañamos la evolución organizativa alineando cultura, capacidades y tecnología para transformar la manera en que la organización decide y actúa.",
+        "services": [
+          "Cultura organizacional",
+          "Inteligencia Artificial Aplicada",
+          "Bootcamps y Workshops para empresas"
+        ],
+        "href": "/transformacion-cultural"
+      }
+    ]
+  },
+  "work": {
+    "ariaLabel": "Trabajos y clientes",
+    "heading": "Nuestros clientes",
+    "description": "Trabajamos con organizaciones que operan en contextos complejos y entienden que avanzar no es cuestión de hacer más, sino de decidir mejor."
   }
 }

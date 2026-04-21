@@ -1,7 +1,6 @@
 /**
  * next-intl request config
  * --------------------------------------------------------------------------
- * next-intl auto-descubre este archivo en la raíz del proyecto.
  * Se ejecuta por request en server components y genera la config de
  * mensajes + formatos + timezone que inyecta NextIntlClientProvider.
  *
@@ -62,7 +61,7 @@ async function loadMessages(locale: Locale): Promise<Record<string, Record<strin
   await Promise.all(
     NAMESPACES.map(async (ns) => {
       try {
-        const mod = await import(`./messages/${locale}/${ns}.json`)
+        const mod = await import(`../messages/${locale}/${ns}.json`)
         merged[ns] = mod.default as Record<string, string>
       } catch {
         // Namespace faltante → se trata como {}.

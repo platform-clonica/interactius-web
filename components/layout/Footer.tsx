@@ -2,7 +2,6 @@ import { getTranslations } from 'next-intl/server'
 
 import { Link } from '@/lib/i18n/routing'
 import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
-import { Wordmark } from '@/components/ui/Wordmark'
 
 export async function Footer() {
   const t = await getTranslations('footer')
@@ -47,10 +46,11 @@ export async function Footer() {
           {/* Wordmark + dirección + social */}
           <div className="flex flex-col gap-10 lg:col-span-5">
             <div className="flex items-start">
-              <Wordmark
-                height={95}
-                variant="light"
-                aria-label="Interactius"
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo/interactius_w.svg"
+                alt="Interactius"
+                style={{ height: 'clamp(60px, 7vw, 95px)', width: 'auto' }}
               />
             </div>
 

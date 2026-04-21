@@ -16,8 +16,6 @@
  * Especificación Figma: node 435:1602 "side-margin" — 30.975 × 219.195 px.
  */
 
-import { Logo } from '@/components/ui/Logo'
-
 interface RotatedLogoProps {
   className?: string
 }
@@ -33,7 +31,13 @@ export function RotatedLogo({ className = '' }: RotatedLogoProps) {
       style={{ width: LOGO_H, height: LOGO_W }}
     >
       <span className="-rotate-90 flex-none">
-        <Logo variant="wordmark" className={`h-[${LOGO_H}] w-auto`} />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo/interactius.svg"
+          alt=""
+          aria-hidden="true"
+          style={{ height: LOGO_H, width: 'auto' }}
+        />
       </span>
     </span>
   )

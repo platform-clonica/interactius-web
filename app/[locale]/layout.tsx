@@ -10,6 +10,8 @@ import { MenuOverlay } from '@/components/layout/MenuOverlay'
 import { Footer } from '@/components/layout/Footer'
 import { PageTransition } from '@/components/layout/PageTransition'
 
+import { getTranslations } from 'next-intl/server'
+
 import { buildRootMetadata } from '@/lib/seo/metadata.config'
 import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/seo/schema'
 import { LOCALES, type Locale } from '@/lib/i18n/config'
@@ -107,6 +109,7 @@ export default async function RootLayout({
 
   // next-intl: mensajes cargados server-side, serializados al cliente.
   const messages = await getMessages()
+  const t = await getTranslations('common')
 
   const organizationSchema = buildOrganizationSchema(locale)
   const webSiteSchema = buildWebSiteSchema(locale)
@@ -117,11 +120,22 @@ export default async function RootLayout({
       className={`${ibmPlexSerif.variable} ${ibmPlexMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Structured data — JSON-LD Organization + WebSite. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
+        />
+      </head>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {/* Skip link para accesibilidad AA */}
           <a href="#main-content" className="sr-only focus:not-sr-only">
-            Saltar al contenido principal
+            {t('skipToContent')}
           </a>
 
           <Sidebar />
@@ -136,18 +150,6 @@ export default async function RootLayout({
 
           <Footer />
         </NextIntlClientProvider>
-
-        {/* Structured data — JSON-LD Organization + WebSite.
-            Inyectado en <body> (no en <head>) para evitar hydration mismatches
-            con el output de next/font. Google acepta JSON-LD en body. */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
-        />
       </body>
     </html>
   )
