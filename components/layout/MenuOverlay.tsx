@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 
-import { Link, type RouteId } from '@/lib/i18n/routing'
+import { Link, useRouter, usePathname, type RouteId } from '@/lib/i18n/routing'
+import { LOCALES } from '@/lib/i18n/config'
 import { useMenuStore } from '@/lib/store/menu'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
@@ -42,8 +43,14 @@ const SOCIAL_LINKS = [
 
 export function MenuOverlay() {
   const t = useTranslations()
+  const locale = useLocale()
+  const router = useRouter()
+  const pathname = usePathname()
   const isOpen = useMenuStore((s) => s.isOpen)
   const close = useMenuStore((s) => s.close)
+
+  // Locales distintos al actual para el switcher
+  const otherLocales = LOCALES.filter((l) => l !== locale)
 
   // isVisible controls DOM presence — lags behind isOpen to allow close animation
   const [isVisible, setIsVisible] = useState(false)
@@ -69,7 +76,6 @@ export function MenuOverlay() {
   }, [isOpen])
 
   // GSAP animations — runs after DOM is visible
-  // gsap + SplitType se importan lazy para no engrosar el bundle del layout.
   useEffect(() => {
     if (!isVisible || !containerRef.current) return
     const container = containerRef.current
@@ -90,6 +96,7 @@ export function MenuOverlay() {
         tlRef.current = tl
 
         // Primary nav: line-mask reveal (SplitType + GSAP)
+        // t=0.48s + i×0.12s per spec
         const primaryLinks = container.querySelectorAll<HTMLElement>('[data-primary-link]')
         primaryLinks.forEach((link, i) => {
           if (reduced) {
@@ -107,7 +114,7 @@ export function MenuOverlay() {
           )
         })
 
-        // Secondary links: opacity fade at t=860ms
+        // Secondary links: opacity fade at t=860ms (+380ms after 480ms)
         const secondaryLinks = container.querySelectorAll<HTMLElement>('[data-secondary-link]')
         gsap.set(secondaryLinks, { opacity: 0 })
         tl.to(
@@ -116,7 +123,7 @@ export function MenuOverlay() {
           reduced ? 0 : 0.86,
         )
 
-        // Social links: opacity fade at t=980ms
+        // Social links: opacity fade at t=980ms (+500ms after 480ms)
         const socialLinks = container.querySelectorAll<HTMLElement>('[data-social-link]')
         gsap.set(socialLinks, { opacity: 0 })
         tl.to(
@@ -124,13 +131,24 @@ export function MenuOverlay() {
           { opacity: 1, duration: reduced ? 0 : 0.4, stagger: reduced ? 0 : 0.04 },
           reduced ? 0 : 0.98,
         )
+
+        // Locale switcher: fade in with secondary links
+        const localeSwitcher = container.querySelector<HTMLElement>('[data-locale-switcher]')
+        if (localeSwitcher) {
+          gsap.set(localeSwitcher, { opacity: 0 })
+          tl.to(
+            localeSwitcher,
+            { opacity: 1, duration: reduced ? 0 : 0.5 },
+            reduced ? 0 : 0.86,
+          )
+        }
       })()
     } else {
       // Close: fade all content (200ms), panel clips via CSS (400ms)
       void import('gsap').then(({ default: gsap }) => {
         tlRef.current?.kill()
         const allLinks = container.querySelectorAll<HTMLElement>(
-          '[data-primary-link], [data-secondary-link], [data-social-link]',
+          '[data-primary-link], [data-secondary-link], [data-social-link], [data-locale-switcher]',
         )
         gsap.to(allLinks, { opacity: 0, duration: 0.2, ease: 'none', overwrite: true })
       })
@@ -185,9 +203,9 @@ export function MenuOverlay() {
         />
       </div>
 
-      {/* ── Left warm panel — clip-path reveal (TÉCNICA LATERAL canónica) ── */}
+      {/* ── Left warm panel — 50vw (960px de 1920px) — TÉCNICA LATERAL canónica ── */}
       <div
-        className={`absolute inset-y-0 left-0 w-2/3 bg-warm-light transition-[clip-path] ease-expo
+        className={`absolute inset-y-0 left-0 w-1/2 bg-warm-light transition-[clip-path] ease-expo
                     ${isOpen ? 'duration-menu-in' : 'duration-menu-out'}`}
         style={{
           clipPath: isOpen ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
@@ -224,7 +242,32 @@ export function MenuOverlay() {
         className="absolute inset-y-0 z-10"
         style={{ left: 'calc(var(--sidebar-w) + var(--grid-margin))' }}
       >
-        {/* Primary nav: 3 capacity routes, serif light 42px, numbered with border dividers */}
+        {/* Locale switcher — posición Figma: ~52px desde el top del viewport */}
+        {otherLocales.length > 0 && (
+          <div
+            data-locale-switcher=""
+            className="absolute flex gap-10 font-mono text-title-mono text-fg"
+            style={{ top: '52px' }}
+          >
+            {otherLocales.map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => {
+                  close()
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  router.replace(pathname as any, { locale: l })
+                }}
+                className="underline underline-offset-4 opacity-40
+                           hover:opacity-100 transition-opacity duration-fast ease-expo"
+              >
+                {l.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Primary nav: 3 capacity routes, serif ~42px, numbered with border dividers */}
         <nav
           aria-label={t('common.menu.primaryNav')}
           className="absolute"
@@ -235,7 +278,7 @@ export function MenuOverlay() {
               key={route}
               className="border-t border-fg/20"
               style={{
-                width: 'calc(50vw - var(--sidebar-w) - 2 * var(--grid-margin))',
+                width: 'calc(50vw - var(--sidebar-w) - var(--grid-margin))',
               }}
             >
               <span className="block pt-[9px] font-mono text-card-sm text-fg leading-none">
@@ -246,7 +289,7 @@ export function MenuOverlay() {
                 onClick={close}
                 data-primary-link=""
                 className="block mt-[14px] pb-[9px] overflow-hidden
-                           font-serif font-light text-section text-fg
+                           font-serif font-light text-title text-fg
                            transition-opacity duration-fast ease-expo
                            hover:opacity-60 focus-visible:opacity-60"
               >
@@ -267,7 +310,7 @@ export function MenuOverlay() {
               href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
               onClick={close}
               data-secondary-link=""
-              className="font-mono text-body-sm text-fg underline underline-offset-4
+              className="font-mono text-title-mono text-fg underline underline-offset-4
                          transition-opacity duration-fast ease-expo
                          hover:opacity-60 focus-visible:opacity-60"
             >
@@ -288,7 +331,7 @@ export function MenuOverlay() {
               target="_blank"
               rel="noopener noreferrer"
               data-social-link=""
-              className="font-mono text-label text-fg/40 underline underline-offset-4
+              className="font-mono text-body-sm text-fg/40 underline underline-offset-4
                          transition-opacity duration-fast ease-expo hover:opacity-70"
             >
               {label}
