@@ -1,14 +1,19 @@
 import { NextResponse } from 'next/server'
 
 import { newsletterSchema } from '@/lib/schemas/forms'
+import { submitToHubspot } from '@/lib/hubspot/submit'
 
-/**
- * POST /api/newsletter — suscripción a la newsletter (stub funcional).
- *
- * TODO: decidir provider (Mailchimp / Brevo / Hubspot newsletter) y
- * sustituir el stub por la llamada real. El contrato del cliente ya está
- * congelado — cambiar provider NO requiere tocar el ContactForm.
- */
+/* ==========================================================================
+   POST /api/newsletter — suscripción a la newsletter
+   --------------------------------------------------------------------------
+   Variables de entorno requeridas en producción:
+     HUBSPOT_PORTAL_ID
+     HUBSPOT_ACCESS_TOKEN
+     HUBSPOT_FORM_ID_NEWSLETTER
+
+   En desarrollo sin credenciales: loga el envío y devuelve ok:true (stub).
+   ========================================================================== */
+
 export async function POST(request: Request) {
   let body: unknown
   try {
@@ -29,15 +34,43 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data
+  const formId = process.env.HUBSPOT_FORM_ID_NEWSLETTER
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (!formId) {
+    // Modo stub — sin credenciales configuradas.
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.log('[newsletter] stub — subscribed', {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        company: data.company,
+      })
+    }
+    return NextResponse.json({ ok: true }, { status: 200 })
+  }
+
+  const result = await submitToHubspot({
+    formId,
+    fields: [
+      { name: 'firstname', value: data.firstName },
+      { name: 'lastname', value: data.lastName },
+      { name: 'email', value: data.email },
+      { name: 'company', value: data.company ?? '' },
+    ],
+    pageUri: request.headers.get('referer') ?? undefined,
+  })
+
+  if (!result.ok) {
+    if (result.status === 0 && result.message === 'HUBSPOT_NOT_CONFIGURED') {
+      // eslint-disable-next-line no-console
+      console.warn('[newsletter] Hubspot not fully configured')
+      return NextResponse.json({ ok: true }, { status: 200 })
+    }
+
     // eslint-disable-next-line no-console
-    console.log('[newsletter] subscribed', {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      company: data.company,
-    })
+    console.error('[newsletter] Hubspot error', result.status, result.message)
+    return NextResponse.json({ error: 'upstream_error' }, { status: 502 })
   }
 
   return NextResponse.json({ ok: true }, { status: 200 })

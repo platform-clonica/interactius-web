@@ -80,7 +80,7 @@ export const SITE_CONFIG = {
   icons: {
     favicon: '/favicon.ico',
     appleTouchIcon: '/apple-touch-icon.png',
-    manifest: '/site.webmanifest',
+    manifest: '/manifest.webmanifest',
   },
 
   /**

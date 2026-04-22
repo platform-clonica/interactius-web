@@ -1,94 +1,75 @@
-import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 import type { ReactNode } from 'react'
 
-import { Logo } from '@/components/ui/Logo'
+import { ContactHeroAnim } from './ContactHeroAnim'
+
+/* ==========================================================================
+   ContactHero — Server Component wrapper
+   --------------------------------------------------------------------------
+   Resuelve las traducciones del namespace 'contacto' y las pasa como props
+   al componente cliente ContactHeroAnim que orquesta la animación de entrada.
+
+   Variantes soportadas: 'contacto' | 'newsletter' | 'testers'
+   La spec de animación del Figma es idéntica para las tres.
+   ========================================================================== */
+
+type Variant = 'contacto' | 'newsletter' | 'testers'
 
 interface ContactHeroProps {
-  title: string
-  /** Can be a string or JSX (e.g. multiple paragraphs with bold last line) */
-  copy: ReactNode
-  altEmail?: string
+  variant: Variant
   imageSrc?: string
   imageAlt?: string
+  /** Formulario — pasado directamente como children a ContactHeroAnim. */
   children: ReactNode
 }
 
 export async function ContactHero({
-  title,
-  copy,
-  altEmail,
-  imageSrc = '/contacto/bg.jpg',
-  imageAlt = '',
+  variant,
+  imageSrc,
+  imageAlt,
   children,
 }: ContactHeroProps) {
   const t = await getTranslations('contacto')
 
+  // ── Copy por variante ──────────────────────────────────────────────────────
+  const titleMap: Record<Variant, string> = {
+    contacto:   t('contacto.title'),
+    newsletter: t('newsletter.title'),
+    testers:    t('testers.title'),
+  }
+
+  const bodyMap: Record<Variant, ReactNode> = {
+    contacto: (
+      <>
+        <p>{t('contacto.copy1')}</p>
+        <p>{t('contacto.copy2')}</p>
+        <p className="font-semibold">{t('contacto.copy3')}</p>
+      </>
+    ),
+    newsletter: (
+      <p>{t('newsletter.copy')}</p>
+    ),
+    testers: (
+      <p>{t('testers.copy')}</p>
+    ),
+  }
+
+  const altEmailMap: Record<Variant, string | undefined> = {
+    contacto:   t('contacto.altEmail'),
+    newsletter: undefined,
+    testers:    undefined,
+  }
+
   return (
-    <section
-      aria-labelledby="contact-hero-title"
-      className="relative min-h-screen w-full overflow-hidden"
+    <ContactHeroAnim
+      imageSrc={imageSrc}
+      imageAlt={imageAlt}
+      title={titleMap[variant]}
+      body={bodyMap[variant]}
+      altEmailLabel={altEmailMap[variant] ? t('altEmailText') : undefined}
+      altEmail={altEmailMap[variant]}
     >
-      {/* Full-screen background image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={imageSrc}
-          alt={imageAlt}
-          fill
-          priority
-          fetchPriority="high"
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-      </div>
-
-      {/* Outer container: vertical centering + right card margin on desktop (mirrors sidebar on right) */}
-      <div className="relative z-content min-h-screen flex items-center py-section lg:pr-grid-margin">
-        {/* Warm-light card — full remaining content width */}
-        <div className="w-full bg-warm-light">
-          <div className="section-inner py-section">
-            <div className="grid grid-cols-12 gap-grid-gutter">
-
-              {/* ── LEFT COLUMN: heading + body copy + alt-email ── */}
-              <div className="col-span-12 lg:col-span-5 flex flex-col justify-between gap-10 lg:gap-0">
-                <div>
-                  <h1
-                    id="contact-hero-title"
-                    className="font-serif font-normal text-section text-fg"
-                  >
-                    {title}
-                  </h1>
-                  <div className="mt-10 font-mono text-body-sm text-fg/80 space-y-5">
-                    {copy}
-                  </div>
-                </div>
-
-                {altEmail && (
-                  <p className="font-mono text-micro text-fg/40 lg:mt-auto">
-                    {t('altEmailText')}{' '}
-                    <a
-                      href={`mailto:${altEmail}`}
-                      className="underline underline-offset-4 hover:opacity-70"
-                    >
-                      {altEmail}
-                    </a>
-                  </p>
-                )}
-              </div>
-
-              {/* ── RIGHT COLUMN: logo + form ── */}
-              <div className="col-span-12 lg:col-start-7 lg:col-span-6 flex flex-col gap-10">
-                <Logo
-                  variant="wordmark"
-                  className="h-[40px] lg:h-[clamp(40px,3.9vw,75px)] w-auto self-start"
-                />
-                {children}
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      {children}
+    </ContactHeroAnim>
   )
 }

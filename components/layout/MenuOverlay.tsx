@@ -187,7 +187,7 @@ export function MenuOverlay() {
 
       {/* ── Left warm panel — clip-path reveal (TÉCNICA LATERAL canónica) ── */}
       <div
-        className={`absolute inset-y-0 left-0 w-1/2 bg-warm-light transition-[clip-path] ease-expo
+        className={`absolute inset-y-0 left-0 w-2/3 bg-warm-light transition-[clip-path] ease-expo
                     ${isOpen ? 'duration-menu-in' : 'duration-menu-out'}`}
         style={{
           clipPath: isOpen ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
