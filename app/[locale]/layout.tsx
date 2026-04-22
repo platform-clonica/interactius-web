@@ -2,15 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Serif, IBM_Plex_Mono } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
-
-import { Sidebar } from '@/components/layout/Sidebar'
-import { Header } from '@/components/layout/Header'
-import { MenuOverlay } from '@/components/layout/MenuOverlay'
-import { Footer } from '@/components/layout/Footer'
-import { PageTransition } from '@/components/layout/PageTransition'
-
-import { getTranslations } from 'next-intl/server'
+import { getMessages, getTranslations } from 'next-intl/server'
 
 import { buildRootMetadata } from '@/lib/seo/metadata.config'
 import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/seo/schema'
@@ -20,9 +12,6 @@ import '../globals.css'
 
 /* ==========================================================================
    Fonts — IBM Plex Serif + IBM Plex Mono via next/font/google
-   - Self-hosted, zero-FOUT gracias a display:swap + preload.
-   - Variables CSS expuestas en <html className> → consumidas por
-     tailwind.config.ts fontFamily.serif / fontFamily.mono.
    ========================================================================== */
 
 const ibmPlexSerif = IBM_Plex_Serif({
@@ -43,7 +32,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 })
 
 /* ==========================================================================
-   Static params — pre-renderiza las 3 locales en build
+   Static params
    ========================================================================== */
 
 export function generateStaticParams() {
@@ -66,7 +55,7 @@ export const viewport: Viewport = {
 }
 
 /* ==========================================================================
-   Metadata — se genera por locale. Cada page.tsx sobrescribe lo específico.
+   Metadata
    ========================================================================== */
 
 type LayoutParams = { locale: string }
@@ -79,15 +68,18 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params
   const locale = rawLocale as Locale
 
-  if (!LOCALES.includes(locale)) {
-    return {}
-  }
+  if (!LOCALES.includes(locale)) return {}
 
   return buildRootMetadata(locale)
 }
 
 /* ==========================================================================
-   RootLayout
+   RootLayout — shell HTML + i18n provider
+   --------------------------------------------------------------------------
+   Este layout es compartido por (main) y (contact). Cada grupo tiene su
+   propio layout anidado con el chrome apropiado:
+     (main)/layout.tsx   → Sidebar, Header, MenuOverlay, Footer, PageTransition
+     (contact)/layout.tsx → ContactOverlay (fullscreen, sin chrome)
    ========================================================================== */
 
 interface RootLayoutProps {
@@ -102,12 +94,8 @@ export default async function RootLayout({
   const { locale: rawLocale } = await params
   const locale = rawLocale as Locale
 
-  // Hard-validate locale — middleware debería prevenir esto, pero por seguridad.
-  if (!LOCALES.includes(locale)) {
-    notFound()
-  }
+  if (!LOCALES.includes(locale)) notFound()
 
-  // next-intl: mensajes cargados server-side, serializados al cliente.
   const messages = await getMessages()
   const t = await getTranslations('common')
 
@@ -121,7 +109,6 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Structured data — JSON-LD Organization + WebSite. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -133,22 +120,11 @@ export default async function RootLayout({
       </head>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {/* Skip link para accesibilidad AA */}
+          {/* Skip link — solo relevante en páginas con chrome completo */}
           <a href="#main-content" className="sr-only focus:not-sr-only">
             {t('skipToContent')}
           </a>
-
-          <Sidebar />
-          <Header />
-          <MenuOverlay />
-
-          <PageTransition>
-            <main id="main-content" tabIndex={-1}>
-              {children}
-            </main>
-          </PageTransition>
-
-          <Footer />
+          {children}
         </NextIntlClientProvider>
       </body>
     </html>
@@ -156,9 +132,7 @@ export default async function RootLayout({
 }
 
 /* ==========================================================================
-   Config Next.js App Router
+   Config
    ========================================================================== */
 
-// Fuerza render dinámico solo cuando la locale cambia; las páginas hijas
-// siguen siendo static/SSG por defecto.
 export const dynamicParams = false

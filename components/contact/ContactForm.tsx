@@ -151,7 +151,7 @@ function FormShell({
         </p>
       )}
 
-      <div className="mt-2">
+      <div className="mt-2" data-contact-submit>
         <ButtonPrimary
           as="button"
           type="submit"
@@ -179,13 +179,15 @@ function PrivacyCheckbox({
 }) {
   const t = useTranslations('forms')
   return (
-    <Checkbox {...(register as object)} error={error} required labelClassName="font-mono text-micro text-fg/40 leading-snug">
-      {t('privacy.prefix')}{' '}
-      <Link href="/aviso-legal" className="underline underline-offset-4 hover:opacity-70">
-        {t('privacy.link')}
-      </Link>
-      {t('privacy.suffix')}
-    </Checkbox>
+    <div data-contact-checkbox>
+      <Checkbox {...(register as object)} error={error} required labelClassName="font-mono text-micro text-fg/40 leading-snug">
+        {t('privacy.prefix')}{' '}
+        <Link href="/aviso-legal" className="underline underline-offset-4 hover:opacity-70">
+          {t('privacy.link')}
+        </Link>
+        {t('privacy.suffix')}
+      </Checkbox>
+    </div>
   )
 }
 
@@ -250,42 +252,50 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
       submittingLabel={t('submitting')}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <FormField
-        {...register('name')}
-        label={t('labels.name')}
-        name="name"
-        type="text"
-        autoComplete="name"
-        error={errors.name?.message}
-        required
-      />
-      <FormField
-        {...register('company')}
-        label={t('labels.company')}
-        name="company"
-        type="text"
-        autoComplete="organization"
-        error={errors.company?.message}
-        required
-      />
-      <FormField
-        {...register('email')}
-        label={t('labels.workEmail')}
-        name="email"
-        type="email"
-        autoComplete="email"
-        error={errors.email?.message}
-        required
-      />
-      <FormField
-        {...register('message')}
-        as="textarea"
-        label={t('labels.message')}
-        name="message"
-        error={errors.message?.message}
-        required
-        autoResize
-      />
+      <div data-contact-field>
+        <FormField
+          {...register('name')}
+          label={t('labels.name')}
+          name="name"
+          type="text"
+          autoComplete="name"
+          error={errors.name?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('company')}
+          label={t('labels.company')}
+          name="company"
+          type="text"
+          autoComplete="organization"
+          error={errors.company?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('email')}
+          label={t('labels.workEmail')}
+          name="email"
+          type="email"
+          autoComplete="email"
+          error={errors.email?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('message')}
+          as="textarea"
+          label={t('labels.message')}
+          name="message"
+          error={errors.message?.message}
+          required
+          autoResize
+        />
+      </div>
       <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )
@@ -341,41 +351,49 @@ function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: Su
       submittingLabel={t('submitting')}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <FormField
-        {...register('firstName')}
-        label={t('labels.name')}
-        name="firstName"
-        type="text"
-        autoComplete="given-name"
-        error={errors.firstName?.message}
-        required
-      />
-      <FormField
-        {...register('lastName')}
-        label={t('labels.lastName')}
-        name="lastName"
-        type="text"
-        autoComplete="family-name"
-        error={errors.lastName?.message}
-        required
-      />
-      <FormField
-        {...register('company')}
-        label={t('labels.companyOptional')}
-        name="company"
-        type="text"
-        autoComplete="organization"
-        error={errors.company?.message}
-      />
-      <FormField
-        {...register('email')}
-        label={t('labels.workEmail')}
-        name="email"
-        type="email"
-        autoComplete="email"
-        error={errors.email?.message}
-        required
-      />
+      <div data-contact-field>
+        <FormField
+          {...register('firstName')}
+          label={t('labels.name')}
+          name="firstName"
+          type="text"
+          autoComplete="given-name"
+          error={errors.firstName?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('lastName')}
+          label={t('labels.lastName')}
+          name="lastName"
+          type="text"
+          autoComplete="family-name"
+          error={errors.lastName?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('company')}
+          label={t('labels.companyOptional')}
+          name="company"
+          type="text"
+          autoComplete="organization"
+          error={errors.company?.message}
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('email')}
+          label={t('labels.workEmail')}
+          name="email"
+          type="email"
+          autoComplete="email"
+          error={errors.email?.message}
+          required
+        />
+      </div>
       <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )
@@ -434,73 +452,87 @@ function TestersForm({ status, setStatus, errorMessage, setErrorMessage }: SubFo
       submittingLabel={t('submitting')}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <FormField
-        {...register('firstName')}
-        label={t('labels.name')}
-        name="firstName"
-        type="text"
-        autoComplete="given-name"
-        error={errors.firstName?.message}
-        required
-      />
-      <FormField
-        {...register('lastName')}
-        label={t('labels.lastName')}
-        name="lastName"
-        type="text"
-        autoComplete="family-name"
-        error={errors.lastName?.message}
-        required
-      />
-      <FormField
-        {...register('email')}
-        label={t('labels.email')}
-        name="email"
-        type="email"
-        autoComplete="email"
-        error={errors.email?.message}
-        required
-      />
-      <FormField
-        {...register('profession')}
-        label={t('labels.profession')}
-        name="profession"
-        type="text"
-        error={errors.profession?.message}
-        required
-      />
-      <FormField
-        {...register('gender')}
-        as="select"
-        label={t('labels.gender')}
-        name="gender"
-        error={errors.gender?.message}
-      >
-        <option value=""></option>
-        <option value="female">{t('genderOptions.female')}</option>
-        <option value="male">{t('genderOptions.male')}</option>
-        <option value="non-binary">{t('genderOptions.nonBinary')}</option>
-        <option value="other">{t('genderOptions.other')}</option>
-        <option value="prefer-not-to-say">{t('genderOptions.preferNotToSay')}</option>
-      </FormField>
-      <FormField
-        {...register('city')}
-        label={t('labels.city')}
-        name="city"
-        type="text"
-        autoComplete="address-level2"
-        error={errors.city?.message}
-        required
-      />
-      <FormField
-        {...register('birthdate')}
-        label={t('labels.birthdate')}
-        name="birthdate"
-        type="date"
-        autoComplete="bday"
-        error={errors.birthdate?.message}
-        required
-      />
+      <div data-contact-field>
+        <FormField
+          {...register('firstName')}
+          label={t('labels.name')}
+          name="firstName"
+          type="text"
+          autoComplete="given-name"
+          error={errors.firstName?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('lastName')}
+          label={t('labels.lastName')}
+          name="lastName"
+          type="text"
+          autoComplete="family-name"
+          error={errors.lastName?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('email')}
+          label={t('labels.email')}
+          name="email"
+          type="email"
+          autoComplete="email"
+          error={errors.email?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('profession')}
+          label={t('labels.profession')}
+          name="profession"
+          type="text"
+          error={errors.profession?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('gender')}
+          as="select"
+          label={t('labels.gender')}
+          name="gender"
+          error={errors.gender?.message}
+        >
+          <option value=""></option>
+          <option value="female">{t('genderOptions.female')}</option>
+          <option value="male">{t('genderOptions.male')}</option>
+          <option value="non-binary">{t('genderOptions.nonBinary')}</option>
+          <option value="other">{t('genderOptions.other')}</option>
+          <option value="prefer-not-to-say">{t('genderOptions.preferNotToSay')}</option>
+        </FormField>
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('city')}
+          label={t('labels.city')}
+          name="city"
+          type="text"
+          autoComplete="address-level2"
+          error={errors.city?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('birthdate')}
+          label={t('labels.birthdate')}
+          name="birthdate"
+          type="date"
+          autoComplete="bday"
+          error={errors.birthdate?.message}
+          required
+        />
+      </div>
       <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )

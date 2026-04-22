@@ -77,15 +77,15 @@ const config: Config = {
     fontSize: {
       // [size, { lineHeight, letterSpacing }]
       // Fijos — diferencia de 2px en estos rangos es imperceptible (−2px vs original)
-      caption: ['10px', { lineHeight: '1.5', letterSpacing: '0' }],
-      micro: ['12px', { lineHeight: '1.5', letterSpacing: '0' }],
+      'caption': ['10px', { lineHeight: '1.5', letterSpacing: '0' }],
+      'micro': ['12px', { lineHeight: '1.5', letterSpacing: '0' }],
       'card-sm': ['14px', { lineHeight: '1.5', letterSpacing: '0' }],
-      label: ['16px', { lineHeight: '1.5', letterSpacing: '0' }],
+      'label': ['16px', { lineHeight: '1.5', letterSpacing: '0' }],
       // Fluidos — clamp(mín@480px, slope·100vw + intercept, máx@1440px)
       // Fórmula Utopia: slope = (max−min)/(1440−480), intercept = min − slope·480
       // Todos los valores reducidos −2px respecto a la escala original.
       'body-sm': ['clamp(14px, calc(0.21vw + 15px), 18px)', { lineHeight: '1.5', letterSpacing: '0' }],
-      body: ['clamp(16px, calc(0.42vw + 16px), 22px)', { lineHeight: '1.5', letterSpacing: '0' }],
+      'body': ['clamp(16px, calc(0.42vw + 16px), 22px)', { lineHeight: '1.5', letterSpacing: '0' }],
       'title-mono': ['clamp(20px, calc(0.63vw + 17px), 26px)', { lineHeight: '1.5', letterSpacing: '0' }],
       subtitle: ['clamp(24px, calc(0.83vw + 20px), 32px)', { lineHeight: '1.0', letterSpacing: '0' }],
       'title-sm': ['clamp(26px, calc(0.83vw + 22px), 34px)', { lineHeight: '1.2', letterSpacing: '0' }],
