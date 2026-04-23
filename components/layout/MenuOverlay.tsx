@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useTranslations, useLocale } from 'next-intl'
+import { useParams } from 'next/navigation'
 
-import { Link, useRouter, usePathname, type RouteId } from '@/lib/i18n/routing'
+import { Link, usePathname, type RouteId } from '@/lib/i18n/routing'
+import { articleHref, type IntlHref } from '@/lib/i18n/article-href'
 import { LOCALES } from '@/lib/i18n/config'
 import { useMenuStore } from '@/lib/store/menu'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
@@ -44,13 +46,20 @@ const SOCIAL_LINKS = [
 export function MenuOverlay() {
   const t = useTranslations()
   const locale = useLocale()
-  const router = useRouter()
   const pathname = usePathname()
+  const params = useParams()
   const isOpen = useMenuStore((s) => s.isOpen)
   const close = useMenuStore((s) => s.close)
 
   // Locales distintos al actual para el switcher
   const otherLocales = LOCALES.filter((l) => l !== locale)
+
+  // Href para el locale switcher — igual que LocaleSwitcher: Link + locale prop
+  const cat = params.cat as string | undefined
+  const slug = params.slug as string | undefined
+  const localeSwitcherHref: IntlHref = cat && slug
+    ? articleHref(cat, slug)
+    : (pathname as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
 
   // isVisible controls DOM presence — lags behind isOpen to allow close animation
   const [isVisible, setIsVisible] = useState(false)
@@ -250,19 +259,16 @@ export function MenuOverlay() {
             style={{ top: '52px' }}
           >
             {otherLocales.map((l) => (
-              <button
+              <Link
                 key={l}
-                type="button"
-                onClick={() => {
-                  close()
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  router.replace(pathname as any, { locale: l })
-                }}
+                href={localeSwitcherHref}
+                locale={l}
+                onClick={close}
                 className="underline underline-offset-4 opacity-40
                            hover:opacity-100 transition-opacity duration-fast ease-expo"
               >
                 {l.toUpperCase()}
-              </button>
+              </Link>
             ))}
           </div>
         )}
