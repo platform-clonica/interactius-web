@@ -51,40 +51,47 @@ export function IdentidadValores() {
         return
       }
 
-      // All images start hidden
-      imgs.forEach((img) => img && gsap.set(img, { clipPath: 'inset(0 100% 0 0)' }))
+      // Stacked z-index: img[0] at bottom, img[3] on top.
+      // Only the top-most visible image animates — the one below stays put,
+      // so there's never a gap showing the background between transitions.
+      imgs.forEach((img, i) => {
+        if (!img) return
+        gsap.set(img, {
+          clipPath: i === 0 ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
+          zIndex: i + 1,
+        })
+      })
 
-      // 1. First image reveals when section enters viewport
+      // 1. First image reveals laterally when section enters viewport
       const st0 = ScrollTrigger.create({
         trigger: section,
         start: 'top 80%',
         once: true,
         onEnter: () => {
-          gsap.to(imgs[0], { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease })
+          gsap.fromTo(
+            imgs[0],
+            { clipPath: 'inset(0 100% 0 0)' },
+            { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease },
+          )
         },
       })
       cleanups.push(() => st0.kill())
 
-      // 2–4. Image swaps: each triggered by the corresponding text block entering the viewport
-      const swaps: Array<{ txtIdx: number; exitIdx: number; enterIdx: number }> = [
-        { txtIdx: 1, exitIdx: 0, enterIdx: 1 },
-        { txtIdx: 2, exitIdx: 1, enterIdx: 2 },
-        { txtIdx: 3, exitIdx: 2, enterIdx: 3 },
-      ]
-
-      swaps.forEach(({ txtIdx, exitIdx, enterIdx }) => {
-        const txt = txts[txtIdx]
+      // 2–4. Bidirectional swaps — onEnter (scroll down) and onLeaveBack (scroll up).
+      // Forward: new image slides in from right over the current (no exit animation needed).
+      // Backward: current image slides out to the right, revealing the one underneath.
+      ;[1, 2, 3].forEach((imgIdx) => {
+        const txt = txts[imgIdx]
         if (!txt) return
 
         const st = ScrollTrigger.create({
           trigger: txt,
           start: 'top 55%',
-          once: true,
           onEnter: () => {
-            // Exit current: left mask, 300ms
-            gsap.to(imgs[exitIdx], { clipPath: 'inset(0 0 0 100%)', duration: 0.3, ease })
-            // Enter new: right unmask, 400ms
-            gsap.to(imgs[enterIdx], { clipPath: 'inset(0 0% 0 0)', duration: 0.4, ease })
+            gsap.to(imgs[imgIdx], { clipPath: 'inset(0 0% 0 0)', duration: 0.6, ease })
+          },
+          onLeaveBack: () => {
+            gsap.to(imgs[imgIdx], { clipPath: 'inset(0 100% 0 0)', duration: 0.6, ease })
           },
         })
         cleanups.push(() => st.kill())
@@ -155,7 +162,7 @@ export function IdentidadValores() {
 
         {/* Sticky image panel */}
         <div
-          className="sticky top-0 self-start h-screen overflow-hidden flex-shrink-0 relative"
+          className="sticky top-0 self-start h-screen overflow-hidden flex-shrink-0 relative bg-warm-light"
           style={{ width: '41.8%' }}
         >
           {IMAGES.map((src, i) => (

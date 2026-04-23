@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react'
 import Image from 'next/image'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 
 // ─── Scroll budget constants (px) ────────────────────────────────────────────
 const HERO_SCROLL = 1260  // total scroll distance while hero is active
@@ -71,6 +72,7 @@ export function HeroScroll({
         } else {
           const split = new SplitType(h1, { types: 'lines' })
           const lines = split.lines ?? []
+          wrapLinesInMask(lines)
           gsap.set(lines, { y: 80, opacity: 0 })
           gsap.to(lines, {
             y: 0,

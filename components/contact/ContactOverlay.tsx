@@ -59,7 +59,7 @@ export function ContactOverlay({ children }: { children: React.ReactNode }) {
       await gsap.to(curtain, {
         x: 0,
         duration: 0.35,
-        ease: 'power3.inOut',
+        ease: 'cubic-bezier(.16,1,.3,1)',
       })
 
       // Pausa mínima para que el usuario sienta el "cambio de escena"
@@ -69,7 +69,7 @@ export function ContactOverlay({ children }: { children: React.ReactNode }) {
       await gsap.to(curtain, {
         x: '-100vw',
         duration: 0.35,
-        ease: 'power3.inOut',
+        ease: 'cubic-bezier(.16,1,.3,1)',
       })
 
       // Botón de cerrar aparece tras la cortina
@@ -103,7 +103,7 @@ export function ContactOverlay({ children }: { children: React.ReactNode }) {
     await gsap.to(curtain, {
       x: 0,
       duration: 0.35,
-      ease: 'power3.inOut',
+      ease: 'cubic-bezier(.16,1,.3,1)',
     })
 
     router.back()
@@ -123,7 +123,7 @@ export function ContactOverlay({ children }: { children: React.ReactNode }) {
       {/* Cortina de transición warm-light */}
       <div
         ref={curtainRef}
-        className="absolute inset-0 bg-warm-light pointer-events-none z-10"
+        className="absolute inset-0 bg-pure-white pointer-events-none z-10"
         aria-hidden="true"
         style={{ transform: 'translateX(100vw)' }}
       />

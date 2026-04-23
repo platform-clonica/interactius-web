@@ -110,7 +110,7 @@ export function CapacityOthersAnim({
           gsap.to(card0, {
             clipPath: 'inset(0 0% 0 0)',
             duration: 0.8,
-            ease: 'power3.out',
+            ease: 'cubic-bezier(.16,1,.3,1)',
             onComplete: () => revealCardText(card0),
           })
 
@@ -118,7 +118,7 @@ export function CapacityOthersAnim({
           gsap.to(card1, {
             clipPath: 'inset(0 0% 0 0)',
             duration: 0.8,
-            ease: 'power3.out',
+            ease: 'cubic-bezier(.16,1,.3,1)',
             delay: 0.15,
             onComplete: () => revealCardText(card1),
           })
