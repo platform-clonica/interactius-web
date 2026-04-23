@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 
 export function IdentidadJoinUs() {
   const t = useTranslations('identidad')
@@ -31,6 +32,7 @@ export function IdentidadJoinUs() {
       const paragraphs = Array.from(contentEl.querySelectorAll<HTMLElement>('[data-join-el]'))
       const splits = paragraphs.map((p) => new SplitType(p, { types: 'lines' }))
       const allLines = splits.flatMap((s) => s.lines ?? [])
+      wrapLinesInMask(allLines)
       gsap.set(allLines, { y: 80, opacity: 0 })
 
       const st = ScrollTrigger.create({

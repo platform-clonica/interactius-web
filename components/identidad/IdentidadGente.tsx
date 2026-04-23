@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 
 // Team members — placeholder data; replace with CMS data when available
 const TEAM = [
@@ -73,11 +74,13 @@ export function IdentidadGente() {
       // 1. Title line-mask reveal
       const titleSplit = new SplitType(titleEl, { types: 'lines' })
       const titleLines = titleSplit.lines ?? []
+      wrapLinesInMask(titleLines)
       gsap.set(titleLines, { y: 80, opacity: 0 })
 
-      // 2. Description line-mask reveal
+      // 2. Description line-mask reveal — serif display, behaves as titular
       const descSplit = new SplitType(descEl, { types: 'lines' })
       const descLines = descSplit.lines ?? []
+      wrapLinesInMask(descLines)
       gsap.set(descLines, { y: 80, opacity: 0 })
 
       const st1 = ScrollTrigger.create({
@@ -129,13 +132,15 @@ export function IdentidadGente() {
       aria-labelledby="gente-title"
     >
       <div className="section-inner pt-section pb-16">
-        <h2
-          ref={titleRef}
-          id="gente-title"
-          className="font-serif font-normal text-section text-warm-light"
-        >
-          {t('gente.title')}
-        </h2>
+        <div className="grid grid-cols-12 gap-grid-gutter">
+          <h2
+            ref={titleRef}
+            id="gente-title"
+            className="col-span-12 lg:col-span-10 lg:col-start-2 font-serif font-normal text-section text-warm-light"
+          >
+            {t('gente.title')}
+          </h2>
+        </div>
 
         <p
           ref={descRef}

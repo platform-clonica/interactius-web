@@ -11,7 +11,7 @@ export async function IntroScroll() {
       <div className="section-inner pt-28 lg:pt-32">
         <div className="grid grid-cols-12 gap-grid-gutter">
           <div className="col-span-12 lg:col-span-6 lg:col-start-7">
-            <div className="flex flex-col gap-6 font-mono text-body text-fg max-w-[34ch]">
+            <div className="flex flex-col gap-6 font-mono text-body-sm text-fg max-w-[34ch]">
               <p>{t('intro.p1')}</p>
               <p className="font-semibold">{t('intro.p2')}</p>
               <p>{t('intro.p3')}</p>
@@ -75,7 +75,7 @@ export async function IntroScroll() {
       <div className="section-inner py-20 lg:py-28">
         <div className="grid grid-cols-12 gap-grid-gutter">
           <div className="col-span-12 lg:col-span-4 lg:col-start-2">
-            <p className="font-mono text-body text-fg max-w-[32ch]">
+            <p className="font-mono text-body-sm text-fg max-w-[32ch]">
               {t('intro.p4')}
             </p>
           </div>

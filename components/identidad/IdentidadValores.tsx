@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 
 // Image order matches Figma: img[i] corresponds to valor text[i]
 // Swap sequence from Figma: img1→img2 when text[1] enters, img2→img3 at text[2], img3→img4 at text[3]
@@ -110,7 +111,10 @@ export function IdentidadValores() {
         allEls.forEach((el) => {
           const split = new SplitType(el, { types: 'lines' })
           splits.push(split)
-          gsap.set(split.lines ?? [], { y: 60, opacity: 0 })
+          const lines = split.lines ?? []
+          // Line-mask only on h3 titulares; paragraphs keep fade+Y
+          if (el.tagName === 'H3') wrapLinesInMask(lines)
+          gsap.set(lines, { y: 60, opacity: 0 })
         })
 
         const allLines = allEls.flatMap((_, j) => splits[splits.length - allEls.length + j]?.lines ?? [])
@@ -173,6 +177,7 @@ export function IdentidadValores() {
               key={i}
               ref={(el) => { imgRefs.current[i] = el }}
               className="absolute inset-0 will-change-[clip-path]"
+              data-valores-img=""
             >
               <Image
                 src={src}

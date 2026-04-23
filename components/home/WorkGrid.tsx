@@ -112,7 +112,7 @@ export async function WorkGrid() {
           >
             {t('work.heading')}
           </h2>
-          <p className="font-mono text-body text-fg/80 lg:col-span-8 lg:col-start-4">
+          <p className="font-mono text-body-sm text-fg/80 lg:col-span-8 lg:col-start-4">
             {t('work.description')}
           </p>
         </header>

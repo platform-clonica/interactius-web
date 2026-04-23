@@ -8,6 +8,7 @@ interface MenuTriggerProps {
   /** Id del overlay controlado — para aria-controls */
   controls?: string
   className?: string
+  style?: React.CSSProperties
 }
 
 /**
@@ -18,6 +19,7 @@ export function MenuTrigger({
   label,
   controls = 'menu-overlay',
   className,
+  style,
 }: MenuTriggerProps) {
   const isOpen = useMenuStore((s) => s.isOpen)
   const toggle = useMenuStore((s) => s.toggle)
@@ -30,6 +32,7 @@ export function MenuTrigger({
       aria-expanded={isOpen}
       aria-controls={controls}
       className={className}
+      style={style}
     >
       <HamburgerIcon open={isOpen} />
     </button>
@@ -48,12 +51,12 @@ function HamburgerIcon({ open }: { open: boolean }) {
       aria-hidden="true"
     >
       <span
-        className={`absolute left-0 top-[9px] h-[1.5px] w-6 bg-current
+        className={`absolute left-0 top-[9px] h-[2px] w-6 bg-current
                     transition-transform duration-fast ease-expo
                     ${open ? 'translate-y-[3px] rotate-45' : 'translate-y-0 rotate-0'}`}
       />
       <span
-        className={`absolute left-0 top-[15px] h-[1.5px] w-6 bg-current
+        className={`absolute left-0 top-[15px] h-[2px] w-6 bg-current
                     transition-transform duration-fast ease-expo
                     ${open ? '-translate-y-[3px] -rotate-45' : 'translate-y-0 rotate-0'}`}
       />

@@ -290,7 +290,7 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
                       priority={i === 0}
                     />
                     {i === 0 && rightCol.length > 2 && (
-                      <p className="hidden lg:block font-mono text-body text-fg leading-[1.5] py-8">
+                      <p className="hidden lg:block font-mono text-body-sm text-fg leading-[1.5] py-8">
                         {t('grid.interstitialQuote')}
                       </p>
                     )}

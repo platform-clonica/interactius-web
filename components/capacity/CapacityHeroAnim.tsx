@@ -139,7 +139,7 @@ export function CapacityHeroAnim({
           </h1>
           <p
             ref={leadRef}
-            className="mt-8 max-w-[44ch] font-mono text-body text-fg/70"
+            className="mt-8 max-w-[44ch] font-mono text-body-sm text-fg/70"
           >
             {lead}
           </p>

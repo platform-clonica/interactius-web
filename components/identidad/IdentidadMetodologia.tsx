@@ -32,7 +32,26 @@ export function IdentidadMetodologia() {
       const ease = 'cubic-bezier(.16,1,.3,1)'
       const cleanups: Array<() => void> = []
 
-      // 1. Parallax background — 0.5× scroll speed via scrub
+      // 1a. Background lateral reveal — canonical right→left clip-path
+      if (!reduced && bgRef.current) {
+        gsap.set(bgRef.current, { clipPath: 'inset(0 100% 0 0)' })
+        const reveal = gsap.to(bgRef.current, {
+          clipPath: 'inset(0 0% 0 0)',
+          duration: 0.9,
+          ease,
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 85%',
+            once: true,
+          },
+        })
+        if (reveal.scrollTrigger) cleanups.push(() => reveal.scrollTrigger!.kill())
+        cleanups.push(() => reveal.kill())
+      } else if (reduced && bgRef.current) {
+        gsap.set(bgRef.current, { clipPath: 'inset(0 0% 0 0)' })
+      }
+
+      // 1b. Parallax background — 0.5× scroll speed via scrub
       // bg is oversized (inset-y-[-15%]) so edges don't show during translation
       if (!reduced && bgRef.current) {
         const tw = gsap.fromTo(
