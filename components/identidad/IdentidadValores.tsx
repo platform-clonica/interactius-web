@@ -51,31 +51,32 @@ export function IdentidadValores() {
         return
       }
 
-      // Stacked z-index: img[0] at bottom, img[3] on top.
-      // Only the top-most visible image animates — the one below stays put,
-      // so there's never a gap showing the background between transitions.
+      // All images start hidden; img[0] reveals when txt[0] enters viewport
+      // (= exactly when IdentidadIntro exits), the rest swap on scroll.
       imgs.forEach((img, i) => {
         if (!img) return
         gsap.set(img, {
-          clipPath: i === 0 ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
+          clipPath: 'inset(0 100% 0 0)',
           zIndex: i + 1,
         })
       })
 
-      // 1. First image reveals laterally when section enters viewport
-      const st0 = ScrollTrigger.create({
-        trigger: section,
-        start: 'top 80%',
-        once: true,
-        onEnter: () => {
-          gsap.fromTo(
-            imgs[0],
-            { clipPath: 'inset(0 100% 0 0)' },
-            { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease },
-          )
-        },
-      })
-      cleanups.push(() => st0.kill())
+      // 1. First image slides in when txt[0] enters viewport bottom,
+      //    which coincides with IdentidadIntro leaving the screen.
+      //    Bidirectional so scrolling back hides it again.
+      if (txts[0]) {
+        const st0 = ScrollTrigger.create({
+          trigger: txts[0],
+          start: 'top bottom',
+          onEnter: () => {
+            gsap.to(imgs[0], { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease })
+          },
+          onLeaveBack: () => {
+            gsap.to(imgs[0], { clipPath: 'inset(0 100% 0 0)', duration: 0.6, ease })
+          },
+        })
+        cleanups.push(() => st0.kill())
+      }
 
       // 2–4. Bidirectional swaps — onEnter (scroll down) and onLeaveBack (scroll up).
       // Forward: new image slides in from right over the current (no exit animation needed).
@@ -97,8 +98,10 @@ export function IdentidadValores() {
         cleanups.push(() => st.kill())
       })
 
-      // 5. Text line-mask reveals — each block on scroll
-      txts.forEach((txt) => {
+      // 5. Text line-mask reveals — each block on scroll.
+      //    txt[0] fires as soon as it enters the viewport (in sync with img[0]);
+      //    txt[1-3] fire at the conventional 70% threshold.
+      txts.forEach((txt, i) => {
         if (!txt) return
 
         const allEls = Array.from(txt.querySelectorAll<HTMLElement>('[data-valor-el]'))
@@ -110,11 +113,11 @@ export function IdentidadValores() {
           gsap.set(split.lines ?? [], { y: 60, opacity: 0 })
         })
 
-        const allLines = allEls.flatMap((_, i) => splits[splits.length - allEls.length + i]?.lines ?? [])
+        const allLines = allEls.flatMap((_, j) => splits[splits.length - allEls.length + j]?.lines ?? [])
 
         const st = ScrollTrigger.create({
           trigger: txt,
-          start: 'top 70%',
+          start: i === 0 ? 'top bottom' : 'top 70%',
           once: true,
           onEnter: () => {
             gsap.to(allLines, { y: 0, opacity: 1, duration: 1, ease: 'power4.out', stagger: 0.06 })
@@ -183,8 +186,11 @@ export function IdentidadValores() {
           ))}
         </div>
 
-        {/* Scrolling text panels — 4 × min-h-screen */}
+        {/* Scrolling text panels — spacer + 4 × min-h-screen */}
         <div className="flex-1">
+          {/* 100vh spacer so txt[0] only enters the viewport once IdentidadIntro
+              has fully exited — the overlap between sections is always one viewport height */}
+          <div style={{ height: '100vh' }} aria-hidden="true" />
           {([0, 1, 2, 3] as const).map((i) => (
             <div
               key={i}
