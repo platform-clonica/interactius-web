@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react'
 import Image from 'next/image'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 
 /* ==========================================================================
    CapacityHeroAnim — layout + GSAP entry sequence (sección 1/4)
@@ -59,6 +60,7 @@ export function CapacityHeroAnim({
 
       // ── Splits de texto ───────────────────────────────────────────────────
       const titleSplit = new SplitType(titleEl, { types: 'lines' })
+      wrapLinesInMask(titleSplit.lines ?? [])
 
       // ── Estado inicial ─────────────────────────────────────────────────────
       gsap.set(titleSplit.lines ?? [], { y: 80, opacity: 0 })

@@ -5,6 +5,7 @@ import Image from 'next/image'
 
 import { Logo } from '@/components/ui/Logo'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 
 /* ==========================================================================
    ContactHeroAnim — layout + GSAP entry sequence
@@ -80,6 +81,7 @@ export function ContactHeroAnim({
 
       // ── Splits de texto ───────────────────────────────────────────────────
       const h1Split = new SplitType(heading, { types: 'lines' })
+      wrapLinesInMask(h1Split.lines ?? [])
       const bodyParas = bodyEl.querySelectorAll('p')
       const bodySplits = Array.from(bodyParas).map(
         (p) => new SplitType(p as HTMLElement, { types: 'lines' }),

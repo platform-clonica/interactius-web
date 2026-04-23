@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 
 import { richComponents } from '@/lib/i18n/rich-text'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 
 export function IdentidadHero() {
   const t = useTranslations('identidad')
@@ -48,6 +49,7 @@ export function IdentidadHero() {
       // SplitType
       const headlineSplit = new SplitType(headlineEl, { types: 'lines' })
       const headlineLines = headlineSplit.lines ?? []
+      wrapLinesInMask(headlineLines)
       gsap.set(headlineLines, { y: 80, opacity: 0 })
 
       const bodyParagraphs = Array.from(bodyEl.querySelectorAll<HTMLElement>('[data-body-p]'))
@@ -132,13 +134,13 @@ export function IdentidadHero() {
           <div className="col-span-12 lg:col-span-6 flex flex-col gap-12 pt-[calc(80px+18vh)] pb-20 lg:pb-32">
             <h1
               ref={headlineRef}
-              className="font-serif font-light text-display text-fg leading-none tracking-[-0.02em]"
+              className="font-serif font-light text-title text-fg leading-[1.1] tracking-[-0.02em] pt-[5px]"
             >
               {t('hero.title')}
             </h1>
 
-            <div ref={bodyRef} className="flex flex-col gap-6 font-mono text-body text-fg">
-              <p data-body-p="">{t.rich('hero.body1', richComponents.bold)}</p>
+            <div ref={bodyRef} className="flex flex-col gap-6 font-mono text-body-sm text-fg">
+              <p data-body-p="" className="pt-[5px]">{t.rich('hero.body1', richComponents.bold)}</p>
               <p data-body-p="">{t.rich('hero.body2', richComponents.bold)}</p>
               <p data-body-p="">{t.rich('hero.body3', richComponents.bold)}</p>
             </div>

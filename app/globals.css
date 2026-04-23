@@ -231,6 +231,14 @@
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--grid-gutter);
   }
+
+  /* Line-mask para SplitType — overflow:hidden que recorta el texto al subir */
+  .st-mask {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.2em;
+    margin-bottom: -0.2em;
+  }
 }
 
 

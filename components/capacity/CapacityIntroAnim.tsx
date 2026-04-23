@@ -105,7 +105,7 @@ export function CapacityIntroAnim({
           gsap.to(imageEl, {
             clipPath: 'inset(0 0 0 100%)',
             duration: 0.9,
-            ease: 'power3.inOut',
+            ease: 'cubic-bezier(.16,1,.3,1)',
             onComplete: revealStatement,
           })
         },

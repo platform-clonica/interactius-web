@@ -20,9 +20,9 @@ interface RotatedLogoProps {
   className?: string
 }
 
-// Dimensiones extraídas de Figma — no cambiar sin actualizar ambas
-const LOGO_H = '30.975px'  // altura del logo horizontal
-const LOGO_W = '219.195px' // anchura del logo horizontal
+// Dimensiones extraídas de Figma × 0.8
+const LOGO_H = '24.78px'   // 30.975 × 0.8
+const LOGO_W = '175.356px' // 219.195 × 0.8
 
 export function RotatedLogo({ className = '' }: RotatedLogoProps) {
   return (

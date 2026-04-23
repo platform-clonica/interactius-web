@@ -20,7 +20,7 @@ export async function Sidebar() {
   return (
     <aside
       className="fixed left-0 top-0 z-sidebar hidden h-screen w-sidebar
-                 border-r border-muted bg-bg overflow-hidden lg:block"
+                 bg-bg overflow-hidden lg:block"
       aria-label={t('sidebar.label')}
     >
       {/* Hamburger — top center, ~26px from top */}
@@ -37,8 +37,9 @@ export async function Sidebar() {
       {/* Logo vertical — top: 80px, centered, rotated -90deg */}
       <Link
         href="/"
-        className="absolute left-1/2 top-20 -translate-x-1/2
+        className="absolute top-20 -translate-x-1/2
                    transition-opacity duration-fast ease-expo hover:opacity-70"
+        style={{ left: 'calc(50% - 3px)' }}
         aria-label={t('logo.home')}
       >
         <RotatedLogo />
