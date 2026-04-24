@@ -84,7 +84,7 @@ const config: Config = {
       // Fluidos — clamp(mín@480px, slope·100vw + intercept, máx@1440px)
       // Fórmula Utopia: slope = (max−min)/(1440−480), intercept = min − slope·480
       // Todos los valores reducidos −2px respecto a la escala original.
-      'body-sm': ['clamp(14px, calc(0.21vw + 15px), 18px)', { lineHeight: '1.5', letterSpacing: '0' }],
+      'body-sm': ['clamp(12px, calc(0.21vw + 13px), 16px)', { lineHeight: '1.5', letterSpacing: '0' }],
       'body': ['clamp(16px, calc(0.42vw + 16px), 22px)', { lineHeight: '1.5', letterSpacing: '0' }],
       'title-mono': ['clamp(20px, calc(0.63vw + 17px), 26px)', { lineHeight: '1.5', letterSpacing: '0' }],
       subtitle: ['clamp(24px, calc(0.83vw + 20px), 32px)', { lineHeight: '1.0', letterSpacing: '0' }],
@@ -202,7 +202,7 @@ const config: Config = {
       0: '0',
       content: '2',
       'intro-active': '5',
-      sidebar: '50',
+      sidebar: '160',
       'menu-overlay': '150',
       header: '200',
       'hero-fixed': '400',

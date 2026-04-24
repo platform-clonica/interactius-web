@@ -9,13 +9,17 @@ import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 export function IdentidadJoinUs() {
   const t = useTranslations('identidad')
 
+  const sectionRef = useRef<HTMLElement>(null)
+  const pinRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
+    const section = sectionRef.current
+    const pinEl = pinRef.current
     const contentEl = contentRef.current
-    if (!contentEl) return
+    if (!section || !pinEl || !contentEl) return
 
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
@@ -27,36 +31,66 @@ export function IdentidadJoinUs() {
       gsap.registerPlugin(ScrollTrigger)
 
       const reduced = getReducedMotion()
-      if (reduced) return
+      const cleanups: Array<() => void> = []
 
+      // Pin the centered CTA for 100vh of scroll — text alone on screen.
+      const pinST = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: '+=100%',
+        pin: pinEl,
+        pinSpacing: true,
+        anticipatePin: 1,
+      })
+      cleanups.push(() => pinST.kill())
+
+      // Line-mask reveal of CTA + email
       const paragraphs = Array.from(contentEl.querySelectorAll<HTMLElement>('[data-join-el]'))
       const splits = paragraphs.map((p) => new SplitType(p, { types: 'lines' }))
       const allLines = splits.flatMap((s) => s.lines ?? [])
       wrapLinesInMask(allLines)
-      gsap.set(allLines, { y: 80, opacity: 0 })
 
-      const st = ScrollTrigger.create({
-        trigger: contentEl,
-        start: 'top 88%',
-        once: true,
-        onEnter: () => {
-          gsap.to(allLines, { y: 0, opacity: 1, duration: 1.2, ease: 'power4.out', stagger: 0.1 })
-        },
-      })
-
-      cleanupRef.current = () => {
-        st.kill()
-        splits.forEach((s) => s.revert())
+      if (reduced) {
+        gsap.set(allLines, { y: 0, opacity: 1 })
+      } else {
+        gsap.set(allLines, { y: 80, opacity: 0 })
+        const revealST = ScrollTrigger.create({
+          trigger: section,
+          start: 'top 70%',
+          once: true,
+          onEnter: () => {
+            gsap.to(allLines, {
+              y: 0,
+              opacity: 1,
+              duration: 1.2,
+              ease: 'power4.out',
+              stagger: 0.1,
+            })
+          },
+        })
+        cleanups.push(() => {
+          revealST.kill()
+          splits.forEach((s) => s.revert())
+        })
       }
+
+      cleanupRef.current = () => cleanups.forEach((fn) => fn())
     })()
 
     return () => cleanupRef.current?.()
   }, [])
 
   return (
-    <section className="w-full bg-dark" aria-label="Únete al equipo">
-      <div className="section-inner py-section flex items-center justify-center min-h-[280px] md:min-h-[400px] lg:min-h-[540px]">
-        <div ref={contentRef} className="text-center flex flex-col gap-0">
+    <section
+      ref={sectionRef}
+      className="relative w-full bg-dark"
+      aria-label="Únete al equipo"
+    >
+      <div
+        ref={pinRef}
+        className="w-full h-screen flex items-center justify-center"
+      >
+        <div ref={contentRef} className="text-center flex flex-col gap-0 px-6">
           <p
             data-join-el=""
             className="font-serif font-normal text-section text-warm-light tracking-[-0.02em] leading-[1.2]"

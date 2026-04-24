@@ -9,8 +9,6 @@ import { LOCALES } from '@/lib/i18n/config'
 import { useMenuStore } from '@/lib/store/menu'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
-import { RotatedLogo } from '@/components/ui/RotatedLogo'
-
 // gsap + SplitType se importan de forma lazy dentro del useEffect para que
 // no engrosen el bundle del layout (critical path). Solo se cargan la primera
 // vez que el menú se abre.
@@ -212,30 +210,9 @@ export function MenuOverlay() {
         }}
       />
 
-      {/* ── Sidebar column: X close button + vertical logo ── */}
-      <div className="absolute inset-y-0 left-0 z-10 hidden w-sidebar lg:block">
-        <div className="absolute left-1/2 top-[26px] -translate-x-1/2">
-          <button
-            type="button"
-            onClick={close}
-            aria-label={t('common.menu.close')}
-            className="flex size-10 items-center justify-center text-fg
-                       transition-opacity duration-fast ease-expo hover:opacity-70"
-          >
-            <CloseIcon />
-          </button>
-        </div>
-
-        <Link
-          href="/"
-          onClick={close}
-          className="absolute left-1/2 top-20 -translate-x-1/2
-                     transition-opacity duration-fast ease-expo hover:opacity-70"
-          aria-label={t('common.logo.home')}
-        >
-          <RotatedLogo />
-        </Link>
-      </div>
+      {/* Sidebar (logo + hamburger→X) renders over this overlay via z-index.
+          Close via hamburger morph handled by MenuTrigger; Escape handled by
+          useFocusTrap. */}
 
       {/* ── Nav content — positioned after sidebar + grid margin ── */}
       <div
@@ -344,17 +321,3 @@ export function MenuOverlay() {
   )
 }
 
-/* ==========================================================================
-   Close icon (X) — static version, hamburger→X is handled by MenuTrigger
-   ========================================================================== */
-
-function CloseIcon() {
-  return (
-    <span className="relative block size-6" aria-hidden="true">
-      <span className="absolute inset-0 flex items-center justify-center">
-        <span className="absolute h-[1.5px] w-6 bg-current rotate-45" />
-        <span className="absolute h-[1.5px] w-6 bg-current -rotate-45" />
-      </span>
-    </span>
-  )
-}

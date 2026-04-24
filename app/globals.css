@@ -238,6 +238,19 @@
     padding-bottom: 0.2em;
     margin-bottom: -0.2em;
   }
+
+  /* Chrome elements that hide when the footer reveals. Hamburger stays visible. */
+  [data-sidebar-logo],
+  [data-header-cta] {
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+
+  body[data-footer-visible='true'] [data-sidebar-logo],
+  body[data-footer-visible='true'] [data-header-cta] {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+  }
 }
 
 

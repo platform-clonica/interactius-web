@@ -18,9 +18,11 @@ export async function Header() {
       className="fixed top-0 right-0 z-header flex h-20 items-center justify-end
                  pr-[26px] left-0"
     >
-      <ButtonPrimary as={Link} href="/contacto" variant="light">
-        {t('header.cta')}
-      </ButtonPrimary>
+      <div data-header-cta="">
+        <ButtonPrimary as={Link} href="/contacto" variant="light">
+          {t('header.cta')}
+        </ButtonPrimary>
+      </div>
     </header>
   )
 }

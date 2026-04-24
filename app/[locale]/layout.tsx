@@ -7,6 +7,7 @@ import { getMessages, getTranslations } from 'next-intl/server'
 import { buildRootMetadata } from '@/lib/seo/metadata.config'
 import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/seo/schema'
 import { LOCALES, type Locale } from '@/lib/i18n/config'
+import { GridOverlay } from '@/components/dev/GridOverlay'
 
 import '../globals.css'
 
@@ -125,6 +126,7 @@ export default async function RootLayout({
             {t('skipToContent')}
           </a>
           {children}
+          {process.env.NODE_ENV !== 'production' && <GridOverlay />}
         </NextIntlClientProvider>
       </body>
     </html>

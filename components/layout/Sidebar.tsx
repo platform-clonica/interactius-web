@@ -43,6 +43,7 @@ export async function Sidebar() {
           mix-blend-mode: difference on the <aside> produces proper contrast. */}
       <Link
         href="/"
+        data-sidebar-logo=""
         className="absolute top-20 -translate-x-1/2 pointer-events-auto
                    transition-opacity duration-fast ease-expo hover:opacity-70"
         style={{ left: 'calc(50% - 3px)', filter: 'brightness(0) invert(1)' }}

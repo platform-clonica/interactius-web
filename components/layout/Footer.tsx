@@ -10,7 +10,7 @@ export async function Footer() {
   return (
     <footer
       role="contentinfo"
-      className="relative w-full bg-dark text-pure-white"
+      className="relative w-full bg-dark text-pure-white min-h-screen flex flex-col justify-center"
     >
       <div className="section-inner py-section">
         {/* Top grid */}

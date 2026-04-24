@@ -47,18 +47,18 @@ export function MenuTrigger({
 function HamburgerIcon({ open }: { open: boolean }) {
   return (
     <span
-      className="relative block size-6"
+      className="relative block w-10 h-[10px]"
       aria-hidden="true"
     >
       <span
-        className={`absolute left-0 top-[9px] h-[2px] w-6 bg-current
+        className={`absolute left-0 top-0 h-[1.5px] w-10 bg-current origin-center
                     transition-transform duration-fast ease-expo
-                    ${open ? 'translate-y-[3px] rotate-45' : 'translate-y-0 rotate-0'}`}
+                    ${open ? 'translate-y-[4.25px] rotate-45' : 'translate-y-0 rotate-0'}`}
       />
       <span
-        className={`absolute left-0 top-[15px] h-[2px] w-6 bg-current
+        className={`absolute left-0 bottom-0 h-[1.5px] w-10 bg-current origin-center
                     transition-transform duration-fast ease-expo
-                    ${open ? '-translate-y-[3px] -rotate-45' : 'translate-y-0 rotate-0'}`}
+                    ${open ? '-translate-y-[4.25px] -rotate-45' : 'translate-y-0 rotate-0'}`}
       />
     </span>
   )
