@@ -16,9 +16,9 @@ export async function Header() {
     <header
       role="banner"
       className="fixed top-0 right-0 z-header flex h-20 items-center justify-end
-                 pr-[26px] left-0"
+                 pr-[26px] left-0 pointer-events-none"
     >
-      <div data-header-cta="">
+      <div data-header-cta="" className="pointer-events-auto">
         <ButtonPrimary as={Link} href="/contacto" variant="light">
           {t('header.cta')}
         </ButtonPrimary>

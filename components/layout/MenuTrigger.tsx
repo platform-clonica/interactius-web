@@ -22,12 +22,16 @@ export function MenuTrigger({
   style,
 }: MenuTriggerProps) {
   const isOpen = useMenuStore((s) => s.isOpen)
-  const toggle = useMenuStore((s) => s.toggle)
+  const open = useMenuStore((s) => s.open)
+  const requestCurtainClose = useMenuStore((s) => s.requestCurtainClose)
+
+  // Abrir: directo. Cerrar: solicita cortina (MenuOverlay la corre).
+  const handleClick = () => (isOpen ? requestCurtainClose() : open())
 
   return (
     <button
       type="button"
-      onClick={toggle}
+      onClick={handleClick}
       aria-label={label}
       aria-expanded={isOpen}
       aria-controls={controls}
@@ -45,6 +49,10 @@ export function MenuTrigger({
    ========================================================================== */
 
 function HamburgerIcon({ open }: { open: boolean }) {
+  // Duración asimétrica: apertura lenta (0.9s, match panel reveal) para que
+  // el morph se perciba; cierre rápido (0.15s) — así la X→hamburger es inmediata
+  // y no queda flotando durante la cortina de cierre.
+  const duration = open ? 'duration-[900ms]' : 'duration-fast'
   return (
     <span
       className="relative block w-10 h-[10px]"
@@ -52,12 +60,12 @@ function HamburgerIcon({ open }: { open: boolean }) {
     >
       <span
         className={`absolute left-0 top-0 h-[1.5px] w-10 bg-current origin-center
-                    transition-transform duration-fast ease-expo
+                    transition-transform ${duration} ease-expo
                     ${open ? 'translate-y-[4.25px] rotate-45' : 'translate-y-0 rotate-0'}`}
       />
       <span
         className={`absolute left-0 bottom-0 h-[1.5px] w-10 bg-current origin-center
-                    transition-transform duration-fast ease-expo
+                    transition-transform ${duration} ease-expo
                     ${open ? '-translate-y-[4.25px] -rotate-45' : 'translate-y-0 rotate-0'}`}
       />
     </span>
