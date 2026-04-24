@@ -124,25 +124,27 @@ export function MenuOverlay() {
         tl.to(content, { opacity: 0, duration: 0.15, ease: 'power2.out', overwrite: true }, 0)
 
         // Fase 2 — cover (clip → 0%) desde el half-clip actual hasta full
-        tl.to(panel, { clipPath: 'inset(0 0% 0 0)', duration: 0.5, ease, overwrite: true }, 0.15)
+        tl.to(panel, { clipPath: 'inset(0 0% 0 0)', duration: 0.7, ease, overwrite: true }, 0.15)
 
-        // Fase 2.5 — al terminar cover, el panel tapa todo: ahora sí quitamos
-        // el backdrop (instant, no se percibe porque el panel está encima)
+        // Fase 2.5 — panel cubriendo full-width (t=0.85). Instantes coordinados:
+        //   · backdrop opacity → 0 (se descarta tras el panel opaco; invisible)
+        //   · navigate(): DISPARO AQUÍ, no antes. Si se llama antes, el swap de
+        //     DOM de Next.js se ve a través del backdrop blur (glitch visual).
+        //     El panel full-cover lo oculta por completo.
         if (backdrop) {
-          tl.set(backdrop, { opacity: 0 }, 0.65)
+          tl.set(backdrop, { opacity: 0 }, 0.85)
         }
-
-        // Navegación: la disparamos LO ANTES POSIBLE (t=0) para que Next.js
-        // tenga tiempo de renderizar la página destino antes de que arranque
-        // el uncover. Durante content-fade y cover, el panel/backdrop tapan
-        // el swap de DOM de la página subyacente (el usuario no lo percibe).
         if (navigate) {
-          tl.call(navigate, [], 0)
+          tl.call(navigate, [], 0.85)
         }
 
+        // Fase 2.75 — hold 0.15s en full-cover. Da a Next.js tiempo de render
+        // antes de destapar. Con prefetch (hover Link) es casi instantáneo;
+        // sin prefetch este buffer evita que el uncover revele contenido a medio
+        // hidratar.
         // Fase 3 — uncover: panel se pliega hacia la derecha (left-inset crece
         // 0 → 100%). Equivale a transformOrigin:right + scaleX 1→0 del referente.
-        tl.to(panel, { clipPath: 'inset(0 0% 0 100%)', duration: 0.9, ease }, 0.65)
+        tl.to(panel, { clipPath: 'inset(0 0% 0 100%)', duration: 1.25, ease }, 1.0)
       })
     },
     [beginCurtainStore, endCurtainStore],

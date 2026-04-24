@@ -55,9 +55,14 @@ export default async function HomePage({ params }: PageProps) {
         posterAlt=""
         // videoSrc: undefined — Fase 1 usa Ken-Burns del poster como fallback.
       >
-        <h1 className="max-w-[20ch] font-serif text-section font-light text-fg lg:max-w-[22ch]">
-          {t.rich('hero.tagline', { em: (chunks) => <em>{chunks}</em> })}
-        </h1>
+        <div className="grid grid-cols-12 gap-grid-gutter">
+          <h1 className="col-span-12 lg:col-start-2 lg:col-span-9 font-serif text-section font-light text-fg">
+            {t.rich('hero.tagline', {
+              em: (chunks) => <em>{chunks}</em>,
+              strong: (chunks) => <span data-word="">{chunks}</span>,
+            })}
+          </h1>
+        </div>
       </HeroScroll>
 
       <IntroScroll />
