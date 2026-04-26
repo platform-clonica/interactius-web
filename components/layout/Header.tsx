@@ -1,13 +1,13 @@
 import { getTranslations } from 'next-intl/server'
 
-import { Link } from '@/lib/i18n/routing'
-import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
+import { HeaderCTA } from './HeaderCTA'
 
 /**
  * Header — barra superior fija con CTA "Hablemos".
  *
- * Server Component: no necesita estado ni hooks de cliente.
- * useTranslations → getTranslations (async, server-side).
+ * Server Component: resuelve traducciones y delega la interacción al
+ * subcomponente cliente HeaderCTA, que dispara la cortina global de
+ * transición a /contacto.
  */
 export async function Header() {
   const t = await getTranslations('common')
@@ -19,9 +19,7 @@ export async function Header() {
                  pr-[26px] left-0 pointer-events-none"
     >
       <div data-header-cta="" className="pointer-events-auto">
-        <ButtonPrimary as={Link} href="/contacto" variant="light">
-          {t('header.cta')}
-        </ButtonPrimary>
+        <HeaderCTA label={t('header.cta')} />
       </div>
     </header>
   )

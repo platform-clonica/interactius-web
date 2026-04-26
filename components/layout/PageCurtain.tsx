@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 
 import { useRouter, type RouteId } from '@/lib/i18n/routing'
 import { usePageCurtainStore } from '@/lib/store/curtain'
+import { useMenuStore } from '@/lib/store/menu'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 
 /* ==========================================================================
@@ -30,6 +31,7 @@ import { getReducedMotion } from '@/components/motion/useReducedMotion'
 export function PageCurtain() {
   const isActive = usePageCurtainStore((s) => s.isActive)
   const targetHref = usePageCurtainStore((s) => s.targetHref)
+  const mode = usePageCurtainStore((s) => s.mode)
   const endPageCurtain = usePageCurtainStore((s) => s.endPageCurtain)
 
   const router = useRouter()
@@ -39,14 +41,27 @@ export function PageCurtain() {
   const inProgressRef = useRef(false)
 
   useEffect(() => {
-    if (!isActive || !targetHref || inProgressRef.current) return
+    if (!isActive || inProgressRef.current) return
+    if (mode === 'push' && !targetHref) return
     inProgressRef.current = true
 
     const panel = panelRef.current
-    const targetRoute = targetHref as Exclude<RouteId, '/miradas/[cat]/[slug]'>
+    const navigate = () => {
+      // Si el menú estaba abierto al disparar la cortina (caso menu→contact),
+      // lo cerramos JUSTO en el momento de la navegación, cuando el panel
+      // cubre la pantalla completa. Cerrar antes haría visible la transición
+      // del backdrop/body-scroll a través de la zona aún sin cubrir.
+      useMenuStore.getState().close()
+
+      if (mode === 'back') {
+        router.back()
+      } else if (targetHref) {
+        router.push(targetHref as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
+      }
+    }
 
     if (!panel) {
-      router.push(targetRoute)
+      navigate()
       endPageCurtain()
       inProgressRef.current = false
       return
@@ -54,7 +69,7 @@ export function PageCurtain() {
 
     const reduced = getReducedMotion()
     if (reduced) {
-      router.push(targetRoute)
+      navigate()
       endPageCurtain()
       inProgressRef.current = false
       return
@@ -80,16 +95,14 @@ export function PageCurtain() {
       // Fase 1 — cover: panel cubre desde la izquierda hasta full
       tl.to(panel, { clipPath: 'inset(0 0% 0 0)', duration: 0.7, ease }, 0)
 
-      // Fase 2 — navigate al completar el cover (t=0.7)
-      tl.call(() => {
-        router.push(targetRoute)
-      }, [], 0.7)
+      // Fase 2 — navigate (push o back) al completar el cover (t=0.7)
+      tl.call(() => navigate(), [], 0.7)
 
       // Fase 3 — hold 0.15s (buffer para render de Next.js)
       // Fase 4 — uncover: panel se pliega a la derecha
       tl.to(panel, { clipPath: 'inset(0 0% 0 100%)', duration: 1.25, ease }, 0.85)
     })
-  }, [isActive, targetHref, router, endPageCurtain])
+  }, [isActive, targetHref, mode, router, endPageCurtain])
 
   // Cleanup unmount-only: matar la timeline si el componente se desmonta
   // mientras hay una cortina en curso. NO matar al re-renderizar — eso

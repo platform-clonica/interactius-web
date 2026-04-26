@@ -10,10 +10,12 @@ import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 /* ==========================================================================
    ContactHeroAnim — layout + GSAP entry sequence
    --------------------------------------------------------------------------
-   Recibe el contenido ya traducido del Server Component (ContactHero) y
-   orquesta la animación de entrada:
+   La página entra a través de la PageCurtain global (root layout): mientras
+   la cortina hace su uncover (clip-path pliegue a la derecha), aquí dentro
+   ya está todo posicionado y los contenidos hacen su stagger de fade-in
+   sincronizado con el reveal.
 
-   t=0      Cuadro warm-light: translateX -100vw→0, 700ms, cubic-bezier(.16,1,.3,1)
+   t=0      Bg fullscreen + cuadro warm-light visibles (sin slide).
    t=560ms  Columna izquierda: heading (SplitType line-mask) + body + email
    t=760ms  Columna derecha:   logo → separador │ → campos → checkbox → enviar
 
@@ -41,23 +43,19 @@ export function ContactHeroAnim({
   children,
 }: ContactHeroAnimProps) {
   const sectionRef    = useRef<HTMLElement>(null)
-  const boxRef        = useRef<HTMLDivElement>(null)
   const headingRef    = useRef<HTMLHeadingElement>(null)
   const bodyRef       = useRef<HTMLDivElement>(null)
   const emailRef      = useRef<HTMLParagraphElement>(null)
   const logoRef       = useRef<HTMLDivElement>(null)
-  const separatorRef  = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef    = useRef<(() => void) | null>(null)
 
   useEffect(() => {
     const section   = sectionRef.current
-    const box       = boxRef.current
     const heading   = headingRef.current
     const bodyEl    = bodyRef.current
     const logoEl    = logoRef.current
-    const separator = separatorRef.current
-    if (!section || !box || !heading || !bodyEl || !logoEl || !separator) return
+    if (!section || !heading || !bodyEl || !logoEl) return
 
     void (async () => {
       const [{ default: gsap }, { default: SplitType }] = await Promise.all([
@@ -70,7 +68,7 @@ export function ContactHeroAnim({
 
       if (reduced) {
         // Mostrar todo inmediatamente sin transición
-        gsap.set([box, logoEl, separator], { clearProps: 'all' })
+        gsap.set([logoEl], { clearProps: 'all' })
         if (emailEl) gsap.set(emailEl, { clearProps: 'all' })
         const fields   = section.querySelectorAll('[data-contact-field]')
         const checkbox = section.querySelector('[data-contact-checkbox]')
@@ -89,13 +87,16 @@ export function ContactHeroAnim({
       const bodyLines = bodySplits.flatMap((s) => s.lines ?? [])
 
       // ── Estado inicial ────────────────────────────────────────────────────
-      // El cuadro ya empieza en translateX(-100vw) via inline style del JSX.
-      // GSAP solo necesita setear el resto.
+      // Box visible al instante (la PageCurtain global ya hace el reveal).
       gsap.set(h1Split.lines ?? [], { y: 60, opacity: 0 })
       gsap.set(bodyLines,            { y: 40, opacity: 0 })
       if (emailEl) gsap.set(emailEl, { opacity: 0 })
       gsap.set(logoEl,               { opacity: 0, y: -12 })
-      gsap.set(separator,            { opacity: 0 })
+
+      // Números de pasos (variant testers) — fuera del set de <p>, requieren
+      // animación propia sincronizada con la entrada del body.
+      const stepNumbers = bodyEl.querySelectorAll('[data-step-number]')
+      gsap.set(stepNumbers, { y: 40, opacity: 0 })
 
       const fields   = section.querySelectorAll('[data-contact-field]')
       const checkbox = section.querySelector('[data-contact-checkbox]')
@@ -105,20 +106,10 @@ export function ContactHeroAnim({
       if (submit)   gsap.set(submit,   { opacity: 0, y: 8 })
 
       // ── Secuencia de animación ─────────────────────────────────────────────
-
-      // t=0: Cuadro warm-light entra desde la izquierda (translateX -100vw → 0)
-      // Pequeño delay para que la cortina del ContactOverlay termine de salir.
-      // La cortina tarda ~350ms; el box empieza a los 200ms → overlap natural.
-      gsap.to(box, {
-        x: 0,
-        duration: 0.7,
-        ease: 'power3.out',  // aproximación de cubic-bezier(.16,1,.3,1)
-        delay: 0.2,
-      })
-
-      // Los delays de contenido son relativos al inicio del box (t=0.2s)
-      // Spec original: heading a 560ms del box → aquí 0.2 + 0.56 = 0.76s
-      const D = 0.2  // delay base del box
+      // El box es visible al montar; el stagger del contenido empieza con un
+      // pequeño buffer para que coincida con el final del uncover de la
+      // PageCurtain (≈ 0.15s después del navigate dentro del timeline global).
+      const D = 0.2
 
       // t=560ms rel. box: Heading (SplitType line-mask)
       gsap.to(h1Split.lines ?? [], {
@@ -138,6 +129,18 @@ export function ContactHeroAnim({
         delay: D + 0.66,
       })
 
+      // Números de pasos — stagger más amplio para que cada número entre
+      // aproximadamente con la primera línea de su bloque.
+      if (stepNumbers.length) {
+        gsap.to(stepNumbers, {
+          y: 0, opacity: 1,
+          duration: 1,
+          ease: 'power4.out',
+          stagger: 0.18,
+          delay: D + 0.72,
+        })
+      }
+
       // t=960ms: Email alternativo
       if (emailEl) {
         gsap.to(emailEl, { opacity: 1, duration: 0.6, delay: D + 0.96 })
@@ -151,9 +154,6 @@ export function ContactHeroAnim({
         ease: 'power2.out',
         delay: D + 0.76,
       })
-
-      // t=840ms rel. box: Separador │
-      gsap.to(separator, { opacity: 1, duration: 0.3, delay: D + 0.84 })
 
       // t=920ms+ rel. box: Campos del formulario (stagger 80ms)
       gsap.to(fields, {
@@ -210,16 +210,12 @@ export function ContactHeroAnim({
         />
       </div>
 
-      {/* Contenedor exterior — centra el cuadro verticalmente */}
-      <div className="relative z-content min-h-full flex items-center py-section lg:pr-grid-margin">
+      {/* Contenedor exterior — centra el cuadro con marco uniforme alrededor */}
+      <div className="relative z-content h-full flex items-center justify-center p-grid-margin">
 
-        {/* Cuadro warm-light — la animación de clip-path empieza aquí */}
-        <div
-          ref={boxRef}
-          className="w-full bg-warm-light"
-          style={{ transform: 'translateX(-100vw)' }}
-        >
-          <div className="section-inner py-section">
+        {/* Cuadro warm-light — visible al instante (la PageCurtain global hace el reveal) */}
+        <div className="w-full max-w-[var(--grid-max-w)] bg-warm-light">
+          <div className="p-[clamp(32px,4vw,64px)]">
             <div className="grid grid-cols-12 gap-grid-gutter">
 
               {/* ── COLUMNA IZQUIERDA ─────────────────────────────────────── */}
@@ -228,13 +224,13 @@ export function ContactHeroAnim({
                   <h1
                     ref={headingRef}
                     id="contact-hero-title"
-                    className="font-serif font-normal text-section text-fg"
+                    className="font-serif font-light text-title-sm text-fg"
                   >
                     {title}
                   </h1>
                   <div
                     ref={bodyRef}
-                    className="mt-10 font-mono text-body-sm text-fg/80 space-y-5"
+                    className="mt-10 flex flex-col gap-6 font-mono text-body-sm text-fg"
                   >
                     {body}
                   </div>
@@ -259,23 +255,13 @@ export function ContactHeroAnim({
               {/* ── COLUMNA DERECHA ───────────────────────────────────────── */}
               <div className="col-span-12 lg:col-start-7 lg:col-span-6 flex flex-col gap-6">
 
-                {/* Logo */}
-                <div ref={logoRef}>
+                {/* Logo — ocupa 3 cols, justificado a la derecha */}
+                <div ref={logoRef} className="flex justify-end">
                   <Logo
                     variant="wordmark"
-                    className="h-[40px] lg:h-[clamp(40px,3.9vw,75px)] w-auto text-fg"
+                    className="h-[32px] lg:h-[clamp(32px,2.4vw,44px)] w-auto text-fg"
                     aria-label="Interactius"
                   />
-                </div>
-
-                {/* Separador │ — visual divider antes del formulario */}
-                <div
-                  ref={separatorRef}
-                  className="border-b border-fg/20 w-full h-[42px] flex items-end pb-1"
-                >
-                  <span className="font-mono text-body-sm text-fg leading-none" aria-hidden>
-                    │
-                  </span>
                 </div>
 
                 {/* Formulario — campos animados via [data-contact-field] etc. */}

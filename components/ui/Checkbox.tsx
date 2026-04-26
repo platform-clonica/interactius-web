@@ -32,6 +32,11 @@ interface CheckboxProps
 
 /* ==========================================================================
    Component
+   --------------------------------------------------------------------------
+   Custom visual: el <input> nativo va sr-only (sigue siendo accesible y
+   recibe focus); un <span> dibuja el cuadrado y un <svg> el tick. Toggle
+   visual basado en `peer-checked:`. Más predecible que estilizar el input
+   con appearance-none entre navegadores.
    ========================================================================== */
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
@@ -58,8 +63,13 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     const describedBy =
       [error && errorId, hint && hintId].filter(Boolean).join(' ') || undefined
 
-    const borderClass = error ? 'border-alert' : 'border-dark'
     const labelColorClass = error ? 'text-alert' : 'text-fg'
+
+    // Borde reposo: gris fino. Cuando el peer (input) está :checked, pasa a fg.
+    // Estado error: borde alert siempre.
+    const boxBorderClass = error
+      ? 'border-alert'
+      : 'border-fg/30 peer-checked:border-fg peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-fg'
 
     return (
       <div className={`w-full ${className ?? ''}`}>
@@ -67,8 +77,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           htmlFor={id}
           className={`flex items-start gap-3 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
-          {/* Wrapper relativo del checkbox visual — contiene input nativo + tick */}
+          {/* Wrapper relativo del checkbox visual */}
           <span className="relative flex size-5 shrink-0 items-center justify-center">
+            {/* Input nativo — sr-only, sigue accesible y recibe focus */}
             <input
               ref={ref}
               id={id}
@@ -77,25 +88,19 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               disabled={disabled}
               aria-invalid={error ? true : undefined}
               aria-describedby={describedBy}
-              className={`
-                peer size-5 m-0 cursor-inherit appearance-none
-                border ${borderClass} bg-transparent
-                transition-colors duration-fast ease-expo
-                focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dark
-              `}
+              className="peer sr-only"
               {...rest}
             />
-            {/* Tick SVG — aparece con opacity+scale cuando el peer está :checked */}
+            {/* Cuadrado visible — borde + transición */}
+            <span
+              aria-hidden="true"
+              className={`pointer-events-none absolute inset-0 border bg-transparent transition-colors duration-fast ease-expo ${boxBorderClass}`}
+            />
+            {/* Tick SVG — fade-in + scale al hacer :checked en el peer */}
             <svg
               viewBox="0 0 20 20"
               aria-hidden="true"
-              className="
-                pointer-events-none absolute size-4
-                text-purple
-                opacity-0 scale-50
-                transition-[opacity,transform] duration-fast ease-expo
-                peer-checked:opacity-100 peer-checked:scale-100
-              "
+              className="pointer-events-none relative size-4 text-fg opacity-0 scale-50 transition-[opacity,transform] duration-fast ease-expo peer-checked:opacity-100 peer-checked:scale-100"
               fill="none"
               stroke="currentColor"
               strokeWidth="2.5"
@@ -112,9 +117,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           >
             {children ?? label}
             {required && !children && (
-              <span aria-hidden="true" className="ml-1 text-fg/60">
+              <sup aria-hidden="true" className="ml-0.5 text-fg/60 text-[0.6em] align-super">
                 *
-              </span>
+              </sup>
             )}
           </span>
         </label>

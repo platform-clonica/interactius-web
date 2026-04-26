@@ -137,9 +137,9 @@ function FormFieldComponent(
     <label htmlFor={id} className={labelBase}>
       {label}
       {required && (
-        <span aria-hidden="true" className="ml-1 text-fg/60">
+        <sup aria-hidden="true" className="ml-0.5 text-fg/60 text-[0.6em] align-super">
           *
-        </span>
+        </sup>
       )}
     </label>
   )

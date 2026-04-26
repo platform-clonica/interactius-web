@@ -1,7 +1,8 @@
 import { getTranslations } from 'next-intl/server'
 
 import { Link } from '@/lib/i18n/routing'
-import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
+
+import { FooterNewsletterCTA } from './FooterNewsletterCTA'
 
 export async function Footer() {
   const t = await getTranslations('footer')
@@ -32,14 +33,7 @@ export async function Footer() {
             </p>
 
             <div className="mt-8">
-              <ButtonPrimary
-                as={Link}
-                href="/newsletter"
-                variant="outline"
-              >
-                {t('newsletter.cta')}{' '}
-                <span aria-hidden="true">↗</span>
-              </ButtonPrimary>
+              <FooterNewsletterCTA label={t('newsletter.cta')} />
             </div>
           </section>
 

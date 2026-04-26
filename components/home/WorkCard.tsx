@@ -1,7 +1,11 @@
+'use client'
+
 import Image from 'next/image'
+import { useEffect, useRef } from 'react'
 
 import { Link } from '@/lib/i18n/routing'
 import type { RouteId } from '@/lib/i18n/routing'
+import { getReducedMotion } from '@/components/motion/useReducedMotion'
 
 /* ==========================================================================
    Types
@@ -48,12 +52,51 @@ const ASPECT_CLASS: Record<WorkAspect, string> = {
 }
 
 export function WorkCard({ data, responsive = 'desktop' }: WorkCardProps) {
+  const cardRef = useRef<HTMLElement>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cleanupRef = useRef<(() => void) | null>(null)
+
+  // Reveal lateral canónico al entrar en viewport (cada thumb por separado).
+  useEffect(() => {
+    const el = cardRef.current
+    if (!el) return
+
+    void (async () => {
+      const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
+        import('gsap'),
+        import('gsap/ScrollTrigger'),
+      ])
+      gsap.registerPlugin(ScrollTrigger)
+
+      const reduced = getReducedMotion()
+      if (reduced) return
+
+      gsap.set(el, { clipPath: 'inset(0 100% 0 0)' })
+      const st = ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        once: true,
+        onEnter: () => {
+          gsap.to(el, {
+            clipPath: 'inset(0 0% 0 0)',
+            duration: 0.9,
+            ease: 'cubic-bezier(.16,1,.3,1)',
+          })
+        },
+      })
+
+      cleanupRef.current = () => st.kill()
+    })()
+
+    return () => cleanupRef.current?.()
+  }, [])
+
   const Wrapper = (data.href ? Link : 'article') as React.ElementType
   const wrapperProps: Record<string, unknown> = data.href
     ? { href: data.href }
     : {}
 
-  const gridStyle: React.CSSProperties | undefined =
+  const gridStyle: React.CSSProperties =
     responsive === 'desktop'
       ? {
           gridColumnStart: data.gridStart,
@@ -62,11 +105,12 @@ export function WorkCard({ data, responsive = 'desktop' }: WorkCardProps) {
               ? data.gridStart + data.gridSpan
               : undefined,
           marginTop: data.marginTop ? `${data.marginTop}px` : undefined,
+          clipPath: 'inset(0 100% 0 0)',
         }
-      : undefined
+      : { clipPath: 'inset(0 100% 0 0)' }
 
   return (
-    <article style={gridStyle}>
+    <article ref={cardRef} style={gridStyle}>
       <Wrapper
         {...wrapperProps}
         className={`
@@ -86,20 +130,15 @@ export function WorkCard({ data, responsive = 'desktop' }: WorkCardProps) {
           />
         )}
 
-        <span
-          className="absolute left-0 top-0 inline-flex items-center
-                     bg-surface px-3 py-[6px]
-                     font-mono text-card-sm text-fg"
-        >
-          {data.client}
-        </span>
-
         <div
           className="absolute bottom-0 left-0
                      max-w-[392px] w-full
                      bg-surface p-5 sm:p-6"
         >
-          <h3 className="font-serif font-light text-fg text-subtitle leading-none">
+          <span className="block font-mono text-card-sm text-fg/60">
+            {data.client}
+          </span>
+          <h3 className="mt-2 font-serif font-light text-fg text-subtitle leading-none">
             {data.title}
           </h3>
         </div>

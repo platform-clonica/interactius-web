@@ -9,11 +9,15 @@
   },
   "newsletter": {
     "title": "Suscríbete a nuestra newsletter",
-    "copy": "A menudo, el problema no es la falta de respuestas, sino no saber qué preguntas merece la pena hacerse. Cada mes enviamos nuestra newsletter con aprendizajes que unen la reflexión con la acción, sin ruido y con intención."
+    "copy1": "Cada mes compartimos ideas, aprendizajes y casos reales para entender mejor lo que está pasando. Sin ruido. Con intención.",
+    "copy2": "Suscríbete."
   },
   "testers": {
-    "title": "Tu voz importa y queremos escucharla",
-    "copy": "Un espacio para personas que quieren participar y aportar su experiencia en la mejora de productos y servicios. No buscamos perfiles ideales. Buscamos realidades. Aquí tu voz se convierte en parte del proceso: entrevistas, tests y dinámicas donde lo importante no es opinar, sino ayudar a entender mejor lo que está pasando. Porque las mejores decisiones no se toman sin escuchar a las personas."
+    "title": "Tu experiencia nos inspira a diseñar mejor",
+    "intro": "Participa en entrevistas, tests o encuestas desde casa y recibe una recompensa.",
+    "step1": "<strong>Regístrate aquí.</strong> Déjanos tus datos básicos y tus intereses para conocerte mejor.",
+    "step2": "<strong>Participa desde donde quieras.</strong> La mayoría de sesiones son online, por videollamada. Puedes conectarte desde el móvil o el ordenador.",
+    "step3": "<strong>¡Te lo agradecemos como se merece!</strong> Tu tiempo vale dinero. Por eso recibirás una recompensa por cada participación."
   },
   "avisoLegal": {
     "title": "Aviso legal",

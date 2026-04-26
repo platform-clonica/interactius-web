@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 
 import { Link, useRouter, type RouteId } from '@/lib/i18n/routing'
 import { useMenuStore, resetSavedScroll } from '@/lib/store/menu'
+import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 // gsap se importa lazy dentro del useEffect para no engrosar el bundle del layout.
@@ -23,6 +24,7 @@ const SECONDARY_ITEMS = [
   { route: '/miradas', labelKey: 'nav.miradas' },
   { route: '/identidad', labelKey: 'nav.identidad' },
   { route: '/contacto', labelKey: 'nav.contacto' },
+  { route: '/testers', labelKey: 'nav.testers' },
 ] as const
 
 /**
@@ -52,10 +54,10 @@ export function MenuOverlay() {
   const t = useTranslations()
   const router = useRouter()
   const isOpen = useMenuStore((s) => s.isOpen)
-  const close = useMenuStore((s) => s.close)
   const beginCurtainStore = useMenuStore((s) => s.beginCurtain)
   const endCurtainStore = useMenuStore((s) => s.endCurtain)
   const curtainCloseSignal = useMenuStore((s) => s.curtainCloseSignal)
+  const beginPageCurtain = usePageCurtainStore((s) => s.beginPageCurtain)
 
   const [isVisible, setIsVisible] = useState(false)
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -257,19 +259,23 @@ export function MenuOverlay() {
   }, [])
 
   // Click handler para Links del menú. Cmd/Ctrl/Shift/Alt click → dejar default
-  // (abrir en nueva pestaña, etc). Rutas del grupo (contact) → Link nativo + close()
-  // porque su layout propio (ContactOverlay) gestiona la transición.
+  // (abrir en nueva pestaña, etc).
+  // · Rutas del grupo (contact): disparamos la PageCurtain global (root layout).
+  //   El menú permanece visible durante el cover (oculto detrás del panel z=500);
+  //   PageCurtain ejecuta `useMenuStore.close()` justo en el momento del
+  //   navigate (t=0.7s, cover full), evitando el salto del backdrop/scroll.
+  // · Resto de rutas: cortina propia del menú (fade content + cover + uncover).
   const handleLinkClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, route: string) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+      e.preventDefault()
       if (CONTACT_ROUTES.has(route)) {
-        close()
+        beginPageCurtain(route)
         return
       }
-      e.preventDefault()
       beginCurtain(() => router.push(route as Exclude<RouteId, '/miradas/[cat]/[slug]'>))
     },
-    [beginCurtain, close, router],
+    [beginCurtain, beginPageCurtain, router],
   )
 
   if (!isVisible) return null

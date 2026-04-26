@@ -20,10 +20,11 @@ import { z } from 'zod'
    ========================================================================== */
 
 export const contactSchema = z.object({
-  name: z.string().min(2),
-  company: z.string().min(1),
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
   email: z.string().email(),
-  message: z.string().min(10),
+  company: z.string().optional(),
+  message: z.string().optional(),
   privacy: z.literal(true),
 })
 

@@ -4,6 +4,9 @@
   },
   "intro": {
     "ariaLabel": "Introducción",
+    "solo": "Ayudamos a las organizaciones en los momentos de <strong>cambio</strong> a decidir con criterio, convertir la estrategia en soluciones para activar cambios que perduran.",
+    "revealTitle": "Diseñamos para la transición.",
+    "revealBody": "Permitiendo ver lo que aún no es evidente. Evitando respuestas rápidas. Abriendo espacio para definir algo que realmente tenga sentido en lo que viene.",
     "p1": "Ese lugar no tiene nombre en ningún catálogo de servicios.",
     "p2": "Llevamos años construyendo ahí.",
     "p3": "Combinamos diseño estratégico, criterio humano y tecnología para ayudar a las organizaciones a tomar mejores decisiones.",
@@ -11,24 +14,25 @@
     "p4": "Convertimos la estrategia en productos y servicios validados para activar cambios culturales sostenibles."
   },
   "services": {
-    "title": "Lo que hacemos",
+    "title": "Servicios",
+    "lead": "Combinamos diseño estratégico, criterio humano y tecnología.",
     "pillars": [
       {
         "number": "1",
         "name": "Pensamiento estratégico",
-        "description": "Diseñamos la arquitectura de decisiones que orientan a las organizaciones en contextos de incertidumbre.",
+        "description": "Aportamos claridad para identificar oportunidades y construir propuestas de valor duraderas.",
         "services": [
           "Diseño estratégico",
+          "Prospectiva estratégica",
           "Estrategias de marca",
-          "Estrategias de innovación",
-          "Prospectiva estratégica"
+          "Estrategias de innovación"
         ],
         "href": "/pensamiento-estrategico"
       },
       {
         "number": "2",
         "name": "Diseño de experiencias",
-        "description": "Convertimos la estrategia en productos y servicios validados, reduciendo riesgo y acelerando impacto.",
+        "description": "Activamos soluciones coherentes y validadas mediante metodología propia e inteligencia artificial aplicada con criterio humano.",
         "services": [
           "Diseño de productos y servicios",
           "Validación de producto",
@@ -40,7 +44,7 @@
       {
         "number": "3",
         "name": "Transformación cultural",
-        "description": "Acompañamos la evolución organizativa alineando cultura, capacidades y tecnología para transformar la manera en que la organización decide y actúa.",
+        "description": "Impulsamos cambios sostenidos integrando nuevas mentalidades y IA para desarrollar equipos capaces de liderar el cambio.",
         "services": [
           "Cultura organizacional",
           "Inteligencia Artificial Aplicada",
@@ -53,6 +57,6 @@
   "work": {
     "ariaLabel": "Trabajos y clientes",
     "heading": "Nuestros clientes",
-    "description": "Trabajamos con organizaciones que operan en contextos complejos y entienden que avanzar no es cuestión de hacer más, sino de decidir mejor."
+    "description": "Trabajamos con organizaciones que operan en contextos complejos y entienden que avanzar no es cuestión de hacer más, sino de <strong>decidir mejor</strong>."
   }
 }

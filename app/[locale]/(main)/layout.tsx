@@ -1,7 +1,6 @@
 import { Sidebar } from '@/components/layout/Sidebar'
 import { Header } from '@/components/layout/Header'
 import { MenuOverlay } from '@/components/layout/MenuOverlay'
-import { PageCurtain } from '@/components/layout/PageCurtain'
 import { Footer } from '@/components/layout/Footer'
 import { FooterObserver } from '@/components/layout/FooterObserver'
 import { PageTransition } from '@/components/layout/PageTransition'
@@ -24,7 +23,6 @@ export default function MainLayout({
       <Sidebar />
       <Header />
       <MenuOverlay />
-      <PageCurtain />
 
       <PageTransition>
         <main id="main-content" tabIndex={-1}>

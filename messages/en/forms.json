@@ -32,6 +32,7 @@
   },
   "submit": "Send",
   "submitting": "Sending…",
+  "requiredHint": "* Required fields",
   "success": {
     "title": "Message sent.",
     "body": "Thank you for reaching out. We'll get back to you shortly."

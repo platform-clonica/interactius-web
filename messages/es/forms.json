@@ -32,6 +32,7 @@
   },
   "submit": "Enviar",
   "submitting": "Enviando…",
+  "requiredHint": "* Campos obligatorios",
   "success": {
     "title": "Mensaje enviado.",
     "body": "Gracias por escribirnos. Te responderemos en breve."

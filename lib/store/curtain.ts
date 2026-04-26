@@ -21,14 +21,23 @@ import { create } from 'zustand'
 
 interface PageCurtainState {
   isActive: boolean
+  /** Destino del push() — `null` indica back navigation (router.back()). */
   targetHref: string | null
+  /** Distinguir push vs back cuando targetHref es null (siempre que back). */
+  mode: 'push' | 'back'
   beginPageCurtain: (targetHref: string) => void
+  beginPageCurtainBack: () => void
   endPageCurtain: () => void
 }
 
 export const usePageCurtainStore = create<PageCurtainState>((set) => ({
   isActive: false,
   targetHref: null,
-  beginPageCurtain: (targetHref) => set({ isActive: true, targetHref }),
-  endPageCurtain: () => set({ isActive: false, targetHref: null }),
+  mode: 'push',
+  beginPageCurtain: (targetHref) =>
+    set({ isActive: true, targetHref, mode: 'push' }),
+  beginPageCurtainBack: () =>
+    set({ isActive: true, targetHref: null, mode: 'back' }),
+  endPageCurtain: () =>
+    set({ isActive: false, targetHref: null, mode: 'push' }),
 }))

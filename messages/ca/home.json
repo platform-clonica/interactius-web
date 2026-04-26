@@ -4,6 +4,9 @@
   },
   "intro": {
     "ariaLabel": "Introducci\u00f3",
+    "solo": "Ajudem les organitzacions en els moments de <strong>canvi</strong> a decidir amb criteri, convertir l\u2019estrat\u00e8gia en solucions per activar canvis que perduren.",
+    "revealTitle": "Dissenyem per a la transici\u00f3.",
+    "revealBody": "Permetent veure el que encara no \u00e9s evident. Evitant respostes r\u00e0pides. Obrint espai per definir alguna cosa que realment tingui sentit en el que ve.",
     "p1": "Aquest lloc no t\u00e9 nom en cap cat\u00e0leg de serveis.",
     "p2": "Portem anys construint aqu\u00ed.",
     "p3": "Combinem disseny estrat\u00e8gic, criteri hum\u00e0 i tecnologia per ajudar les organitzacions a prendre millors decisions.",
@@ -11,24 +14,25 @@
     "p4": "Convertim l\u2019estrat\u00e8gia en productes i serveis validats per activar canvis culturals sostenibles."
   },
   "services": {
-    "title": "El que fem",
+    "title": "Serveis",
+    "lead": "Combinem disseny estrat\u00e8gic, criteri hum\u00e0 i tecnologia.",
     "pillars": [
       {
         "number": "1",
         "name": "Pensament estrat\u00e8gic",
-        "description": "Dissenyem l\u2019arquitectura de decisions que orienten les organitzacions en contextos d\u2019incertesa.",
+        "description": "Aportem claredat per identificar oportunitats i construir propostes de valor duradores.",
         "services": [
           "Disseny estrat\u00e8gic",
+          "Prospectiva estrat\u00e8gica",
           "Estrat\u00e8gies de marca",
-          "Estrat\u00e8gies d\u2019innovaci\u00f3",
-          "Prospectiva estrat\u00e8gica"
+          "Estrat\u00e8gies d\u2019innovaci\u00f3"
         ],
         "href": "/pensamiento-estrategico"
       },
       {
         "number": "2",
         "name": "Disseny d\u2019experi\u00e8ncies",
-        "description": "Convertim l\u2019estrat\u00e8gia en productes i serveis validats, reduint el risc i accelerant l\u2019impacte.",
+        "description": "Activem solucions coherents i validades mitjan\u00e7ant metodologia pr\u00f2pia i intel\u00b7lig\u00e8ncia artificial aplicada amb criteri hum\u00e0.",
         "services": [
           "Disseny de productes i serveis",
           "Validaci\u00f3 de producte",
@@ -40,7 +44,7 @@
       {
         "number": "3",
         "name": "Transformaci\u00f3 cultural",
-        "description": "Acompanyem l\u2019evoluci\u00f3 organitzativa alineant cultura, capacitats i tecnologia per transformar la manera en qu\u00e8 l\u2019organitzaci\u00f3 decideix i actua.",
+        "description": "Impulsem canvis sostinguts integrant noves mentalitats i IA per desenvolupar equips capa\u00e7os de liderar el canvi.",
         "services": [
           "Cultura organitzacional",
           "Intel\u00b7lig\u00e8ncia Artificial Aplicada",
@@ -53,6 +57,6 @@
   "work": {
     "ariaLabel": "Treballs i clients",
     "heading": "Els nostres clients",
-    "description": "Treballem amb organitzacions que operen en contextos complexos i entenen que avan\u00e7ar no \u00e9s qu\u00fcesti\u00f3 de fer m\u00e9s, sin\u00f3 de decidir millor."
+    "description": "Treballem amb organitzacions que operen en contextos complexos i entenen que avan\u00e7ar no \u00e9s qu\u00fcesti\u00f3 de fer m\u00e9s, sin\u00f3 de <strong>decidir millor</strong>."
   }
 }

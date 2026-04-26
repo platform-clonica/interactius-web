@@ -1,7 +1,7 @@
-import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 
 import { WorkCard, type WorkCardData } from './WorkCard'
+import { PortfolioOpeningImage } from './PortfolioOpeningImage'
 
 const WORK_DATA: WorkCardData[] = [
   {
@@ -87,19 +87,11 @@ export async function WorkGrid() {
       aria-label={t('work.ariaLabel')}
       className="relative z-content w-full"
     >
-      {/* Imagen apertura */}
-      <div
-        className="relative mt-10 lg:mt-16 overflow-hidden"
-        style={{ height: 'clamp(240px, 29vw, 550px)', maxWidth: '86%' }}
-      >
-        <Image
-          src="/home/portfolio-opening.jpg"
-          alt=""
-          fill
-          sizes="86vw"
-          className="object-cover object-center"
-          aria-hidden
-        />
+      {/* Imagen de apertura — reveal lateral, cols 1-11 del grid 12 */}
+      <div className="section-inner mt-10 lg:mt-16">
+        <div className="grid grid-cols-12 gap-grid-gutter">
+          <PortfolioOpeningImage />
+        </div>
       </div>
 
       <div className="section-inner py-section">
@@ -108,12 +100,14 @@ export async function WorkGrid() {
           <h2
             id="work-heading"
             className="font-serif text-section font-normal text-fg
-                       lg:col-span-5"
+                       lg:col-start-2 lg:col-span-5"
           >
             {t('work.heading')}
           </h2>
           <p className="font-mono text-body-sm text-fg/80 lg:col-span-8 lg:col-start-4">
-            {t('work.description')}
+            {t.rich('work.description', {
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
         </header>
 

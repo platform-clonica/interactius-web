@@ -73,7 +73,11 @@ const PATHNAMES = {
     ca: '/newsletter',
     en: '/newsletter',
   },
-  // '/testers':    { es: '/testers',    ca: '/testers',    en: '/testers' },
+  '/testers': {
+    es: '/testers',
+    ca: '/testers',
+    en: '/testers',
+  },
 
   // Miradas
   '/miradas': {

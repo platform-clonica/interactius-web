@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { HeroScroll } from '@/components/home/HeroScroll'
-import { IntroScroll } from '@/components/home/IntroScroll'
+import { HomeIntroText } from '@/components/home/HomeIntroText'
+import { HomeIntroReveal } from '@/components/home/HomeIntroReveal'
 import { ServicesRows } from '@/components/home/ServicesRows'
 import { WorkGrid } from '@/components/home/WorkGrid'
 import { ClientsMarquee } from '@/components/home/ClientsMarquee'
@@ -65,7 +66,9 @@ export default async function HomePage({ params }: PageProps) {
         </div>
       </HeroScroll>
 
-      <IntroScroll />
+      <HomeIntroText />
+
+      <HomeIntroReveal />
 
       <ServicesRows />
 
