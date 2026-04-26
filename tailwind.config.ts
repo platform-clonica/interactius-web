@@ -80,7 +80,7 @@ const config: Config = {
       'caption': ['10px', { lineHeight: '1.5', letterSpacing: '0' }],
       'micro': ['12px', { lineHeight: '1.5', letterSpacing: '0' }],
       'card-sm': ['14px', { lineHeight: '1.5', letterSpacing: '0' }],
-      'label': ['16px', { lineHeight: '1.5', letterSpacing: '0' }],
+      'label': ['14px', { lineHeight: '1.5', letterSpacing: '0' }],
       // Fluidos — clamp(mín@480px, slope·100vw + intercept, máx@1440px)
       // Fórmula Utopia: slope = (max−min)/(1440−480), intercept = min − slope·480
       // Todos los valores reducidos −2px respecto a la escala original.
@@ -88,11 +88,11 @@ const config: Config = {
       'body': ['clamp(16px, calc(0.42vw + 16px), 22px)', { lineHeight: '1.5', letterSpacing: '0' }],
       'title-mono': ['clamp(20px, calc(0.63vw + 17px), 26px)', { lineHeight: '1.5', letterSpacing: '0' }],
       subtitle: ['clamp(24px, calc(0.83vw + 20px), 32px)', { lineHeight: '1.0', letterSpacing: '0' }],
-      'title-sm': ['clamp(26px, calc(0.83vw + 22px), 34px)', { lineHeight: '1.2', letterSpacing: '0' }],
+      'title-sm': ['clamp(26px, calc(0.83vw + 22px), 34px)', { lineHeight: '1.1', letterSpacing: '0' }],
       section: ['clamp(30px, calc(1.04vw + 25px), 40px)', { lineHeight: '1.2', letterSpacing: '-0.02em' }],
       title: ['clamp(34px, calc(1.25vw + 28px), 46px)', { lineHeight: '1.2', letterSpacing: '-0.02em' }],
       display: ['clamp(46px, calc(3.33vw + 30px), 78px)', { lineHeight: '1.0', letterSpacing: '-0.02em' }],
-      super: ['clamp(78px, calc(14.58vw + 8px), 218px)', { lineHeight: '0.70', letterSpacing: '-0.04em' }],
+      super: ['clamp(80px, 15vw, 240px)', { lineHeight: '1.0', letterSpacing: '-0.04em' }],
     },
 
     // ----- Spacing -----

@@ -6,11 +6,11 @@
   "pensamiento": {
     "hero": {
       "title": "Pensamiento estratégico",
-      "lead": "Somos mentes curiosas, analíticas y críticas. Habitamos el espacio que está por definir. Integramos criterio y visión de futuro para decidir en entornos complejos."
+      "lead": "<strong>Somos mentes curiosas, analíticas y críticas.</strong><p>Habitamos el espacio que está por definir. Integramos criterio y visión de futuro para decidir en entornos complejos.</p>"
     },
     "intro": {
-      "statement": "Aportamos / claridad / para identificar oportunidades relevantes y construir propuestas de valor que perduren en el tiempo.",
-      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo"
+      "statement": "Aportamos <strong>claridad</strong> para identificar oportunidades relevantes y construir propuestas de valor que perduren en el tiempo.",
+      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo  —"
     },
     "services": [
       {
@@ -59,7 +59,7 @@
       {
         "title": "Diseño de experiencias",
         "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       },
       {
         "title": "Transformación cultural",
@@ -68,14 +68,14 @@
       }
     ]
   },
-  "activacion": {
+  "experiencias": {
     "hero": {
       "title": "Diseño de experiencias",
-      "lead": "Investigamos, diseñamos y validamos. Operamos el terreno donde las ideas se vuelven tangibles. Aportamos evidencia y rigor metodológico para escalar soluciones con criterio."
+      "lead": "<strong>Investigamos, diseñamos y validamos.</strong><p>Operamos el terreno donde las ideas se vuelven tangibles. Aportamos evidencia y rigor metodológico para escalar soluciones con criterio.</p>"
     },
     "intro": {
-      "statement": "Activamos / soluciones / auténticas y coherentes a partir de metodologías propias y herramientas de inteligencia artificial aplicada con criterio humano.",
-      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh"
+      "statement": "Activamos <strong>soluciones</strong> auténticas y coherentes a partir de metodologías propias y herramientas de inteligencia artificial aplicada con criterio humano.",
+      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh  —"
     },
     "services": [
       {
@@ -135,11 +135,11 @@
   "transformacion": {
     "hero": {
       "title": "Transformación cultural",
-      "lead": "Facilitamos, impulsamos y divulgamos. Habitamos el cambio desde dentro para ayudar a las organizaciones a pensar, trabajar y relacionarse con el futuro. El cambio más difícil no es tecnológico ni estructural, es cultural."
+      "lead": "<strong>Facilitamos, impulsamos y divulgamos.</strong><p>Habitamos el cambio desde dentro para ayudar a las organizaciones a pensar, trabajar y relacionarse con el futuro. El cambio más difícil no es tecnológico ni estructural, es cultural.</p>"
     },
     "intro": {
-      "statement": "Impulsamos cambios reales y sostenidos integrando nuevas mentalidades y herramientas de inteligencia artificial que / amplifican / el talento. Desarrollamos la capacidad interna necesaria para que los equipos avancen con autonomía.",
-      "clients": "Novartis — Adeslas — Nestlé — MWC"
+      "statement": "Impulsamos cambios reales y sostenidos integrando nuevas mentalidades y herramientas de inteligencia artificial que <strong>amplifican</strong> el talento. Desarrollamos la capacidad interna necesaria para que los equipos avancen con autonomía.",
+      "clients": "Novartis — Adeslas — Nestlé — MWC  —"
     },
     "services": [
       {
@@ -184,7 +184,7 @@
       {
         "title": "Diseño de experiencias",
         "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       }
     ]
   }

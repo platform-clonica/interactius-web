@@ -6,11 +6,11 @@
   "pensamiento": {
     "hero": {
       "title": "Pensament estratègic",
-      "lead": "Som ments curioses, analítiques i crítiques. Habitem l'espai que està per definir. Integrem criteri i visió de futur per decidir en entorns complexos."
+      "lead": "<strong>Som ments curioses, analítiques i crítiques.</strong><p>Habitem l'espai que està per definir. Integrem criteri i visió de futur per decidir en entorns complexos.</p>"
     },
     "intro": {
-      "statement": "Aportem / claredat / per identificar oportunitats rellevants i construir propostes de valor que perdurin en el temps.",
-      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo"
+      "statement": "Aportem <strong>claredat</strong> per identificar oportunitats rellevants i construir propostes de valor que perdurin en el temps.",
+      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo  —"
     },
     "services": [
       {
@@ -59,7 +59,7 @@
       {
         "title": "Disseny d'experiències",
         "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       },
       {
         "title": "Transformació cultural",
@@ -68,14 +68,14 @@
       }
     ]
   },
-  "activacion": {
+  "experiencias": {
     "hero": {
       "title": "Disseny d'experiències",
-      "lead": "Investiguem, dissenyem i validem. Operem el terreny on les idees es fan tangibles. Aportem evidència i rigor metodològic per escalar solucions amb criteri."
+      "lead": "<strong>Investiguem, dissenyem i validem.</strong><p>Operem el terreny on les idees es fan tangibles. Aportem evidència i rigor metodològic per escalar solucions amb criteri.</p>"
     },
     "intro": {
-      "statement": "Activem / solucions / autèntiques i coherents a partir de metodologies pròpies i eines d'intel·ligència artificial aplicada amb criteri humà.",
-      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh"
+      "statement": "Activem <strong>solucions</strong> autèntiques i coherents a partir de metodologies pròpies i eines d'intel·ligència artificial aplicada amb criteri humà.",
+      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh  —"
     },
     "services": [
       {
@@ -135,11 +135,11 @@
   "transformacion": {
     "hero": {
       "title": "Transformació cultural",
-      "lead": "Facilitem, impulsem i divulguem. Habitem el canvi des de dins per ajudar les organitzacions a pensar, treballar i relacionar-se amb el futur. El canvi més difícil no és tecnològic ni estructural, és cultural."
+      "lead": "<strong>Facilitem, impulsem i divulguem.</strong><p>Habitem el canvi des de dins per ajudar les organitzacions a pensar, treballar i relacionar-se amb el futur. El canvi més difícil no és tecnològic ni estructural, és cultural.</p>"
     },
     "intro": {
-      "statement": "Impulsem canvis reals i sostinguts integrant noves mentalitats i eines d'intel·ligència artificial que / amplifiquen / el talent. Desenvolupem la capacitat interna necessària perquè els equips avancin amb autonomia.",
-      "clients": "Novartis — Adeslas — Nestlé — MWC"
+      "statement": "Impulsem canvis reals i sostinguts integrant noves mentalitats i eines d'intel·ligència artificial que <strong>amplifiquen</strong> el talent. Desenvolupem la capacitat interna necessària perquè els equips avancin amb autonomia.",
+      "clients": "Novartis — Adeslas — Nestlé — MWC  —"
     },
     "services": [
       {
@@ -184,7 +184,7 @@
       {
         "title": "Disseny d'experiències",
         "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       }
     ]
   }

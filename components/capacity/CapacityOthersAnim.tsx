@@ -1,10 +1,11 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useCallback, useRef, useEffect } from 'react'
 
 import { Link } from '@/lib/i18n/routing'
 import type { RouteId } from '@/lib/i18n/routing'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { usePageCurtainStore } from '@/lib/store/curtain'
 
 /* ==========================================================================
    CapacityOthersAnim — tarjetas con clip-path lateral (sección 4/4)
@@ -32,6 +33,19 @@ export function CapacityOthersAnim({
   items,
   sectionLabel,
 }: CapacityOthersAnimProps) {
+  const beginPageCurtain = usePageCurtainStore((s) => s.beginPageCurtain)
+
+  // Click handler — intercepta navegación interna y dispara la cortina global.
+  // Cmd/Ctrl/Shift/Alt clicks o middle-click se dejan pasar (abrir en pestaña).
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+      e.preventDefault()
+      beginPageCurtain(href)
+    },
+    [beginPageCurtain],
+  )
+
   const containerRef = useRef<HTMLDivElement>(null)
   const card0Ref = useRef<HTMLAnchorElement>(null)
   const card1Ref = useRef<HTMLAnchorElement>(null)
@@ -110,7 +124,7 @@ export function CapacityOthersAnim({
           gsap.to(card0, {
             clipPath: 'inset(0 0% 0 0)',
             duration: 0.8,
-            ease: 'cubic-bezier(.16,1,.3,1)',
+            ease: 'power4.inOut',
             onComplete: () => revealCardText(card0),
           })
 
@@ -118,7 +132,7 @@ export function CapacityOthersAnim({
           gsap.to(card1, {
             clipPath: 'inset(0 0% 0 0)',
             duration: 0.8,
-            ease: 'cubic-bezier(.16,1,.3,1)',
+            ease: 'power4.inOut',
             delay: 0.15,
             onComplete: () => revealCardText(card1),
           })
@@ -137,7 +151,7 @@ export function CapacityOthersAnim({
 
   return (
     <section
-      className="w-full border-t border-muted"
+      className="w-full bg-pure-white border-t border-muted"
       aria-label={sectionLabel}
     >
       <div className="section-inner">
@@ -150,6 +164,7 @@ export function CapacityOthersAnim({
               key={item.href}
               ref={i === 0 ? card0Ref : card1Ref}
               href={item.href as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+              onClick={(e) => handleClick(e, item.href)}
               className={`
                 col-span-12 lg:col-span-6
                 flex flex-col gap-4 py-12 lg:py-16
@@ -167,7 +182,7 @@ export function CapacityOthersAnim({
               </span>
               <span
                 data-other-title
-                className="font-serif font-light text-fg text-title"
+                className="font-serif font-light text-fg text-section"
               >
                 {item.title}
               </span>

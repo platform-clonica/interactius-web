@@ -16,7 +16,7 @@ import { getAllSlugs } from '@/lib/content/miradas'
 const STATIC_ROUTES: RouteId[] = [
   '/',
   '/pensamiento-estrategico',
-  '/activacion-de-soluciones',
+  '/diseno-de-experiencias',
   '/transformacion-cultural',
   '/identidad',
   '/contacto',
@@ -27,7 +27,7 @@ const STATIC_ROUTES: RouteId[] = [
 const ROUTE_PRIORITY: Partial<Record<RouteId, number>> = {
   '/': 1.0,
   '/pensamiento-estrategico': 0.8,
-  '/activacion-de-soluciones': 0.8,
+  '/diseno-de-experiencias': 0.8,
   '/transformacion-cultural': 0.8,
   '/identidad': 0.8,
   '/contacto': 0.7,

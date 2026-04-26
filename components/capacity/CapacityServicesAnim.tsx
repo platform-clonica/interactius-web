@@ -34,11 +34,13 @@ export function CapacityServicesAnim({
 }: CapacityServicesAnimProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const sectionRef = useRef<HTMLElement>(null)
+  // Cada wrapper es min-h-screen (un subservicio = una pantalla). Observamos
+  // el wrapper; title/body/tags son descendientes vía querySelector.
   const blockRefs  = useRef<(HTMLDivElement | null)[]>([])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
 
-  // Callback ref para capturar divs de cada bloque
+  // Callback ref para capturar el wrapper de cada servicio
   const setBlockRef = useCallback(
     (el: HTMLDivElement | null, i: number) => {
       blockRefs.current[i] = el
@@ -61,8 +63,9 @@ export function CapacityServicesAnim({
       const splits: InstanceType<typeof SplitType>[] = []
 
       if (reduced) {
-        blocks.forEach((block) => {
-          gsap.set(block.querySelectorAll('[data-service-title],[data-service-body],[data-service-tags]'), { clearProps: 'all' })
+        blocks.forEach((wrapper) => {
+          const elements = wrapper.querySelectorAll('[data-service-title],[data-service-body],[data-service-tags]')
+          gsap.set(elements, { clearProps: 'all' })
         })
         return
       }
@@ -70,10 +73,10 @@ export function CapacityServicesAnim({
       // ── Por cada bloque: estado inicial + IntersectionObserver ────────────
       const observers: IntersectionObserver[] = []
 
-      blocks.forEach((block, i) => {
-        const titleEl = block.querySelector<HTMLElement>('[data-service-title]')
-        const bodyEl  = block.querySelector<HTMLElement>('[data-service-body]')
-        const tagsEl  = block.querySelector<HTMLElement>('[data-service-tags]')
+      blocks.forEach((wrapper, i) => {
+        const titleEl = wrapper.querySelector<HTMLElement>('[data-service-title]')
+        const bodyEl = wrapper.querySelector<HTMLElement>('[data-service-body]')
+        const tagsEl = wrapper.querySelector<HTMLElement>('[data-service-tags]')
 
         // SplitType
         const titleSplit = titleEl ? new SplitType(titleEl, { types: 'lines' }) : null
@@ -119,7 +122,7 @@ export function CapacityServicesAnim({
           ([entry]) => { if (entry?.isIntersecting) reveal() },
           { threshold: 0.15 },
         )
-        revealObserver.observe(block)
+        revealObserver.observe(wrapper)
         observers.push(revealObserver)
 
         // IntersectionObserver para activeIndex (centro del viewport)
@@ -127,7 +130,7 @@ export function CapacityServicesAnim({
           ([entry]) => { if (entry?.isIntersecting) setActiveIndex(i) },
           { threshold: 0, rootMargin: '-40% 0px -40% 0px' },
         )
-        activeObserver.observe(block)
+        activeObserver.observe(wrapper)
         observers.push(activeObserver)
       })
 
@@ -143,68 +146,84 @@ export function CapacityServicesAnim({
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-surface"
+      className="w-full bg-warm-light relative"
       aria-label={sectionLabel}
     >
-      <div className="section-inner py-section">
-        <div className="grid grid-cols-12 gap-grid-gutter">
-
-          {/* ── Gráfico sticky — solo desktop ─────────────────────────────── */}
-          <div
-            className="hidden lg:flex lg:col-span-4 items-center justify-center"
-            aria-hidden="true"
-          >
-            <div className="sticky top-0 h-screen flex items-center justify-center w-full py-section">
-              <CapacityGraph
-                services={services}
-                activeIndex={activeIndex}
-                capacityLabel={capacityLabel}
-              />
+      {/* ── Layer del graph — absolute fill de la sección. Sticky interno se
+            ancla al viewport y permanece visible mientras los subservicios
+            scrollean por la derecha. Decoupled del grid de subservicios para
+            evitar problemas de row-span del CSS Grid. Cols 1-4 vía un grid
+            interno que replica el sistema canónico (mismo section-inner +
+            grid-cols-12 + gap-grid-gutter). ───────────────────────────────── */}
+      <div className="hidden lg:block absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="section-inner h-full">
+          <div className="grid grid-cols-12 gap-grid-gutter h-full">
+            <div className="col-start-1 col-span-4 h-full">
+              <div className="sticky top-0 h-screen flex items-center justify-center pointer-events-auto">
+                <CapacityGraph
+                  services={services}
+                  activeIndex={activeIndex}
+                  capacityLabel={capacityLabel}
+                />
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* ── Bloques de servicio ───────────────────────────────────────── */}
-          <div className="col-span-12 lg:col-span-8">
-            {services.map((svc, i) => (
-              <div
-                key={svc.name}
-                ref={(el) => setBlockRef(el, i)}
-                className={`${i > 0 ? 'border-t border-muted' : ''} py-12 lg:py-16`}
-              >
+      {/* ── Subservicios — cada uno ocupa una pantalla completa
+            (lg:min-h-screen + flex items-center). Wrapper full-width
+            (col-span-12) en el outer grid; inner grid-cols-12 con mismo
+            ancho y gap → cols alineadas pixel-perfect con el sistema
+            canónico. Patrón equivalente al de IdentidadValores: panel
+            sticky a la izquierda + paneles full-viewport scrolleando. ────── */}
+      <div className="section-inner py-section relative">
+        <div className="grid grid-cols-12 gap-grid-gutter">
+          {services.map((svc, i) => (
+            <div
+              key={svc.name}
+              ref={(el) => setBlockRef(el, i)}
+              className="col-span-12 lg:min-h-screen lg:flex lg:items-center py-12 lg:py-0"
+            >
+              <div className="grid grid-cols-12 gap-x-grid-gutter gap-y-6 w-full">
+                {/* Título — outer col 6, span 6. text-title-sm. */}
                 <h3
                   data-service-title
-                  className="font-serif font-light text-fg text-section"
+                  className="col-span-12 lg:col-start-6 lg:col-span-6 font-serif font-light text-fg text-title-sm"
                 >
                   {svc.name}
                 </h3>
 
-                <p
-                  data-service-body
-                  className="mt-6 max-w-[56ch] font-mono text-body-sm text-fg/80"
-                >
-                  {svc.description}
-                </p>
-
-                {svc.deliverables.length > 0 && (
-                  <ul
-                    data-service-tags
-                    className="mt-6 flex flex-wrap gap-2"
-                    aria-label="Entregables"
+                {/* Body + labels — outer col 7, span 5. Salto diagonal.
+                    No mt-6 aquí: el row-gap del grid (gap-y-6 = 24px, igual
+                    que IdentidadValores) ya provee la separación con el título. */}
+                <div className="col-span-12 lg:col-start-7 lg:col-span-5">
+                  <p
+                    data-service-body
+                    className="font-mono text-body-sm text-fg"
                   >
-                    {svc.deliverables.map((tag) => (
-                      <li
-                        key={tag}
-                        className="font-mono text-micro text-fg/60 border border-fg/20 px-3 py-1 rounded-full"
-                      >
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
+                    {svc.description}
+                  </p>
 
+                  {svc.deliverables.length > 0 && (
+                    <ul
+                      data-service-tags
+                      className="mt-6 flex flex-col gap-2"
+                      aria-label="Entregables"
+                    >
+                      {svc.deliverables.map((tag) => (
+                        <li key={tag}>
+                          <span className="inline-block bg-grey px-1.5 py-1 font-mono text-label text-fg leading-tight">
+                            {tag}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

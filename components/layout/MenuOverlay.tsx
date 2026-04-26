@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { Link, useRouter, type RouteId } from '@/lib/i18n/routing'
-import { useMenuStore } from '@/lib/store/menu'
+import { useMenuStore, resetSavedScroll } from '@/lib/store/menu'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 // gsap se importa lazy dentro del useEffect para no engrosar el bundle del layout.
@@ -15,7 +15,7 @@ import { getReducedMotion } from '@/components/motion/useReducedMotion'
 
 const PRIMARY_ITEMS = [
   { route: '/pensamiento-estrategico', labelKey: 'nav.pensamiento', num: '1' },
-  { route: '/activacion-de-soluciones', labelKey: 'nav.activacion', num: '2' },
+  { route: '/diseno-de-experiencias', labelKey: 'nav.experiencias', num: '2' },
   { route: '/transformacion-cultural', labelKey: 'nav.transformacion', num: '3' },
 ] as const
 
@@ -135,7 +135,13 @@ export function MenuOverlay() {
           tl.set(backdrop, { opacity: 0 }, 0.85)
         }
         if (navigate) {
-          tl.call(navigate, [], 0.85)
+          tl.call(() => {
+            navigate()
+            // Tras navegar, resetear el savedScrollY para que el unlock
+            // del scroll-lock no restaure la posición de la página anterior.
+            // Sin esto, la nueva página empieza al scroll-y donde estaba la previa.
+            resetSavedScroll()
+          }, [], 0.85)
         }
 
         // Fase 2.75 — hold 0.15s en full-cover. Da a Next.js tiempo de render

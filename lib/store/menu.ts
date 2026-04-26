@@ -64,6 +64,15 @@ export const useMenuStore = create<MenuState>((set, get) => ({
 
 let savedScrollY = 0
 
+/**
+ * Resetea el scroll guardado a 0. Llamar después de un navigate() para que
+ * cuando el menú cierre el unlockBodyScroll no restaure la posición de la
+ * página ANTERIOR — la nueva página debe empezar arriba del todo.
+ */
+export function resetSavedScroll(): void {
+  savedScrollY = 0
+}
+
 function lockBodyScroll(lock: boolean): void {
   if (typeof document === 'undefined') return
   const body = document.body

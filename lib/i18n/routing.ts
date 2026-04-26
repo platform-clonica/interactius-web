@@ -44,10 +44,10 @@ const PATHNAMES = {
     ca: '/pensament-estrategic',
     en: '/strategic-thinking',
   },
-  '/activacion-de-soluciones': {
-    es: '/activacion-de-soluciones',
-    ca: '/activacio-de-solucions',
-    en: '/solution-activation',
+  '/diseno-de-experiencias': {
+    es: '/diseno-de-experiencias',
+    ca: '/disseny-d-experiencies',
+    en: '/experience-design',
   },
   '/transformacion-cultural': {
     es: '/transformacion-cultural',

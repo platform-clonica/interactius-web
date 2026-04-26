@@ -39,7 +39,7 @@ export function IdentidadValores() {
       gsap.registerPlugin(ScrollTrigger)
 
       const reduced = getReducedMotion()
-      const ease = 'cubic-bezier(.16,1,.3,1)'
+      const ease = 'power4.inOut'
       const cleanups: Array<() => void> = []
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const splits: any[] = []

@@ -29,7 +29,7 @@ export function IdentidadMetodologia() {
       gsap.registerPlugin(ScrollTrigger)
 
       const reduced = getReducedMotion()
-      const ease = 'cubic-bezier(.16,1,.3,1)'
+      const ease = 'power4.inOut'
       const cleanups: Array<() => void> = []
 
       // 1. Background lateral reveal — canonical right→left clip-path
@@ -126,9 +126,8 @@ export function IdentidadMetodologia() {
       <div className="relative overflow-hidden pt-section pb-6 lg:pb-10">
         <h2
           id="metodologia-title"
-          className="font-serif font-normal text-fg leading-[0.9] tracking-[-0.04em] whitespace-nowrap select-none"
+          className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
           style={{
-            fontSize: 'clamp(80px, 15vw, 240px)',
             marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
           }}
         >

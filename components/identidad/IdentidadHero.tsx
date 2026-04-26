@@ -35,7 +35,7 @@ export function IdentidadHero() {
       gsap.registerPlugin(ScrollTrigger)
 
       const reduced = getReducedMotion()
-      const ease = 'cubic-bezier(.16,1,.3,1)'
+      const ease = 'power4.inOut'
       const cleanups: Array<() => void> = []
 
       if (reduced) {

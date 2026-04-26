@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
-import { CapacityHero } from '@/components/capacity/CapacityHero'
-import { CapacityIntro } from '@/components/capacity/CapacityIntro'
+import { CapacityHeroSequence } from '@/components/capacity/CapacityHeroSequence'
 import { CapacityServices } from '@/components/capacity/CapacityServices'
 import { CapacityOthers } from '@/components/capacity/CapacityOthers'
+import { ClientsMarquee } from '@/components/capacity/ClientsMarquee'
+import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
 import type { CapacityOtherItem } from '@/components/capacity/CapacityOthers'
 import type { RouteId } from '@/lib/i18n/routing'
@@ -37,17 +38,20 @@ export default async function TransformacionCultural({ params }: PageProps) {
 
   return (
     <>
-      <CapacityHero
+      <CapacityHeroSequence
         title={capacityTitle}
-        lead={t('transformacion.hero.lead')}
-        imageSrc="/capacidades/transformacion-cultural.jpg"
+        lead={t.rich('transformacion.hero.lead', {
+          strong: (chunks) => (
+            <h2 className="font-serif text-title-sm font-light text-fg">{chunks}</h2>
+          ),
+          p: (chunks) => <p>{chunks}</p>,
+        })}
+        statement={t.rich('transformacion.intro.statement', richComponents.boldWord)}
+        imageSrc="/capacidades/transformacion-hero-right.jpg"
+        imageBottomSrc="/capacidades/transformacion-hero-bottom.jpg"
       />
 
-      <CapacityIntro
-        statement={t('transformacion.intro.statement')}
-        clients={t('transformacion.intro.clients')}
-        imageSrc="/capacidades/transformacion-intro.jpg"
-      />
+      <ClientsMarquee clients={t('transformacion.intro.clients')} />
 
       <CapacityServices
         services={services}
@@ -55,6 +59,7 @@ export default async function TransformacionCultural({ params }: PageProps) {
         capacityLabel={capacityTitle}
       />
 
+      {/* Manifiesto IA — sección exclusiva de Transformación cultural. NO replicar en otros servicios. */}
       <section className="w-full bg-dark" aria-labelledby="manifiesto-title">
         <div className="section-inner py-section">
           <div className="grid grid-cols-12 gap-grid-gutter">

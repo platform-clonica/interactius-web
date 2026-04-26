@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
-import { CapacityHero } from '@/components/capacity/CapacityHero'
-import { CapacityIntro } from '@/components/capacity/CapacityIntro'
+import { CapacityHeroSequence } from '@/components/capacity/CapacityHeroSequence'
 import { CapacityServices } from '@/components/capacity/CapacityServices'
 import { CapacityOthers } from '@/components/capacity/CapacityOthers'
+import { ClientsMarquee } from '@/components/capacity/ClientsMarquee'
+import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
 import type { CapacityOtherItem } from '@/components/capacity/CapacityOthers'
 import type { RouteId } from '@/lib/i18n/routing'
@@ -20,37 +21,40 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params
   return buildPageMetadata({
     locale,
-    routeId: '/activacion-de-soluciones',
+    routeId: '/diseno-de-experiencias',
     title: 'Diseño de experiencias',
     description:
-      'Investigamos, diseñamos y validamos. Activamos soluciones auténticas a partir de metodologías propias y herramientas de IA aplicada con criterio humano.',
-    pathname: localizedPath('/activacion-de-soluciones', locale),
-    alternates: getAlternates('/activacion-de-soluciones'),
+      'Investigamos, diseñamos y validamos. Diseñamos experiencias auténticas a partir de metodologías propias y herramientas de IA aplicada con criterio humano.',
+    pathname: localizedPath('/diseno-de-experiencias', locale),
+    alternates: getAlternates('/diseno-de-experiencias'),
   })
 }
 
-export default async function DisenoExperiencias({ params }: PageProps) {
+export default async function DisenoDeExperiencias({ params }: PageProps) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'capacidades' })
 
-  const services = t.raw('activacion.services') as CapacityService[]
-  const others = t.raw('activacion.others') as Array<{ title: string; description: string; href: string }>
+  const services = t.raw('experiencias.services') as CapacityService[]
+  const others = t.raw('experiencias.others') as Array<{ title: string; description: string; href: string }>
 
-  const capacityTitle = t('activacion.hero.title')
+  const capacityTitle = t('experiencias.hero.title')
 
   return (
     <>
-      <CapacityHero
+      <CapacityHeroSequence
         title={capacityTitle}
-        lead={t('activacion.hero.lead')}
-        imageSrc="/capacidades/activacion-de-soluciones.jpg"
+        lead={t.rich('experiencias.hero.lead', {
+          strong: (chunks) => (
+            <h2 className="font-serif text-title-sm font-light text-fg">{chunks}</h2>
+          ),
+          p: (chunks) => <p>{chunks}</p>,
+        })}
+        statement={t.rich('experiencias.intro.statement', richComponents.boldWord)}
+        imageSrc="/capacidades/experiencias-hero-right.jpg"
+        imageBottomSrc="/capacidades/experiencias-hero-bottom.jpg"
       />
 
-      <CapacityIntro
-        statement={t('activacion.intro.statement')}
-        clients={t('activacion.intro.clients')}
-        imageSrc="/capacidades/activacion-intro.jpg"
-      />
+      <ClientsMarquee clients={t('experiencias.intro.clients')} />
 
       <CapacityServices
         services={services}

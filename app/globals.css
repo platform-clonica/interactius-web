@@ -239,6 +239,17 @@
     margin-bottom: -0.2em;
   }
 
+  /* Scoped: a tamaño Super (clamp 80-240px) la tinta de glifos serif sobresale
+     del bounding box métrico (puntos de "i", tildes, descenders de "g").
+     Damos al mask padding extra para evitar clipping. Margins negativos
+     compensan a nivel layout. Solo aplica dentro de elementos `text-super`. */
+  .text-super .st-mask {
+    padding-top: 0.15em;
+    padding-bottom: 0.35em;
+    margin-top: -0.15em;
+    margin-bottom: -0.50em;
+  }
+
   /* Chrome elements that hide when the footer reveals. Hamburger stays visible. */
   [data-sidebar-logo],
   [data-header-cta] {
