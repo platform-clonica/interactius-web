@@ -57,6 +57,11 @@ export function IdentidadIntro() {
             const wordEl = quoteEl.querySelector<HTMLElement>('[data-word]')
             if (!wordEl?.parentNode) return
 
+            // Defensive: limpia residuos si el efecto se ejecuta dos veces
+            // (StrictMode dev, remount tras navegación) — evita duplicados.
+            quoteEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+            wordEl.style.removeProperty('-webkit-text-stroke')
+
             // Slashes inserted hidden — no space taken until phase 2
             const slashL = document.createElement('span')
             slashL.textContent = '/ '
@@ -77,20 +82,23 @@ export function IdentidadIntro() {
             // Phase 1: word strokes bold smoothly (no font-weight snap)
             tl.to(proxy, {
               v: 0.6,
-              duration: 0.9,
-              ease: 'power2.out',
+              duration: 1.4,
+              ease: 'sine.inOut',
               onUpdate: () => {
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
 
-            // Slashes appear simultaneously with the bold stroke
-            slashL.style.display = 'inline-block'
-            slashR.style.display = 'inline-block'
-            gsap.set(slashL, { opacity: 0, x: -3 })
-            gsap.set(slashR, { opacity: 0, x:  3 })
-            tl.to(slashL, { opacity: 1, x: 0, duration: 0.9, ease: 'power2.out' }, 0)
-            tl.to(slashR, { opacity: 1, x: 0, duration: 0.9, ease: 'power2.out' }, 0)
+            // Animar font-size 0 → natural sobre display:inline. El baseline
+            // y el line-box quedan idénticos al texto vecino (no hay
+            // desalineación) y el desplazamiento sigue siendo gradual.
+            slashL.style.display = ''
+            slashR.style.display = ''
+            const fontSize = window.getComputedStyle(slashL).fontSize
+            gsap.set(slashL, { fontSize: 0, opacity: 0 })
+            gsap.set(slashR, { fontSize: 0, opacity: 0 })
+            tl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
+            tl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
           })
         },
       })

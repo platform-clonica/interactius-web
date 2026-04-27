@@ -131,6 +131,9 @@ export function HeroScroll({
           const delayed = gsap.delayedCall(transformDelay, () => {
             const parent = wordEl.parentNode
             if (!parent) return
+            // Defensive: limpia residuos si el efecto se ejecuta dos veces.
+            h1.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+            wordEl.style.removeProperty('-webkit-text-stroke')
             const slashL = document.createElement('span')
             slashL.textContent = '/ '
             slashL.dataset.slashDynamic = ''
@@ -145,18 +148,20 @@ export function HeroScroll({
             const btl = gsap.timeline()
             btl.to(proxy, {
               v: 0.6,
-              duration: 0.9,
-              ease: 'power2.out',
+              duration: 1.4,
+              ease: 'sine.inOut',
               onUpdate: () => {
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
-            slashL.style.display = 'inline-block'
-            slashR.style.display = 'inline-block'
-            gsap.set(slashL, { opacity: 0, x: -3 })
-            gsap.set(slashR, { opacity: 0, x: 3 })
-            btl.to(slashL, { opacity: 1, x: 0, duration: 0.9, ease: 'power2.out' }, 0)
-            btl.to(slashR, { opacity: 1, x: 0, duration: 0.9, ease: 'power2.out' }, 0)
+            // Animar font-size 0 → natural (display:inline) — baseline alineado
+            slashL.style.display = ''
+            slashR.style.display = ''
+            const fontSize = window.getComputedStyle(slashL).fontSize
+            gsap.set(slashL, { fontSize: 0, opacity: 0 })
+            gsap.set(slashR, { fontSize: 0, opacity: 0 })
+            btl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
+            btl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
           })
           cleanups.push(() => {
             delayed.kill()

@@ -16,17 +16,23 @@ import { getReducedMotion } from '@/components/motion/useReducedMotion'
      · cover (clipPath inset(0 100% 0 0) → inset(0 0% 0 0))
        0.7s, power4.inOut — el panel warm-light cubre desde la izquierda
      · navigate(targetHref) al completar el cover (t=0.7s)
-     · hold 0.15s — buffer para que Next.js renderice el destino
+     · hold dinámico — espera a que el pathname haya cambiado
+       (commit del nuevo árbol de Next), con MIN_HOLD_MS=150 y
+       MAX_HOLD_MS=700 como tope. Sin esto, las primeras navegaciones a
+       rutas no cacheadas reveal-ban con la página vieja todavía visible.
      · uncover (clipPath inset(0 0% 0 0) → inset(0 0% 0 100%))
        1.25s, power4.inOut — el panel se pliega a la derecha
      · endPageCurtain() — reset estado
 
-   Total ~2.10s. Reduced-motion: navega instantáneamente sin cortina.
+   Reduced-motion: navega instantáneamente sin cortina.
 
    Coherente con el patrón canónico de `feedback_curtain_transition.md`. La
    única diferencia con la cortina del menú es que ésta no tiene fade prefix
    (no hay contenido del menú que ocultar antes del cover).
    ========================================================================== */
+
+const MIN_HOLD_MS = 150
+const MAX_HOLD_MS = 700
 
 export function PageCurtain() {
   const isActive = usePageCurtainStore((s) => s.isActive)
@@ -38,6 +44,7 @@ export function PageCurtain() {
   const panelRef = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tlRef = useRef<any>(null)
+  const rafIdRef = useRef<number | null>(null)
   const inProgressRef = useRef(false)
 
   useEffect(() => {
@@ -77,30 +84,50 @@ export function PageCurtain() {
 
     void import('gsap').then(({ default: gsap }) => {
       tlRef.current?.kill()
+      if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
       const ease = 'power4.inOut'
 
-      // Estado inicial — panel completamente clipado a la izquierda (oculto)
       gsap.set(panel, { clipPath: 'inset(0 100% 0 0)' })
 
-      const tl = gsap.timeline({
+      const initialPath = window.location.pathname
+
+      const startUncover = () => {
+        const uncover = gsap.to(panel, {
+          clipPath: 'inset(0 0% 0 100%)',
+          duration: 1.25,
+          ease,
+          onComplete: () => {
+            endPageCurtain()
+            inProgressRef.current = false
+            gsap.set(panel, { clipPath: 'inset(0 100% 0 0)' })
+          },
+        })
+        tlRef.current = uncover
+      }
+
+      const cover = gsap.to(panel, {
+        clipPath: 'inset(0 0% 0 0)',
+        duration: 0.7,
+        ease,
         onComplete: () => {
-          endPageCurtain()
-          inProgressRef.current = false
-          // Reset el panel al estado oculto para próxima activación
-          gsap.set(panel, { clipPath: 'inset(0 100% 0 0)' })
+          navigate()
+          const startedAt = performance.now()
+
+          const tick = () => {
+            const elapsed = performance.now() - startedAt
+            const pathChanged = window.location.pathname !== initialPath
+            const reached = (pathChanged && elapsed >= MIN_HOLD_MS) || elapsed >= MAX_HOLD_MS
+            if (reached) {
+              rafIdRef.current = null
+              startUncover()
+              return
+            }
+            rafIdRef.current = requestAnimationFrame(tick)
+          }
+          rafIdRef.current = requestAnimationFrame(tick)
         },
       })
-      tlRef.current = tl
-
-      // Fase 1 — cover: panel cubre desde la izquierda hasta full
-      tl.to(panel, { clipPath: 'inset(0 0% 0 0)', duration: 0.7, ease }, 0)
-
-      // Fase 2 — navigate (push o back) al completar el cover (t=0.7)
-      tl.call(() => navigate(), [], 0.7)
-
-      // Fase 3 — hold 0.15s (buffer para render de Next.js)
-      // Fase 4 — uncover: panel se pliega a la derecha
-      tl.to(panel, { clipPath: 'inset(0 0% 0 100%)', duration: 1.25, ease }, 0.85)
+      tlRef.current = cover
     })
   }, [isActive, targetHref, mode, router, endPageCurtain])
 
@@ -110,6 +137,7 @@ export function PageCurtain() {
   useEffect(() => {
     return () => {
       tlRef.current?.kill()
+      if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
     }
   }, [])
 

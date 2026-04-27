@@ -1,9 +1,9 @@
 'use client'
 
-import { useCallback, type MouseEvent } from 'react'
+import { useCallback, useEffect, type MouseEvent } from 'react'
 
 import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
-import { Link } from '@/lib/i18n/routing'
+import { Link, useRouter } from '@/lib/i18n/routing'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 
 /**
@@ -17,6 +17,12 @@ import { usePageCurtainStore } from '@/lib/store/curtain'
  */
 export function FooterNewsletterCTA({ label }: { label: string }) {
   const begin = usePageCurtainStore((s) => s.beginPageCurtain)
+  const router = useRouter()
+
+  // Prefetch programático en montaje — el footer puede no estar en viewport.
+  useEffect(() => {
+    router.prefetch('/newsletter')
+  }, [router])
 
   const handleClick = useCallback(
     (e: MouseEvent<HTMLAnchorElement>) => {

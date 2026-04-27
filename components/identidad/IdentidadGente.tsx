@@ -1,43 +1,24 @@
 'use client'
 
-import { useRef, useEffect, type PointerEvent as ReactPointerEvent } from 'react'
+import { useRef, useEffect, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
+import { TEAM, type TeamMember } from '@/lib/data/team'
 
 /* ==========================================================================
-   Team photos — placeholder names/roles (fix later, pending real data)
+   Fisher-Yates shuffle — orden aleatorio cliente al refrescar.
    ========================================================================== */
-
-const TEAM = [
-  { src: '/identidad/fotos-team/Tom.webp', name: 'Tomas Modroño', role: 'Partner' },
-  { src: '/identidad/fotos-team/Adrian.webp', name: 'Adrián Yanes', role: 'Design' },
-  { src: '/identidad/fotos-team/Ale.webp', name: 'Alejandro Madeira', role: 'Strategy' },
-  { src: '/identidad/fotos-team/Alex.webp', name: 'Alex Cuadrado', role: 'Research' },
-  { src: '/identidad/fotos-team/Berta.webp', name: 'Berta', role: 'Operations' },
-  { src: '/identidad/fotos-team/Carlos.webp', name: 'Carlos', role: 'Partner' },
-  { src: '/identidad/fotos-team/Diana.webp', name: 'Diana', role: 'Strategy' },
-  { src: '/identidad/fotos-team/Diego.webp', name: 'Diego', role: 'Engineering' },
-  { src: '/identidad/fotos-team/Edmond.webp', name: 'Edmond', role: 'Design' },
-  { src: '/identidad/fotos-team/ElenaS.webp', name: 'Elena S.', role: 'Design' },
-  { src: '/identidad/fotos-team/EleneC.webp', name: 'Elena C.', role: 'Design' },
-  { src: '/identidad/fotos-team/Eli.webp', name: 'Eli López', role: 'Strategy' },
-  { src: '/identidad/fotos-team/Francesc.webp', name: 'Francesc', role: 'Engineering' },
-  { src: '/identidad/fotos-team/Isaac.webp', name: 'Isaac', role: 'Design' },
-  { src: '/identidad/fotos-team/Joha.webp', name: 'Joha', role: 'Strategy' },
-  { src: '/identidad/fotos-team/Josep.webp', name: 'Josep', role: 'Partner' },
-  { src: '/identidad/fotos-team/Lucho.webp', name: 'Lucho', role: 'Engineering' },
-  { src: '/identidad/fotos-team/Marcela.webp', name: 'Marcela', role: 'Strategy' },
-  { src: '/identidad/fotos-team/Maria.webp', name: 'María', role: 'Design' },
-  { src: '/identidad/fotos-team/Martina.webp', name: 'Martina Gentile', role: 'Head of Marketing' },
-  { src: '/identidad/fotos-team/PamC.webp', name: 'Pam C.', role: 'Design' },
-  { src: '/identidad/fotos-team/Pamela B.webp', name: 'Pamela B.', role: 'Strategy' },
-  { src: '/identidad/fotos-team/Pol.webp', name: 'Pol', role: 'Engineering' },
-  { src: '/identidad/fotos-team/Riccardo.webp', name: 'Riccardo', role: 'Design' },
-  { src: '/identidad/fotos-team/Sara.webp', name: 'Sara', role: 'Strategy' },
-] as const
+function shuffle<T>(arr: readonly T[]): T[] {
+  const out = arr.slice()
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
+}
 
 /* ==========================================================================
    Scattered layout — 12 slots in 3 vertical bands, alternating so
@@ -45,26 +26,24 @@ const TEAM = [
    y: % of viewport height · x: px offset within the REEL_WIDTH cycle
    ========================================================================== */
 
-// 3 vertical bands, capped so photo + labels fit inside the viewport on ≥800vh.
-// Band 3 photos flip labels to above (bottom-full) so they never clip off-screen.
+// 3 vertical bands, distribuidas en orden 1→2→3 con leve variación de y por
+// banda para mantener el feel scattered. 27 slots = 27 miembros; cada uno
+// renderiza con la foto correspondiente del array `team` (barajado en mount).
 const SLOTS: { y: number; x: number }[] = [
-  { y: 12, x: 0 },      // band 1 (labels below)
-  { y: 45, x: 280 },    // band 2 (labels below)
-  { y: 64, x: 560 },    // band 3 (labels above)
-  { y: 8, x: 840 },     // band 1
-  { y: 48, x: 1120 },   // band 2
-  { y: 68, x: 1400 },   // band 3
-  { y: 16, x: 1680 },   // band 1
-  { y: 42, x: 1960 },   // band 2
-  { y: 62, x: 2240 },   // band 3
-  { y: 10, x: 2520 },   // band 1
-  { y: 50, x: 2800 },   // band 2
-  { y: 66, x: 3080 },   // band 3
+  { y: 12, x: 0 },     { y: 45, x: 280 },   { y: 64, x: 560 },
+  { y: 8,  x: 840 },   { y: 48, x: 1120 },  { y: 68, x: 1400 },
+  { y: 16, x: 1680 },  { y: 42, x: 1960 },  { y: 62, x: 2240 },
+  { y: 10, x: 2520 },  { y: 50, x: 2800 },  { y: 66, x: 3080 },
+  { y: 14, x: 3360 },  { y: 46, x: 3640 },  { y: 63, x: 3920 },
+  { y: 9,  x: 4200 },  { y: 49, x: 4480 },  { y: 67, x: 4760 },
+  { y: 15, x: 5040 },  { y: 43, x: 5320 },  { y: 65, x: 5600 },
+  { y: 11, x: 5880 },  { y: 47, x: 6160 },  { y: 64, x: 6440 },
+  { y: 13, x: 6720 },  { y: 44, x: 7000 },  { y: 66, x: 7280 },
 ]
 
-const REEL_WIDTH = 3360
-const DRIFT_SPEED = 40 // px per second — same velocity for entry and drift
-const PHOTO_W = 200    // px — reference for wrap calculation
+const REEL_WIDTH = 7560 // 280px × 27 slots
+const DRIFT_SPEED = 100 // px per second — same velocity for entry and drift
+const PHOTO_W = 200     // px — reference for wrap calculation
 
 /* ==========================================================================
    Component
@@ -73,12 +52,22 @@ const PHOTO_W = 200    // px — reference for wrap calculation
 export function IdentidadGente() {
   const t = useTranslations('identidad')
 
+  // Server-render usa el orden canónico (TEAM); en el primer commit cliente
+  // se baraja para que cada refresh muestre un set distinto en los 12 slots.
+  // Esto evita hydration mismatch (ambos renders coinciden con el orden
+  // canónico) y la barajada queda imperceptible.
+  const [team, setTeam] = useState<readonly TeamMember[]>(TEAM)
+  useEffect(() => {
+    setTeam(shuffle(TEAM))
+  }, [])
+
   const sectionRef = useRef<HTMLElement>(null)
   const pinRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const descRef = useRef<HTMLParagraphElement>(null)
   const photosLayerRef = useRef<HTMLDivElement>(null)
   const photoItemsRef = useRef<(HTMLDivElement | null)[]>([])
+  const dragHintRef = useRef<HTMLDivElement>(null)
 
   // Drift state held in ref to avoid re-renders on every frame.
   // entryOffset starts at 1600 → all photos are off-screen right. The entry
@@ -146,7 +135,7 @@ export function IdentidadGente() {
         gsap.set(descLines, { y: 80, opacity: 0 })
         const revealST = ScrollTrigger.create({
           trigger: section,
-          start: 'top 30%',
+          start: 'top bottom',
           once: true,
           onEnter: () => {
             gsap.to(titleLines, {
@@ -170,16 +159,25 @@ export function IdentidadGente() {
       }
 
       // 3. Background fade warm-light → dark of the WHOLE PAGE (body bg),
-      //    with text colors fg → warm-light in the same timeline so the
-      //    contrast flip is simultaneous. Text is fg (dark) while bg is
-      //    warm-light, then warm-light (#f5f2ed exact) when bg goes dark.
+      //    con flip de color de los textos sincronizado.
+      //
+      //    Canónico (`feedback_bg_fade_pinned.md`): el fade del bg de un
+      //    pinned sólo debe arrancar cuando el pin cubre el viewport
+      //    (`start: 'top top'`). Antes de ese punto, la sección anterior
+      //    todavía es parcialmente visible y el cambio de bg crea una
+      //    línea horizontal que parece máscara y produce los flashes /
+      //    saltos al hacer reverse.
+      //
+      //    `overwrite: 'auto'` evita que un scroll rápido en ambas
+      //    direcciones deje tweens compitiendo (causa probable de
+      //    "se queda en negro" / "pasa a blanco").
       gsap.set(document.body, { backgroundColor: '#f5f2ed' })
       gsap.set([titleEl, descEl], { color: '#1c1a17' })
 
       const bgTl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: 'top 30%',
+          start: 'top top',
           toggleActions: 'play none none reverse',
         },
       })
@@ -188,11 +186,13 @@ export function IdentidadGente() {
           backgroundColor: '#1c1a17',
           duration: 0.5,
           ease: 'power2.inOut',
+          overwrite: 'auto',
         }, 0)
         .to([titleEl, descEl], {
           color: '#f5f2ed',
           duration: 0.5,
           ease: 'power2.inOut',
+          overwrite: 'auto',
         }, 0)
 
       if (bgTl.scrollTrigger) cleanups.push(() => bgTl.scrollTrigger!.kill())
@@ -271,25 +271,53 @@ export function IdentidadGente() {
             }
           }
 
-          // Normalise baseX + dragDelta into [-REEL_WIDTH, 0] so
-          // photos tile seamlessly and floating-point can't overflow.
-          const combined = state.baseX + state.dragDelta
-          const modBase =
-            ((combined % REEL_WIDTH) + REEL_WIDTH) % REEL_WIDTH - REEL_WIDTH
-
-          SLOTS.forEach((slot, i) => {
-            const el = photoItemsRef.current[i]
-            if (!el) return
-            let x = slot.x + modBase
-            if (x < -PHOTO_W) x += REEL_WIDTH
-            x += state.entryOffset
-            el.style.transform = `translate3d(${x}px, 0, 0)`
-          })
+          // Durante entry: shift lineal (drag + drift sólo desplazan, sin
+          // ciclo). El wrap modular sólo tiene sentido cuando los slots
+          // están en sus posiciones cíclicas naturales — al sumar el
+          // entryOffset post-wrap, slots con slot.x cercano a REEL_WIDTH
+          // (slot 26) tienen una región de wrap muy estrecha y un drag de
+          // pocos píxeles los empujaba fuera de esa región, provocando
+          // que apareciesen/desapareciesen de golpe.
+          //
+          // Una vez `entryOffset === 0`, los slots están en cycle range
+          // y se vuelve a aplicar la math de ciclo + wrap canónica.
+          if (state.entryOffset > 0) {
+            const linearShift = state.baseX + state.dragDelta + state.entryOffset
+            SLOTS.forEach((slot, i) => {
+              const el = photoItemsRef.current[i]
+              if (!el) return
+              el.style.transform = `translate3d(${slot.x + linearShift}px, 0, 0)`
+            })
+          } else {
+            const combined = state.baseX + state.dragDelta
+            const modBase =
+              ((combined % REEL_WIDTH) + REEL_WIDTH) % REEL_WIDTH - REEL_WIDTH
+            SLOTS.forEach((slot, i) => {
+              const el = photoItemsRef.current[i]
+              if (!el) return
+              let x = slot.x + modBase
+              if (x < -PHOTO_W) x += REEL_WIDTH
+              el.style.transform = `translate3d(${x}px, 0, 0)`
+            })
+          }
 
           rafId = requestAnimationFrame(tick)
         }
         rafId = requestAnimationFrame(tick)
         cleanups.push(() => cancelAnimationFrame(rafId))
+      }
+
+      // 6. "Arrastrar" hint — tracking continuo de posición sobre la layer.
+      //    La VISIBILIDAD se gestiona en handlePhotoEnter/Leave (sólo aparece
+      //    sobre fotos, no sobre el espacio vacío de la layer).
+      const layer = photosLayerRef.current
+      const hintEl = dragHintRef.current
+      if (layer && hintEl && !reduced) {
+        const onLayerMove = (e: MouseEvent) => {
+          gsap.set(hintEl, { x: e.clientX + 12, y: e.clientY + 12 })
+        }
+        layer.addEventListener('mousemove', onLayerMove)
+        cleanups.push(() => layer.removeEventListener('mousemove', onLayerMove))
       }
 
       cleanupRef.current = () => cleanups.forEach((fn) => fn())
@@ -329,6 +357,50 @@ export function IdentidadGente() {
     }
   }
 
+  /* ========================================================================
+     Hover en foto — reveal lateral canónico (cubic-bezier(.16,1,.3,1))
+     entrando desde la izquierda; al salir, fold inverso al borde derecho
+     (mismo patrón que la PageCurtain / IdentidadHero exit).
+     ======================================================================== */
+  const LATERAL_EASE = 'cubic-bezier(.16,1,.3,1)'
+  const handlePhotoEnter = async (e: ReactPointerEvent<HTMLDivElement>) => {
+    const labels = e.currentTarget.querySelector<HTMLElement>('[data-photo-labels]')
+    const hint = dragHintRef.current
+    const { default: gsap } = await import('gsap')
+    if (labels) {
+      gsap.killTweensOf(labels)
+      gsap.fromTo(
+        labels,
+        { clipPath: 'inset(0 100% 0 0)' },
+        { clipPath: 'inset(0 0% 0 0)', duration: 0.6, ease: LATERAL_EASE },
+      )
+    }
+    if (hint) {
+      gsap.killTweensOf(hint)
+      gsap.to(hint, { opacity: 1, duration: 0.2, ease: 'power2.out' })
+    }
+  }
+  const handlePhotoLeave = async (e: ReactPointerEvent<HTMLDivElement>) => {
+    const labels = e.currentTarget.querySelector<HTMLElement>('[data-photo-labels]')
+    const hint = dragHintRef.current
+    const { default: gsap } = await import('gsap')
+    if (labels) {
+      gsap.killTweensOf(labels)
+      gsap.to(labels, {
+        clipPath: 'inset(0 0 0 100%)',
+        duration: 0.6,
+        ease: LATERAL_EASE,
+        onComplete: () => {
+          gsap.set(labels, { clipPath: 'inset(0 100% 0 0)' })
+        },
+      })
+    }
+    if (hint) {
+      gsap.killTweensOf(hint)
+      gsap.to(hint, { opacity: 0, duration: 0.15, ease: 'power2.out' })
+    }
+  }
+
   return (
     <section
       ref={sectionRef}
@@ -343,7 +415,7 @@ export function IdentidadGente() {
         {/* Titular "Nuestra gente" — text-title like Actitud Liminal, top-left.
             Color tweened by GSAP from fg → warm-light in sync with body bg. */}
         <div
-          className="absolute top-[clamp(90px,14vh,160px)] inset-x-0 section-inner pointer-events-none"
+          className="absolute top-[clamp(210px,17.7vh,234px)] inset-x-0 section-inner pointer-events-none"
         >
           <div className="grid grid-cols-12 gap-grid-gutter">
             <h2
@@ -374,6 +446,7 @@ export function IdentidadGente() {
         <div
           ref={photosLayerRef}
           className="absolute inset-0 overflow-hidden cursor-grab active:cursor-grabbing select-none touch-pan-y"
+          style={{ willChange: 'transform' }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -381,14 +454,14 @@ export function IdentidadGente() {
           aria-hidden="true"
         >
           {SLOTS.map((slot, i) => {
-            const member = TEAM[i % TEAM.length]
-            // Bottom band (y > 55): flip labels to above photo so they don't clip
-            const labelsAbove = slot.y > 55
+            const member = team[i % team.length]
             return (
               <div
                 key={i}
                 ref={(el) => { photoItemsRef.current[i] = el }}
-                className="group absolute w-[clamp(160px,14vw,210px)] h-[clamp(200px,17vw,260px)] will-change-transform"
+                onPointerEnter={handlePhotoEnter}
+                onPointerLeave={handlePhotoLeave}
+                className="group absolute w-[clamp(160px,13vw,210px)] aspect-square will-change-transform"
                 style={{ top: `${slot.y}%`, left: 0 }}
               >
                 <div className="relative h-full w-full overflow-hidden">
@@ -397,34 +470,54 @@ export function IdentidadGente() {
                     alt=""
                     fill
                     sizes="16vw"
+                    loading="eager"
                     draggable={false}
                     className="object-cover grayscale transition-[filter] duration-[400ms] ease-expo group-hover:grayscale-0 pointer-events-none"
                     onError={(e) => {
                       ;(e.target as HTMLImageElement).src = '/identidad/team.jpg'
                     }}
                   />
-                </div>
-                {/* Hover labels — role top, name bottom. Flip above for bottom band. */}
-                <div
-                  className={`absolute left-0 flex flex-col gap-[2px] opacity-0 transition-opacity duration-[280ms] ease-expo group-hover:opacity-100 pointer-events-none ${
-                    labelsAbove ? 'bottom-full mb-[2px]' : 'top-full mt-[2px]'
-                  }`}
-                >
-                  <div className="bg-warm-light px-[6px] py-[2px] self-start">
-                    <p className="font-mono text-card-sm text-fg leading-[1.4] whitespace-nowrap">
-                      {member.role}
-                    </p>
-                  </div>
-                  <div className="bg-warm-light px-[6px] py-[2px] self-start">
-                    <p className="font-serif font-light text-[clamp(18px,2vw,28px)] text-fg leading-none whitespace-nowrap">
-                      {member.name}
-                    </p>
+                  {/* Labels — bottom-left dentro de la imagen. Reveal lateral
+                      cubic-bezier(.16,1,.3,1) en hover, inverso al salir
+                      (clip-path canónico). */}
+                  <div
+                    data-photo-labels
+                    className="absolute bottom-0 left-0 flex flex-col pointer-events-none"
+                    style={{ clipPath: 'inset(0 100% 0 0)' }}
+                  >
+                    <div className="bg-warm-light px-[6px] py-[2px] self-start">
+                      <p className="font-mono text-micro text-fg leading-[1.4] whitespace-nowrap">
+                        {member.role}
+                      </p>
+                    </div>
+                    <div className="bg-warm-light px-[6px] py-[2px] self-start">
+                      <p className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-none whitespace-nowrap">
+                        {member.name}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             )
           })}
         </div>
+      </div>
+
+      {/* "Arrastrar" hint — fixed sibling, sigue al cursor con mix-blend
+          difference. Mismo pipeline que el hint del Hero (HeroScroll). */}
+      <div
+        ref={dragHintRef}
+        aria-hidden="true"
+        className="fixed pointer-events-none top-0 left-0 font-mono text-body-sm"
+        style={{
+          opacity: 0,
+          zIndex: 410,
+          mixBlendMode: 'difference',
+          color: 'var(--c-warm-light)',
+          willChange: 'transform, opacity',
+        }}
+      >
+        Arrastrar
       </div>
     </section>
   )

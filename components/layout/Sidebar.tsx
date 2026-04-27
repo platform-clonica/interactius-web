@@ -1,9 +1,9 @@
 import { getTranslations } from 'next-intl/server'
 
-import { Link } from '@/lib/i18n/routing'
 import { RotatedLogo } from '@/components/ui/RotatedLogo'
 
 import { MenuTrigger } from './MenuTrigger'
+import { SidebarLogoLink } from './SidebarLogoLink'
 
 /**
  * Sidebar — barra fija vertical izquierda.
@@ -40,17 +40,11 @@ export async function Sidebar() {
 
       {/* Logo vertical — top: 80px, centered, rotated -90deg.
           brightness(0) invert(1) turns the SVG's dark fill pure white so
-          mix-blend-mode: difference on the <aside> produces proper contrast. */}
-      <Link
-        href="/"
-        data-sidebar-logo=""
-        className="absolute top-20 -translate-x-1/2 pointer-events-auto
-                   transition-opacity duration-fast ease-expo hover:opacity-70"
-        style={{ left: 'calc(50% - 3px)', filter: 'brightness(0) invert(1)' }}
-        aria-label={t('logo.home')}
-      >
+          mix-blend-mode: difference on the <aside> produces proper contrast.
+          Click intercepted en client wrapper para disparar PageCurtain. */}
+      <SidebarLogoLink ariaLabel={t('logo.home')}>
         <RotatedLogo />
-      </Link>
+      </SidebarLogoLink>
     </aside>
   )
 }

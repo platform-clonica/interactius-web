@@ -258,6 +258,18 @@ export function MenuOverlay() {
     }
   }, [])
 
+  // Warm up de rutas contact al abrir el menú. Una sola vez por sesión:
+  // garantiza que el destino esté listo cuando el cover de PageCurtain
+  // termine, evitando que el uncover muestre la página vieja a medio swap.
+  const contactPrefetchedRef = useRef(false)
+  useEffect(() => {
+    if (!isOpen || contactPrefetchedRef.current) return
+    contactPrefetchedRef.current = true
+    CONTACT_ROUTES.forEach((route) => {
+      router.prefetch(route as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
+    })
+  }, [isOpen, router])
+
   // Click handler para Links del menú. Cmd/Ctrl/Shift/Alt click → dejar default
   // (abrir en nueva pestaña, etc).
   // · Rutas del grupo (contact): disparamos la PageCurtain global (root layout).
@@ -346,10 +358,11 @@ export function MenuOverlay() {
           ))}
         </nav>
 
-        {/* Secondary nav — agrupado (gap-3) y separado del primary (top 72vh) */}
+        {/* Secondary nav — agrupado y separado del primary. Sube top para
+            compensar el extra de gap entre items, mantiene centro óptico. */}
         <div
-          className="absolute flex flex-col gap-3"
-          style={{ top: '72vh' }}
+          className="absolute flex flex-col gap-6"
+          style={{ top: '68vh' }}
         >
           {SECONDARY_ITEMS.map(({ route, labelKey }) => (
             <Link
