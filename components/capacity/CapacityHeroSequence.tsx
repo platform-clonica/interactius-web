@@ -5,6 +5,7 @@ import Image from 'next/image'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
+import { usePageCurtainStore } from '@/lib/store/curtain'
 
 /* ==========================================================================
    CapacityHeroSequence — secuencia scroll-driven combinando hero + statement
@@ -138,170 +139,183 @@ export function CapacityHeroSequence({
         gsap.set(statementLines, { y: '110%' })
       }
 
-      // ── Escena 1: entrada en mount ────────────────────────────────────────
-
-      // Right image — clip-path lateral reveal canónico (carga automática).
-      // Tras completar, se monta el scrubbed inverse reveal para que su
-      // estado inicial respete el resultado del mount sin sobrescribirlo.
+      // ── Gate: si llegamos via PageCurtain, los reveals correrían DETRÁS
+      //    de la cortina cubriendo (~2s) y el usuario sólo vería el estado
+      //    final estático al destapar. Diferimos el arranque hasta que la
+      //    cortina termine (isActive: true → false). En primera carga sin
+      //    cortina (isActive=false al montar), arranca inmediatamente.
       let rightInverseST: ScrollTrigger | null = null
-      if (rightImageEl) {
-        gsap.to(rightImageEl, {
-          clipPath: 'inset(0 0% 0 0)',
-          duration: 0.9,
-          ease: lateralEase,
-          onComplete: () => {
-            const tw = gsap.to(rightImageEl, {
-              clipPath: 'inset(0 0 0 100%)',
-              ease: 'none',
-              scrollTrigger: {
-                trigger: rightImageEl,
-                start: 'top top',
-                end: 'top -=60%',
-                scrub: 1,
-              },
-            })
-            rightInverseST = tw.scrollTrigger ?? null
-          },
-        })
-      }
-      cleanups.push(() => rightInverseST?.kill())
-
-      // Lead heading — line-mask canónico (titular)
-      if (leadHeadingLines.length) {
-        gsap.to(leadHeadingLines, {
-          y: '0%',
-          duration: 1.2,
-          ease: 'power4.out',
-          stagger: 0.08,
-          delay: 0.3,
-        })
-      }
-      // Lead body — fade + y (párrafo)
-      if (leadBodyEl) {
-        gsap.to(leadBodyEl, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-          delay: 0.5,
-        })
-      }
-
-      // ── Escena 2: triggers por scroll ─────────────────────────────────────
-
       let bottomInverseST: ScrollTrigger | null = null
+      cleanups.push(() => rightInverseST?.kill())
       cleanups.push(() => bottomInverseST?.kill())
 
-      // Title line-mask — dispara al entrar el título al viewport
-      if (titleEl && titleLines.length) {
-        const st = ScrollTrigger.create({
-          trigger: titleEl,
-          start: 'top 75%',
-          once: true,
-          onEnter: () => {
-            gsap.to(titleLines, {
-              y: '0%',
-              duration: 1.2,
-              ease: 'power4.out',
-              stagger: 0.08,
-            })
-          },
+      const runReveals = () => {
+        // Right image — clip-path lateral reveal canónico (carga automática).
+        if (rightImageEl) {
+          gsap.to(rightImageEl, {
+            clipPath: 'inset(0 0% 0 0)',
+            duration: 0.9,
+            ease: lateralEase,
+            onComplete: () => {
+              const tw = gsap.to(rightImageEl, {
+                clipPath: 'inset(0 0 0 100%)',
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: rightImageEl,
+                  start: 'top top',
+                  end: 'top -=60%',
+                  scrub: 1,
+                },
+              })
+              rightInverseST = tw.scrollTrigger ?? null
+            },
+          })
+        }
+
+        // Lead heading — line-mask canónico (titular)
+        if (leadHeadingLines.length) {
+          gsap.to(leadHeadingLines, {
+            y: '0%',
+            duration: 1.2,
+            ease: 'power4.out',
+            stagger: 0.08,
+            delay: 0.3,
+          })
+        }
+        // Lead body — fade + y (párrafo)
+        if (leadBodyEl) {
+          gsap.to(leadBodyEl, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            delay: 0.5,
+          })
+        }
+
+        // ── Escena 2: triggers por scroll ─────────────────────────────────
+
+        // Title line-mask — dispara al entrar el título al viewport
+        if (titleEl && titleLines.length) {
+          const st = ScrollTrigger.create({
+            trigger: titleEl,
+            start: 'top 75%',
+            once: true,
+            onEnter: () => {
+              gsap.to(titleLines, {
+                y: '0%',
+                duration: 1.2,
+                ease: 'power4.out',
+                stagger: 0.08,
+              })
+            },
+          })
+          cleanups.push(() => st.kill())
+        }
+
+        // Bottom image reveal canónico — dispara al entrar al viewport.
+        if (bottomImageEl) {
+          const st = ScrollTrigger.create({
+            trigger: bottomImageEl,
+            start: 'top 80%',
+            once: true,
+            onEnter: () => {
+              gsap.to(bottomImageEl, {
+                clipPath: 'inset(0 0% 0 0)',
+                duration: 0.9,
+                ease: lateralEase,
+                onComplete: () => {
+                  const tw = gsap.to(bottomImageEl, {
+                    clipPath: 'inset(0 0 0 100%)',
+                    ease: 'none',
+                    scrollTrigger: {
+                      trigger: bottomImageEl,
+                      start: 'top top',
+                      end: 'bottom top',
+                      scrub: 1,
+                    },
+                  })
+                  bottomInverseST = tw.scrollTrigger ?? null
+                },
+              })
+            },
+          })
+          cleanups.push(() => st.kill())
+        }
+
+        // Statement line-mask + bold word effect.
+        if (statementEl && statementLines.length) {
+          const st = ScrollTrigger.create({
+            trigger: statementEl,
+            start: 'top 80%',
+            once: true,
+            onEnter: () => {
+              gsap.to(statementLines, {
+                y: '0%',
+                duration: 1.2,
+                ease: 'power4.out',
+                stagger: 0.08,
+                onComplete: () => {
+                  // Efecto bold canónico — text-stroke + slashes inyectados
+                  const wordEl = statementEl.querySelector<HTMLElement>('[data-word]')
+                  if (!wordEl?.parentNode) return
+
+                  statementEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+                  wordEl.style.removeProperty('-webkit-text-stroke')
+
+                  const slashL = document.createElement('span')
+                  slashL.textContent = '/ '
+                  slashL.dataset.slashDynamic = ''
+                  slashL.style.display = 'none'
+
+                  const slashR = document.createElement('span')
+                  slashR.textContent = ' /'
+                  slashR.dataset.slashDynamic = ''
+                  slashR.style.display = 'none'
+
+                  wordEl.parentNode.insertBefore(slashL, wordEl)
+                  wordEl.parentNode.insertBefore(slashR, wordEl.nextSibling)
+
+                  const proxy = { v: 0 }
+                  const tl = gsap.timeline({ delay: 0.4 })
+
+                  tl.to(proxy, {
+                    v: 0.6,
+                    duration: 1.4,
+                    ease: 'sine.inOut',
+                    onUpdate: () => {
+                      wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
+                    },
+                  })
+
+                  slashL.style.display = ''
+                  slashR.style.display = ''
+                  const fontSize = window.getComputedStyle(slashL).fontSize
+                  gsap.set(slashL, { fontSize: 0, opacity: 0 })
+                  gsap.set(slashR, { fontSize: 0, opacity: 0 })
+                  tl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
+                  tl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
+                },
+              })
+            },
+          })
+          cleanups.push(() => st.kill())
+        }
+      } // end runReveals
+
+      const isCurtainActive = usePageCurtainStore.getState().isActive
+      if (!isCurtainActive) {
+        // First load / direct nav: arranca inmediatamente.
+        runReveals()
+      } else {
+        // Llegamos via PageCurtain: esperamos a que termine (true → false).
+        const unsub = usePageCurtainStore.subscribe((state, prev) => {
+          if (prev.isActive && !state.isActive) {
+            unsub()
+            runReveals()
+          }
         })
-        cleanups.push(() => st.kill())
-      }
-
-      // Bottom image reveal canónico — dispara al entrar la imagen al viewport.
-      // Al completar monta el scrubbed inverse para que el estado inicial
-      // respete el resultado del reveal sin sobrescribirlo.
-      if (bottomImageEl) {
-        const st = ScrollTrigger.create({
-          trigger: bottomImageEl,
-          start: 'top 80%',
-          once: true,
-          onEnter: () => {
-            gsap.to(bottomImageEl, {
-              clipPath: 'inset(0 0% 0 0)',
-              duration: 0.9,
-              ease: lateralEase,
-              onComplete: () => {
-                const tw = gsap.to(bottomImageEl, {
-                  clipPath: 'inset(0 0 0 100%)',
-                  ease: 'none',
-                  scrollTrigger: {
-                    trigger: bottomImageEl,
-                    start: 'top top',
-                    end: 'bottom top',
-                    scrub: 1,
-                  },
-                })
-                bottomInverseST = tw.scrollTrigger ?? null
-              },
-            })
-          },
-        })
-        cleanups.push(() => st.kill())
-      }
-
-      // Statement line-mask + bold word effect — dispara al entrar el
-      // statement al viewport (independiente del bottom image).
-      if (statementEl && statementLines.length) {
-        const st = ScrollTrigger.create({
-          trigger: statementEl,
-          start: 'top 80%',
-          once: true,
-          onEnter: () => {
-            gsap.to(statementLines, {
-              y: '0%',
-              duration: 1.2,
-              ease: 'power4.out',
-              stagger: 0.08,
-              onComplete: () => {
-                // Efecto bold canónico — text-stroke + slashes inyectados
-                const wordEl = statementEl.querySelector<HTMLElement>('[data-word]')
-                if (!wordEl?.parentNode) return
-
-                // Defensive: limpia residuos si el efecto se ejecuta dos veces.
-                statementEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
-                wordEl.style.removeProperty('-webkit-text-stroke')
-
-                const slashL = document.createElement('span')
-                slashL.textContent = '/ '
-                slashL.dataset.slashDynamic = ''
-                slashL.style.display = 'none'
-
-                const slashR = document.createElement('span')
-                slashR.textContent = ' /'
-                slashR.dataset.slashDynamic = ''
-                slashR.style.display = 'none'
-
-                wordEl.parentNode.insertBefore(slashL, wordEl)
-                wordEl.parentNode.insertBefore(slashR, wordEl.nextSibling)
-
-                const proxy = { v: 0 }
-                const tl = gsap.timeline({ delay: 0.4 })
-
-                tl.to(proxy, {
-                  v: 0.6,
-                  duration: 1.4,
-                  ease: 'sine.inOut',
-                  onUpdate: () => {
-                    wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
-                  },
-                })
-
-                // Animar font-size 0 → natural (display:inline) — baseline alineado
-                slashL.style.display = ''
-                slashR.style.display = ''
-                const fontSize = window.getComputedStyle(slashL).fontSize
-                gsap.set(slashL, { fontSize: 0, opacity: 0 })
-                gsap.set(slashR, { fontSize: 0, opacity: 0 })
-                tl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
-                tl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
-              },
-            })
-          },
-        })
-        cleanups.push(() => st.kill())
+        cleanups.push(unsub)
       }
 
       cleanupRef.current = () => {
