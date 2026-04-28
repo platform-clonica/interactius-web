@@ -47,8 +47,8 @@ export default async function TransformacionCultural({ params }: PageProps) {
           p: (chunks) => <p>{chunks}</p>,
         })}
         statement={t.rich('transformacion.intro.statement', richComponents.boldWord)}
-        imageSrc="/capacidades/transformacion-hero-right.jpg"
-        imageBottomSrc="/capacidades/transformacion-hero-bottom.jpg"
+        imageSrc="/capacidades/transformacion-hero-right.webp"
+        imageBottomSrc="/capacidades/transformacion-hero-bottom.webp"
       />
 
       <ClientsMarquee clients={t('transformacion.intro.clients')} />

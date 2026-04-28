@@ -37,11 +37,12 @@ export async function generateMetadata({
    Page
    --------------------------------------------------------------------------
    Orden DOM (crítico por el stacking context del scroll):
-     1. HeroScroll    — se promueve a fixed + spacer 1260px (desktop).
-     2. IntroScroll   — sticky + spacer 2740px (desktop).
-     3. ServicesRows  — z-content, queda encima del hero/intro mientras sube.
-     4. WorkGrid      — z-content.
-     5. ClientsMarquee— z-content.
+     1. HeroScroll      — fixed + spacer 1260px (desktop).
+     2. HomeIntroText   — sticky lead text con bold-effect.
+     3. HomeIntroReveal — strip image + crop overlay sobre cuadro blanco.
+     4. ServicesRows    — z-content.
+     5. WorkGrid        — z-content.
+     6. ClientsMarquee  — z-content.
    Footer viene del layout.tsx.
    ========================================================================== */
 
@@ -54,7 +55,7 @@ export default async function HomePage({ params }: PageProps) {
       <HeroScroll
         posterSrc="/home/hero-poster.webp"
         posterAlt=""
-        // videoSrc: undefined — Fase 1 usa Ken-Burns del poster como fallback.
+        videoSrc="/home/hero-poster.mp4"
       >
         <div className="grid grid-cols-12 gap-grid-gutter">
           <h1 className="col-span-12 lg:col-start-2 lg:col-span-9 font-serif text-section font-light text-fg">

@@ -50,8 +50,8 @@ export default async function DisenoDeExperiencias({ params }: PageProps) {
           p: (chunks) => <p>{chunks}</p>,
         })}
         statement={t.rich('experiencias.intro.statement', richComponents.boldWord)}
-        imageSrc="/capacidades/experiencias-hero-right.jpg"
-        imageBottomSrc="/capacidades/experiencias-hero-bottom.jpg"
+        imageSrc="/capacidades/experiencias-hero-right.webp"
+        imageBottomSrc="/capacidades/experiencias-hero-bottom.webp"
       />
 
       <ClientsMarquee clients={t('experiencias.intro.clients')} />

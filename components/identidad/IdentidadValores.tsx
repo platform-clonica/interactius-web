@@ -10,10 +10,10 @@ import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 // Image order matches Figma: img[i] corresponds to valor text[i]
 // Swap sequence from Figma: img1→img2 when text[1] enters, img2→img3 at text[2], img3→img4 at text[3]
 const IMAGES = [
-  '/identidad/valores-01.jpg',
-  '/identidad/valores-02.jpg',
-  '/identidad/valores-03.jpg',
-  '/identidad/valores-04.jpg',
+  '/identidad/valores-01.webp',
+  '/identidad/valores-02.webp',
+  '/identidad/valores-03.webp',
+  '/identidad/valores-04.webp',
 ]
 
 export function IdentidadValores() {

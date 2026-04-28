@@ -203,6 +203,13 @@ export function HeroScroll({
         })
       }
 
+      // Video corre desde el principio (mute + loop), visible también dentro
+      // del strip enmascarado. Click sobre el strip → fullscreen + (futuro) sonido.
+      if (videoEl) {
+        videoEl.style.opacity = '1'
+        videoEl.play().catch(() => {})
+      }
+
       if (!reduced) {
         const onResize = () => {
           leftStart = getCol2StartPx()
@@ -211,8 +218,6 @@ export function HeroScroll({
         }
         window.addEventListener('resize', onResize, { passive: true })
         cleanups.push(() => window.removeEventListener('resize', onResize))
-
-        let hasStartedVideo = false
 
         const st = ScrollTrigger.create({
           trigger: spacer,
@@ -233,20 +238,12 @@ export function HeroScroll({
               applyStripState(p)
               gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
               if (arrowEl) gsap.set(arrowEl, { opacity: 0 })
-              if (videoEl) videoEl.style.opacity = '0'
 
             } else if (scrollY <= PHASE2_END) {
-              // Fase 2 — fullscreen. Video fade-in + arrow visible.
+              // Fase 2 — fullscreen. Arrow fade-in.
               applyStripState(1)
               gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
               const vp = Math.min((scrollY - PHASE1_END) / 100, 1)
-              if (videoEl) {
-                videoEl.style.opacity = String(vp)
-                if (!hasStartedVideo && vp > 0) {
-                  hasStartedVideo = true
-                  videoEl.play().catch(() => {})
-                }
-              }
               if (arrowEl) gsap.set(arrowEl, { opacity: vp })
 
             } else if (scrollY <= PHASE3_END) {
@@ -256,7 +253,6 @@ export function HeroScroll({
               const p = (scrollY - PHASE2_END) / (PHASE3_END - PHASE2_END)
               gsap.set(strip, { clipPath: `inset(0 0 ${p * 100}% 0)` })
               if (arrowEl) gsap.set(arrowEl, { opacity: 1 - p })
-              if (videoEl) videoEl.style.opacity = '1'
 
             } else {
               // Tras el budget — strip fuera
@@ -268,10 +264,6 @@ export function HeroScroll({
       } else {
         // Reduced motion — mostrar fullscreen directo
         applyStripState(1)
-        if (videoEl) {
-          videoEl.style.opacity = '1'
-          videoEl.play().catch(() => {})
-        }
       }
 
       // ── Hover "Play video"/"Close video": label follows mouse, con mix-blend
@@ -383,12 +375,12 @@ export function HeroScroll({
           <video
             ref={videoRef}
             src={videoSrc}
+            autoPlay
             muted
             loop
             playsInline
-            preload="none"
+            preload="auto"
             className="absolute inset-0 h-full w-full object-cover"
-            style={{ opacity: 0 }}
           />
         )}
 

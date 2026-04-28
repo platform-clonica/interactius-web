@@ -41,7 +41,8 @@ export function IdentidadMetodologia() {
           ease,
           scrollTrigger: { trigger: section, start: 'top 85%', once: true },
         })
-        if (reveal.scrollTrigger) cleanups.push(() => reveal.scrollTrigger!.kill())
+        const revealSt = reveal.scrollTrigger
+        if (revealSt) cleanups.push(() => revealSt.kill())
         cleanups.push(() => reveal.kill())
       } else if (reduced && bgRef.current) {
         gsap.set(bgRef.current, { clipPath: 'inset(0 0% 0 0)' })
@@ -119,7 +120,7 @@ export function IdentidadMetodologia() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full"
+      className="relative w-full bg-warm-light"
       aria-labelledby="metodologia-title"
     >
       {/* Title — above image, dark on warm-light, bleeds past left edge */}
@@ -145,7 +146,7 @@ export function IdentidadMetodologia() {
         {/* Background image */}
         <div ref={bgRef} className="absolute inset-0">
           <Image
-            src="/identidad/metodologia-bg.jpg"
+            src="/identidad/metodologia-bg.webp"
             alt=""
             fill
             sizes="100vw"

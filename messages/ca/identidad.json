@@ -4,7 +4,7 @@
     "imageAlt": "Equip Interactius",
     "body1": "Interactius neix l'any <strong>2013</strong> de la mà d'un professor de belles arts, Josep, i un alumne d'enginyeria informàtica, Carlos.",
     "body2": "D'aquella tensió entre l'artístic i el tècnic sorgeix el que avui som: un <strong>equip multidisciplinari</strong> que aposta per humanitzar la tecnologia.",
-    "body3": "No encaixem en etiquetes ni ens en vestim. Som un <strong>partner</strong>: proper, implicat i enfocat en el que realment importa. Treballar sense pretensions, amb naturalitat i criteri.",
+    "body3": "No encaixem en etiquetes ni ens en vestim. Som un <strong>partner</strong>: proper, implicat i enfocat en el que realment importa. Treballar amb rigor, naturalitat i criteri.",
     "body4": "No esperem que el canvi passi ni deixem que ens arrossegui. L'habitem. I des d'aquí, avancem."
   },
   "intro": {
@@ -41,7 +41,7 @@
     "quote": "Habitem al marge per viure en el canvi."
   },
   "metodologia": {
-    "title": "Metodologia",
+    "title": "Enfocament",
     "pasos": {
       "0": { "label": "Pensar", "description": "Nomenem el que encara no té forma." },
       "1": { "label": "Activar", "description": "Posem en moviment el que importa." },

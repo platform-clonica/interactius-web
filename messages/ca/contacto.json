@@ -8,14 +8,14 @@
     "altEmail": "info@interactius.com"
   },
   "newsletter": {
-    "title": "Subscriu-te a la nostra newsletter",
-    "copy1": "Cada mes compartim idees, aprenentatges i casos reals per entendre millor el que està passant. Sense soroll. Amb intenció.",
+    "title": "La nostra newsletter. On aturar-se també és avançar.",
+    "copy1": "Cada mes obrim una pausa per explorar tensions i desenvolupar idees amb profunditat. Sense soroll. Sense pressa. Amb criteri.",
     "copy2": "Subscriu-te."
   },
   "testers": {
     "title": "La teva experiència ens inspira a dissenyar millor",
     "intro": "Participa en entrevistes, tests o enquestes des de casa i rep una recompensa.",
-    "step1": "<strong>Registra't aquí.</strong> Deixa'ns les teves dades bàsiques i els teus interessos per conèixer-te millor.",
+    "step1": "<strong>Registra't aquí.</strong> Deixa'ns les teves dades perquè et puguem contactar.",
     "step2": "<strong>Participa des d'on vulguis.</strong> La majoria de sessions són online, per videotrucada. Pots connectar-te des del mòbil o l'ordinador.",
     "step3": "<strong>T'ho agraïm com es mereix!</strong> El teu temps val diners. Per això rebràs una recompensa per cada participació."
   },

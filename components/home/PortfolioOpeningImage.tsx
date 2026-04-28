@@ -73,7 +73,7 @@ export function PortfolioOpeningImage() {
       }}
     >
       <Image
-        src="/home/portfolio-introimg.jpg"
+        src="/home/portfolio-introimg.webp"
         alt=""
         fill
         sizes="(min-width: 1024px) 92vw, 100vw"

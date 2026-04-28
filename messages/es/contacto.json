@@ -8,14 +8,14 @@
     "altEmail": "info@interactius.com"
   },
   "newsletter": {
-    "title": "Suscríbete a nuestra newsletter",
-    "copy1": "Cada mes compartimos ideas, aprendizajes y casos reales para entender mejor lo que está pasando. Sin ruido. Con intención.",
+    "title": "Nuestra newsletter. Donde detenerse también es avanzar.",
+    "copy1": "Cada mes abrimos una pausa para explorar tensiones y desarrollar ideas con profundidad. Sin ruido. Sin prisa. Con criterio.",
     "copy2": "Suscríbete."
   },
   "testers": {
     "title": "Tu experiencia nos inspira a diseñar mejor",
     "intro": "Participa en entrevistas, tests o encuestas desde casa y recibe una recompensa.",
-    "step1": "<strong>Regístrate aquí.</strong> Déjanos tus datos básicos y tus intereses para conocerte mejor.",
+    "step1": "<strong>Regístrate aquí.</strong> Déjanos tus datos para que te podamos contactar.",
     "step2": "<strong>Participa desde donde quieras.</strong> La mayoría de sesiones son online, por videollamada. Puedes conectarte desde el móvil o el ordenador.",
     "step3": "<strong>¡Te lo agradecemos como se merece!</strong> Tu tiempo vale dinero. Por eso recibirás una recompensa por cada participación."
   },

@@ -1,12 +1,21 @@
 'use client'
 
-import { useRef, useEffect, useState, useCallback } from 'react'
+import { useRef, useEffect, useState, useCallback, type ReactNode } from 'react'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { CapacityGraph } from './CapacityGraph'
 import type { CapacityService } from './CapacityGraph'
 
 export type { CapacityService }
+
+// Renderiza inline `<strong>...</strong>` markers desde un string del JSON.
+// Permite negritas dentro de `description` sin migrar a t.rich (los services
+// se cargan via t.raw para mantener el array como objeto plano).
+function renderRich(text: string): ReactNode[] {
+  return text.split(/<strong>(.*?)<\/strong>/).map((part, i) =>
+    i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+  )
+}
 
 /* ==========================================================================
    CapacityServicesAnim — gráfico sticky + bloques animados (sección 3/4)
@@ -198,12 +207,16 @@ export function CapacityServicesAnim({
                     No mt-6 aquí: el row-gap del grid (gap-y-6 = 24px, igual
                     que IdentidadValores) ya provee la separación con el título. */}
                 <div className="col-span-12 lg:col-start-7 lg:col-span-5">
-                  <p
-                    data-service-body
-                    className="font-mono text-body-sm text-fg"
-                  >
-                    {svc.description}
-                  </p>
+                  {/* description puede contener varios párrafos separados por \n\n */}
+                  {svc.description.split(/\n\n+/).map((para, i) => (
+                    <p
+                      key={i}
+                      data-service-body
+                      className={`font-mono text-body-sm text-fg ${i > 0 ? 'mt-6' : ''}`}
+                    >
+                      {renderRich(para)}
+                    </p>
+                  ))}
 
                   {svc.deliverables.length > 0 && (
                     <ul
@@ -214,7 +227,7 @@ export function CapacityServicesAnim({
                       {svc.deliverables.map((tag) => (
                         <li key={tag}>
                           <span className="inline-block bg-grey px-1.5 py-1 font-mono text-label text-fg leading-tight">
-                            {tag}
+                            {renderRich(tag)}
                           </span>
                         </li>
                       ))}

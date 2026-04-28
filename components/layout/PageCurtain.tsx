@@ -64,6 +64,12 @@ export function PageCurtain() {
         router.back()
       } else if (targetHref) {
         router.push(targetHref as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
+        // Forzamos top en push (navegación nueva). No tocamos en mode 'back'
+        // porque ahí queremos que el navegador restaure la posición previa
+        // (scrollRestoration de Next). Se llama mientras la cortina cubre el
+        // viewport completo → invisible para el usuario. `instant` evita
+        // animar un scroll que el usuario no debe ver.
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
       }
     }
 
@@ -112,10 +118,18 @@ export function PageCurtain() {
         onComplete: () => {
           navigate()
           const startedAt = performance.now()
+          let scrolledAfterCommit = false
 
           const tick = () => {
             const elapsed = performance.now() - startedAt
             const pathChanged = window.location.pathname !== initialPath
+            // Segundo scrollTo justo cuando la nueva ruta commitea, por si
+            // Next restauró posición (scrollRestoration) durante el mount.
+            // Solo en push; back conserva la posición original deliberadamente.
+            if (pathChanged && !scrolledAfterCommit && mode === 'push') {
+              window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+              scrolledAfterCommit = true
+            }
             const reached = (pathChanged && elapsed >= MIN_HOLD_MS) || elapsed >= MAX_HOLD_MS
             if (reached) {
               rafIdRef.current = null

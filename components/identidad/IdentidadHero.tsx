@@ -120,7 +120,7 @@ export function IdentidadHero() {
         style={{ left: '58.2%' }}
       >
         <Image
-          src="/identidad/hero-right.jpg"
+          src="/identidad/hero-right.webp"
           alt={t('hero.imageAlt')}
           fill
           priority
@@ -152,7 +152,7 @@ export function IdentidadHero() {
       {/* Mobile image */}
       <div className="relative w-full aspect-[3/2] lg:hidden overflow-hidden">
         <Image
-          src="/identidad/hero-right.jpg"
+          src="/identidad/hero-right.webp"
           alt={t('hero.imageAlt')}
           fill
           sizes="100vw"

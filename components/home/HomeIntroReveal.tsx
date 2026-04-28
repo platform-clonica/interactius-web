@@ -176,7 +176,7 @@ export function HomeIntroReveal() {
           }}
         >
           <Image
-            src="/home/intro-img.jpg"
+            src="/home/intro-img.webp"
             alt=""
             fill
             sizes="100vw"
@@ -217,7 +217,7 @@ export function HomeIntroReveal() {
                 {/* Crop de la misma imagen — sin blur; scrub-up overlay */}
                 <div ref={smallImgRef} className="absolute inset-0">
                   <Image
-                    src="/home/intro-img.jpg"
+                    src="/home/intro-img.webp"
                     alt=""
                     fill
                     sizes="(min-width: 1024px) 28vw, 90vw"

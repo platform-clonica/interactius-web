@@ -28,9 +28,11 @@ export async function Footer() {
               {t('newsletter.tagline')}
             </h2>
 
-            <p className="mt-6 font-mono text-body-sm text-pure-white/60">
-              {t('newsletter.subtitle')}
-            </p>
+            <div className="mt-6 lg:grid lg:grid-cols-7 lg:gap-grid-gutter">
+              <p className="font-mono text-body-sm text-pure-white/60 lg:col-span-5">
+                {t('newsletter.subtitle')}
+              </p>
+            </div>
 
             <div className="mt-8">
               <FooterNewsletterCTA label={t('newsletter.cta')} />

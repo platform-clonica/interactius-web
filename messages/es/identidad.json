@@ -4,7 +4,7 @@
     "imageAlt": "Equipo Interactius",
     "body1": "Interactius nace en <strong>2013</strong> de la mano de un profesor de bellas artes, Josep, y un alumno de ingeniería informática, Carlos.",
     "body2": "De esa tensión entre lo artístico y lo técnico surge lo que hoy somos: un <strong>equipo multidisciplinar</strong> que apuesta por humanizar la tecnología.",
-    "body3": "No encajamos en etiquetas ni vestimos de ellas. Somos un <strong>partner</strong>: cercano, implicado y enfocado en lo que realmente importa. Trabajar sin pretensiones, con naturalidad y criterio.",
+    "body3": "No encajamos en etiquetas ni vestimos de ellas. Somos un <strong>partner</strong>: cercano, implicado y enfocado en lo que realmente importa. Trabajar con rigor, naturalidad y criterio.",
     "body4": "No esperamos a que el cambio ocurra ni dejamos que nos arrastre. Lo habitamos. Y desde ahí, avanzamos."
   },
   "intro": {
@@ -41,7 +41,7 @@
     "quote": "Habitamos en el margen para vivir en el cambio."
   },
   "metodologia": {
-    "title": "Metodología",
+    "title": "Enfoque",
     "pasos": {
       "0": { "label": "Pensar", "description": "Nombramos lo que aún no tiene forma." },
       "1": { "label": "Activar", "description": "Ponemos en movimiento lo que importa." },

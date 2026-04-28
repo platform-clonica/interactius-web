@@ -49,8 +49,8 @@ export default async function PensamientoEstrategico({ params }: PageProps) {
           p: (chunks) => <p>{chunks}</p>,
         })}
         statement={t.rich('pensamiento.intro.statement', richComponents.boldWord)}
-        imageSrc="/capacidades/pensamiento-hero-right.jpg"
-        imageBottomSrc="/capacidades/pensamiento-hero-bottom.jpg"
+        imageSrc="/capacidades/pensamiento-hero-right.webp"
+        imageBottomSrc="/capacidades/pensamiento-hero-bottom.webp"
       />
 
       <ClientsMarquee clients={t('pensamiento.intro.clients')} />

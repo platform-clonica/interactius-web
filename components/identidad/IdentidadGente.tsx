@@ -95,6 +95,17 @@ export function IdentidadGente() {
     const descEl = descRef.current
     if (!section || !pinEl || !titleEl || !descEl) return
 
+    // Detección síncrona: ¿en qué fase está la sección AL MOMENTO DEL MOUNT?
+    // Si la página se carga (o se navega via PageCurtain) con el scroll ya
+    // dentro o pasado Gente, los imports async de GSAP llegarían tarde y los
+    // ScrollTriggers `once+onEnter` no dispararían (ya estamos pasados el
+    // start) → texto oculto sin animar, drift inactivo, fotos off-screen.
+    // Saltamos las animaciones de entrada y dejamos el estado final.
+    const rect = section.getBoundingClientRect()
+    const vh = window.innerHeight
+    const pastTopBottom = rect.top < vh         // texto debería estar revelado
+    const pastTop30 = rect.top < vh * 0.3       // drift debería estar activo
+
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
         import('gsap'),
@@ -128,8 +139,11 @@ export function IdentidadGente() {
       wrapLinesInMask(titleLines)
       wrapLinesInMask(descLines)
 
-      if (reduced) {
+      if (reduced || pastTopBottom) {
+        // Ya entró en viewport antes de que GSAP cargara — dejamos el texto
+        // en su estado final visible, sin animación, sin flash invisible.
         gsap.set([...titleLines, ...descLines], { y: 0, opacity: 1 })
+        cleanups.push(() => { titleSplit.revert(); descSplit.revert() })
       } else {
         gsap.set(titleLines, { y: 80, opacity: 0 })
         gsap.set(descLines, { y: 80, opacity: 0 })
@@ -158,56 +172,50 @@ export function IdentidadGente() {
         cleanups.push(() => { revealST.kill(); titleSplit.revert(); descSplit.revert() })
       }
 
-      // 3. Background fade warm-light → dark of the WHOLE PAGE (body bg),
-      //    con flip de color de los textos sincronizado.
+      // 3. Background fade warm-light → dark — DESACTIVADO temporalmente
+      //    para aislar el origen de los problemas de estabilidad en Gente.
+      //    La sección queda bg-warm-light durante todo el pin. Reactivar
+      //    descomentando el bloque siguiente cuando confirmemos que el
+      //    resto de la sección se comporta bien.
       //
-      //    Canónico (`feedback_bg_fade_pinned.md`): el fade del bg de un
-      //    pinned sólo debe arrancar cuando el pin cubre el viewport
-      //    (`start: 'top top'`). Antes de ese punto, la sección anterior
-      //    todavía es parcialmente visible y el cambio de bg crea una
-      //    línea horizontal que parece máscara y produce los flashes /
-      //    saltos al hacer reverse.
-      //
-      //    `overwrite: 'auto'` evita que un scroll rápido en ambas
-      //    direcciones deje tweens compitiendo (causa probable de
-      //    "se queda en negro" / "pasa a blanco").
-      gsap.set(document.body, { backgroundColor: '#f5f2ed' })
-      gsap.set([titleEl, descEl], { color: '#1c1a17' })
-
-      const bgTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          toggleActions: 'play none none reverse',
-        },
-      })
-      bgTl
-        .to(document.body, {
-          backgroundColor: '#1c1a17',
-          duration: 0.5,
-          ease: 'power2.inOut',
-          overwrite: 'auto',
-        }, 0)
-        .to([titleEl, descEl], {
-          color: '#f5f2ed',
-          duration: 0.5,
-          ease: 'power2.inOut',
-          overwrite: 'auto',
-        }, 0)
-
-      if (bgTl.scrollTrigger) cleanups.push(() => bgTl.scrollTrigger!.kill())
-      cleanups.push(() => bgTl.kill())
-      // Restore inline styles on unmount — body bg and text colors.
-      cleanups.push(() => {
-        document.body.style.backgroundColor = ''
-        titleEl.style.color = ''
-        descEl.style.color = ''
-      })
+      // gsap.set([titleEl, descEl], { color: '#1c1a17' })
+      // const bgTl = gsap.timeline({
+      //   scrollTrigger: {
+      //     trigger: section,
+      //     start: 'top top',
+      //     toggleActions: 'play none none reverse',
+      //   },
+      // })
+      // bgTl
+      //   .to(section, {
+      //     backgroundColor: '#1c1a17',
+      //     duration: 0.5,
+      //     ease: 'power2.inOut',
+      //     overwrite: 'auto',
+      //   }, 0)
+      //   .to([titleEl, descEl], {
+      //     color: '#f5f2ed',
+      //     duration: 0.5,
+      //     ease: 'power2.inOut',
+      //     overwrite: 'auto',
+      //   }, 0)
+      // const bgSt = bgTl.scrollTrigger
+      // if (bgSt) cleanups.push(() => bgSt.kill())
+      // cleanups.push(() => bgTl.kill())
 
       // 3b. Photo drift — activates at the same point as the text reveal and
       //     bg fade. Drift consumes the entryOffset at the same speed it'll
       //     later consume baseX — photos come in one by one from the right
       //     with constant velocity throughout the animation.
+      //
+      //     Si la sección ya está pasado `top 30%` cuando montamos (deep-link,
+      //     hot reload, navegación con scroll restaurado), forzamos el estado
+      //     final desde el primer tick: drift activo, entryOffset consumido,
+      //     fotos en sus posiciones cíclicas naturales.
+      if (pastTop30) {
+        driftRef.current.driftActive = true
+        driftRef.current.entryOffset = 0
+      }
       const entryST = ScrollTrigger.create({
         trigger: section,
         start: 'top 30%',
@@ -239,7 +247,8 @@ export function IdentidadGente() {
             },
           },
         )
-        if (lagTw.scrollTrigger) cleanups.push(() => lagTw.scrollTrigger!.kill())
+        const lagSt = lagTw.scrollTrigger
+        if (lagSt) cleanups.push(() => lagSt.kill())
         cleanups.push(() => lagTw.kill())
       }
 
@@ -404,7 +413,7 @@ export function IdentidadGente() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full"
+      className="relative w-full bg-warm-light"
       aria-labelledby="gente-title"
     >
       {/* Pinned sticky container — bg animates warm-light → dark */}
@@ -462,7 +471,14 @@ export function IdentidadGente() {
                 onPointerEnter={handlePhotoEnter}
                 onPointerLeave={handlePhotoLeave}
                 className="group absolute w-[clamp(160px,13vw,210px)] aspect-square will-change-transform"
-                style={{ top: `${slot.y}%`, left: 0 }}
+                style={{
+                  top: `${slot.y}%`,
+                  left: 0,
+                  // Pre-aplicado: nacen off-screen-right (slot.x + entry offset)
+                  // para evitar el flash de 1 frame con todas apiladas en left:0
+                  // antes de que el RAF aplique el primer transform.
+                  transform: `translate3d(${slot.x + ENTRY_OFFSET_START}px, 0, 0)`,
+                }}
               >
                 <div className="relative h-full w-full overflow-hidden">
                   <Image
