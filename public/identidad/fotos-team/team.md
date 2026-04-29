@@ -25,3 +25,4 @@ Sara Suárez - UX Researcher - Sara.webp
 Tomás Modroño - UX/UI Specialist - Tom.webp
 Alexandra Tresaco - UX/UI Designer - Alexandra.webp
 Oscar Soler - UX/UI Designer - Oscar.webp
+Aleix Martí - Front-end Developer - Aleix.webp

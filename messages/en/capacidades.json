@@ -57,12 +57,12 @@
     ],
     "others": [
       {
-        "title": "Experience design",
+        "title": "Experience\ndesign",
         "description": "We help organisations relate to the future.",
         "href": "/diseno-de-experiencias"
       },
       {
-        "title": "Cultural transformation",
+        "title": "Cultural\ntransformation",
         "description": "AI adoption, organisational change and training.",
         "href": "/transformacion-cultural"
       }
@@ -121,12 +121,12 @@
     ],
     "others": [
       {
-        "title": "Strategic thinking",
+        "title": "Strategic\nthinking",
         "description": "We integrate future vision to make decisions in complex environments.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Cultural transformation",
+        "title": "Cultural\ntransformation",
         "description": "AI adoption, organisational change and training.",
         "href": "/transformacion-cultural"
       }
@@ -169,16 +169,17 @@
     ],
     "manifiesto": {
       "title": "AI Manifesto",
-      "body": "We understand AI not as an end, but as a responsibility. We use it to expand judgement, not to replace it; to explore and design better, not faster."
+      "body1": "We understand AI not as an end, but as a responsibility. We use it to expand judgement, not to replace it; to explore and <strong>design better</strong>, not faster.",
+      "body2": "We commit to applying it with rigour, ethical sense and critical thinking to detect its biases and safeguard human meaning and real impact."
     },
     "others": [
       {
-        "title": "Strategic thinking",
+        "title": "Strategic\nthinking",
         "description": "We integrate future vision to make decisions in complex environments.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Experience design",
+        "title": "Experience\ndesign",
         "description": "We help organisations relate to the future.",
         "href": "/diseno-de-experiencias"
       }

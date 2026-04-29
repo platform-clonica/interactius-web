@@ -167,22 +167,39 @@ export function CapacityOthersAnim({
               onClick={(e) => handleClick(e, item.href)}
               className={`
                 col-span-12 lg:col-span-6
-                flex flex-col gap-4 py-12 lg:py-16
+                flex flex-col gap-2 py-12 lg:py-16
                 ${i === 0 ? 'lg:border-r lg:border-muted lg:pr-grid-gutter' : 'border-t border-muted lg:border-t-0 lg:pl-grid-gutter'}
                 hover:opacity-60 focus-visible:opacity-60
               `}
               style={{ clipPath: 'inset(0 100% 0 0)' }}
             >
-              <span
-                data-other-arrow
-                aria-hidden="true"
-                className="font-mono text-micro text-fg/40"
-              >
-                →
+              <span data-other-arrow aria-hidden="true" className="text-fg">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="shrink-0"
+                >
+                  <line
+                    x1="2"
+                    y1="20"
+                    x2="20"
+                    y2="2"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <polyline
+                    points="4,2 20,2 20,18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                </svg>
               </span>
               <span
                 data-other-title
-                className="font-serif font-light text-fg text-section"
+                className="font-serif font-light text-fg text-title-sm whitespace-pre-line"
               >
                 {item.title}
               </span>

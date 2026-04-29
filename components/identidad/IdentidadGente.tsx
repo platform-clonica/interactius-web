@@ -27,7 +27,7 @@ function shuffle<T>(arr: readonly T[]): T[] {
    ========================================================================== */
 
 // 3 vertical bands, distribuidas en orden 1→2→3 con leve variación de y por
-// banda para mantener el feel scattered. 27 slots = 27 miembros; cada uno
+// banda para mantener el feel scattered. 28 slots = 28 miembros; cada uno
 // renderiza con la foto correspondiente del array `team` (barajado en mount).
 const SLOTS: { y: number; x: number }[] = [
   { y: 12, x: 0 },     { y: 45, x: 280 },   { y: 64, x: 560 },
@@ -39,9 +39,10 @@ const SLOTS: { y: number; x: number }[] = [
   { y: 15, x: 5040 },  { y: 43, x: 5320 },  { y: 65, x: 5600 },
   { y: 11, x: 5880 },  { y: 47, x: 6160 },  { y: 64, x: 6440 },
   { y: 13, x: 6720 },  { y: 44, x: 7000 },  { y: 66, x: 7280 },
+  { y: 17, x: 7560 },
 ]
 
-const REEL_WIDTH = 7560 // 280px × 27 slots
+const REEL_WIDTH = 7840 // 280px × 28 slots
 const DRIFT_SPEED = 100 // px per second — same velocity for entry and drift
 const PHOTO_W = 200     // px — reference for wrap calculation
 
@@ -105,6 +106,7 @@ export function IdentidadGente() {
     const vh = window.innerHeight
     const pastTopBottom = rect.top < vh         // texto debería estar revelado
     const pastTop30 = rect.top < vh * 0.3       // drift debería estar activo
+    const pastTopTop = rect.top <= 0            // bg-fade debería estar en dark
 
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
@@ -172,36 +174,41 @@ export function IdentidadGente() {
         cleanups.push(() => { revealST.kill(); titleSplit.revert(); descSplit.revert() })
       }
 
-      // 3. Background fade warm-light → dark — DESACTIVADO temporalmente
-      //    para aislar el origen de los problemas de estabilidad en Gente.
-      //    La sección queda bg-warm-light durante todo el pin. Reactivar
-      //    descomentando el bloque siguiente cuando confirmemos que el
-      //    resto de la sección se comporta bien.
-      //
-      // gsap.set([titleEl, descEl], { color: '#1c1a17' })
-      // const bgTl = gsap.timeline({
-      //   scrollTrigger: {
-      //     trigger: section,
-      //     start: 'top top',
-      //     toggleActions: 'play none none reverse',
-      //   },
-      // })
-      // bgTl
-      //   .to(section, {
-      //     backgroundColor: '#1c1a17',
-      //     duration: 0.5,
-      //     ease: 'power2.inOut',
-      //     overwrite: 'auto',
-      //   }, 0)
-      //   .to([titleEl, descEl], {
-      //     color: '#f5f2ed',
-      //     duration: 0.5,
-      //     ease: 'power2.inOut',
-      //     overwrite: 'auto',
-      //   }, 0)
-      // const bgSt = bgTl.scrollTrigger
-      // if (bgSt) cleanups.push(() => bgSt.kill())
-      // cleanups.push(() => bgTl.kill())
+      // 3. Background fade warm-light → dark
+      //    Si la sección ya está pasada `top top` cuando montamos (deep-link,
+      //    navegación con scroll restaurado), forzamos estado final dark sin
+      //    animar para evitar flash + línea horizontal de la máscara.
+      if (!reduced) {
+        if (pastTopTop) {
+          gsap.set(section, { backgroundColor: '#1c1a17' })
+          gsap.set([titleEl, descEl], { color: '#f5f2ed' })
+        } else {
+          gsap.set([titleEl, descEl], { color: '#1c1a17' })
+          const bgTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: 'top top',
+              toggleActions: 'play none none reverse',
+            },
+          })
+          bgTl
+            .to(section, {
+              backgroundColor: '#1c1a17',
+              duration: 0.5,
+              ease: 'power2.inOut',
+              overwrite: 'auto',
+            }, 0)
+            .to([titleEl, descEl], {
+              color: '#f5f2ed',
+              duration: 0.5,
+              ease: 'power2.inOut',
+              overwrite: 'auto',
+            }, 0)
+          const bgSt = bgTl.scrollTrigger
+          if (bgSt) cleanups.push(() => bgSt.kill())
+          cleanups.push(() => bgTl.kill())
+        }
+      }
 
       // 3b. Photo drift — activates at the same point as the text reveal and
       //     bg fade. Drift consumes the entryOffset at the same speed it'll

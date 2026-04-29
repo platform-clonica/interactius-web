@@ -57,12 +57,12 @@
     ],
     "others": [
       {
-        "title": "Diseño de experiencias",
+        "title": "Diseño de\nexperiencias",
         "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
         "href": "/diseno-de-experiencias"
       },
       {
-        "title": "Transformación cultural",
+        "title": "Transformación\ncultural",
         "description": "Adopción de IA, cambio organizacional y formación.",
         "href": "/transformacion-cultural"
       }
@@ -121,12 +121,12 @@
     ],
     "others": [
       {
-        "title": "Pensamiento estratégico",
+        "title": "Pensamiento\nestratégico",
         "description": "Integramos visión de futuro para decidir en entornos complejos.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Transformación cultural",
+        "title": "Transformación\ncultural",
         "description": "Adopción de IA, cambio organizacional y formación.",
         "href": "/transformacion-cultural"
       }
@@ -169,16 +169,17 @@
     ],
     "manifiesto": {
       "title": "Manifiesto IA",
-      "body": "Entendemos la IA no como un fin, sino como una responsabilidad. La usamos para ampliar el criterio, no para sustituirlo; para explorar y diseñar mejor, no más rápido."
+      "body1": "Entendemos la IA no como un fin, sino como una responsabilidad. La usamos para ampliar el criterio, no para sustituirlo; para explorar y <strong>diseñar mejor</strong>, no más rápido.",
+      "body2": "Nos comprometemos a aplicarla con rigor, con sentido ético y pensamiento crítico para detectar sus sesgos y asegurar el sentido humano e impacto real."
     },
     "others": [
       {
-        "title": "Pensamiento estratégico",
+        "title": "Pensamiento\nestratégico",
         "description": "Integramos visión de futuro para decidir en entornos complejos.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Diseño de experiencias",
+        "title": "Diseño de\nexperiencias",
         "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
         "href": "/diseno-de-experiencias"
       }

@@ -21,8 +21,8 @@ const PRIMARY_ITEMS = [
 ] as const
 
 const SECONDARY_ITEMS = [
-  { route: '/miradas', labelKey: 'nav.miradas' },
   { route: '/identidad', labelKey: 'nav.identidad' },
+  { route: '/miradas', labelKey: 'nav.miradas' },
   { route: '/contacto', labelKey: 'nav.contacto' },
   { route: '/testers', labelKey: 'nav.testers' },
 ] as const

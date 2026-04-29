@@ -20,6 +20,7 @@ export interface TeamMember {
 export const TEAM: readonly TeamMember[] = [
   { src: '/identidad/fotos-team/Adrian.webp',   name: 'Adrián Yanes',       role: 'UX/UI Designer' },
   { src: '/identidad/fotos-team/Ale.webp',      name: 'Alejandro Madeira',  role: 'Project Manager' },
+  { src: '/identidad/fotos-team/Aleix.webp',    name: 'Aleix Martí',        role: 'Front-end Developer' },
   { src: '/identidad/fotos-team/Alex.webp',     name: 'Alex Cuadrado',      role: 'UX Designer' },
   { src: '/identidad/fotos-team/Alexandra.webp',name: 'Alexandra Tresaco',  role: 'UX/UI Designer' },
   { src: '/identidad/fotos-team/Berta.webp',    name: 'Berta Abad',         role: 'Graphic Designer' },

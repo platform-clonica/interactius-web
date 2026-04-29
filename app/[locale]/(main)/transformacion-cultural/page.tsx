@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server'
 import { CapacityHeroSequence } from '@/components/capacity/CapacityHeroSequence'
 import { CapacityServices } from '@/components/capacity/CapacityServices'
 import { CapacityOthers } from '@/components/capacity/CapacityOthers'
+import { CapacityManifiesto } from '@/components/capacity/CapacityManifiesto'
 import { ClientsMarquee } from '@/components/capacity/ClientsMarquee'
 import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
@@ -60,25 +61,12 @@ export default async function TransformacionCultural({ params }: PageProps) {
       />
 
       {/* Manifiesto IA — sección exclusiva de Transformación cultural. NO replicar en otros servicios. */}
-      <section className="w-full bg-dark" aria-labelledby="manifiesto-title">
-        <div className="section-inner py-section">
-          <div className="grid grid-cols-12 gap-grid-gutter">
-            <div className="col-span-12 lg:col-span-4">
-              <h2
-                id="manifiesto-title"
-                className="font-serif font-light text-pure-white text-section"
-              >
-                {t('transformacion.manifiesto.title')}
-              </h2>
-            </div>
-            <div className="col-span-12 lg:col-span-7 lg:col-start-6">
-              <p className="font-mono text-body text-pure-white/80 max-w-[52ch]">
-                {t('transformacion.manifiesto.body')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CapacityManifiesto
+        title={t('transformacion.manifiesto.title')}
+        body1={t.rich('transformacion.manifiesto.body1', richComponents.bold)}
+        body2={t('transformacion.manifiesto.body2')}
+        imageSrc="/capacidades/transformacion3.webp"
+      />
 
       <CapacityOthers
         items={others.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityOtherItem, CapacityOtherItem]}

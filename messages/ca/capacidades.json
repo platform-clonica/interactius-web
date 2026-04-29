@@ -57,12 +57,12 @@
     ],
     "others": [
       {
-        "title": "Disseny d'experiències",
+        "title": "Disseny\nd'experiències",
         "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
         "href": "/diseno-de-experiencias"
       },
       {
-        "title": "Transformació cultural",
+        "title": "Transformació\ncultural",
         "description": "Adopció d'IA, canvi organitzacional i formació.",
         "href": "/transformacion-cultural"
       }
@@ -121,12 +121,12 @@
     ],
     "others": [
       {
-        "title": "Pensament estratègic",
+        "title": "Pensament\nestratègic",
         "description": "Integrem visió de futur per decidir en entorns complexos.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Transformació cultural",
+        "title": "Transformació\ncultural",
         "description": "Adopció d'IA, canvi organitzacional i formació.",
         "href": "/transformacion-cultural"
       }
@@ -169,16 +169,17 @@
     ],
     "manifiesto": {
       "title": "Manifest IA",
-      "body": "Entenem la IA no com un fi, sinó com una responsabilitat. La fem servir per ampliar el criteri, no per substituir-lo; per explorar i dissenyar millor, no més ràpid."
+      "body1": "Entenem la IA no com un fi, sinó com una responsabilitat. La fem servir per ampliar el criteri, no per substituir-lo; per explorar i <strong>dissenyar millor</strong>, no més ràpid.",
+      "body2": "Ens comprometem a aplicar-la amb rigor, amb sentit ètic i pensament crític per detectar els seus biaixos i assegurar el sentit humà i l'impacte real."
     },
     "others": [
       {
-        "title": "Pensament estratègic",
+        "title": "Pensament\nestratègic",
         "description": "Integrem visió de futur per decidir en entorns complexos.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Disseny d'experiències",
+        "title": "Disseny\nd'experiències",
         "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
         "href": "/diseno-de-experiencias"
       }
