@@ -54,7 +54,7 @@ export default async function DisenoDeExperiencias({ params }: PageProps) {
         imageBottomSrc="/capacidades/experiencias-hero-bottom.webp"
       />
 
-      <ClientsMarquee clients={t('experiencias.intro.clients')} />
+      <ClientsMarquee clients={t('experiencias.intro.clients')} singleLine />
 
       <CapacityServices
         services={services}

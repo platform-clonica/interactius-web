@@ -19,7 +19,7 @@
     "pillars": [
       {
         "number": "1",
-        "name": "Pensament estrat\u00e8gic",
+        "name": "Pensament\nestrat\u00e8gic",
         "description": "Aportem claredat per identificar oportunitats i construir propostes de valor duradores.",
         "services": [
           "Disseny estrat\u00e8gic",
@@ -31,7 +31,7 @@
       },
       {
         "number": "2",
-        "name": "Disseny d\u2019experi\u00e8ncies",
+        "name": "Disseny\nd\u2019experi\u00e8ncies",
         "description": "Activem solucions coherents i validades mitjan\u00e7ant metodologia pr\u00f2pia i intel\u00b7lig\u00e8ncia artificial aplicada amb criteri hum\u00e0.",
         "services": [
           "Disseny de productes i serveis",
@@ -43,7 +43,7 @@
       },
       {
         "number": "3",
-        "name": "Transformaci\u00f3 cultural",
+        "name": "Transformaci\u00f3\ncultural",
         "description": "Impulsem canvis sostinguts integrant noves mentalitats i IA per desenvolupar equips capa\u00e7os de liderar el canvi.",
         "services": [
           "Cultura organitzacional",

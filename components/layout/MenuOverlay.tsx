@@ -8,6 +8,7 @@ import { useMenuStore, resetSavedScroll } from '@/lib/store/menu'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher'
 // gsap se importa lazy dentro del useEffect para no engrosar el bundle del layout.
 
 /* ==========================================================================
@@ -221,8 +222,10 @@ export function MenuOverlay() {
         )
       }
 
-      // Secondary links — fade + y
-      const secondaryLinks = container.querySelectorAll<HTMLElement>('[data-secondary-link]')
+      // Secondary links + locale switcher items — fade + y staggered
+      const secondaryLinks = container.querySelectorAll<HTMLElement>(
+        '[data-secondary-link], [data-locale-switcher] li',
+      )
       if (reduced) {
         gsap.set(secondaryLinks, { opacity: 1, y: 0 })
       } else {
@@ -327,6 +330,19 @@ export function MenuOverlay() {
         className="absolute inset-y-0 z-10"
         style={{ left: 'calc(var(--sidebar-w) + var(--grid-margin))' }}
       >
+        {/* Home link — alineado verticalmente con la X del Sidebar (top:26px),
+            mismo estilo que los secondary nav links. */}
+        <Link
+          href="/"
+          onClick={(e) => handleLinkClick(e, '/')}
+          data-secondary-link=""
+          className="hover-wipe-underline absolute top-[26px] w-fit
+                     font-mono text-body-sm text-fg
+                     focus-visible:opacity-90"
+        >
+          {t('nav.home')}
+        </Link>
+
         {/* Primary nav */}
         <nav
           aria-label={t('common.menu.primaryNav')}
@@ -340,18 +356,45 @@ export function MenuOverlay() {
                          lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]"
             >
               <div data-primary-block="" className="border-t border-fg/20">
-                <span className="block pt-[9px] font-mono text-card-sm text-fg leading-none">
+                <span className="block pt-[9px] font-mono text-card-sm text-fg/40 leading-none">
                   {num}
                 </span>
                 <Link
                   href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
                   onClick={(e) => handleLinkClick(e, route)}
-                  className="block mt-[14px] pb-[9px]
-                             font-serif font-light text-section text-fg
-                             transition-opacity duration-fast ease-expo
-                             hover:opacity-60 focus-visible:opacity-60"
+                  className="hover-text-flip block mt-[14px] pb-[9px]
+                             font-serif font-light text-title-sm text-fg
+                             focus-visible:opacity-90"
                 >
-                  {t(labelKey)}
+                  <span className="flex w-full items-center justify-between gap-3 pr-[10px]">
+                    <span className="st-mask">
+                      <span className="hover-text-flip-target inline-block">
+                        {t(labelKey)}
+                      </span>
+                    </span>
+                    {/* Mask custom para flecha — sin padding/margin de st-mask
+                        (que añadía clearance para descenders y dejaba 1px de
+                        peek). overflow-hidden con dims explícitas; translateY
+                        de la base lleva 1px extra para garantizar 0 peek. */}
+                    <span
+                      aria-hidden="true"
+                      className="overflow-hidden inline-block leading-none align-middle"
+                      style={{ width: '40px', height: '40px' }}
+                    >
+                      <span className="hover-arrow-slide-target block">
+                        <svg
+                          width="40"
+                          height="40"
+                          viewBox="0 0 40 40"
+                          fill="none"
+                          className="shrink-0"
+                        >
+                          <line x1="10" y1="27" x2="33" y2="3" stroke="currentColor" strokeWidth="1.5" />
+                          <polyline points="7,3 33,3 33,30" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                        </svg>
+                      </span>
+                    </span>
+                  </span>
                 </Link>
               </div>
             </div>
@@ -370,13 +413,27 @@ export function MenuOverlay() {
               href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
               onClick={(e) => handleLinkClick(e, route)}
               data-secondary-link=""
-              className="font-mono text-body-sm text-fg underline underline-offset-4
+              className="hover-wipe-underline w-fit font-mono text-body-sm text-fg
                          transition-opacity duration-fast ease-expo
-                         hover:opacity-60 focus-visible:opacity-60"
+                         focus-visible:opacity-90"
             >
               {t(labelKey)}
             </Link>
           ))}
+        </div>
+
+        {/* Locale switcher — top-right del panel, alineado verticalmente con
+            Home y la X. Stack vertical (ES/CA/EN uno debajo del otro). */}
+        <div
+          data-locale-switcher=""
+          className="absolute top-[26px]
+                     w-[calc(100vw-var(--grid-margin)*2)]
+                     lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]
+                     pointer-events-none"
+        >
+          <div className="flex justify-end pr-[30px]">
+            <LocaleSwitcher className="pointer-events-auto" />
+          </div>
         </div>
       </div>
     </div>

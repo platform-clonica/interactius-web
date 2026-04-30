@@ -42,7 +42,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
 
   return (
     <ul
-      className={`flex items-center gap-3 font-mono text-micro ${className ?? ''}`}
+      className={`flex flex-col items-end gap-1 font-mono text-body-sm ${className ?? ''}`}
       aria-label="Language"
     >
       {LOCALES.map((locale) => {
@@ -52,7 +52,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
             {isCurrent ? (
               <span
                 aria-current="true"
-                className="uppercase text-fg"
+                className="uppercase text-fg/40"
               >
                 {LOCALE_META[locale].nativeName}
               </span>
@@ -60,8 +60,8 @@ export function LocaleSwitcher({ className }: { className?: string }) {
               <Link
                 href={linkHref}
                 locale={locale}
-                className="uppercase text-fg/60 transition-colors duration-fast ease-expo
-                           hover:text-fg focus-visible:text-fg"
+                className="hover-wipe-underline w-fit uppercase text-fg
+                           focus-visible:opacity-90"
               >
                 {LOCALE_META[locale].nativeName}
               </Link>

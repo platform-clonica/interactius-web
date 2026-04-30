@@ -112,7 +112,7 @@ export async function WorkGrid() {
           >
             {t('work.heading')}
           </h2>
-          <p className="font-mono text-body-sm text-fg/80 lg:col-span-8 lg:col-start-4">
+          <p className="font-mono text-body-sm text-fg lg:col-span-8 lg:col-start-4">
             {t.rich('work.description', {
               strong: (chunks) => <strong>{chunks}</strong>,
             })}

@@ -19,7 +19,7 @@
     "pillars": [
       {
         "number": "1",
-        "name": "Pensamiento estratégico",
+        "name": "Pensamiento\nestratégico",
         "description": "Aportamos claridad para identificar oportunidades y construir propuestas de valor duraderas.",
         "services": [
           "Diseño estratégico",
@@ -31,7 +31,7 @@
       },
       {
         "number": "2",
-        "name": "Diseño de experiencias",
+        "name": "Diseño de\nexperiencias",
         "description": "Activamos soluciones coherentes y validadas mediante metodología propia e inteligencia artificial aplicada con criterio humano.",
         "services": [
           "Diseño de productos y servicios",
@@ -43,7 +43,7 @@
       },
       {
         "number": "3",
-        "name": "Transformación cultural",
+        "name": "Transformación\ncultural",
         "description": "Impulsamos cambios sostenidos integrando nuevas mentalidades y IA para desarrollar equipos capaces de liderar el cambio.",
         "services": [
           "Cultura organizacional",

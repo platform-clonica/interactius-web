@@ -19,7 +19,7 @@
     "pillars": [
       {
         "number": "1",
-        "name": "Strategic thinking",
+        "name": "Strategic\nthinking",
         "description": "We bring clarity to identify opportunities and build lasting value propositions.",
         "services": [
           "Strategic design",
@@ -31,7 +31,7 @@
       },
       {
         "number": "2",
-        "name": "Experience design",
+        "name": "Experience\ndesign",
         "description": "We activate coherent, validated solutions through proprietary methodology and AI applied with human judgement.",
         "services": [
           "Product and service design",
@@ -43,7 +43,7 @@
       },
       {
         "number": "3",
-        "name": "Cultural transformation",
+        "name": "Cultural\ntransformation",
         "description": "We drive lasting change by integrating new mindsets and AI to develop teams capable of leading change.",
         "services": [
           "Organisational culture",

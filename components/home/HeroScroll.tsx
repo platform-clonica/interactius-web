@@ -87,6 +87,14 @@ export function HeroScroll({
     const strip   = stripRef.current
     if (!section || !spacer || !tagline || !strip) return
 
+    // Detección síncrona pre-imports: si la página se refresca con scroll
+    // restaurado mid-page, NO queremos disparar la entry reveal del strip
+    // (clipPath 100%→0%) ni autoplay del video — porque el strip ya debería
+    // estar oculto/fuera de fase. Capturamos la decisión antes de que GSAP
+    // cargue async y el scroll-restoration de Next se aplique.
+    const initialScrollY = window.scrollY
+    const isFreshLoad = initialScrollY < 1
+
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
         import('gsap'),
@@ -175,7 +183,9 @@ export function HeroScroll({
       // Strip: estado inicial geometría + clip oculto
       gsap.set(strip, { top: stripTop, left: leftStart, right: 0, bottom: 0, clipPath: 'inset(0 100% 0 0)' })
 
-      if (reduced) {
+      if (reduced || !isFreshLoad) {
+        // Reduced motion O refresco mid-page: sin reveal animation. El estado
+        // final lo aplica el snap inicial de fase más abajo (basado en scrollY).
         gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
       } else {
         // Reveal lateral canónico con el mismo ease que la cortina (power4.inOut)
@@ -203,9 +213,38 @@ export function HeroScroll({
         })
       }
 
+      // Snap inicial al phase state correcto basado en scrollY actual.
+      // Sin esto, en refresh mid-page el strip flashea desde su geometría
+      // inicial (bottom-strip) hasta su estado final cuando ScrollTrigger
+      // dispara onUpdate por primera vez.
+      const snapPhaseState = (scrollY: number) => {
+        if (scrollY <= PHASE1_END) {
+          const p = scrollY / PHASE1_END
+          gsap.set(strip, { top: stripTop * (1 - p), left: leftStart * (1 - p) })
+          gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
+        } else if (scrollY <= PHASE2_END) {
+          gsap.set(strip, { top: 0, left: 0 })
+          gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
+        } else if (scrollY <= PHASE3_END) {
+          const p = (scrollY - PHASE2_END) / (PHASE3_END - PHASE2_END)
+          gsap.set(strip, { top: 0, left: 0 })
+          gsap.set(strip, { clipPath: `inset(0 0 ${p * 100}% 0)` })
+        } else {
+          // Más allá de fase 3 — strip totalmente clipado (oculto).
+          gsap.set(strip, { top: 0, left: 0 })
+          gsap.set(strip, { clipPath: 'inset(0 0 100% 0)' })
+        }
+      }
+      if (!isFreshLoad) {
+        snapPhaseState(initialScrollY)
+      }
+
       // Video corre desde el principio (mute + loop), visible también dentro
       // del strip enmascarado. Click sobre el strip → fullscreen + (futuro) sonido.
-      if (videoEl) {
+      // NO autoplay si el strip ya está fuera (Phase 3 completado) — evita
+      // que en refresh mid-page el video se reproduzca invisible/encima.
+      const stripVisibleAtMount = initialScrollY < PHASE3_END
+      if (videoEl && stripVisibleAtMount) {
         videoEl.style.opacity = '1'
         videoEl.play().catch(() => {})
       }

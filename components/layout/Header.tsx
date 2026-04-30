@@ -17,6 +17,7 @@ export async function Header() {
       role="banner"
       className="fixed top-0 right-0 z-header flex h-20 items-center justify-end
                  pr-[26px] left-0 pointer-events-none"
+      style={{ mixBlendMode: 'difference' }}
     >
       <div data-header-cta="" className="pointer-events-auto">
         <HeaderCTA label={t('header.cta')} />

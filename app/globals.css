@@ -263,6 +263,85 @@
     pointer-events: none;
   }
 
+  /* ────────────────────────────────────────────────────────────────────────
+     Link hover underline — instant clear + slow wipe-in (variación propia).
+     --------------------------------------------------------------------
+     Aplicado vía clase `.hover-wipe-underline` a links que llevan underline
+     en estado base. En hover:
+     · El underline desaparece INSTANTÁNEAMENTE (frame 0% del keyframe en
+       scaleX 0).
+     · Reaparece animándose de izquierda a derecha con el easing canónico
+       lateral del proyecto (cubic-bezier(.16,1,.3,1)) durante 0.9s.
+     Visualmente la posición y grosor (1px @ underline-offset 4px) imitan
+     el text-decoration nativo, sólo cambia la animación al hacer hover.
+     ──────────────────────────────────────────────────────────────────── */
+  .hover-wipe-underline {
+    position: relative;
+    text-decoration: none;
+  }
+  .hover-wipe-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(1);
+    transform-origin: left;
+    pointer-events: none;
+  }
+  .hover-wipe-underline:hover::after,
+  .hover-wipe-underline:focus-visible::after {
+    animation: link-wipe-in 0.5s cubic-bezier(.45, 0, .15, 1) forwards;
+  }
+  @keyframes link-wipe-in {
+    0%   { transform: scaleX(0); transform-origin: left; }
+    100% { transform: scaleX(1); transform-origin: left; }
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+     Line-mask flip on hover — pattern editorial. El texto sale de la
+     máscara hacia ARRIBA y reaparece desde ABAJO en un solo movimiento
+     continuo (siempre hacia arriba). Usa el parent con `overflow:hidden`
+     para recortar fuera de la mascara.
+     · 0% → 50%: translateY 0% → -100% (sube y se oculta por arriba).
+     · 50% → 50.01%: jump instantáneo a translateY 100% (parte inferior).
+     · 50.01% → 100%: translateY 100% → 0% (vuelve a su sitio desde abajo).
+     · NO `forwards` → tras la animación vuelve al estado inline (GSAP
+       dejó translateY 0%, opacity 1).
+     ──────────────────────────────────────────────────────────────────── */
+  /* Trigger en el ancestro hoverable; target en el inner span con
+     inline-block (necesario para que `transform` aplique). */
+  .hover-text-flip:hover .hover-text-flip-target,
+  .hover-text-flip:focus-visible .hover-text-flip-target {
+    animation: line-mask-flip 0.5s cubic-bezier(.45, 0, .15, 1);
+  }
+
+  @keyframes line-mask-flip {
+    0%     { transform: translateY(0%); }
+    49.99% { transform: translateY(-100%); }
+    50%    { transform: translateY(100%); }
+    100%   { transform: translateY(0%); }
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+     Hover-arrow slide — flecha oculta debajo del mask por defecto. En hover
+     sube a su sitio; al salir el hover vuelve a esconderse hacia abajo
+     (transición bidireccional simétrica).
+     · Trigger: ancestro con `.hover-text-flip`.
+     · Requiere parent con `overflow:hidden` y dimensiones explícitas.
+     · El `+1px` asegura 0 peek por subpíxel.
+     ──────────────────────────────────────────────────────────────────── */
+  .hover-arrow-slide-target {
+    transform: translateY(calc(100% + 1px));
+    transition: transform 0.5s cubic-bezier(.45, 0, .15, 1);
+  }
+  .hover-text-flip:hover .hover-arrow-slide-target,
+  .hover-text-flip:focus-visible .hover-arrow-slide-target {
+    transform: translateY(0%);
+  }
+
 }
 
 

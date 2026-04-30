@@ -2,16 +2,20 @@
 
 import { useCallback, useEffect, type MouseEvent } from 'react'
 
-import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
 import { Link, useRouter } from '@/lib/i18n/navigation'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 
 /**
- * HeaderCTA — botón "Hablemos" con cortina de transición a /contacto.
+ * HeaderCTA — link "Hablemos" con cortina de transición a /contacto.
  *
- * Renderiza como Link (prefetch automático de Next.js para que el chunk de
- * /contacto esté listo antes del uncover). Click normal → PageCurtain;
- * cmd/ctrl/shift/alt-click → navegación nativa (nueva pestaña).
+ * Estilo canónico de link con underline y hover-wipe (mismo lenguaje que
+ * los secondary nav links del menú). Color adaptativo al fondo vía el
+ * pipeline canónico del chrome:
+ *   1. Texto inicial color dark (`text-fg`).
+ *   2. `filter: brightness(0) invert(1)` lo convierte en blanco puro.
+ *   3. `mix-blend-mode: difference` (en el wrapper data-header-cta del
+ *      Header.tsx) compone el blanco contra el fondo → contraste correcto
+ *      sobre cualquier color de página.
  */
 export function HeaderCTA({ label }: { label: string }) {
   const begin = usePageCurtainStore((s) => s.beginPageCurtain)
@@ -34,13 +38,13 @@ export function HeaderCTA({ label }: { label: string }) {
   )
 
   return (
-    <ButtonPrimary
-      as={Link}
+    <Link
       href="/contacto"
-      variant="light"
       onClick={handleClick}
+      className="hover-wipe-underline inline-block w-fit font-mono text-body-sm text-fg"
+      style={{ filter: 'brightness(0) invert(1)' }}
     >
       {label}
-    </ButtonPrimary>
+    </Link>
   )
 }

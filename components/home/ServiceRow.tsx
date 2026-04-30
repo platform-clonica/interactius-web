@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from '@/lib/i18n/navigation'
 import type { RouteId } from '@/lib/i18n/navigation'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { PlusArrowFlipIcon } from '@/components/ui/PlusArrowFlipIcon'
 
 interface PillarData {
   number: string
@@ -78,7 +79,7 @@ export function ServiceRow({ data }: ServiceRowProps) {
       <div className="relative section-inner">
         <InnerWrapper
           {...wrapperProps}
-          className="grid grid-cols-12 gap-grid-gutter py-10 md:py-11 lg:py-12"
+          className="hover-text-flip grid grid-cols-12 gap-grid-gutter py-10 md:py-11 lg:py-12"
         >
           {/* Número — col 3 (desktop) / col 1 (mobile) */}
           <div className="col-span-1 lg:col-start-3 lg:col-span-1 flex items-start pt-1">
@@ -90,10 +91,22 @@ export function ServiceRow({ data }: ServiceRowProps) {
             </span>
           </div>
 
-          {/* Nombre del pilar — col 4-6 (desktop) / resto del row (mobile) */}
+          {/* Nombre del pilar — col 4-6 (desktop) / resto del row (mobile).
+              Title con line-mask flip on hover (hover-text-flip en parent).
+              Cada línea (separada por \n en JSON) hace su propio flip con
+              60ms de stagger entre ellas. */}
           <div className="col-span-11 lg:col-start-4 lg:col-span-3">
             <h3 className="font-serif font-light text-fg text-subtitle leading-tight">
-              {data.name}
+              {data.name.split('\n').map((line, lineIdx) => (
+                <span key={lineIdx} className="st-mask">
+                  <span
+                    className="hover-text-flip-target inline-block"
+                    style={{ animationDelay: `${lineIdx * 60}ms` }}
+                  >
+                    {line}
+                  </span>
+                </span>
+              ))}
             </h3>
           </div>
 
@@ -113,10 +126,12 @@ export function ServiceRow({ data }: ServiceRowProps) {
             </ul>
           </div>
 
-          {/* Plus icon — col 12. Default 40%, hover 100% + rotación 360°
-              en sync con el stroke (mismo duration y easing). */}
+          {/* Plus icon — col 12. Default 40%, hover 100%.
+              Todos los pilares usan PlusArrowFlipIcon: line-mask vertical
+              entre + y flecha-up-right (stack 40×40 con translate-y -40px
+              al hover). */}
           <div className="hidden lg:col-start-12 lg:col-span-1 lg:flex lg:items-start lg:justify-end lg:pt-1 text-fg/40 group-hover:text-fg transition-colors duration-300 ease-expo">
-            <PlusIcon />
+            <PlusArrowFlipIcon />
           </div>
         </InnerWrapper>
       </div>
@@ -124,18 +139,3 @@ export function ServiceRow({ data }: ServiceRowProps) {
   )
 }
 
-function PlusIcon() {
-  return (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 40 40"
-      fill="none"
-      aria-hidden="true"
-      className="shrink-0 group-hover:rotate-180 group-hover:transition-transform group-hover:duration-700 group-hover:ease-[cubic-bezier(.16,1,.3,1)]"
-    >
-      <line x1="20" y1="0" x2="20" y2="40" stroke="currentColor" strokeWidth="1.5" />
-      <line x1="0" y1="20" x2="40" y2="20" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  )
-}
