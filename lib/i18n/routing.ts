@@ -19,7 +19,7 @@
 
 import { defineRouting } from 'next-intl/routing'
 
-import { DEFAULT_LOCALE, LOCALES } from '@/lib/i18n/config'
+import { DEFAULT_LOCALE, LOCALES } from './config'
 
 /* ==========================================================================
    Mapa de rutas localizadas
