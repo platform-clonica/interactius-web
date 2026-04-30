@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
-import { localizedPath, getAlternates, Link } from '@/lib/i18n/routing'
+import { localizedPath, getAlternates, Link } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 import { getMiradaBySlug, getAllSlugs } from '@/lib/content/miradas'
 import { MDXContent } from '@/components/miradas/MDXContent'

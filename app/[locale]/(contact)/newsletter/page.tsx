@@ -4,7 +4,7 @@ import { ContactHero } from '@/components/contact/ContactHero'
 import { ContactForm } from '@/components/contact/ContactForm'
 
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
-import { getAlternates, localizedPath } from '@/lib/i18n/routing'
+import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
 interface PageProps {

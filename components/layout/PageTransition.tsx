@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
-import { usePathname } from '@/lib/i18n/routing'
+import { usePathname } from '@/lib/i18n/navigation'
 import { useMenuStore } from '@/lib/store/menu'
 
 export function PageTransition({ children }: { children: React.ReactNode }) {

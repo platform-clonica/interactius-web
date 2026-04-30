@@ -11,7 +11,7 @@
  */
 
 import { type ComponentProps } from 'react'
-import { Link } from '@/lib/i18n/routing'
+import { Link } from '@/lib/i18n/navigation'
 
 /** Tipo del href que acepta el Link de next-intl */
 export type IntlHref = ComponentProps<typeof Link>['href']

@@ -9,7 +9,7 @@ import { WorkGrid } from '@/components/home/WorkGrid'
 import { ClientsMarquee } from '@/components/home/ClientsMarquee'
 
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
-import { getAlternates, localizedPath } from '@/lib/i18n/routing'
+import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
 /* ==========================================================================

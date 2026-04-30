@@ -2,8 +2,8 @@
 
 import { useCallback, useRef, useEffect } from 'react'
 
-import { Link } from '@/lib/i18n/routing'
-import type { RouteId } from '@/lib/i18n/routing'
+import { Link } from '@/lib/i18n/navigation'
+import type { RouteId } from '@/lib/i18n/navigation'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 

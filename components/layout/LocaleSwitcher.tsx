@@ -7,8 +7,8 @@ import {
   LOCALE_META,
   type Locale,
 } from '@/lib/i18n/config'
-import { Link, usePathname } from '@/lib/i18n/routing'
-import type { RouteId } from '@/lib/i18n/routing'
+import { Link, usePathname } from '@/lib/i18n/navigation'
+import type { RouteId } from '@/lib/i18n/navigation'
 import { articleHref, type IntlHref } from '@/lib/i18n/article-href'
 
 /**

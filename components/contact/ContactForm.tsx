@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl'
 import { FormField } from '@/components/ui/FormField'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
-import { Link } from '@/lib/i18n/routing'
+import { Link } from '@/lib/i18n/navigation'
 
 /* ==========================================================================
    Types

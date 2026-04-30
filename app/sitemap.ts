@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
 import { LOCALES } from '@/lib/i18n/config'
-import { PATHNAMES, localizedUrl, type RouteId } from '@/lib/i18n/routing'
+import { PATHNAMES, localizedUrl, type RouteId } from '@/lib/i18n/navigation'
 import { getAllSlugs } from '@/lib/content/miradas'
 
 /* ==========================================================================

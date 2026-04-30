@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 
 import { ServiceRow } from './ServiceRow'
-import type { RouteId } from '@/lib/i18n/routing'
+import type { RouteId } from '@/lib/i18n/navigation'
 
 /**
  * ServicesRows — sección "Servicios" en la Home.

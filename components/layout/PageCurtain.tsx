@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
-import { useRouter, type RouteId } from '@/lib/i18n/routing'
+import { useRouter, type RouteId } from '@/lib/i18n/navigation'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useMenuStore } from '@/lib/store/menu'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'

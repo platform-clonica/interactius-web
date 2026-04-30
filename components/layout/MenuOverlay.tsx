@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 
-import { Link, useRouter, type RouteId } from '@/lib/i18n/routing'
+import { Link, useRouter, type RouteId } from '@/lib/i18n/navigation'
 import { useMenuStore, resetSavedScroll } from '@/lib/store/menu'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'

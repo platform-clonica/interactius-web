@@ -3,7 +3,7 @@
 import { useCallback, useEffect, type MouseEvent } from 'react'
 
 import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
-import { Link, useRouter } from '@/lib/i18n/routing'
+import { Link, useRouter } from '@/lib/i18n/navigation'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 
 /**

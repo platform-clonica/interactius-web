@@ -8,9 +8,9 @@ import { ClientsMarquee } from '@/components/capacity/ClientsMarquee'
 import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
 import type { CapacityOtherItem } from '@/components/capacity/CapacityOthers'
-import type { RouteId } from '@/lib/i18n/routing'
+import type { RouteId } from '@/lib/i18n/navigation'
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
-import { getAlternates, localizedPath } from '@/lib/i18n/routing'
+import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
 interface PageProps {

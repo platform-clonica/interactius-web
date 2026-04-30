@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
-import { getAlternates, localizedPath } from '@/lib/i18n/routing'
+import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
 interface PageProps {

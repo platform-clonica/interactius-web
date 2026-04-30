@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, type MouseEvent, type ReactNode } from 'react'
 
-import { Link, useRouter } from '@/lib/i18n/routing'
+import { Link, useRouter } from '@/lib/i18n/navigation'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 
 /**

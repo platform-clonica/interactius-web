@@ -4,7 +4,7 @@ import { useState, Fragment, useTransition } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
-import { Link } from '@/lib/i18n/routing'
+import { Link } from '@/lib/i18n/navigation'
 import { articleHref } from '@/lib/i18n/article-href'
 import type { MiradaMeta } from '@/lib/content/miradas'
 
