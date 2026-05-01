@@ -76,10 +76,6 @@ export function CapacityServicesAnim({
   // limpio cada bloque a un punto del progress (block 0 top → 0, block N-1
   // top → 1), sin offset por el py-section de la sección.
   const blocksRef = useRef<HTMLDivElement>(null)
-  // Fondo blanco bajo el vortex (col 1-5). Se revela cuando arranca el
-  // mount-in del vortex y se oculta cuando termina el mount-out — mismos
-  // triggers que CapacityVortex pero animando clip-path lateral.
-  const whiteBgRef = useRef<HTMLDivElement>(null)
   // Background calculado de los pills de deliverables — accent del
   // servicio con alpha para mantener el peso visual del bg-grey original.
   const labelBg = accentColor ? computeLabelBg(accentColor) : null
@@ -115,54 +111,6 @@ export function CapacityServicesAnim({
       const splits: InstanceType<typeof SplitType>[] = []
       type ScrollTriggerInstance = { kill: () => void }
       const scrollTriggers: ScrollTriggerInstance[] = []
-
-      // Fondo blanco bajo el vortex — animación clip-path tied a los
-      // mismos rangos de mount-in/out que CapacityVortex. Composición:
-      // - mount-in scrub: right inset 100% → 0% (reveal de izquierda a derecha)
-      // - mount-out scrub: left inset 0% → 100% (hide saliendo por la derecha)
-      // El clip-path final es `inset(0 RIGHT% 0 LEFT%)`. Antes de mount-in
-      // ambos contribuyen a hacerlo invisible; durante el rango activo se
-      // ven progresivamente; después de mount-out de nuevo invisible.
-      const whiteBgEl = whiteBgRef.current
-      const triggerEl = blocksRef.current
-      if (whiteBgEl && triggerEl && accentColor && !reduced) {
-        let mountIn = 0
-        let mountOut = 0
-        const updateBg = () => {
-          const rightInset = (1 - mountIn) * 100
-          const leftInset = mountOut * 100
-          whiteBgEl.style.clipPath = `inset(0 ${rightInset}% 0 ${leftInset}%)`
-        }
-        updateBg()
-
-        scrollTriggers.push(
-          ScrollTrigger.create({
-            trigger: triggerEl,
-            start: 'top 65%',
-            end: 'top top',
-            scrub: true,
-            onUpdate: (self) => {
-              mountIn = self.progress
-              updateBg()
-            },
-          }),
-        )
-        scrollTriggers.push(
-          ScrollTrigger.create({
-            trigger: triggerEl,
-            start: 'bottom bottom',
-            end: 'bottom 65%',
-            scrub: true,
-            onUpdate: (self) => {
-              mountOut = self.progress
-              updateBg()
-            },
-          }),
-        )
-      } else if (whiteBgEl && accentColor && reduced) {
-        // Reduced motion: bg blanco estático visible (sin animación)
-        whiteBgEl.style.clipPath = 'inset(0 0% 0 0%)'
-      }
 
       if (reduced) {
         blocks.forEach((wrapper) => {
@@ -267,38 +215,6 @@ export function CapacityServicesAnim({
               a col-span-4 con flex-center, sin z-index extra. ───────────── */}
       {accentColor ? (
         <>
-          {/* Fondo blanco bajo el vortex — se extiende desde el borde
-              izquierdo del viewport (incluido el sangrado y la zona del
-              sidebar) hasta el final visual de col-5 del grid canónico.
-              Sin z-index propio: el vortex (DOM más abajo) pinta encima.
-              Sticky h-screen para que acompañe al vortex en todo momento.
-              Reveal vía clip-path lateral en mount-in/out (ScrollTriggers
-              que mirran los del vortex). */}
-          <div
-            className="hidden lg:block absolute inset-0 pointer-events-none"
-            aria-hidden="true"
-          >
-            <div className="sticky top-0 h-screen">
-              <div className="section-inner h-full">
-                <div className="grid grid-cols-12 gap-grid-gutter h-full">
-                  <div
-                    ref={whiteBgRef}
-                    className="col-start-1 col-span-5 h-full bg-pure-white"
-                    style={{
-                      // Extiende leftward al borde del viewport sumando
-                      // grid-margin (padding del section-inner) + bleed
-                      // (mitad del espacio sobrante cuando viewport > grid-max-w).
-                      marginLeft:
-                        'calc(-1 * (var(--grid-margin) + max(0px, (100vw - var(--grid-max-w)) / 2)))',
-                      width:
-                        'calc(100% + var(--grid-margin) + max(0px, (100vw - var(--grid-max-w)) / 2))',
-                      clipPath: 'inset(0 100% 0 0%)',
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
           <div
             className="hidden lg:block absolute inset-0 z-10 pointer-events-none"
             aria-hidden="true"

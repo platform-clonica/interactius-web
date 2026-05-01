@@ -7,6 +7,8 @@ import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useMenuStore } from '@/lib/store/menu'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 
+import { CurtainGlyph } from './CurtainGlyph'
+
 /* ==========================================================================
    PageCurtain — cortina global de transición entre páginas
    --------------------------------------------------------------------------
@@ -31,8 +33,14 @@ import { getReducedMotion } from '@/components/motion/useReducedMotion'
    (no hay contenido del menú que ocultar antes del cover).
    ========================================================================== */
 
-const MIN_HOLD_MS = 150
-const MAX_HOLD_MS = 700
+// Hold extendido para (1) dar tiempo a la nueva ruta a hidratar antes
+// del uncover y (2) dejar respirar el glyph "ius" que aparece en el
+// centro como imago intencionado.
+// Cronología: cover (0.7s) → onComplete dispara reveal del glyph (~0.5s).
+// Hold mínimo 1300ms = ~800ms de glyph visible estático tras el reveal,
+// suficiente para que el imago se perciba con intención. MAX 1700ms.
+const MIN_HOLD_MS = 1300
+const MAX_HOLD_MS = 1700
 
 export function PageCurtain() {
   const isActive = usePageCurtainStore((s) => s.isActive)
@@ -170,6 +178,15 @@ export function PageCurtain() {
       aria-hidden="true"
       className="fixed inset-0 z-page-transition pointer-events-none bg-warm-light"
       style={{ clipPath: 'inset(0 100% 0 0)' }}
-    />
+    >
+      {/* Imago intencionado: las tres últimas letras del wordmark se
+          revelan letra a letra durante el hold de la cortina. Centradas
+          absolutamente en el panel. Heredan el clip-path del padre →
+          aparecen junto con el panel y se recortan en el uncover sin
+          tween extra. */}
+      <div className="absolute inset-0 grid place-items-center">
+        <CurtainGlyph />
+      </div>
+    </div>
   )
 }

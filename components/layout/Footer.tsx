@@ -35,7 +35,7 @@ export async function Footer() {
           >
             <h2
               id="footer-newsletter-title"
-              className="font-serif text-title-sm font-light text-warm-light"
+              className="whitespace-pre-line font-serif text-title-sm font-light text-warm-light"
             >
               {t('newsletter.tagline')}
             </h2>

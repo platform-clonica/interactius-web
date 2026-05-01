@@ -33,10 +33,9 @@ export function FooterNewsletterCTA({ label }: { label: string }) {
     <Link
       href="/newsletter"
       onClick={handleClick}
-      className="hover-wipe-underline inline-flex w-fit items-center gap-2 font-mono text-body-sm text-warm-light"
+      className="hover-wipe-underline w-fit font-mono text-body-sm text-warm-light"
     >
-      <span>{label}</span>
-      <span aria-hidden="true">↗</span>
+      {label}
     </Link>
   )
 }

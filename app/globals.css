@@ -23,7 +23,7 @@
     /* ----- Grid y layout ----- */
     --grid-margin: clamp(20px, 12vw - 45px, 128px);
     --grid-gutter: clamp(16px, 2.2vw, 32px);
-    --grid-max-w: 1440px;
+    --grid-max-w: 100vw;
     --sidebar-w: 128px;
 
     /* ----- Section spacing fluido ----- */
@@ -250,13 +250,20 @@
     margin-bottom: -0.50em;
   }
 
-  /* Chrome elements that hide when the footer reveals. Hamburger stays visible. */
-  [data-sidebar-logo],
+  /* Chrome elements that hide when the footer reveals. Hamburger stays visible.
+     Logo: solo fade (sin translate), pediste que no haga movimiento.
+     Header CTA: fade + slide up (mantiene el lift que ya tenía). */
+  [data-sidebar-logo] {
+    transition: opacity 0.45s ease;
+  }
   [data-header-cta] {
     transition: opacity 0.45s ease, transform 0.45s ease;
   }
 
-  body[data-footer-visible='true'] [data-sidebar-logo],
+  body[data-footer-visible='true'] [data-sidebar-logo] {
+    opacity: 0;
+    pointer-events: none;
+  }
   body[data-footer-visible='true'] [data-header-cta] {
     opacity: 0;
     transform: translateY(-12px);
