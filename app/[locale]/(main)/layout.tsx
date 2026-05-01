@@ -4,6 +4,7 @@ import { MenuOverlay } from '@/components/layout/MenuOverlay'
 import { Footer } from '@/components/layout/Footer'
 import { FooterObserver } from '@/components/layout/FooterObserver'
 import { PageTransition } from '@/components/layout/PageTransition'
+import { ConsentMount } from '@/components/consent/ConsentMount'
 
 /* ==========================================================================
    MainLayout — chrome completo (Sidebar, Header, MenuOverlay, Footer)
@@ -33,6 +34,8 @@ export default function MainLayout({
       <FooterObserver>
         <Footer />
       </FooterObserver>
+
+      <ConsentMount />
     </>
   )
 }

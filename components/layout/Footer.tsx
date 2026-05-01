@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 
+import { ManagePreferencesButton } from '@/components/consent/ManagePreferencesButton'
 import { Link } from '@/lib/i18n/navigation'
 
 import { FooterNewsletterCTA } from './FooterNewsletterCTA'
@@ -156,6 +157,9 @@ export async function Footer() {
                 >
                   {t('legal.notice')}
                 </Link>
+              </li>
+              <li>
+                <ManagePreferencesButton />
               </li>
             </ul>
           </nav>

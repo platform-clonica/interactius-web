@@ -87,6 +87,7 @@ export const NAMESPACES = [
   'miradas', // copy de la página miradas
   'contacto', // copy de las páginas de contacto
   'capacidades', // copy de las páginas de capacidades
+  'consent', // banner + settings de consentimiento de cookies
 ] as const
 
 export type Namespace = (typeof NAMESPACES)[number]

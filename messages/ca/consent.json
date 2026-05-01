@@ -1,0 +1,41 @@
+{
+  "banner": {
+    "title": "Aquesta web utilitza cookies",
+    "body": "Utilitzem cookies necessàries perquè la web funcioni i, amb el teu permís, d'altres per entendre com s'utilitza, recordar les teves preferències i millorar-la.",
+    "policyLink": "Més informació",
+    "acceptAll": "Acceptar-ho tot",
+    "rejectAll": "Rebutjar-ho tot",
+    "customize": "Personalitzar"
+  },
+  "settings": {
+    "title": "Preferències de cookies",
+    "intro": "Activa les categories que acceptes. Les cookies necessàries no es poden desactivar perquè són imprescindibles perquè la web funcioni.",
+    "save": "Desar les meves preferències",
+    "acceptAll": "Acceptar-ho tot",
+    "rejectAll": "Rebutjar-ho tot",
+    "close": "Tancar sense desar",
+    "alwaysOn": "Sempre activa",
+    "categories": {
+      "necessary": {
+        "name": "Necessàries",
+        "desc": "Imprescindibles perquè la web funcioni: sessió, preferències d'idioma, seguretat. No es poden desactivar."
+      },
+      "preferences": {
+        "name": "Preferències",
+        "desc": "Recorden eleccions que milloren la teva experiència, com l'idioma o la regió."
+      },
+      "analytics": {
+        "name": "Analítiques",
+        "desc": "Ens ajuden a entendre de forma agregada com s'utilitza la web per millorar-la. Sense aquestes cookies no sabem què funciona."
+      },
+      "marketing": {
+        "name": "Màrqueting",
+        "desc": "Per mostrar-te contingut rellevant en altres plataformes. Avui no utilitzem cookies de màrqueting; activar-les aquí només tindrà efecte si en el futur les afegim."
+      }
+    },
+    "moreInfo": "Més informació a la Política de Cookies i la Política de Privacitat."
+  },
+  "footer": {
+    "managePreferences": "Gestionar preferències"
+  }
+}

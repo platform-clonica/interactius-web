@@ -1,0 +1,41 @@
+{
+  "banner": {
+    "title": "This website uses cookies",
+    "body": "We use necessary cookies for the site to work and, with your permission, others to understand how it's used, remember your preferences and improve it.",
+    "policyLink": "Learn more",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "customize": "Customize"
+  },
+  "settings": {
+    "title": "Cookie preferences",
+    "intro": "Enable the categories you accept. Necessary cookies cannot be disabled because they're essential for the site to work.",
+    "save": "Save my preferences",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "close": "Close without saving",
+    "alwaysOn": "Always on",
+    "categories": {
+      "necessary": {
+        "name": "Necessary",
+        "desc": "Essential for the site to work: session, language preferences, security. Cannot be disabled."
+      },
+      "preferences": {
+        "name": "Preferences",
+        "desc": "Remember choices that improve your experience, such as language or region."
+      },
+      "analytics": {
+        "name": "Analytics",
+        "desc": "Help us understand in aggregate how the site is used so we can improve it. Without these cookies we don't know what's working."
+      },
+      "marketing": {
+        "name": "Marketing",
+        "desc": "To show you relevant content on other platforms. We don't currently use marketing cookies; enabling them here will only take effect if we add any in the future."
+      }
+    },
+    "moreInfo": "More info in our Cookie Policy and Privacy Policy."
+  },
+  "footer": {
+    "managePreferences": "Manage preferences"
+  }
+}
