@@ -1,95 +1,72 @@
 'use client'
 
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment } from 'react'
 
-import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { CLIENTS } from '@/lib/data/clients'
 
 /* ==========================================================================
-   ClientsMarquee (capacity) — clientes con justify pleno + spotlight random.
+   ClientsMarquee (capacity) — mismo layout que home/ClientsMarquee con
+   highlight ESTÁTICO de los clientes del servicio.
    --------------------------------------------------------------------------
-   Mismo lenguaje visual que el ClientsMarquee del Home:
-   · Tipografía text-title font-serif font-normal, color base text-fg/10.
-   · Caja más ancha que el viewport con justify completo (`text-justify
-     [text-align-last:justify]`) → líneas siempre llenas, nombres en bordes
-     se cortan visualmente.
-   · Spotlight: cada SWITCH_INTERVAL_MS un cliente aleatorio pasa a text-fg
-     en TODAS sus instancias (incluye duplicados).
-   · Repeat 2× del array de clientes para que el justify nunca tenga
-     última línea con huecos exagerados.
-   · max-height + overflow:hidden recorta verticalmente para mantener el
-     bloque compacto y consistente con el del Home.
+   · Lista completa de clientes (lib/data/clients) repetida 2× para que el
+     justify nunca tenga última línea con huecos exagerados.
+   · Layout idéntico al home: caja más ancha que el viewport (overflow
+     horizontal en los bordes), justify completo, max-height + overflow
+     vertical, tipografía text-title font-serif.
+   · Sin rotación random. Los clientes específicos de la página (parsed
+     del prop `clients` en formato " — " separado) renderizan en text-fg;
+     el resto en text-fg/10.
    ========================================================================== */
 
 interface ClientsMarqueeProps {
-  /** String con los clientes separados por " — " (formato de las traducciones). */
+  /** Clientes del servicio actual, separados por " — ". Se resaltan en
+   *  text-fg dentro del listado completo. */
   clients: string
-  /** Si true, fuerza una sola línea con tipografía fluida que escala al ancho.
-   *  Útil cuando el listado es corto y `text-title` queda exagerado. */
+  /** Mantenido por compatibilidad con la API previa pero ignorado en el
+   *  nuevo layout (siempre multi-línea justified). */
   singleLine?: boolean
 }
 
-const SWITCH_INTERVAL_MS = 1500
+const REPEAT = 2
+const REPEATED_CLIENTS = Array.from({ length: REPEAT }, () => CLIENTS).flat()
 const SEPARATOR = ' — '
-const REPEAT = 1
+const OVERFLOW = 'clamp(120px, 8vw, 320px)'
 
-export function ClientsMarquee({ clients, singleLine = false }: ClientsMarqueeProps) {
-  // Parseamos la lista a un array (split por dash, trim, eliminar entradas vacías).
-  const list = clients
-    .split(/—/)
-    .map((s) => s.trim())
-    .filter(Boolean)
-
-  const repeated = Array.from({ length: REPEAT }, () => list).flat()
-
-  const [highlight, setHighlight] = useState<number>(-1)
-
-  useEffect(() => {
-    if (getReducedMotion()) return
-    if (list.length === 0) return
-
-    let prev = -1
-    const pick = () => {
-      let next: number
-      do {
-        next = Math.floor(Math.random() * list.length)
-      } while (next === prev && list.length > 1)
-      prev = next
-      setHighlight(next)
-    }
-
-    pick()
-    const id = setInterval(pick, SWITCH_INTERVAL_MS)
-    return () => clearInterval(id)
-  }, [list.length])
-
-  const highlightedName = highlight >= 0 ? list[highlight] : null
-
-  if (list.length === 0) return null
+export function ClientsMarquee({ clients }: ClientsMarqueeProps) {
+  // Parse del string de clientes del servicio. Normalizamos a Set para
+  // lookup O(1) durante el render.
+  const highlightedSet = new Set(
+    clients
+      .split(/—/)
+      .map((s) => s.trim())
+      .filter(Boolean),
+  )
 
   return (
     <section
-      className="w-full bg-warm-light py-12 lg:py-16"
       aria-label="Clientes"
+      className="relative z-content w-full bg-warm-light py-16"
     >
-      <div className="section-inner">
+      <div
+        className="overflow-hidden pb-2"
+        style={{ maxHeight: 'clamp(290px, 30vh, 494px)' }}
+      >
         <p
           aria-hidden="true"
-          className={`font-serif font-normal text-fg/10 leading-[1.05] text-center ${
-            singleLine
-              ? 'whitespace-nowrap text-[clamp(14px,3.2vw,44px)]'
-              : 'text-title [text-wrap:balance]'
-          }`}
+          className="font-serif font-normal text-fg/10 text-title leading-[1.05] text-justify [text-align-last:justify]"
+          style={{
+            width: `calc(100vw + ${OVERFLOW})`,
+            marginLeft: `calc(-${OVERFLOW} / 2)`,
+          }}
         >
-          {repeated.map((c, i) => (
+          {REPEATED_CLIENTS.map((c, i) => (
             <Fragment key={`${c}-${i}`}>
               <span
-                className={`transition-colors duration-500 ease-out ${
-                  c === highlightedName ? 'text-fg' : 'text-fg/10'
-                }`}
+                className={highlightedSet.has(c) ? 'text-fg' : 'text-fg/10'}
               >
                 {c}
               </span>
-              {i < repeated.length - 1 && SEPARATOR}
+              {i < REPEATED_CLIENTS.length - 1 && SEPARATOR}
             </Fragment>
           ))}
         </p>

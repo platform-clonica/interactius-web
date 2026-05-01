@@ -60,6 +60,8 @@ export default async function DisenoDeExperiencias({ params }: PageProps) {
         services={services}
         sectionLabel={t('sections.services')}
         capacityLabel={capacityTitle}
+        accentColor="#99335F"
+        shapeKind="ellipse"
       />
 
       <CapacityOthers

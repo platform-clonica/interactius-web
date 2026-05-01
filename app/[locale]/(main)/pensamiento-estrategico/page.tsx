@@ -59,6 +59,7 @@ export default async function PensamientoEstrategico({ params }: PageProps) {
         services={services}
         sectionLabel={t('sections.services')}
         capacityLabel={capacityTitle}
+        accentColor="#B0B5B0"
       />
 
       <CapacityOthers

@@ -32,8 +32,8 @@ export function PlusArrowFlipIcon() {
           aria-hidden="true"
           className="shrink-0"
         >
-          <line x1="20" y1="0" x2="20" y2="40" stroke="currentColor" strokeWidth="1.5" />
-          <line x1="0" y1="20" x2="40" y2="20" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="20" y1="0" x2="20" y2="40" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+          <line x1="0" y1="20" x2="40" y2="20" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
         </svg>
         {/* FLECHA — misma geometría que CapacityOthersAnim (services link),
             escalada proporcionalmente de viewBox 24 a 40 (×1.667) para
@@ -46,8 +46,8 @@ export function PlusArrowFlipIcon() {
           aria-hidden="true"
           className="shrink-0"
         >
-          <line x1="10" y1="27" x2="33" y2="3" stroke="currentColor" strokeWidth="1.5" />
-          <polyline points="7,3 33,3 33,30" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="10" y1="27" x2="33" y2="3" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+          <polyline points="7,3 33,3 33,30" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
         </svg>
       </div>
     </div>

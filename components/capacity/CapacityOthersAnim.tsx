@@ -84,16 +84,23 @@ export function CapacityOthersAnim({
         if (!titleEl) return
         const splits: InstanceType<typeof SplitType>[] = []
 
-        const titleSplit = new SplitType(titleEl, { types: 'lines' })
-        const descSplit  = descEl ? new SplitType(descEl, { types: 'lines' }) : null
-        splits.push(titleSplit)
+        // Title: NO usamos SplitType porque el título ya viene estructurado
+        // con `.st-mask` (uno por línea del split por \n del JSON). Si dejamos
+        // que SplitType reprocese, recalcula el wrap a partir del DOM ya
+        // renderizado y a veces colapsa las líneas a una sola → layout shift
+        // perceptible cuando entra en viewport.
+        const titleLines = Array.from(
+          titleEl.querySelectorAll<HTMLElement>('.st-mask'),
+        )
+
+        const descSplit = descEl ? new SplitType(descEl, { types: 'lines' }) : null
         if (descSplit) splits.push(descSplit)
 
-        gsap.set(titleSplit.lines ?? [], { y: 30, opacity: 0 })
+        gsap.set(titleLines, { y: 30, opacity: 0 })
         if (descSplit?.lines) gsap.set(descSplit.lines, { y: 20, opacity: 0 })
         if (arrowEl) gsap.set(arrowEl, { opacity: 0 })
 
-        gsap.to(titleSplit.lines ?? [], {
+        gsap.to(titleLines, {
           y: 0, opacity: 1,
           duration: 0.8,
           ease: 'power4.out',
@@ -183,7 +190,7 @@ export function CapacityOthersAnim({
               </span>
               <span
                 data-other-title
-                className="font-serif font-light text-fg text-title-sm"
+                className="block font-serif font-light text-fg text-title-sm"
               >
                 {item.title.split('\n').map((line, lineIdx) => (
                   <span key={lineIdx} className="st-mask">

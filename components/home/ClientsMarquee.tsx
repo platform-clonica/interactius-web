@@ -3,16 +3,7 @@
 import { Fragment, useEffect, useState } from 'react'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
-
-const CLIENTS = [
-  'AD Parts', 'Adeslas', 'Allianz', 'AXA', 'Banc Sabadell', 'Bershka', 'Brico Depot',
-  'Bytetravel', 'CaixaBank', 'Castañer', 'CatSalut', 'Citring', 'Consentio',
-  'Desigual', 'EAE', 'Ecoembes', 'MWC', 'Frit Ravich', 'FCB', 'Gescaser',
-  'GLS', 'Grandvalira', 'Grupo Piñero', 'Hermex', 'Ignion', 'Imagin',
-  'Inditex', 'ING', 'La Wash', 'Mahou', 'Mango', 'Masmusculo', 'Massimo Dutti',
-  'Nestlé', 'Novartis', 'Quepo', 'Ricoh', 'Hospital Sant Pau', 'Serveo',
-  'Tecnocasa', 'Telefónica', 'UPF ESCI', 'Vibia', 'Voicemod', 'Voro',
-]
+import { CLIENTS } from '@/lib/data/clients'
 
 // Repeticiones del array. Generamos suficiente material como para que el
 // justify nunca tenga última línea con huecos; el bloque se recorta

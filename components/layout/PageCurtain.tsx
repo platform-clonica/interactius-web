@@ -98,6 +98,14 @@ export function PageCurtain() {
       const initialPath = window.location.pathname
 
       const startUncover = () => {
+        // CANÓNICO: último scrollTo justo antes del uncover. Garantiza que
+        // si Next.js restauró la posición durante el mount (scrollRestoration)
+        // o si el RAF tick perdió un frame, el viewport está a top=0 cuando
+        // el panel empieza a destaparse. El usuario nunca debe ver un salto
+        // de scroll detrás del panel.
+        if (mode === 'push') {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+        }
         const uncover = gsap.to(panel, {
           clipPath: 'inset(0 0% 0 100%)',
           duration: 1.25,
@@ -118,17 +126,18 @@ export function PageCurtain() {
         onComplete: () => {
           navigate()
           const startedAt = performance.now()
-          let scrolledAfterCommit = false
 
           const tick = () => {
             const elapsed = performance.now() - startedAt
             const pathChanged = window.location.pathname !== initialPath
-            // Segundo scrollTo justo cuando la nueva ruta commitea, por si
-            // Next restauró posición (scrollRestoration) durante el mount.
-            // Solo en push; back conserva la posición original deliberadamente.
-            if (pathChanged && !scrolledAfterCommit && mode === 'push') {
+            // CANÓNICO: forzamos scrollTo top en CADA frame durante el hold.
+            // Next.js scrollRestoration puede ejecutarse en cualquier momento
+            // del mount → si solo lo hacíamos una vez al detectar pathChanged,
+            // perdíamos la carrera y el scroll terminaba en posición vieja.
+            // Cheap operation, el browser hace no-op si ya estamos en 0.
+            // Solo en push; back conserva posición previa deliberadamente.
+            if (mode === 'push') {
               window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-              scrolledAfterCommit = true
             }
             const reached = (pathChanged && elapsed >= MIN_HOLD_MS) || elapsed >= MAX_HOLD_MS
             if (reached) {

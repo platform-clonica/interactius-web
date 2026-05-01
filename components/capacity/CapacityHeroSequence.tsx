@@ -77,18 +77,25 @@ export function CapacityHeroSequence({
     const statementEl = statementRef.current
     if (!sectionEl) return
 
+    // Guard contra unmount durante el async import — sin esta flag, los
+    // subscribers/timers del bloque async pueden ejecutar runReveals sobre
+    // refs ya desmontados (no rompen, pero sí dejan listeners colgando).
+    let mounted = true
+    const cleanups: Array<() => void> = []
+    cleanups.push(() => { mounted = false })
+
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
         import('gsap'),
         import('gsap/ScrollTrigger'),
         import('split-type'),
       ])
+      if (!mounted) return
 
       gsap.registerPlugin(ScrollTrigger)
 
       const reduced = getReducedMotion()
       const lateralEase = 'power4.inOut'
-      const cleanups: Array<() => void> = []
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const splits: any[] = []
 
@@ -303,20 +310,33 @@ export function CapacityHeroSequence({
         }
       } // end runReveals
 
-      const isCurtainActive = usePageCurtainStore.getState().isActive
-      if (!isCurtainActive) {
-        // First load / direct nav: arranca inmediatamente.
+      // Patrón "subscribe-first": suscribimos ANTES de leer el estado para
+      // evitar perder la transición true→false si ocurre entre el getState
+      // y el subscribe (race posible cuando el async import tarda y se
+      // navega rápido entre páginas → imágenes quedan invisibles para
+      // siempre porque el reveal no dispara).
+      let revealed = false
+      const safelyRun = () => {
+        if (revealed) return
+        revealed = true
         runReveals()
-      } else {
-        // Llegamos via PageCurtain: esperamos a que termine (true → false).
-        const unsub = usePageCurtainStore.subscribe((state, prev) => {
-          if (prev.isActive && !state.isActive) {
-            unsub()
-            runReveals()
-          }
-        })
-        cleanups.push(unsub)
       }
+
+      const unsub = usePageCurtainStore.subscribe((state, prev) => {
+        if (prev.isActive && !state.isActive) safelyRun()
+      })
+      cleanups.push(unsub)
+
+      // Después de suscribir, evalúa el estado actual. Si la cortina ya
+      // no está activa (carga directa o transición ya completada), arranca
+      // inmediatamente. Si está activa, el subscriber esperará al final.
+      if (!usePageCurtainStore.getState().isActive) safelyRun()
+
+      // Fallback: si por alguna razón la cortina no completa nunca (bug
+      // upstream, navegación interrumpida), liberamos los reveals tras
+      // 3s para que los assets nunca queden invisibles.
+      const fallbackTimer = window.setTimeout(safelyRun, 3000)
+      cleanups.push(() => window.clearTimeout(fallbackTimer))
 
       cleanupRef.current = () => {
         cleanups.forEach((fn) => fn())
@@ -325,7 +345,14 @@ export function CapacityHeroSequence({
       }
     })()
 
-    return () => cleanupRef.current?.()
+    // Si el unmount ocurre antes de que cleanupRef.current se asigne (async
+    // import en curso), igualmente recorremos los cleanups que ya se hayan
+    // acumulado (incluido el que setea mounted=false → guard contra ejecución
+    // posterior del bloque async).
+    return () => {
+      if (cleanupRef.current) cleanupRef.current()
+      else cleanups.forEach((fn) => fn())
+    }
   }, [])
 
   return (
@@ -383,19 +410,20 @@ export function CapacityHeroSequence({
         {/* Spacer para empujar el título a la siguiente "escena" */}
         <div className="h-[40vh] lg:h-[50vh]" aria-hidden="true" />
 
-        {/* Title — Super (clamp 80-240), edge-to-edge sangrado izquierdo
-            (mismo patrón que IdentidadMetodologia title) */}
+        {/* Title — text-super-sm (mitad de Super), alineado a col-start-2.
+            Tamaño intermedio guardado en guidelines para Capacity hero. */}
         <div className="relative overflow-hidden pt-12 pb-section lg:pt-16">
-          <h1
-            ref={titleRef}
-            id="capacity-hero-title"
-            className="font-serif font-normal text-fg text-super select-none"
-            style={{
-              marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
-            }}
-          >
-            {title}
-          </h1>
+          <div className="section-inner">
+            <div className="grid grid-cols-12 gap-grid-gutter">
+              <h1
+                ref={titleRef}
+                id="capacity-hero-title"
+                className="col-span-12 lg:col-start-2 lg:col-span-11 font-serif font-normal text-fg select-none text-[clamp(40px,7.5vw,120px)] leading-[1.0] tracking-[-0.03em]"
+              >
+                {title}
+              </h1>
+            </div>
+          </div>
         </div>
 
         {/* Bottom image (cols 1-5, sangrado izq) + Statement (col 7-12, alineado al bottom de la imagen) */}

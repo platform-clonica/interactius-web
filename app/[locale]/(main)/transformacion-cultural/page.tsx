@@ -58,6 +58,8 @@ export default async function TransformacionCultural({ params }: PageProps) {
         services={services}
         sectionLabel={t('sections.services')}
         capacityLabel={capacityTitle}
+        accentColor="#5999A6"
+        shapeKind="wave"
       />
 
       {/* Manifiesto IA — sección exclusiva de Transformación cultural. NO replicar en otros servicios. */}

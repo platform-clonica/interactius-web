@@ -52,22 +52,49 @@ function HamburgerIcon({ open }: { open: boolean }) {
   // Duración asimétrica: apertura lenta (0.9s, match panel reveal) para que
   // el morph se perciba; cierre rápido (0.15s) — así la X→hamburger es inmediata
   // y no queda flotando durante la cortina de cierre.
+  //
+  // Implementado como SVG (no spans) con `vectorEffect="non-scaling-stroke"`
+  // → ambas líneas renderizan a 1.5px exactos en pantalla con el mismo
+  // antialiasing en cualquier resolución/DPR. Antes usaba spans con
+  // `top:0` vs `bottom:0` que introducían ligera asimetría de subpíxel
+  // (el stroke superior se veía más grueso que el inferior en algunas
+  // pantallas).
   const duration = open ? 'duration-[900ms]' : 'duration-fast'
   return (
-    <span
-      className="relative block w-10 h-[10px]"
+    <svg
+      width="40"
+      height="10"
+      viewBox="0 0 40 10"
+      fill="none"
       aria-hidden="true"
+      className="block overflow-visible"
     >
-      <span
-        className={`absolute left-0 top-0 h-[1.5px] w-10 bg-current origin-center
-                    transition-transform ${duration} ease-expo
-                    ${open ? 'translate-y-[4.25px] rotate-45' : 'translate-y-0 rotate-0'}`}
+      <line
+        x1="0"
+        y1="0.75"
+        x2="40"
+        y2="0.75"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        vectorEffect="non-scaling-stroke"
+        className={`transition-transform ${duration} ease-expo ${
+          open ? 'translate-y-[4.25px] rotate-45' : 'translate-y-0 rotate-0'
+        }`}
+        style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
       />
-      <span
-        className={`absolute left-0 bottom-0 h-[1.5px] w-10 bg-current origin-center
-                    transition-transform ${duration} ease-expo
-                    ${open ? '-translate-y-[4.25px] -rotate-45' : 'translate-y-0 rotate-0'}`}
+      <line
+        x1="0"
+        y1="9.25"
+        x2="40"
+        y2="9.25"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        vectorEffect="non-scaling-stroke"
+        className={`transition-transform ${duration} ease-expo ${
+          open ? '-translate-y-[4.25px] -rotate-45' : 'translate-y-0 rotate-0'
+        }`}
+        style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
       />
-    </span>
+    </svg>
   )
 }

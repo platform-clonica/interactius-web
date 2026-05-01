@@ -366,7 +366,7 @@ export function MenuOverlay() {
                              font-serif font-light text-title-sm text-fg
                              focus-visible:opacity-90"
                 >
-                  <span className="flex w-full items-center justify-between gap-3 pr-[10px]">
+                  <span className="flex w-full items-center justify-between gap-3 pr-[30px]">
                     <span className="st-mask">
                       <span className="hover-text-flip-target inline-block">
                         {t(labelKey)}
@@ -375,22 +375,27 @@ export function MenuOverlay() {
                     {/* Mask custom para flecha — sin padding/margin de st-mask
                         (que añadía clearance para descenders y dejaba 1px de
                         peek). overflow-hidden con dims explícitas; translateY
-                        de la base lleva 1px extra para garantizar 0 peek. */}
+                        de la base lleva 1px extra para garantizar 0 peek.
+                        Padre con pr-[30px] alinea right edge con LocaleSwitcher. */}
                     <span
                       aria-hidden="true"
                       className="overflow-hidden inline-block leading-none align-middle"
-                      style={{ width: '40px', height: '40px' }}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        transform: 'translateY(5px)',
+                      }}
                     >
                       <span className="hover-arrow-slide-target block">
                         <svg
-                          width="40"
-                          height="40"
+                          width="32"
+                          height="32"
                           viewBox="0 0 40 40"
                           fill="none"
                           className="shrink-0"
                         >
-                          <line x1="10" y1="27" x2="33" y2="3" stroke="currentColor" strokeWidth="1.5" />
-                          <polyline points="7,3 33,3 33,30" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                          <line x1="10" y1="27" x2="33" y2="3" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+                          <polyline points="7,3 33,3 33,30" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
                         </svg>
                       </span>
                     </span>

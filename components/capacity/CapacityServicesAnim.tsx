@@ -4,6 +4,7 @@ import { useRef, useEffect, useState, useCallback, type ReactNode } from 'react'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { CapacityGraph } from './CapacityGraph'
+import { CapacityVortex } from './CapacityVortex'
 import type { CapacityService } from './CapacityGraph'
 
 export type { CapacityService }
@@ -15,6 +16,24 @@ function renderRich(text: string): ReactNode[] {
   return text.split(/<strong>(.*?)<\/strong>/).map((part, i) =>
     i % 2 === 1 ? <strong key={i}>{part}</strong> : part
   )
+}
+
+/** Calcula el background de los pills/labels a partir del accentColor del
+ *  servicio. Mantiene el peso visual del bg-grey original (#e8e6e3 sobre
+ *  warm-light = ~13 unidades de diferencia por canal) pero teñido del
+ *  accent. Alpha = 13 / |distancia_brillo_promedio|. Colores muy
+ *  saturados (granate) reciben menos alpha; colores cercanos al bg
+ *  (grey-green) reciben más, manteniendo todos un peso perceptual
+ *  similar al grey original. */
+function computeLabelBg(accentHex: string): string {
+  const r = parseInt(accentHex.slice(1, 3), 16)
+  const g = parseInt(accentHex.slice(3, 5), 16)
+  const b = parseInt(accentHex.slice(5, 7), 16)
+  const accentAvg = (r + g + b) / 3
+  const warmAvg = 241 // bg warm-light #F5F2ED, promedio RGB
+  const distance = Math.max(1, Math.abs(warmAvg - accentAvg))
+  const alpha = Math.min(0.4, Math.max(0.05, 13 / distance))
+  return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(3)})`
 }
 
 /* ==========================================================================
@@ -34,15 +53,36 @@ interface CapacityServicesAnimProps {
   services: CapacityService[]
   sectionLabel: string
   capacityLabel: string
+  /** Si se pasa, el panel sticky usa CapacityVortex (canvas geométrico
+   *  scroll-driven) en lugar de CapacityGraph estático. El color tiñe
+   *  el gradient diagonal del stroke. */
+  accentColor?: string
+  /** Tipo de geometría base del vortex. 'polygon' (default) para
+   *  pensamiento, 'ellipse' para experiencias, 'wave' para
+   *  transformación cultural. */
+  shapeKind?: 'polygon' | 'ellipse' | 'wave'
 }
 
 export function CapacityServicesAnim({
   services,
   sectionLabel,
   capacityLabel,
+  accentColor,
+  shapeKind,
 }: CapacityServicesAnimProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const sectionRef = useRef<HTMLElement>(null)
+  // Trigger del vortex: el wrapper de los bloques de subservicios. Mapea
+  // limpio cada bloque a un punto del progress (block 0 top → 0, block N-1
+  // top → 1), sin offset por el py-section de la sección.
+  const blocksRef = useRef<HTMLDivElement>(null)
+  // Fondo blanco bajo el vortex (col 1-5). Se revela cuando arranca el
+  // mount-in del vortex y se oculta cuando termina el mount-out — mismos
+  // triggers que CapacityVortex pero animando clip-path lateral.
+  const whiteBgRef = useRef<HTMLDivElement>(null)
+  // Background calculado de los pills de deliverables — accent del
+  // servicio con alpha para mantener el peso visual del bg-grey original.
+  const labelBg = accentColor ? computeLabelBg(accentColor) : null
   // Cada wrapper es min-h-screen (un subservicio = una pantalla). Observamos
   // el wrapper; title/body/tags son descendientes vía querySelector.
   const blockRefs  = useRef<(HTMLDivElement | null)[]>([])
@@ -64,18 +104,74 @@ export function CapacityServicesAnim({
     const reduced = getReducedMotion()
 
     void (async () => {
-      const [{ default: gsap }, { default: SplitType }] = await Promise.all([
+      const [{ default: gsap }, scrollTriggerMod, { default: SplitType }] = await Promise.all([
         import('gsap'),
+        import('gsap/ScrollTrigger'),
         import('split-type'),
       ])
+      const ScrollTrigger = scrollTriggerMod.ScrollTrigger
+      gsap.registerPlugin(ScrollTrigger)
 
       const splits: InstanceType<typeof SplitType>[] = []
+      type ScrollTriggerInstance = { kill: () => void }
+      const scrollTriggers: ScrollTriggerInstance[] = []
+
+      // Fondo blanco bajo el vortex — animación clip-path tied a los
+      // mismos rangos de mount-in/out que CapacityVortex. Composición:
+      // - mount-in scrub: right inset 100% → 0% (reveal de izquierda a derecha)
+      // - mount-out scrub: left inset 0% → 100% (hide saliendo por la derecha)
+      // El clip-path final es `inset(0 RIGHT% 0 LEFT%)`. Antes de mount-in
+      // ambos contribuyen a hacerlo invisible; durante el rango activo se
+      // ven progresivamente; después de mount-out de nuevo invisible.
+      const whiteBgEl = whiteBgRef.current
+      const triggerEl = blocksRef.current
+      if (whiteBgEl && triggerEl && accentColor && !reduced) {
+        let mountIn = 0
+        let mountOut = 0
+        const updateBg = () => {
+          const rightInset = (1 - mountIn) * 100
+          const leftInset = mountOut * 100
+          whiteBgEl.style.clipPath = `inset(0 ${rightInset}% 0 ${leftInset}%)`
+        }
+        updateBg()
+
+        scrollTriggers.push(
+          ScrollTrigger.create({
+            trigger: triggerEl,
+            start: 'top 65%',
+            end: 'top top',
+            scrub: true,
+            onUpdate: (self) => {
+              mountIn = self.progress
+              updateBg()
+            },
+          }),
+        )
+        scrollTriggers.push(
+          ScrollTrigger.create({
+            trigger: triggerEl,
+            start: 'bottom bottom',
+            end: 'bottom 65%',
+            scrub: true,
+            onUpdate: (self) => {
+              mountOut = self.progress
+              updateBg()
+            },
+          }),
+        )
+      } else if (whiteBgEl && accentColor && reduced) {
+        // Reduced motion: bg blanco estático visible (sin animación)
+        whiteBgEl.style.clipPath = 'inset(0 0% 0 0%)'
+      }
 
       if (reduced) {
         blocks.forEach((wrapper) => {
           const elements = wrapper.querySelectorAll('[data-service-title],[data-service-body],[data-service-tags]')
           gsap.set(elements, { clearProps: 'all' })
         })
+        cleanupRef.current = () => {
+          scrollTriggers.forEach((st) => st.kill())
+        }
         return
       }
 
@@ -146,6 +242,7 @@ export function CapacityServicesAnim({
       cleanupRef.current = () => {
         splits.forEach((s) => s.revert())
         observers.forEach((o) => o.disconnect())
+        scrollTriggers.forEach((st) => st.kill())
       }
     })()
 
@@ -160,25 +257,80 @@ export function CapacityServicesAnim({
     >
       {/* ── Layer del graph — absolute fill de la sección. Sticky interno se
             ancla al viewport y permanece visible mientras los subservicios
-            scrollean por la derecha. Decoupled del grid de subservicios para
-            evitar problemas de row-span del CSS Grid. Cols 1-4 vía un grid
-            interno que replica el sistema canónico (mismo section-inner +
-            grid-cols-12 + gap-grid-gutter). ───────────────────────────────── */}
-      <div className="hidden lg:block absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="section-inner h-full">
-          <div className="grid grid-cols-12 gap-grid-gutter h-full">
-            <div className="col-start-1 col-span-4 h-full">
-              <div className="sticky top-0 h-screen flex items-center justify-center pointer-events-auto">
-                <CapacityGraph
-                  services={services}
-                  activeIndex={activeIndex}
-                  capacityLabel={capacityLabel}
-                />
+            scrollean por la derecha. Dos variantes:
+            · Vortex (accentColor): canvas full-width de la sección, z-10 →
+              queda por encima de los bloques de texto (que son z-auto). La
+              forma se sesga a la izquierda via centerXFrac y puede
+              extenderse libremente (incluso cortarse por bordes y solapar
+              con el área de texto, donde se ve por encima).
+            · CapacityGraph (sin accentColor): layout original constreñido
+              a col-span-4 con flex-center, sin z-index extra. ───────────── */}
+      {accentColor ? (
+        <>
+          {/* Fondo blanco bajo el vortex — se extiende desde el borde
+              izquierdo del viewport (incluido el sangrado y la zona del
+              sidebar) hasta el final visual de col-5 del grid canónico.
+              Sin z-index propio: el vortex (DOM más abajo) pinta encima.
+              Sticky h-screen para que acompañe al vortex en todo momento.
+              Reveal vía clip-path lateral en mount-in/out (ScrollTriggers
+              que mirran los del vortex). */}
+          <div
+            className="hidden lg:block absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+          >
+            <div className="sticky top-0 h-screen">
+              <div className="section-inner h-full">
+                <div className="grid grid-cols-12 gap-grid-gutter h-full">
+                  <div
+                    ref={whiteBgRef}
+                    className="col-start-1 col-span-5 h-full bg-pure-white"
+                    style={{
+                      // Extiende leftward al borde del viewport sumando
+                      // grid-margin (padding del section-inner) + bleed
+                      // (mitad del espacio sobrante cuando viewport > grid-max-w).
+                      marginLeft:
+                        'calc(-1 * (var(--grid-margin) + max(0px, (100vw - var(--grid-max-w)) / 2)))',
+                      width:
+                        'calc(100% + var(--grid-margin) + max(0px, (100vw - var(--grid-max-w)) / 2))',
+                      clipPath: 'inset(0 100% 0 0%)',
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="hidden lg:block absolute inset-0 z-10 pointer-events-none"
+            aria-hidden="true"
+          >
+            <div className="sticky top-0 h-screen pointer-events-none">
+              <CapacityVortex
+                shapeCount={services.length}
+                accentColor={accentColor}
+                triggerRef={blocksRef}
+                centerXFrac={0.22}
+                shapeKind={shapeKind}
+              />
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="hidden lg:block absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="section-inner h-full">
+            <div className="grid grid-cols-12 gap-grid-gutter h-full">
+              <div className="col-start-1 col-span-4 h-full">
+                <div className="sticky top-0 h-screen flex items-center justify-center pointer-events-auto">
+                  <CapacityGraph
+                    services={services}
+                    activeIndex={activeIndex}
+                    capacityLabel={capacityLabel}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* ── Subservicios — cada uno ocupa una pantalla completa
             (lg:min-h-screen + flex items-center). Wrapper full-width
@@ -187,7 +339,7 @@ export function CapacityServicesAnim({
             canónico. Patrón equivalente al de IdentidadValores: panel
             sticky a la izquierda + paneles full-viewport scrolleando. ────── */}
       <div className="section-inner py-section relative">
-        <div className="grid grid-cols-12 gap-grid-gutter">
+        <div ref={blocksRef} className="grid grid-cols-12 gap-grid-gutter">
           {services.map((svc, i) => (
             <div
               key={svc.name}
@@ -226,7 +378,10 @@ export function CapacityServicesAnim({
                     >
                       {svc.deliverables.map((tag) => (
                         <li key={tag}>
-                          <span className="inline-block bg-grey px-1.5 py-1 font-mono text-label text-fg leading-tight">
+                          <span
+                            className={`inline-block px-1.5 py-1 font-mono text-label text-fg leading-tight${labelBg ? '' : ' bg-grey'}`}
+                            style={labelBg ? { backgroundColor: labelBg } : undefined}
+                          >
                             {renderRich(tag)}
                           </span>
                         </li>

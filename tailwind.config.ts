@@ -93,6 +93,10 @@ const config: Config = {
       title: ['clamp(34px, calc(1.25vw + 28px), 46px)', { lineHeight: '1.2', letterSpacing: '-0.02em' }],
       display: ['clamp(46px, calc(3.33vw + 30px), 78px)', { lineHeight: '1.0', letterSpacing: '-0.02em' }],
       super: ['clamp(80px, 15vw, 240px)', { lineHeight: '1.0', letterSpacing: '-0.04em' }],
+      // Mitad de super — token específico para titulares grandes pero no
+      // edge-to-edge (Capacity hero). Tamaño no presente en las guidelines
+      // originales pero útil cuando Super queda demasiado dominante.
+      'super-sm': ['clamp(40px, 7.5vw, 120px)', { lineHeight: '1.0', letterSpacing: '-0.03em' }],
     },
 
     // ----- Spacing -----
