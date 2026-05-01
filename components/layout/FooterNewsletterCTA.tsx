@@ -2,24 +2,20 @@
 
 import { useCallback, useEffect, type MouseEvent } from 'react'
 
-import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
 import { Link, useRouter } from '@/lib/i18n/navigation'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 
 /**
- * FooterNewsletterCTA — botón "Suscríbete" del footer con cortina global a /newsletter.
+ * FooterNewsletterCTA — link "Suscríbete" del footer con cortina global a /newsletter.
  *
- * Renderiza como Link para aprovechar el prefetch de Next.js (al hacer hover
- * sobre el botón el chunk de /newsletter se descarga, así la cortina no
- * uncover antes de que la página esté lista). El handler intercepta el click
- * normal y dispara la PageCurtain; cmd/ctrl/shift/alt-click conservan la
- * navegación nativa (abrir en pestaña nueva).
+ * Estilo: underline canónico (hover-wipe-underline), no botón con borde.
+ * El handler intercepta el click normal y dispara la PageCurtain;
+ * cmd/ctrl/shift/alt-click conservan la navegación nativa.
  */
 export function FooterNewsletterCTA({ label }: { label: string }) {
   const begin = usePageCurtainStore((s) => s.beginPageCurtain)
   const router = useRouter()
 
-  // Prefetch programático en montaje — el footer puede no estar en viewport.
   useEffect(() => {
     router.prefetch('/newsletter')
   }, [router])
@@ -34,13 +30,13 @@ export function FooterNewsletterCTA({ label }: { label: string }) {
   )
 
   return (
-    <ButtonPrimary
-      as={Link}
+    <Link
       href="/newsletter"
-      variant="outline"
       onClick={handleClick}
+      className="hover-wipe-underline inline-flex w-fit items-center gap-2 font-mono text-body-sm text-warm-light"
     >
-      {label}
-    </ButtonPrimary>
+      <span>{label}</span>
+      <span aria-hidden="true">↗</span>
+    </Link>
   )
 }

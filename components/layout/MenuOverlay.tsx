@@ -331,17 +331,21 @@ export function MenuOverlay() {
         style={{ left: 'calc(var(--sidebar-w) + var(--grid-margin))' }}
       >
         {/* Home link — alineado verticalmente con la X del Sidebar (top:26px),
-            mismo estilo que los secondary nav links. */}
-        <Link
-          href="/"
-          onClick={(e) => handleLinkClick(e, '/')}
+            mismo estilo que los secondary nav links. El wrapper carga
+            `data-secondary-link` (lo anima GSAP); el Link queda libre con la
+            utility canónica `hover-wipe-underline` (opacity 60→100). */}
+        <div
           data-secondary-link=""
-          className="hover-wipe-underline absolute top-[26px] w-fit
-                     font-mono text-body-sm text-fg
-                     focus-visible:opacity-90"
+          className="absolute top-[26px]"
         >
-          {t('nav.home')}
-        </Link>
+          <Link
+            href="/"
+            onClick={(e) => handleLinkClick(e, '/')}
+            className="hover-wipe-underline w-fit font-mono text-body-sm text-fg"
+          >
+            {t('nav.home')}
+          </Link>
+        </div>
 
         {/* Primary nav */}
         <nav
@@ -374,16 +378,20 @@ export function MenuOverlay() {
                     </span>
                     {/* Mask custom para flecha — sin padding/margin de st-mask
                         (que añadía clearance para descenders y dejaba 1px de
-                        peek). overflow-hidden con dims explícitas; translateY
-                        de la base lleva 1px extra para garantizar 0 peek.
-                        Padre con pr-[30px] alinea right edge con LocaleSwitcher. */}
+                        peek). Caja 32x32 (no cambia layout); el clipping se
+                        hace con clip-path polygon que se extiende 10px arriba
+                        para permitir el bounce overshoot del keyframe sin que
+                        la flecha se corte. translateY de la base lleva 1px
+                        extra para garantizar 0 peek por abajo. Padre con
+                        pr-[30px] alinea right edge con LocaleSwitcher. */}
                     <span
                       aria-hidden="true"
-                      className="overflow-hidden inline-block leading-none align-middle"
+                      className="inline-block leading-none align-middle"
                       style={{
                         width: '32px',
                         height: '32px',
                         transform: 'translateY(5px)',
+                        clipPath: 'polygon(0 -10px, 100% -10px, 100% 100%, 0 100%)',
                       }}
                     >
                       <span className="hover-arrow-slide-target block">
@@ -413,17 +421,15 @@ export function MenuOverlay() {
           style={{ top: '68vh' }}
         >
           {SECONDARY_ITEMS.map(({ route, labelKey }) => (
-            <Link
-              key={route}
-              href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
-              onClick={(e) => handleLinkClick(e, route)}
-              data-secondary-link=""
-              className="hover-wipe-underline w-fit font-mono text-body-sm text-fg
-                         transition-opacity duration-fast ease-expo
-                         focus-visible:opacity-90"
-            >
-              {t(labelKey)}
-            </Link>
+            <div key={route} data-secondary-link="">
+              <Link
+                href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+                onClick={(e) => handleLinkClick(e, route)}
+                className="hover-wipe-underline w-fit font-mono text-body-sm text-fg"
+              >
+                {t(labelKey)}
+              </Link>
+            </div>
           ))}
         </div>
 

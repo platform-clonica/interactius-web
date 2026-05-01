@@ -264,20 +264,28 @@
   }
 
   /* ────────────────────────────────────────────────────────────────────────
-     Link hover underline — instant clear + slow wipe-in (variación propia).
+     Link hover underline — opacidad 60→100 + wipe-in del subrayado.
      --------------------------------------------------------------------
-     Aplicado vía clase `.hover-wipe-underline` a links que llevan underline
-     en estado base. En hover:
-     · El underline desaparece INSTANTÁNEAMENTE (frame 0% del keyframe en
-       scaleX 0).
-     · Reaparece animándose de izquierda a derecha con el easing canónico
-       lateral del proyecto (cubic-bezier(.16,1,.3,1)) durante 0.9s.
-     Visualmente la posición y grosor (1px @ underline-offset 4px) imitan
-     el text-decoration nativo, sólo cambia la animación al hacer hover.
+     Patrón canónico para todos los links con subrayado del proyecto:
+     · Estado base: texto + subrayado a `opacity: 0.6` (gris).
+     · En hover/focus-visible: opacity sube a 1 (transición 0.5s) y el
+       subrayado desaparece y reaparece animándose de izquierda a derecha
+       con cubic-bezier(.45,0,.15,1).
+     Funciona en fondo dark y light usando `currentColor` como color del
+     subrayado y `opacity` como dimming → respeta el color del texto.
+     IMPORTANTE: el callsite debe usar el color a alpha completo
+     (p.ej. `text-warm-light`, `text-fg`), no `/60`. La utility añade el
+     dimming; aplicar /60 doblaría la transparencia.
      ──────────────────────────────────────────────────────────────────── */
   .hover-wipe-underline {
     position: relative;
     text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.5s cubic-bezier(.45, 0, .15, 1);
+  }
+  .hover-wipe-underline:hover,
+  .hover-wipe-underline:focus-visible {
+    opacity: 1;
   }
   .hover-wipe-underline::after {
     content: '';
@@ -339,7 +347,14 @@
   }
   .hover-text-flip:hover .hover-arrow-slide-target,
   .hover-text-flip:focus-visible .hover-arrow-slide-target {
-    transform: translateY(0%);
+    animation: arrow-bounce-in 0.6s cubic-bezier(.34, 1.7, .64, 1) forwards;
+  }
+  /* Bezier back-out: la propia curva sobrepasa y=1 en el camino → la flecha
+     llega a su sitio, hace overshoot suave y se asienta sin necesidad de
+     keyframe intermedio. Más natural que dos easings concatenados. */
+  @keyframes arrow-bounce-in {
+    0%   { transform: translateY(calc(100% + 1px)); }
+    100% { transform: translateY(0%); }
   }
 
 }
