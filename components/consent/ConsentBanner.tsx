@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 
 import { useConsentStore } from '@/lib/store/consent'
@@ -21,47 +23,50 @@ export function ConsentBanner() {
   const rejectAll = useConsentStore((s) => s.rejectAll)
   const openSettings = useConsentStore((s) => s.openSettings)
 
-  // Sin render hasta hidratar (evita flash) y solo si hay decisión pendiente.
-  if (!isHydrated || status !== 'pending' || isSettingsOpen) return null
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
-  return (
+  // Sin render hasta hidratar (evita flash) y solo si hay decisión pendiente.
+  if (!mounted || !isHydrated || status !== 'pending' || isSettingsOpen) return null
+
+  return createPortal(
     <div
       role="region"
       aria-label={t('title')}
       aria-live="polite"
-      className="fixed inset-x-0 bottom-0 z-consent-banner border-t border-warm-light/20 bg-dark text-warm-light"
+      style={{ zIndex: 9000 }}
+      className="fixed inset-x-0 bottom-0 border-t border-warm-light/20 bg-dark text-warm-light"
     >
-      <div className="section-inner flex flex-col gap-6 py-6 lg:flex-row lg:items-center lg:justify-between lg:gap-grid-gutter">
-        <p className="font-mono text-body-sm text-warm-light/80 lg:max-w-2xl">
+      <div className="section-inner grid grid-cols-1 gap-6 py-6 lg:grid-cols-12 lg:items-center lg:gap-grid-gutter">
+        <p className="font-mono text-body-sm text-warm-light lg:col-span-7">
           {t('body')}
         </p>
 
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 lg:flex-nowrap lg:gap-x-4">
+        <div className="flex flex-nowrap items-center justify-end gap-x-6 lg:col-span-5">
           <button
             type="button"
             onClick={rejectAll}
-            className="inline-flex items-center justify-center border border-warm-light bg-transparent px-5 py-2 font-mono text-body-sm text-warm-light transition-colors duration-fast ease-expo hover:bg-warm-light hover:text-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warm-light"
+            className="hover-wipe-underline w-fit whitespace-nowrap font-mono text-body-sm text-warm-light"
           >
             {t('rejectAll')}
           </button>
-
           <button
             type="button"
             onClick={openSettings}
-            className="hover-wipe-underline w-fit font-mono text-body-sm text-warm-light"
+            className="hover-wipe-underline w-fit whitespace-nowrap font-mono text-body-sm text-warm-light"
           >
             {t('customize')}
           </button>
-
           <button
             type="button"
             onClick={acceptAll}
-            className="inline-flex items-center justify-center bg-warm-light px-5 py-2 font-mono text-body-sm text-dark transition-colors duration-fast ease-expo hover:bg-transparent hover:text-warm-light hover:outline hover:outline-1 hover:outline-warm-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warm-light"
+            className="hover-wipe-underline w-fit whitespace-nowrap font-mono text-body-sm text-warm-light"
           >
             {t('acceptAll')}
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

@@ -210,10 +210,10 @@ const config: Config = {
       'menu-overlay': '150',
       header: '200',
       'hero-fixed': '400',
-      'consent-banner': '450',
       'page-transition': '500',
-      'consent-settings': '600',
       modal: '1000',
+      'consent-banner': '9000',
+      'consent-settings': '9999',
     },
 
     // ----- Grid -----
