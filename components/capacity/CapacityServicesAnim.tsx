@@ -57,6 +57,10 @@ interface CapacityServicesAnimProps {
    *  scroll-driven) en lugar de CapacityGraph estático. El color tiñe
    *  el gradient diagonal del stroke. */
   accentColor?: string
+  /** Override del color del stroke del vortex (excepción permitida cuando
+   *  el accentColor queda demasiado claro contra el bg warm-light). Si no
+   *  se pasa, el stroke usa accentColor. */
+  strokeColor?: string
   /** Tipo de geometría base del vortex. 'polygon' (default) para
    *  pensamiento, 'ellipse' para experiencias, 'wave' para
    *  transformación cultural. */
@@ -68,6 +72,7 @@ export function CapacityServicesAnim({
   sectionLabel,
   capacityLabel,
   accentColor,
+  strokeColor,
   shapeKind,
 }: CapacityServicesAnimProps) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -223,6 +228,7 @@ export function CapacityServicesAnim({
               <CapacityVortex
                 shapeCount={services.length}
                 accentColor={accentColor}
+                strokeColor={strokeColor}
                 triggerRef={blocksRef}
                 centerXFrac={0.22}
                 shapeKind={shapeKind}

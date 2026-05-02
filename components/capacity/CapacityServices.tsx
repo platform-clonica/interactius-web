@@ -6,6 +6,7 @@ export interface CapacityServicesProps {
   sectionLabel: string
   capacityLabel: string
   accentColor?: string
+  strokeColor?: string
   shapeKind?: 'polygon' | 'ellipse' | 'wave'
 }
 
@@ -14,6 +15,7 @@ export function CapacityServices({
   sectionLabel,
   capacityLabel,
   accentColor,
+  strokeColor,
   shapeKind,
 }: CapacityServicesProps) {
   return (
@@ -22,6 +24,7 @@ export function CapacityServices({
       sectionLabel={sectionLabel}
       capacityLabel={capacityLabel}
       accentColor={accentColor}
+      strokeColor={strokeColor}
       shapeKind={shapeKind}
     />
   )

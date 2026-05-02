@@ -42,6 +42,11 @@ type ShapeKind = 'polygon' | 'ellipse' | 'wave'
 interface CapacityVortexProps {
   shapeCount: number
   accentColor: string
+  /** Color del extremo "vibrante" del gradient del stroke. Default =
+   *  accentColor. Permite oscurecer el dibujo sin tocar el accent que
+   *  tiñe los pills/labels (excepción permitida en el primer servicio
+   *  para que el `#B0B5B0` no quede demasiado bajo de contraste). */
+  strokeColor?: string
   /** Elemento cuyo scroll dispara el morph (típicamente el wrapper de los
    *  bloques de subservicios). El progress 0→1 mapea desde su `top top`
    *  hasta su `bottom bottom`. */
@@ -63,6 +68,14 @@ const SPACING = 0.72
 const LINE_WIDTH = 0.8
 const RADIUS_FACTOR = 0.33
 const FADE_COLOR = '#F5F2ED' // warm-light: el stroke desaparece contra el bg
+
+// "Respiración" orgánica: cada punto se desplaza por una pequeña
+// señal sin-cos espacio-temporal coherente (puntos cercanos se mueven
+// de forma similar — evita jitter, parece vivo). Se omite con
+// prefers-reduced-motion.
+const NOISE_AMP_FRAC = 0.008 // fracción de maxR — ~1-2px en figuras típicas
+const NOISE_TIME_SPEED = 0.0009 // rad/ms → ciclo completo ≈ 7s
+const NOISE_SPATIAL_FREQ = 0.025 // rad/local-unit
 
 // Mount/unmount scroll-coupled (scrub puro, sin tween de duración fija).
 // Cada par mapea un rango de scroll a la escala 0→1 (in) o 1→0 (out).
@@ -135,13 +148,14 @@ function wavePoints(
   return pts
 }
 
-/** Genera N puntos en una elipse parametrizada con semi-ejes (a, b) y
- *  tilt (rotación). Sample 0 anclado a t = 3π/2 → corresponde al "top"
- *  de la elipse no rotada (0, -b). Después se aplica el tilt al resultado.
- *  No hace falta resampling por arc-length porque la lerp punto-a-punto
- *  entre dos elipses con la misma N de samples produce trayectorias
- *  suaves (la ineficiencia de no-uniform sampling en arc-length es
- *  imperceptible visualmente). */
+/** Genera N puntos en una elipse parametrizada con semi-ejes (a, b),
+ *  tilt (rotación), y modulación radial sinusoidal opcional (waveN, waveAmp).
+ *  Sample 0 anclado a t = 3π/2 → top de la elipse no rotada.
+ *
+ *  Con waveAmp = 0 → elipse pura (equivalente a la versión clásica).
+ *  Con waveAmp > 0 → bulges/contracciones a lo largo del perímetro,
+ *  manteniendo el aspect ratio de la elipse. Esto permite un parámetro
+ *  continuo para morphar elipse → curvy distorted sin cambiar de helper. */
 function ellipsePoints(
   a: number,
   b: number,
@@ -149,15 +163,18 @@ function ellipsePoints(
   cx: number,
   cy: number,
   n: number,
+  waveN = 0,
+  waveAmp = 0,
 ): Pt[] {
   const pts: Pt[] = []
   const cosT = Math.cos(tilt)
   const sinT = Math.sin(tilt)
+  const phaseAnchor = (3 * Math.PI) / 2
   for (let i = 0; i < n; i++) {
-    // t=3π/2 (top) + paso angular regular alrededor.
-    const t = (3 * Math.PI) / 2 + (i * 2 * Math.PI) / n
-    const ux = a * Math.cos(t)
-    const uy = b * Math.sin(t)
+    const t = phaseAnchor + (i * 2 * Math.PI) / n
+    const mod = waveAmp > 0 ? 1 + waveAmp * Math.sin(waveN * (t - phaseAnchor)) : 1
+    const ux = a * Math.cos(t) * mod
+    const uy = b * Math.sin(t) * mod
     const x = ux * cosT - uy * sinT
     const y = ux * sinT + uy * cosT
     pts.push([cx + x, cy + y])
@@ -268,6 +285,8 @@ const STAGGER_DELAY_OUT = 0
  *  poco shrinkage natural. Dips ligeramente más altos para conseguir el
  *  mismo carácter "shrink-and-regrow". */
 const MORPH_DIPS_POLY = [0.1, 0.18, 0.2] as const
+// 4 formas → 3 segmentos. La última forma es una elipse modulada por
+// onda 3-lóbulos (curvy distorted) — añade variedad al set.
 const MORPH_DIPS_ELL = [0.18, 0.18, 0.22] as const
 // 3 formas → 2 segmentos. Más slim que polygon/ellipse porque las waves
 // tienen mayor variación natural durante el lerp (radio oscilante).
@@ -291,15 +310,33 @@ const POLY_SHAPE_SCALE = [1.0, 1.0, 0.9, 0.85] as const
  *  base 0, rotación por anillo creciente. TODAS las formas tienen
  *  rotPerRing > 0 → los 22 anillos crean patrones tipo "rosa" / "fan".
  *
- *  Aspectos ratio: forma 4 más cercana a círculo (1.4:1) — antes era
- *  3:1, demasiado alargado. SHAPE_SCALE 0.80 compensa que las elipses
- *  con rotación llenen todo el envelope (vs polígonos huecos en los
- *  bordes) — sensación visual similar a service 1. */
-const ELL_A = [0.8, 0.6, 1.0, 0.7] as const
-const ELL_B = [1.0, 1.0, 0.6, 1.0] as const
-const ELL_BASE_ROTS = [0, 0, 0, 0] as const
-const ELL_ROT_PER_RING = [0.15, 0.17, 0.18, 0.25] as const
-const ELL_SHAPE_SCALE = [0.8, 0.8, 0.8, 0.8] as const
+ *  4 entradas (4 sub-servicios). El waveAmp introduce distorsión 3-lóbulos
+ *  progresiva: 0/0 puras → 0.10 sutil → 0.22 distorsión total. Esto liga
+ *  visualmente la 2ª/3ª/4ª y rompe la monotonía del set. */
+// Progresión: cada paso introduce UN cambio visible.
+//
+// · #0: centro círculo perfecto (innerCirc=1.0) que se va eliptificando
+//   y rotando hacia fuera; rotPerRing modesto (0.08) → anillos que se
+//   tocan en pocos puntos sin formar rosette densa. Outer tiltado 45°
+//   para BB cuadrada.
+// · #1: misma elipse en TODOS los anillos (innerCirc=0) + rotación
+//   completa (0.18) → rosette densa con cruces múltiples.
+// · #2: base circular + waveAmp 0.10 → 3-lóbulos suaves.
+// · #3: base circular + waveAmp 0.22 → curvy total.
+const ELL_A = [0.6, 0.6, 1.0, 1.0] as const
+const ELL_B = [1.0, 1.0, 1.0, 1.0] as const
+const ELL_INNER_CIRC = [1.0, 0, 0, 0] as const
+const ELL_BASE_ROTS = [Math.PI / 4, -Math.PI / 4, 0, 0]
+const ELL_ROT_PER_RING = [0.10, 0.18, 0.18, 0.20] as const
+// Distribución del sweep de rotación: 1 = lineal (cada anillo +N°),
+// <1 = progresiva (outer rings con saltos grandes, inner con saltos
+// pequeños). Para #0 con innerCirc=1.0 usamos 0.55 → los outer rings
+// (eccéntricos) se rotan dramáticamente entre sí, los inner (círculos)
+// rotan poco (rotación invisible al ser circulares igualmente).
+const ELL_ROT_POWER = [0.85, 1, 1, 1] as const
+const ELL_SHAPE_SCALE = [0.78, 0.78, 0.78, 0.68] as const
+const ELL_WAVE_N = [3, 3, 3, 3] as const
+const ELL_WAVE_AMP = [0, 0, 0.1, 0.22] as const
 
 /* ── Configuración WAVE (servicio Transformación cultural) ────────────────
  *  Círculos con radio modulado por seno: r(θ) = R(1 + amp × sin(N(θ−3π/2))).
@@ -324,10 +361,12 @@ const WAVE_SHAPE_SCALE = [0.78, 0.78, 0.78] as const
 export function CapacityVortex({
   shapeCount,
   accentColor,
+  strokeColor,
   triggerRef,
   centerXFrac = 0.5,
   shapeKind = 'polygon',
 }: CapacityVortexProps) {
+  const gradientStart = strokeColor ?? accentColor
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const targetProgressRef = useRef(0)
   const progressRef = useRef(0)
@@ -393,21 +432,37 @@ export function CapacityVortex({
         })
       } else if (shapeKind === 'ellipse') {
         shapes = Array.from({ length: count }, (_, i) => {
-          const aR = ELL_A[i]!
-          const bR = ELL_B[i]!
+          const baseA = ELL_A[i]!
+          const baseB = ELL_B[i]!
+          const innerCirc = ELL_INNER_CIRC[i]!
           const baseRot = ELL_BASE_ROTS[i]!
           const rotPerRing = ELL_ROT_PER_RING[i]!
+          const rotPower = ELL_ROT_POWER[i]!
           const shapeScale = ELL_SHAPE_SCALE[i]!
+          const waveN = ELL_WAVE_N[i]!
+          const waveAmp = ELL_WAVE_AMP[i]!
+          // Total tilt si la rotación fuera lineal: rotPerRing × (RINGS-1).
+          const totalTilt = rotPerRing * (RINGS - 1)
           return Array.from({ length: RINGS }, (_, r) => {
             const frac = ((RINGS - r) / RINGS) * SPACING + (1 - SPACING)
             const ringR = maxR * shapeScale * frac
+            const tEcc = (RINGS - 1 - r) / (RINGS - 1)
+            const aR = baseA + (1 - baseA) * innerCirc * (1 - tEcc)
+            const bR = baseB + (1 - baseB) * innerCirc * (1 - tEcc)
+            // u ∈ [0,1]: 0 outer (r=0), 1 inner (r=RINGS-1).
+            // Math.pow(u, rotPower) con rotPower<1 → derivada grande en
+            // u≈0 → outer rings concentran la mayor parte del sweep.
+            const u = r / (RINGS - 1)
+            const tiltOffset = totalTilt * Math.pow(u, rotPower)
             return ellipsePoints(
               ringR * aR,
               ringR * bR,
-              baseRot + rotPerRing * r,
+              baseRot + tiltOffset,
               cx,
               cy,
               SAMPLE_N,
+              waveN,
+              waveAmp,
             )
           })
         })
@@ -475,12 +530,22 @@ export function CapacityVortex({
       mountIn: number,
       mountOut: number,
       morphScale: number,
+      noiseT: number,
     ) => {
+      const figRadius = Math.min(H * RADIUS_FACTOR, W * 0.5)
+      const noiseAmp = noiseT > 0 ? figRadius * NOISE_AMP_FRAC : 0
       ctx.clearRect(0, 0, W, H)
 
       ctx.lineWidth = LINE_WIDTH
       ctx.lineJoin = 'miter'
       ctx.miterLimit = 10
+
+      // Stroke punteado canónico: dot diameter = lineWidth, gap centro-a-
+      // centro = 2×lineWidth → edge-gap = lineWidth (mismo grosor que el dot).
+      const dotSize = 1.5
+      ctx.lineWidth = dotSize
+      ctx.lineCap = 'round'
+      ctx.setLineDash([0, dotSize * 2])
 
       ctx.save()
       ctx.translate(W * centerXFrac + driftX, H / 2 + driftY)
@@ -492,7 +557,7 @@ export function CapacityVortex({
       // un lado vibrante, el opuesto desvanecido sobre el bg warm-light.
       const figR = Math.min(H * RADIUS_FACTOR, W * 0.5)
       const grad = ctx.createLinearGradient(-figR, -figR, figR, figR)
-      grad.addColorStop(0, accentColor)
+      grad.addColorStop(0, gradientStart)
       grad.addColorStop(1, FADE_COLOR)
       ctx.strokeStyle = grad
 
@@ -523,10 +588,42 @@ export function CapacityVortex({
         ctx.save()
         ctx.scale(ringScale, ringScale)
 
+        // Noise se aplica en local-frame y dividido por ringScale para
+        // que el desplazamiento final en pantalla sea constante (≈1-2px)
+        // independientemente de la escala del anillo.
+        const invScale = noiseAmp > 0 ? noiseAmp / ringScale : 0
+        const ringPhase = r * 0.31
+
         ctx.beginPath()
-        ctx.moveTo(ring[0]![0], ring[0]![1])
+        const p0 = ring[0]!
+        const nx0 =
+          invScale > 0
+            ? Math.sin(p0[0] * NOISE_SPATIAL_FREQ + noiseT * 1.7 + ringPhase) *
+              Math.cos(p0[1] * NOISE_SPATIAL_FREQ + noiseT * 1.0) *
+              invScale
+            : 0
+        const ny0 =
+          invScale > 0
+            ? Math.sin(p0[1] * NOISE_SPATIAL_FREQ + noiseT * 1.4 + ringPhase) *
+              Math.cos(p0[0] * NOISE_SPATIAL_FREQ + noiseT * 1.2) *
+              invScale
+            : 0
+        ctx.moveTo(p0[0] + nx0, p0[1] + ny0)
         for (let i = 1; i < ring.length; i++) {
-          ctx.lineTo(ring[i]![0], ring[i]![1])
+          const p = ring[i]!
+          const nx =
+            invScale > 0
+              ? Math.sin(p[0] * NOISE_SPATIAL_FREQ + noiseT * 1.7 + ringPhase) *
+                Math.cos(p[1] * NOISE_SPATIAL_FREQ + noiseT * 1.0) *
+                invScale
+              : 0
+          const ny =
+            invScale > 0
+              ? Math.sin(p[1] * NOISE_SPATIAL_FREQ + noiseT * 1.4 + ringPhase) *
+                Math.cos(p[0] * NOISE_SPATIAL_FREQ + noiseT * 1.2) *
+                invScale
+              : 0
+          ctx.lineTo(p[0] + nx, p[1] + ny)
         }
         ctx.closePath()
         ctx.stroke()
@@ -545,7 +642,7 @@ export function CapacityVortex({
     if (reduced) {
       // Sin animación: dibuja la primera forma estática con todos los
       // anillos formados (mountIn=1, mountOut=0, morphScale=1).
-      if (shapes[0]) drawFrame(shapes[0], 0, 0, 1, 0, 1)
+      if (shapes[0]) drawFrame(shapes[0], 0, 0, 1, 0, 1, 0)
       return () => {
         mounted = false
         window.removeEventListener('resize', onResize)
@@ -557,7 +654,7 @@ export function CapacityVortex({
     // unmount: durante mount-in baja desde +0.65H a 0; durante mount-out
     // sube de 0 a -0.35H. Entre los dos rangos (subservicios intermedios)
     // queda fija en H/2. La escala compone mount-in × (1 − mount-out).
-    const tick = () => {
+    const tick = (timestamp: number) => {
       if (!mounted) return
       progressRef.current +=
         (targetProgressRef.current - progressRef.current) * 0.12
@@ -590,7 +687,8 @@ export function CapacityVortex({
       }
 
       const { shape, morphScale } = getMorphInfo(p)
-      drawFrame(shape, 0, dy, mountIn, mountOut, morphScale)
+      const noiseT = timestamp * NOISE_TIME_SPEED
+      drawFrame(shape, 0, dy, mountIn, mountOut, morphScale, noiseT)
       rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
@@ -653,7 +751,7 @@ export function CapacityVortex({
       mountOutSt?.kill()
       window.removeEventListener('resize', onResize)
     }
-  }, [shapeCount, accentColor, triggerRef, centerXFrac, shapeKind])
+  }, [shapeCount, accentColor, gradientStart, triggerRef, centerXFrac, shapeKind])
 
   return <canvas ref={canvasRef} className="block w-full h-full" aria-hidden="true" />
 }
