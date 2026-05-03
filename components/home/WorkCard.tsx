@@ -3,8 +3,8 @@
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 
-import { Link } from '@/lib/i18n/navigation'
 import type { RouteId } from '@/lib/i18n/navigation'
+import { CurtainLink } from '@/components/layout/CurtainLink'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 
 /* ==========================================================================
@@ -115,7 +115,7 @@ export function WorkCard({ data, responsive = 'desktop' }: WorkCardProps) {
     return () => cleanupRef.current?.()
   }, [])
 
-  const Wrapper = (data.href ? Link : 'article') as React.ElementType
+  const Wrapper = (data.href ? CurtainLink : 'article') as React.ElementType
   const wrapperProps: Record<string, unknown> = data.href
     ? { href: data.href }
     : {}

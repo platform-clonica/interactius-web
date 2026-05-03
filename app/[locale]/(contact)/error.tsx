@@ -5,23 +5,22 @@ import { useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 
 /**
- * Error boundary — se activa cuando una page.tsx lanza una excepción no capturada.
- * IMPORTANTE: debe ser 'use client' (restricción de Next.js App Router).
+ * Error boundary del route group (contact). Si una page de /contacto,
+ * /newsletter o /testers lanza una excepción, este file la captura. Mismo
+ * patrón canónico que (main)/error.tsx.
  */
-
 interface ErrorPageProps {
   error: Error & { digest?: string }
   reset: () => void
 }
 
-export default function ErrorPage({ error, reset }: ErrorPageProps) {
+export default function ContactErrorPage({ error, reset }: ErrorPageProps) {
   const t = useTranslations('common')
 
   useEffect(() => {
-    // TODO Sprint 4 — integrar con Sentry o similar cuando esté configurado
     if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
-      console.error('[error boundary]', error)
+      console.error('[contact error boundary]', error)
     }
   }, [error])
 
@@ -34,12 +33,10 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
           {t('error.title')}
         </h1>
 
-        {/* Estilo párrafo canónico (text-body-sm, leading-[1.6], color full). */}
         <p className="font-mono text-body-sm text-fg leading-[1.6]">
           {t('error.body')}
         </p>
 
-        {/* Botones estilo Underline canónico (hover-wipe-underline). */}
         <div className="flex flex-wrap gap-x-8 gap-y-3 font-mono text-body-sm text-fg">
           <button
             type="button"

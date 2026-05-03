@@ -108,16 +108,23 @@ export function IdentidadLiminal() {
       {/* Sticky text panel — holds pinned while the 200vh spacer scrolls */}
       <div className="sticky top-0 min-h-screen section-inner flex items-center py-section">
         <div className="grid grid-cols-12 gap-grid-gutter w-full">
-          <div className="col-span-12 lg:col-span-6 lg:col-start-2">
+          {/* Mismo estilo que los titulares de las páginas legales y los heros
+              de Capacidades: text-[clamp(40px,7.5vw,120px)], leading 1.0,
+              tracking -0.03. Un escalón por debajo del text-super. */}
+          <div className="col-span-12 lg:col-start-2 lg:col-span-4">
             <h2
               ref={titleRef}
               id="liminal-title"
-              className="font-serif font-normal text-section text-fg tracking-[-0.02em] leading-[1.2] whitespace-nowrap"
+              className="font-serif font-normal text-fg select-none text-[clamp(40px,7.5vw,120px)] leading-[1.0] tracking-[-0.03em]"
             >
               {t('liminal.title')}
             </h2>
           </div>
-          <div className="col-span-12 lg:col-span-9 lg:col-start-3 mt-10 lg:mt-16">
+          {/* mt aprox = 2 × line-height del título (= 2 × clamp(40px,7.5vw,120px)
+              = clamp(80px,15vw,240px)). Así el TOP del párrafo coincide con
+              el BOTTOM del título. La sección usa items-center → al ser el
+              bloque más alto, el título sube proporcionalmente. */}
+          <div className="col-span-12 mt-10 lg:col-start-6 lg:col-span-6 lg:mt-[clamp(120px,17vw,280px)]">
             <div
               ref={bodyRef}
               className="flex flex-col gap-6 font-mono text-body-sm text-fg leading-[1.5]"

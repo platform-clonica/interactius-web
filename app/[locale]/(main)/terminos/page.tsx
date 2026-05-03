@@ -15,10 +15,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const t = await getTranslations({ locale, namespace: 'legal' })
   return buildPageMetadata({
     locale,
-    routeId: '/aviso-legal',
-    title: t('avisoLegal.title'),
-    pathname: localizedPath('/aviso-legal', locale),
-    alternates: getAlternates('/aviso-legal'),
+    routeId: '/terminos',
+    title: t('terminos.title'),
+    pathname: localizedPath('/terminos', locale),
+    alternates: getAlternates('/terminos'),
   })
 }
 
@@ -27,7 +27,7 @@ export default async function Page({ params }: PageProps) {
   const t = await getTranslations({ locale, namespace: 'legal' })
 
   type Block = Parameters<typeof LegalContent>[0]
-  const data = t.raw('avisoLegal') as Block
+  const data = t.raw('terminos') as Block
 
   return <LegalContent {...data} />
 }

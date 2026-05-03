@@ -15,9 +15,12 @@
  * razón GSAP no corre, el glyph aparece igual junto con la cortina.
  */
 export function CurtainGlyph() {
-  const height = 'clamp(72px, 9vw, 140px)'
+  // Tamaño reducido a la mitad respecto a la versión anterior — sensación
+  // de "imago" más sobrio. La animación de loading se aplica letra a letra
+  // desde PageCurtain (no aquí), apuntando a `[data-curtain-letter]`.
+  const height = 'clamp(24px, 2.6vw, 42px)'
   // Aspect ratio del viewBox (60 / 30.975 ≈ 1.937).
-  const width = 'calc(clamp(72px, 9vw, 140px) * 1.9370)'
+  const width = 'calc(clamp(24px, 2.6vw, 42px) * 1.9370)'
 
   return (
     <svg

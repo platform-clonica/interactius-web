@@ -1,8 +1,8 @@
 import { getTranslations } from 'next-intl/server'
 
 import { ManagePreferencesButton } from '@/components/consent/ManagePreferencesButton'
-import { Link } from '@/lib/i18n/navigation'
 
+import { CurtainLink } from './CurtainLink'
 import { FooterNewsletterCTA } from './FooterNewsletterCTA'
 
 export async function Footer() {
@@ -127,36 +127,36 @@ export async function Footer() {
           <nav aria-label={t('legal.label')}>
             <ul className="flex flex-wrap gap-x-8 gap-y-2 font-mono text-micro text-warm-light/60">
               <li>
-                <span
-                  aria-disabled="true"
-                  className="cursor-not-allowed underline underline-offset-4"
+                <CurtainLink
+                  href="/politica-privacidad"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
                   {t('legal.privacy')}
-                </span>
+                </CurtainLink>
               </li>
               <li>
-                <span
-                  aria-disabled="true"
-                  className="cursor-not-allowed underline underline-offset-4"
+                <CurtainLink
+                  href="/politica-cookies"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
                   {t('legal.cookies')}
-                </span>
+                </CurtainLink>
               </li>
               <li>
-                <span
-                  aria-disabled="true"
-                  className="cursor-not-allowed underline underline-offset-4"
+                <CurtainLink
+                  href="/terminos"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
                   {t('legal.terms')}
-                </span>
+                </CurtainLink>
               </li>
               <li>
-                <Link
+                <CurtainLink
                   href="/aviso-legal"
                   className="hover-wipe-underline w-fit text-warm-light"
                 >
                   {t('legal.notice')}
-                </Link>
+                </CurtainLink>
               </li>
               <li>
                 <ManagePreferencesButton />

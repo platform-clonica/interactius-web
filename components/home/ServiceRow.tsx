@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 
-import { Link } from '@/lib/i18n/navigation'
 import type { RouteId } from '@/lib/i18n/navigation'
+import { CurtainLink } from '@/components/layout/CurtainLink'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { PlusArrowFlipIcon } from '@/components/ui/PlusArrowFlipIcon'
 
@@ -59,7 +59,7 @@ export function ServiceRow({ data }: ServiceRowProps) {
     return () => cleanupRef.current?.()
   }, [])
 
-  const InnerWrapper = (data.href ? Link : 'div') as React.ElementType
+  const InnerWrapper = (data.href ? CurtainLink : 'div') as React.ElementType
   const wrapperProps = data.href ? { href: data.href } : {}
 
   return (

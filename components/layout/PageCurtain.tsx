@@ -33,14 +33,22 @@ import { CurtainGlyph } from './CurtainGlyph'
    (no hay contenido del menú que ocultar antes del cover).
    ========================================================================== */
 
-// Hold extendido para (1) dar tiempo a la nueva ruta a hidratar antes
-// del uncover y (2) dejar respirar el glyph "ius" que aparece en el
-// centro como imago intencionado.
-// Cronología: cover (0.7s) → onComplete dispara reveal del glyph (~0.5s).
-// Hold mínimo 1300ms = ~800ms de glyph visible estático tras el reveal,
-// suficiente para que el imago se perciba con intención. MAX 1700ms.
+// Hold extendido para (1) dar tiempo a la nueva ruta a hidratar Y PINTAR
+// antes del uncover y (2) dejar respirar el glyph "ius" loading que se
+// repite letra a letra durante el hold.
+//
+// Cronología tras el cover (0.7s):
+//   t=0.7s       → cover full, navigate(), arranca loop del glyph
+//   ≥ MIN       → mínimo respirado por el glyph + tiempo a la nueva ruta
+//   pathChanged → Next ha hecho commit; esperamos 2 RAF antes de uncover
+//                 para que el primer paint del nuevo árbol esté hecho
+//   ≤ MAX       → tope duro para no dejar al usuario colgado
+//
+// MAX 2500ms permite a las páginas de servicios (con imágenes pesadas y
+// ScrollTriggers complejos) terminar su primer ciclo de cálculo antes de
+// destapar; sin esto, se veían saltos de scroll/clip al uncover.
 const MIN_HOLD_MS = 1300
-const MAX_HOLD_MS = 1700
+const MAX_HOLD_MS = 2500
 
 export function PageCurtain() {
   const isActive = usePageCurtainStore((s) => s.isActive)
@@ -105,6 +113,41 @@ export function PageCurtain() {
 
       const initialPath = window.location.pathname
 
+      // Glyph "loading": cada letra (i, u, s) hace REVEAL LATERAL (clip-path
+      // izquierda→derecha) con stagger, y el ciclo se repite en bucle mientras
+      // la cortina cubre la pantalla. Mismo lenguaje canónico que el resto de
+      // reveals laterales del proyecto (cubic-bezier(.16,1,.3,1), 0.6s).
+      const letters = panel.querySelectorAll<SVGGElement>('[data-curtain-letter]')
+      const lateralEase = 'cubic-bezier(.16,1,.3,1)'
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let loopTl: any = null
+      const startGlyphLoop = () => {
+        if (!letters.length) return
+        gsap.set(letters, { clipPath: 'inset(0 100% 0 0)' })
+        loopTl = gsap.timeline({ repeat: -1, repeatDelay: 0.25 })
+        // Reveal: cada letra desclipa de izq→derecha, stagger 0.16s
+        loopTl.to(letters, {
+          clipPath: 'inset(0 0% 0 0)',
+          duration: 0.55,
+          stagger: 0.16,
+          ease: lateralEase,
+        })
+        // Hold breve y reset (re-clipar desde la derecha para que el próximo
+        // ciclo vuelva a entrar limpio desde la izquierda)
+        loopTl.to(letters, {
+          clipPath: 'inset(0 0 0 100%)',
+          duration: 0.4,
+          stagger: 0.08,
+          ease: lateralEase,
+        }, '+=0.5')
+        loopTl.set(letters, { clipPath: 'inset(0 100% 0 0)' })
+      }
+      const stopGlyphLoop = () => {
+        loopTl?.kill()
+        loopTl = null
+        if (letters.length) gsap.set(letters, { clipPath: 'inset(0 0% 0 0)' })
+      }
+
       const startUncover = () => {
         // CANÓNICO: último scrollTo justo antes del uncover. Garantiza que
         // si Next.js restauró la posición durante el mount (scrollRestoration)
@@ -114,6 +157,7 @@ export function PageCurtain() {
         if (mode === 'push') {
           window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
         }
+        stopGlyphLoop()
         const uncover = gsap.to(panel, {
           clipPath: 'inset(0 0% 0 100%)',
           duration: 1.25,
@@ -122,6 +166,13 @@ export function PageCurtain() {
             endPageCurtain()
             inProgressRef.current = false
             gsap.set(panel, { clipPath: 'inset(0 100% 0 0)' })
+            // Refrescar ScrollTrigger global para que la nueva ruta
+            // recalcule posiciones tras el uncover. Evita que reveals con
+            // start: 'top top' (e.g. CapacityHeroSequence inverse-scrub)
+            // se queden con posiciones stale tras la transición.
+            void import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+              ScrollTrigger.refresh()
+            })
           },
         })
         tlRef.current = uncover
@@ -133,7 +184,10 @@ export function PageCurtain() {
         ease,
         onComplete: () => {
           navigate()
+          startGlyphLoop()
           const startedAt = performance.now()
+          let extraFramesAfterPathChange = 0
+          const FRAMES_AFTER_PATH_CHANGE = 2
 
           const tick = () => {
             const elapsed = performance.now() - startedAt
@@ -147,7 +201,13 @@ export function PageCurtain() {
             if (mode === 'push') {
               window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
             }
-            const reached = (pathChanged && elapsed >= MIN_HOLD_MS) || elapsed >= MAX_HOLD_MS
+            // Tras detectar pathChanged, esperamos N frames extra para que
+            // el primer paint del nuevo árbol esté hecho antes de destapar.
+            // Sin esto, el uncover puede revelar un frame en blanco mientras
+            // React/Next aún está reconciliando.
+            if (pathChanged) extraFramesAfterPathChange += 1
+            const paintReady = pathChanged && extraFramesAfterPathChange >= FRAMES_AFTER_PATH_CHANGE
+            const reached = (paintReady && elapsed >= MIN_HOLD_MS) || elapsed >= MAX_HOLD_MS
             if (reached) {
               rafIdRef.current = null
               startUncover()

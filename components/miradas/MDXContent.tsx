@@ -2,57 +2,84 @@ import { evaluate } from '@mdx-js/mdx'
 import * as runtime from 'react/jsx-runtime'
 import type { MDXComponents } from 'mdx/types'
 
+/* ==========================================================================
+   MDXContent — render canónico de los artículos de Miradas
+   --------------------------------------------------------------------------
+   Tipografía:
+     · Body párrafos → font-mono text-body-sm leading-[1.6]
+     · h2 (subtítulos) → font-serif text-section font-light
+     · h3 → font-serif text-subtitle font-light
+     · blockquote → caja con bg-grey, italic serif
+     · strong → font-semibold (no muta peso visualmente brusco)
+   Wrapping protegido por `text-wrap: pretty/balance` global.
+   ========================================================================== */
+
 const components: MDXComponents = {
   h1: ({ children }) => (
-    <h1 className="font-serif font-light text-title text-fg mt-16 mb-6 first:mt-0">{children}</h1>
+    <h1 className="font-serif font-light text-fg text-title leading-tight mt-20 mb-8 first:mt-0">
+      {children}
+    </h1>
   ),
   h2: ({ children }) => (
-    <h2 className="font-serif font-light text-section text-fg mt-14 mb-5">{children}</h2>
+    <h2 className="font-serif font-light text-fg text-title-sm leading-tight mt-20 mb-8 first:mt-0">
+      {children}
+    </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="font-serif font-light text-subtitle text-fg mt-10 mb-4">{children}</h3>
+    <h3 className="font-mono font-semibold text-fg text-body-sm leading-[1.5] mt-12 mb-4">
+      {children}
+    </h3>
   ),
   p: ({ children }) => (
-    <p className="font-mono text-body-sm text-fg/80 leading-relaxed max-w-[64ch] mb-6">{children}</p>
+    <p className="font-mono text-body-sm text-fg leading-[1.6] mb-6">{children}</p>
   ),
   ul: ({ children }) => (
-    <ul className="mb-6 flex flex-col gap-2 font-mono text-body-sm text-fg/80">{children}</ul>
+    <ul className="mb-6 flex flex-col gap-3 font-mono text-body-sm text-fg pl-5 list-disc marker:text-fg/50">
+      {children}
+    </ul>
   ),
   ol: ({ children }) => (
-    <ol className="mb-6 flex flex-col gap-2 font-mono text-body-sm text-fg/80 list-decimal list-inside">{children}</ol>
+    <ol className="mb-6 flex flex-col gap-3 font-mono text-body-sm text-fg pl-6 list-decimal marker:text-fg/60">
+      {children}
+    </ol>
   ),
-  li: ({ children }) => (
-    <li className="flex items-start gap-3">
-      <span aria-hidden="true" className="mt-[3px] shrink-0 text-fg/40">—</span>
-      <span>{children}</span>
-    </li>
-  ),
+  li: ({ children }) => <li className="leading-[1.6]">{children}</li>,
   blockquote: ({ children }) => (
-    <blockquote className="my-8 border-l-2 border-fg/20 pl-6 font-serif font-light italic text-section text-fg/80">
+    <blockquote className="my-10 bg-grey p-8 lg:p-10 font-serif font-light italic text-section text-fg leading-tight">
       {children}
     </blockquote>
   ),
   code: ({ children }) => (
-    <code className="font-mono text-body-sm bg-surface px-1.5 py-0.5 rounded text-fg">{children}</code>
+    <code className="font-mono text-body-sm bg-grey px-1.5 py-0.5 text-fg">{children}</code>
   ),
   pre: ({ children }) => (
-    <pre className="my-8 overflow-x-auto bg-dark rounded p-6 font-mono text-body-sm text-pure-white/80">
+    <pre className="my-8 overflow-x-auto bg-dark p-6 font-mono text-body-sm text-pure-white/80">
       {children}
     </pre>
   ),
-  strong: ({ children }) => <strong className="font-medium text-fg">{children}</strong>,
+  strong: ({ children }) => <strong className="font-semibold text-fg">{children}</strong>,
   em: ({ children }) => <em className="italic">{children}</em>,
-  hr: () => <hr className="my-12 border-muted" />,
+  hr: () => <hr className="my-14 border-fg/15" />,
   table: ({ children }) => (
-    <div className="my-8 overflow-x-auto">
-      <table className="w-full font-mono text-body-sm text-fg/80 border-collapse">{children}</table>
+    <div className="my-10 overflow-x-auto">
+      <table className="w-full font-mono text-body-sm text-fg border-collapse">{children}</table>
     </div>
   ),
   th: ({ children }) => (
-    <th className="text-left font-medium text-fg border-b border-muted pb-3 pr-6">{children}</th>
+    <th className="text-left font-medium text-fg border-b border-fg/20 pb-3 pr-6">{children}</th>
   ),
   td: ({ children }) => (
-    <td className="border-b border-muted py-3 pr-6 text-fg/70">{children}</td>
+    <td className="border-b border-fg/15 py-3 pr-6">{children}</td>
+  ),
+  a: ({ href, children }) => (
+    <a
+      href={href}
+      target={href?.startsWith('http') ? '_blank' : undefined}
+      rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+      className="hover-wipe-underline w-fit text-fg font-medium"
+    >
+      {children}
+    </a>
   ),
 }
 

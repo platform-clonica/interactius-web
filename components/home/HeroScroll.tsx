@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
@@ -60,12 +60,70 @@ export function HeroScroll({
   const sectionRef = useRef<HTMLElement>(null)
   const spacerRef  = useRef<HTMLDivElement>(null)
   const videoRef   = useRef<HTMLVideoElement>(null)
+  const lightboxVideoRef = useRef<HTMLVideoElement>(null)
+  const progressBarRef = useRef<HTMLDivElement>(null)
   const taglineRef = useRef<HTMLDivElement>(null)
   const stripRef   = useRef<HTMLDivElement>(null)
   const arrowRef   = useRef<HTMLDivElement>(null)
   const playHintRef = useRef<HTMLDivElement>(null)
   const playVariantRef  = useRef<HTMLDivElement>(null)
   const closeVariantRef = useRef<HTMLDivElement>(null)
+
+  // Estado del lightbox: cuando true, el vídeo se renderiza encima de todo
+  // con audio. Cierra al hacer click. El strip/fullscreen vídeo se pausa
+  // mientras el lightbox está abierto para no doblar la reproducción.
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [isLightboxMuted, setIsLightboxMuted] = useState(false)
+  const isLightboxOpenRef = useRef(false)
+  useEffect(() => {
+    isLightboxOpenRef.current = isLightboxOpen
+    // Pausar/reanudar el strip video según estado del lightbox.
+    const stripVideo = videoRef.current
+    if (stripVideo) {
+      if (isLightboxOpen) {
+        stripVideo.pause()
+      } else {
+        // Re-evalúa fase al cerrar el lightbox.
+        const sy = window.scrollY
+        if (sy >= PHASE1_END && sy < PHASE3_END) {
+          stripVideo.play().catch(() => {})
+        }
+      }
+    }
+    // Swap inmediato del hint variant (play ↔ cerrar).
+    const playV = playVariantRef.current
+    const closeV = closeVariantRef.current
+    if (playV) playV.style.display = isLightboxOpen ? 'none' : 'flex'
+    if (closeV) closeV.style.display = isLightboxOpen ? 'flex' : 'none'
+  }, [isLightboxOpen])
+
+  // Sync muted del vídeo del lightbox con el estado React (toggle del botón)
+  useEffect(() => {
+    if (!isLightboxOpen) return
+    const v = lightboxVideoRef.current
+    if (v) v.muted = isLightboxMuted
+  }, [isLightboxOpen, isLightboxMuted])
+
+  // Línea de reproducción del lightbox — actualiza la barra inferior con
+  // scaleX según currentTime/duration. Suscribirse al vídeo solo mientras
+  // el lightbox está abierto.
+  useEffect(() => {
+    if (!isLightboxOpen) return
+    const v = lightboxVideoRef.current
+    const bar = progressBarRef.current
+    if (!v || !bar) return
+    const onTime = () => {
+      if (!v.duration || isNaN(v.duration)) return
+      bar.style.transform = `scaleX(${v.currentTime / v.duration})`
+    }
+    v.addEventListener('timeupdate', onTime)
+    v.addEventListener('loadedmetadata', onTime)
+    onTime()
+    return () => {
+      v.removeEventListener('timeupdate', onTime)
+      v.removeEventListener('loadedmetadata', onTime)
+    }
+  }, [isLightboxOpen])
 
   // Menu-aware z-index del strip: cuando el menu abre (z=150), el strip baja
   // a z=100 para quedar por debajo y no competir visualmente. Chrome, menu y
@@ -239,14 +297,30 @@ export function HeroScroll({
         snapPhaseState(initialScrollY)
       }
 
-      // Video corre desde el principio (mute + loop), visible también dentro
-      // del strip enmascarado. Click sobre el strip → fullscreen + (futuro) sonido.
-      // NO autoplay si el strip ya está fuera (Phase 3 completado) — evita
-      // que en refresh mid-page el video se reproduzca invisible/encima.
-      const stripVisibleAtMount = initialScrollY < PHASE3_END
-      if (videoEl && stripVisibleAtMount) {
+      // ── Reproducción del vídeo del strip según fase ──────────────────────
+      //  · Strip (scroll < PHASE1_END): PAUSADO en el primer frame (poster).
+      //  · Fullscreen (PHASE1_END < scroll < PHASE3_END): autoplay muted.
+      //  · Más allá: pausado (no se ve).
+      //  · Lightbox abierto: SIEMPRE pausado (la reproducción la lleva el
+      //    elemento del lightbox, con audio).
+      const updateStripVideoPlayback = (scrollY: number) => {
+        if (!videoEl) return
+        if (isLightboxOpenRef.current) {
+          if (!videoEl.paused) videoEl.pause()
+          return
+        }
+        const inFullscreen = scrollY >= PHASE1_END && scrollY < PHASE3_END
+        if (inFullscreen) {
+          if (videoEl.paused) videoEl.play().catch(() => {})
+        } else {
+          if (!videoEl.paused) videoEl.pause()
+          // En estado strip (scroll < PHASE1_END), aseguramos frame 0
+          if (scrollY < PHASE1_END) videoEl.currentTime = 0
+        }
+      }
+      if (videoEl) {
         videoEl.style.opacity = '1'
-        videoEl.play().catch(() => {})
+        updateStripVideoPlayback(initialScrollY)
       }
 
       if (!reduced) {
@@ -268,6 +342,9 @@ export function HeroScroll({
             // Tagline "se va con el scroll" (patrón rejouice): translateY 1:1
             // con la posición de scroll, simula que está en el flujo del doc.
             gsap.set(taglineEl, { y: -scrollY })
+
+            // Strip video play/pause según fase
+            updateStripVideoPlayback(scrollY)
 
             if (scrollY <= PHASE1_END) {
               // Fase 1 — strip expande a fullscreen (top+left → 0).
@@ -305,18 +382,19 @@ export function HeroScroll({
         applyStripState(1)
       }
 
-      // ── Hover "Play video"/"Close video": label follows mouse, con mix-blend
-      // difference. Variante play/close según fase (scrollY threshold).
+      // ── Hover "Play video"/"Cerrar": label sigue al cursor con mix-blend
+      // difference. Variante:
+      //   · Lightbox cerrado → "Play video" (sobre strip o fullscreen)
+      //   · Lightbox abierto → "Cerrar"
       const playHintEl = playHintRef.current
       const playVariantEl  = playVariantRef.current
       const closeVariantEl = closeVariantRef.current
-      const FULLSCREEN_THRESHOLD = PHASE1_END + 50  // algo dentro de fase 2
-      let variantIsFullscreen = false
+      let variantIsClose = false
 
       const updateHintVariant = () => {
-        const next = window.scrollY >= FULLSCREEN_THRESHOLD
-        if (next === variantIsFullscreen) return
-        variantIsFullscreen = next
+        const next = isLightboxOpenRef.current
+        if (next === variantIsClose) return
+        variantIsClose = next
         if (playVariantEl)  playVariantEl.style.display  = next ? 'none' : 'flex'
         if (closeVariantEl) closeVariantEl.style.display = next ? 'flex' : 'none'
       }
@@ -353,16 +431,13 @@ export function HeroScroll({
       })
       cleanups.push(() => stVariant.kill())
 
-      // ── Click en el strip: alterna según fase (abrir fullscreen / cerrar) ─
+      // ── Click en el strip: SIEMPRE abre el lightbox encima de todo con
+      // audio. (Antes alternaba fullscreen via scroll; ahora ese estado solo
+      // se alcanza scrolleando manualmente.) El cierre se hace desde el
+      // overlay del lightbox.
       const onStripClick = () => {
         if (reduced) return
-        if (window.scrollY >= FULLSCREEN_THRESHOLD) {
-          // Fullscreen → cerrar volviendo al top
-          window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-        } else {
-          // Strip state → abrir fullscreen
-          window.scrollTo({ top: PHASE1_END + 20, left: 0, behavior: 'smooth' })
-        }
+        setIsLightboxOpen(true)
       }
       strip.addEventListener('click', onStripClick)
       cleanups.push(() => strip.removeEventListener('click', onStripClick))
@@ -414,7 +489,6 @@ export function HeroScroll({
           <video
             ref={videoRef}
             src={videoSrc}
-            autoPlay
             muted
             loop
             playsInline
@@ -424,6 +498,70 @@ export function HeroScroll({
         )}
 
       </div>
+
+      {/* ── Lightbox — vídeo encima de TODO (z=2000) en formato modal:
+            backdrop dark/85 (deja entrever el sitio), vídeo limitado a
+            85vw / 85vh (object-contain), barra de progreso fina al pie
+            estilo rejouice. Click en cualquier sitio cierra. */}
+      {isLightboxOpen && videoSrc && (
+        <div
+          className="fixed inset-0 cursor-pointer flex items-center justify-center"
+          style={{ zIndex: 2000, backgroundColor: 'rgb(28 26 23 / 0.85)' }}
+          onClick={() => setIsLightboxOpen(false)}
+          aria-label="Cerrar vídeo"
+          role="button"
+        >
+          <div className="relative">
+            <video
+              ref={lightboxVideoRef}
+              src={videoSrc}
+              autoPlay
+              playsInline
+              preload="auto"
+              className="block max-w-[85vw] max-h-[85vh]"
+            />
+            {/* Línea de reproducción — fina, fija al pie del vídeo. Se rellena
+                vía scaleX según currentTime/duration (timeupdate listener). */}
+            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[2px] bg-warm-light/25">
+              <div
+                ref={progressBarRef}
+                className="h-full origin-left bg-warm-light"
+                style={{ transform: 'scaleX(0)' }}
+              />
+            </div>
+
+            {/* Toggle de audio — esquina inferior derecha, justo encima de la
+                barra de reproducción. stopPropagation evita que el click cierre
+                el lightbox. */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsLightboxMuted((m) => !m)
+              }}
+              aria-label={isLightboxMuted ? 'Activar sonido' : 'Silenciar'}
+              aria-pressed={isLightboxMuted}
+              className="absolute bottom-3 right-3 flex size-8 cursor-pointer items-center justify-center text-warm-light/80 transition-colors duration-fast ease-expo hover:text-warm-light"
+            >
+              {isLightboxMuted ? (
+                /* Speaker muted (con X) */
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                  <line x1="17" y1="9" x2="23" y2="15" />
+                </svg>
+              ) : (
+                /* Speaker on (con ondas) */
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                  <path d="M15.54 8.46a5 5 0 010 7.07" />
+                  <path d="M19.07 4.93a10 10 0 010 14.14" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Play/Close hint — fixed sibling, sigue el cursor con mix-blend-mode
           difference (mismo pipeline conceptual que logo/hamburger). Texto sin

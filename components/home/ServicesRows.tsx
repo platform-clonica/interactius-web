@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { ServiceRow } from './ServiceRow'
 import type { RouteId } from '@/lib/i18n/navigation'
+import { SuperTitleReveal } from '@/components/ui/SuperTitleReveal'
 
 /**
  * ServicesRows — sección "Servicios" en la Home.
@@ -41,7 +42,7 @@ export async function ServicesRows() {
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
           style={{ marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))' }}
         >
-          {t('services.title')}
+          <SuperTitleReveal>{t('services.title')}</SuperTitleReveal>
         </h2>
       </div>
 

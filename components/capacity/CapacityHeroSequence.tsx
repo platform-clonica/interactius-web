@@ -107,8 +107,9 @@ export function CapacityHeroSequence({
       }
 
       // ── Estado inicial ────────────────────────────────────────────────────
-      if (rightImageEl) gsap.set(rightImageEl, { clipPath: 'inset(0 100% 0 0)' })
-      if (bottomImageEl) gsap.set(bottomImageEl, { clipPath: 'inset(0 100% 0 0)' })
+      // Right image: visible por defecto (la cortina hace el reveal al destapar).
+      // Bottom image: inline-clipada en JSX (el scroll-trigger la revelará al
+      // entrar al viewport).
 
       // Lead split: el h2 (heading-style) usa line-mask canónico; el p
       // (body) usa fade+y. Patrón canónico del proyecto: titulares siempre
@@ -157,26 +158,30 @@ export function CapacityHeroSequence({
       cleanups.push(() => bottomInverseST?.kill())
 
       const runReveals = () => {
-        // Right image — clip-path lateral reveal canónico (carga automática).
+        // Refresh global de ScrollTrigger antes de crear/disparar nada.
+        // Tras un cambio de ruta vía PageCurtain, las posiciones de layout
+        // pueden haber cambiado mientras el árbol viejo estaba pintado.
+        // Sin refresh, los inverse-scrubs con start='top top' pueden
+        // calcular progress > 0 al crearse y dejar la imagen recortada.
+        ScrollTrigger.refresh()
+
+        // Right image — la cortina YA hace el reveal lateral al destapar
+        // (uncover de derecha→izquierda), así que aquí NO duplicamos el
+        // entry tween (causaba "doble carga" visible al usuario). Solo
+        // creamos el inverse-scrub para clipar al hacer scroll fuera del hero.
         if (rightImageEl) {
-          gsap.to(rightImageEl, {
-            clipPath: 'inset(0 0% 0 0)',
-            duration: 0.9,
-            ease: lateralEase,
-            onComplete: () => {
-              const tw = gsap.to(rightImageEl, {
-                clipPath: 'inset(0 0 0 100%)',
-                ease: 'none',
-                scrollTrigger: {
-                  trigger: rightImageEl,
-                  start: 'top top',
-                  end: 'top -=60%',
-                  scrub: 1,
-                },
-              })
-              rightInverseST = tw.scrollTrigger ?? null
+          const tw = gsap.to(rightImageEl, {
+            clipPath: 'inset(0 0 0 100%)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: rightImageEl,
+              start: 'top top',
+              end: 'top -=60%',
+              scrub: 1,
             },
           })
+          rightInverseST = tw.scrollTrigger ?? null
+          ScrollTrigger.refresh()
         }
 
         // Lead heading — line-mask canónico (titular)
@@ -221,30 +226,36 @@ export function CapacityHeroSequence({
         }
 
         // Bottom image reveal canónico — dispara al entrar al viewport.
+        // fromTo para garantizar que la imagen quede visible si el reveal
+        // se interrumpe.
         if (bottomImageEl) {
           const st = ScrollTrigger.create({
             trigger: bottomImageEl,
             start: 'top 80%',
             once: true,
             onEnter: () => {
-              gsap.to(bottomImageEl, {
-                clipPath: 'inset(0 0% 0 0)',
-                duration: 0.9,
-                ease: lateralEase,
-                onComplete: () => {
-                  const tw = gsap.to(bottomImageEl, {
-                    clipPath: 'inset(0 0 0 100%)',
-                    ease: 'none',
-                    scrollTrigger: {
-                      trigger: bottomImageEl,
-                      start: 'top top',
-                      end: 'bottom top',
-                      scrub: 1,
-                    },
-                  })
-                  bottomInverseST = tw.scrollTrigger ?? null
+              gsap.fromTo(
+                bottomImageEl,
+                { clipPath: 'inset(0 100% 0 0)' },
+                {
+                  clipPath: 'inset(0 0% 0 0)',
+                  duration: 0.9,
+                  ease: lateralEase,
+                  onComplete: () => {
+                    const tw = gsap.to(bottomImageEl, {
+                      clipPath: 'inset(0 0 0 100%)',
+                      ease: 'none',
+                      scrollTrigger: {
+                        trigger: bottomImageEl,
+                        start: 'top top',
+                        end: 'bottom top',
+                        scrub: 1,
+                      },
+                    })
+                    bottomInverseST = tw.scrollTrigger ?? null
+                  },
                 },
-              })
+              )
             },
           })
           cleanups.push(() => st.kill())
@@ -334,9 +345,27 @@ export function CapacityHeroSequence({
 
       // Fallback: si por alguna razón la cortina no completa nunca (bug
       // upstream, navegación interrumpida), liberamos los reveals tras
-      // 3s para que los assets nunca queden invisibles.
-      const fallbackTimer = window.setTimeout(safelyRun, 3000)
+      // 6s para que los assets nunca queden invisibles. Antes era 3s,
+      // pero con MAX_HOLD_MS=2500ms + uncover 1.25s = 3.75s total, el
+      // fallback de 3s podía dispararse ANTES de la transición real
+      // (el revealed flag lo gateaba, pero el margen era nulo).
+      const fallbackTimer = window.setTimeout(safelyRun, 6000)
       cleanups.push(() => window.clearTimeout(fallbackTimer))
+
+      // Última defensa: pase lo que pase, tras 8s las imágenes deben estar
+      // visibles incondicionalmente. Si por una race condition las refs
+      // mantienen clipPath inicial (`inset(0 100% 0 0)`), esto las desclipa.
+      const visibilityFailsafe = window.setTimeout(() => {
+        if (rightImageEl) {
+          const cs = window.getComputedStyle(rightImageEl).clipPath
+          if (cs.includes('100%')) gsap.set(rightImageEl, { clipPath: 'inset(0 0% 0 0)' })
+        }
+        if (bottomImageEl) {
+          const cs = window.getComputedStyle(bottomImageEl).clipPath
+          if (cs.includes('100%')) gsap.set(bottomImageEl, { clipPath: 'inset(0 0% 0 0)' })
+        }
+      }, 8000)
+      cleanups.push(() => window.clearTimeout(visibilityFailsafe))
 
       cleanupRef.current = () => {
         cleanups.forEach((fn) => fn())
@@ -373,7 +402,6 @@ export function CapacityHeroSequence({
                   ref={rightImageRef}
                   className="relative"
                   style={{
-                    clipPath: 'inset(0 100% 0 0)',
                     width: 'calc(100% + var(--grid-margin))',
                     height: 'calc(100vh - var(--cap-hero-pt-lg) - 80px)',
                   }}
@@ -435,6 +463,10 @@ export function CapacityHeroSequence({
                 ref={bottomImageRef}
                 className="w-full h-[45vh] lg:h-[calc(55vh-40px)] relative"
                 style={{
+                  // Pre-clip inline para que el reveal scroll-triggered
+                  // entre limpio cuando el usuario llega scrolleando. La
+                  // imagen está bajo el fold al cargar, así que no se ve
+                  // "vacía" mientras espera el trigger.
                   clipPath: 'inset(0 100% 0 0)',
                   marginLeft: 'calc(-1 * var(--grid-margin))',
                   width: 'calc(100% + var(--grid-margin))',

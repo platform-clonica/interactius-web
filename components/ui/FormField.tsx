@@ -116,10 +116,11 @@ function FormFieldComponent(
     ? 'border-alert'
     : 'border-dark/40 focus-within:border-dark'
 
-  // Clases del label (floating)
+  // Clases del label (floating). Canónico: text-fg/40 mientras no hay focus
+  // ni contenido (estado idle), text-fg al focus o cuando hay texto.
   const labelBase = `
     pointer-events-none absolute left-0 top-5
-    font-mono text-body-sm text-fg/70
+    font-mono text-body-sm text-fg/40
     transition-all duration-fast ease-expo
     peer-focus:top-0 peer-focus:text-micro peer-focus:text-fg
     peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-micro peer-[:not(:placeholder-shown)]:text-fg

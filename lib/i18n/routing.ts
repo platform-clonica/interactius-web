@@ -103,6 +103,21 @@ const PATHNAMES = {
     ca: '/avis-legal',
     en: '/legal-notice',
   },
+  '/politica-privacidad': {
+    es: '/politica-privacidad',
+    ca: '/politica-privacitat',
+    en: '/privacy-policy',
+  },
+  '/politica-cookies': {
+    es: '/politica-cookies',
+    ca: '/politica-cookies',
+    en: '/cookies-policy',
+  },
+  '/terminos': {
+    es: '/terminos',
+    ca: '/termes',
+    en: '/terms',
+  },
 } as const
 
 /** Identificador canónico de ruta — usado en todo el código. */

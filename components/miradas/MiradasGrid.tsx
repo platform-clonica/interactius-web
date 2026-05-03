@@ -1,10 +1,13 @@
 'use client'
 
-import { useState, Fragment, useTransition } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
-import { Link } from '@/lib/i18n/navigation'
+import { SuperTitleReveal } from '@/components/ui/SuperTitleReveal'
+
+import { CurtainLink } from '@/components/layout/CurtainLink'
+import { FormField } from '@/components/ui/FormField'
 import { articleHref } from '@/lib/i18n/article-href'
 import type { MiradaMeta } from '@/lib/content/miradas'
 
@@ -31,6 +34,32 @@ function formatDate(dateStr: string): string {
 
 /* ─── Article card ─────────────────────────────────────────── */
 
+/**
+ * Subcomponente reusable: Author avatar + label nombre/fecha en columna,
+ * con la base de la label tocando el borde superior del title strip por
+ * items-end del row contenedor. SIN posicionamiento absoluto fijo en px:
+ * todo está anclado por flex bottom-up para que sea responsive-safe.
+ */
+function AuthorBlock({ author, publishedAt }: { author: string; publishedAt: string }) {
+  return (
+    <div className="flex flex-col">
+      <div className="relative w-[60px] h-[63px] overflow-hidden flex-shrink-0 bg-muted">
+        <Image
+          src="/identidad/team.jpg"
+          alt={author}
+          fill
+          sizes="60px"
+          className="object-cover"
+          style={{ objectPosition: '22% 10%' }}
+        />
+      </div>
+      <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
+        {author}, {formatDate(publishedAt)}
+      </span>
+    </div>
+  )
+}
+
 function ArticleCard({
   article,
   cover,
@@ -41,11 +70,12 @@ function ArticleCard({
   priority?: boolean
 }) {
   return (
-    <Link
+    <CurtainLink
       href={articleHref(article.cat, article.slug)}
-      className="group relative flex flex-col bg-pure-white overflow-hidden"
+      className="group relative block overflow-hidden"
     >
-      {/* Image area */}
+      {/* Image area — único bloque del card. Author + title se apilan desde
+          el bottom via flex flex-col (responsive-safe, sin px fijos). */}
       <div className="relative w-full aspect-square overflow-hidden">
         <Image
           src={cover}
@@ -56,31 +86,24 @@ function ArticleCard({
           className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
         />
 
-        {/* Author avatar + date — stacked at bottom-left */}
-        <div className="absolute bottom-5 left-6 flex flex-col gap-1">
-          <div className="relative w-[60px] h-[63px] overflow-hidden flex-shrink-0 bg-muted">
-            <Image
-              src="/identidad/team.jpg"
-              alt={article.author}
-              fill
-              sizes="60px"
-              className="object-cover"
-              style={{ objectPosition: '22% 10%' }}
-            />
+        {/* Bottom-anchored stack: author row → title strip. items-end del row
+            superior garantiza que la base de la label del autor toque el
+            borde superior del title strip a cualquier tamaño. */}
+        <div className="absolute inset-x-0 bottom-0 flex flex-col">
+          {/* Row above title — solo author (no quote en cards normales) */}
+          <div className="flex items-end pl-5">
+            <AuthorBlock author={article.author} publishedAt={article.publishedAt} />
           </div>
-          <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
-            {article.author}, {formatDate(article.publishedAt)}
-          </span>
+
+          {/* Title strip — full width en cards normales */}
+          <div className="w-full bg-pure-white p-5 flex items-center min-h-[72px]">
+            <h2 className="font-serif font-light text-subtitle text-fg leading-tight">
+              {article.title}
+            </h2>
+          </div>
         </div>
       </div>
-
-      {/* Title strip */}
-      <div className="bg-pure-white p-5 flex items-center min-h-[72px]">
-        <h2 className="font-serif font-light text-subtitle text-fg leading-none">
-          {article.title}
-        </h2>
-      </div>
-    </Link>
+    </CurtainLink>
   )
 }
 
@@ -94,12 +117,17 @@ function FeaturedCard({
   cover: string
 }) {
   return (
-    <Link
+    <CurtainLink
       href={articleHref(article.cat, article.slug)}
-      className="group relative col-span-12 lg:col-start-2 lg:col-span-10 flex flex-col bg-pure-white overflow-hidden"
+      className="group relative col-span-12 lg:col-start-2 lg:col-span-10 block overflow-hidden"
     >
-      {/* Image area */}
-      <div className="relative w-full aspect-[16/7] lg:aspect-[1382/640] overflow-hidden">
+      {/* Image area — único bloque del card. Layout canónico bottom-up via
+          flex flex-col (NO px fijos, responsive-safe):
+            · Title strip al fondo (full width mobile, w-1/2 lg)
+            · Encima: row con author (left) + quote (right, lg only)
+            · items-end del row → bases de author label y quote alineadas con
+              el borde superior del title strip a cualquier tamaño */}
+      <div className="relative w-full aspect-[16/9] lg:aspect-[1382/780] overflow-hidden">
         <Image
           src={cover}
           alt={article.title}
@@ -109,38 +137,28 @@ function FeaturedCard({
           className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
         />
 
-        {/* Author avatar + date — stacked at bottom-left */}
-        <div className="absolute bottom-5 left-6 flex flex-col gap-1">
-          <div className="relative w-[60px] h-[63px] overflow-hidden flex-shrink-0 bg-muted">
-            <Image
-              src="/identidad/team.jpg"
-              alt={article.author}
-              fill
-              sizes="60px"
-              className="object-cover"
-              style={{ objectPosition: '22% 10%' }}
-            />
+        {/* Bottom-anchored overlay stack */}
+        <div className="absolute inset-x-0 bottom-0 flex flex-col">
+          {/* Row above title — author (left), quote (right, solo lg).
+              items-end alinea las BASES de ambos con el title-top. */}
+          <div className="flex justify-between items-end pl-5">
+            <AuthorBlock author={article.author} publishedAt={article.publishedAt} />
+            <div className="hidden lg:flex w-1/2 bg-pure-white p-5 items-center">
+              <p className="font-mono text-body-sm text-fg leading-[1.5] line-clamp-3">
+                {article.description}
+              </p>
+            </div>
           </div>
-          <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
-            {article.author}, {formatDate(article.publishedAt)}
-          </span>
-        </div>
 
-        {/* Quote — right half, desktop only */}
-        <div className="hidden lg:flex absolute bottom-[108px] right-0 w-1/2 bg-pure-white p-5 items-center">
-          <p className="font-mono text-body-sm text-fg leading-[1.5] line-clamp-3">
-            {article.description}
-          </p>
+          {/* Title strip — w-1/2 (= 5 cols del card que es col-span-10) en lg */}
+          <div className="w-full lg:w-1/2 bg-pure-white p-5 min-h-[88px] flex items-center">
+            <h2 className="font-serif font-light text-subtitle text-fg leading-tight">
+              {article.title}
+            </h2>
+          </div>
         </div>
       </div>
-
-      {/* Title strip */}
-      <div className="bg-pure-white p-5 lg:w-1/2 min-h-[72px] flex items-center">
-        <h2 className="font-serif font-light text-subtitle text-fg leading-none">
-          {article.title}
-        </h2>
-      </div>
-    </Link>
+    </CurtainLink>
   )
 }
 
@@ -152,8 +170,19 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
   const [activeCategories, setActiveCategories] = useState<string[]>([])
   const [, startTransition] = useTransition()
 
-  // Las categorías se derivan de articles (prop estable del server) — sin useMemo
-  const categories = [...new Set(articles.map((a) => a.cat))].sort()
+
+  // Lista canónica fija de categorías (orden de Figma). Independiente de los
+  // cats reales en los MDX — los artículos sin cat coincidente no se filtran
+  // hasta que se actualice su frontmatter.
+  const categories = [
+    'ux-design',
+    'innovacion',
+    'research',
+    'estrategia',
+    'ui-design',
+    'tendencias',
+    'product-design',
+  ]
 
   // El filtrado es O(n) sobre una lista pequeña — sin useMemo
   let filtered = articles
@@ -185,8 +214,58 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
     }
   }
 
-  const featured = filtered[0]
-  const rest = filtered.slice(1)
+  // Scroll infinito: PAGE_SIZE artículos por carga. Inicial pequeño para
+  // que el sentinel quede claramente bajo el fold y el usuario pueda ver
+  // el efecto de loading dots al hacer scroll.
+  const PAGE_SIZE = 4
+  const [visibleCount, setVisibleCount] = useState(1 + PAGE_SIZE)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+
+  // Reset al cambiar filtros/búsqueda — evita "se quedó cargado n+1" en una
+  // lista filtrada más corta.
+  useEffect(() => {
+    setVisibleCount(1 + PAGE_SIZE)
+  }, [search, activeCategories])
+
+  const visible = filtered.slice(0, visibleCount)
+  const hasMore = visibleCount < filtered.length
+  const filteredLength = filtered.length
+
+  // IntersectionObserver + scroll listener como respaldo. Algunas combinaciones
+  // de layout (sticky, transforms en ancestros) hacen que IO no dispare como
+  // se espera; el scroll listener garantiza que la paginación avance.
+  useEffect(() => {
+    if (!hasMore) return
+    const el = sentinelRef.current
+    if (!el) return
+
+    const loadMore = () =>
+      setVisibleCount((c) => Math.min(c + PAGE_SIZE, filteredLength))
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) loadMore()
+      },
+      { rootMargin: '800px 0px', threshold: 0 },
+    )
+    io.observe(el)
+
+    const onScroll = () => {
+      const rect = el.getBoundingClientRect()
+      if (rect.top < window.innerHeight + 800) loadMore()
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    // Trigger inicial por si el sentinel ya está visible al montar
+    onScroll()
+
+    return () => {
+      io.disconnect()
+      window.removeEventListener('scroll', onScroll)
+    }
+  }, [hasMore, filteredLength])
+
+  const featured = visible[0]
+  const rest = visible.slice(1)
 
   const leftCol = rest.filter((_, i) => i % 2 === 0)
   const rightCol = rest.filter((_, i) => i % 2 === 1)
@@ -194,37 +273,41 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
   return (
     <section className="w-full" aria-label="Artículos">
 
-      {/* ── "Miradas" super title ── */}
-      <div className="overflow-x-hidden w-full pt-8">
-        <p
-          className="font-serif font-normal text-super text-fg whitespace-nowrap select-none"
-          style={{ marginLeft: '-57px' }}
+      {/* ── "Miradas" super title — sangrado izquierdo canónico + line-mask
+            reveal. Padding-top reducido (no canónico aquí: queremos el
+            título cerca del subtítulo del hero). ── */}
+      <div className="relative overflow-hidden mt-0 pb-1 lg:pb-2">
+        <h2
+          className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
+          style={{ marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))' }}
           aria-hidden="true"
         >
-          {t('grid.superTitle')}
-        </p>
+          <SuperTitleReveal>{t('grid.superTitle')}</SuperTitleReveal>
+        </h2>
       </div>
 
       {/* ── Search + filters ── */}
-      <div className="section-inner mt-8 mb-12">
-        <div className="grid grid-cols-12 gap-grid-gutter items-start">
-          {/* Search — left col */}
-          <div className="col-span-12 lg:col-start-2 lg:col-span-5 border-b border-fg/20 pb-1">
-            <input
+      <div className="section-inner mt-20 mb-12 lg:mt-24">
+        <div className="grid grid-cols-12 gap-grid-gutter items-end">
+          {/* Search — left col. Usa FormField canónico (mismo lenguaje que
+              los formularios: floating label, border-b dark/40 → dark on
+              focus, font-mono text-body-sm). */}
+          <div className="col-span-12 lg:col-start-2 lg:col-span-5">
+            <FormField
+              name="search"
               type="search"
+              label={t('grid.searchPlaceholder')}
               value={search}
               onChange={(e) => {
                 const val = e.target.value
                 startTransition(() => setSearch(val))
               }}
-              placeholder={t('grid.searchPlaceholder')}
-              className="w-full bg-transparent font-mono text-body-sm text-fg placeholder:text-fg/20 outline-none"
               aria-label={t('grid.searchAriaLabel')}
             />
           </div>
 
-          {/* Category filters — right col */}
-          <div className="col-span-12 lg:col-start-7 lg:col-span-5 flex flex-wrap gap-2.5 justify-end">
+          {/* Category filters — right col. gap-x/gap-y 10px entre tags. */}
+          <div className="col-span-12 lg:col-start-7 lg:col-span-5 flex flex-wrap justify-end gap-x-[10px] gap-y-[10px]">
             {categories.map((cat) => {
               const active = activeCategories.includes(cat)
               return (
@@ -250,11 +333,13 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
 
       {/* ── Articles grid ── */}
       {filtered.length === 0 ? (
-        <div className="section-inner py-16">
-          <p className="font-mono text-body-sm text-fg/40">{t('grid.noResults')}</p>
+        <div className="section-inner py-24 lg:py-32">
+          <p className="text-center font-mono text-body-sm text-fg leading-[1.6]">
+            {t('grid.noResults')}
+          </p>
         </div>
       ) : (
-        <div className="section-inner">
+        <div className="section-inner pb-section lg:pb-[160px]">
           {/* Featured article */}
           {featured && (
             <div className="grid grid-cols-12 gap-grid-gutter mb-grid-gutter">
@@ -283,31 +368,34 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
               {/* Right column — offset to create visual rhythm */}
               <div className="md:col-span-1 lg:col-start-7 lg:col-span-5 flex flex-col gap-grid-gutter lg:mt-20">
                 {rightCol.map((article, i) => (
-                  <Fragment key={`${article.cat}/${article.slug}`}>
-                    <ArticleCard
-                      article={article}
-                      cover={getCover(article, i * 2 + 2)}
-                      priority={i === 0}
-                    />
-                    {i === 0 && rightCol.length > 2 && (
-                      <p className="hidden lg:block font-mono text-body-sm text-fg leading-[1.5] py-8">
-                        {t('grid.interstitialQuote')}
-                      </p>
-                    )}
-                  </Fragment>
+                  <ArticleCard
+                    key={`${article.cat}/${article.slug}`}
+                    article={article}
+                    cover={getCover(article, i * 2 + 2)}
+                    priority={i === 0}
+                  />
                 ))}
               </div>
             </div>
           )}
 
-          {/* "Quiero más." CTA */}
-          {filtered.length > 0 && (
-            <div className="mt-24 mb-section flex justify-center">
-              <p className="font-serif font-normal text-section text-fg text-center">
-                {t.rich('grid.loadMore', {
-                  u: (chunks) => <span className="underline underline-offset-4">{chunks}</span>,
-                })}
-              </p>
+          {/* Sentinel + loading dots para scroll infinito. El sentinel
+              dispara IntersectionObserver con 600px de pre-margin. Cuando
+              hay más artículos disponibles, mostramos los 3 puntitos
+              (animación CSS canónica). */}
+          <div ref={sentinelRef} aria-hidden="true" className="h-px w-full" />
+          {hasMore && (
+            <div
+              className="mt-16 mb-section flex justify-center"
+              role="status"
+              aria-live="polite"
+              aria-label="Cargando más artículos"
+            >
+              <span className="loading-dots inline-flex items-end gap-1">
+                <span className="block size-1.5 rounded-full bg-fg/60" />
+                <span className="block size-1.5 rounded-full bg-fg/60" />
+                <span className="block size-1.5 rounded-full bg-fg/60" />
+              </span>
             </div>
           )}
         </div>

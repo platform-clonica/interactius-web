@@ -275,22 +275,20 @@ export function MenuOverlay() {
 
   // Click handler para Links del menú. Cmd/Ctrl/Shift/Alt click → dejar default
   // (abrir en nueva pestaña, etc).
-  // · Rutas del grupo (contact): disparamos la PageCurtain global (root layout).
-  //   El menú permanece visible durante el cover (oculto detrás del panel z=500);
-  //   PageCurtain ejecuta `useMenuStore.close()` justo en el momento del
-  //   navigate (t=0.7s, cover full), evitando el salto del backdrop/scroll.
-  // · Resto de rutas: cortina propia del menú (fade content + cover + uncover).
+  //
+  // CANÓNICO: TODAS las rutas (incluido el grupo (main) y (contact)) pasan por
+  // PageCurtain global (root layout). PageCurtain renderiza el imago "ius" con
+  // reveal letra a letra, espera al pathChange + 2 RAF y refresca ScrollTrigger
+  // al destapar — UX consistente para cualquier navegación.
+  // PageCurtain ejecuta `useMenuStore.close()` en el navigate (t=0.7s, cover
+  // full), por lo que el menú se cierra detrás del panel sin salto visible.
   const handleLinkClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, route: string) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
       e.preventDefault()
-      if (CONTACT_ROUTES.has(route)) {
-        beginPageCurtain(route)
-        return
-      }
-      beginCurtain(() => router.push(route as Exclude<RouteId, '/miradas/[cat]/[slug]'>))
+      beginPageCurtain(route)
     },
-    [beginCurtain, beginPageCurtain, router],
+    [beginPageCurtain],
   )
 
   if (!isVisible) return null

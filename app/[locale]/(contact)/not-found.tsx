@@ -2,10 +2,11 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 
 /**
- * Not Found — se activa cuando notFound() es llamado desde una page.tsx
- * o cuando la URL no coincide con ninguna ruta. Server Component.
+ * Not Found del route group (contact). Cuando notFound() se llama desde
+ * /contacto, /newsletter o /testers o la URL no existe en este grupo.
+ * Mismo patrón canónico que (main)/not-found.tsx.
  */
-export default async function NotFoundPage() {
+export default async function ContactNotFoundPage() {
   const t = await getTranslations('common')
 
   return (
