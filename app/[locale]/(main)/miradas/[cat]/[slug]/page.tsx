@@ -16,6 +16,7 @@ import {
 import { MDXContent } from '@/components/miradas/MDXContent'
 import { ShareRow } from '@/components/miradas/article/ShareRow'
 import { ArticleNext } from '@/components/miradas/article/ArticleNext'
+import { AuthorAvatar } from '@/components/miradas/AuthorAvatar'
 
 interface PageProps {
   params: Promise<{ locale: Locale; cat: string; slug: string }>
@@ -101,7 +102,7 @@ export default async function ArticlePage({ params }: PageProps) {
               }}
             >
               <Image
-                src={getCover(article.slug, article.cover)}
+                src={getCover(article.slug, article.image)}
                 alt=""
                 fill
                 priority
@@ -124,16 +125,7 @@ export default async function ArticlePage({ params }: PageProps) {
               también arrancando en col 10. */}
           <div className="hidden lg:block lg:col-start-10 lg:col-span-3 lg:row-start-1 relative pointer-events-none">
             <div className="absolute left-0 bottom-0 pointer-events-auto">
-              <div className="relative w-[120px] h-[126px] overflow-hidden flex-shrink-0 bg-muted">
-                <Image
-                  src="/identidad/team.jpg"
-                  alt={article.author}
-                  fill
-                  sizes="120px"
-                  className="object-cover"
-                  style={{ objectPosition: '22% 10%' }}
-                />
-              </div>
+              <AuthorAvatar author={article.author} size="lg" />
             </div>
             <div className="absolute left-0 top-full pointer-events-auto">
               <span className="block bg-pure-white px-1.5 py-1 font-mono text-card-sm text-fg whitespace-nowrap leading-none">
@@ -144,16 +136,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
           {/* Author mobile — debajo de la imagen, sin posicionado fijo */}
           <div className="col-span-12 lg:hidden mt-6 flex items-center gap-3">
-            <div className="relative w-[60px] h-[63px] overflow-hidden flex-shrink-0 bg-muted">
-              <Image
-                src="/identidad/team.jpg"
-                alt={article.author}
-                fill
-                sizes="60px"
-                className="object-cover"
-                style={{ objectPosition: '22% 10%' }}
-              />
-            </div>
+            <AuthorAvatar author={article.author} size="sm" />
             <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
               {article.author}, {formatDate(article.publishedAt)}
             </span>

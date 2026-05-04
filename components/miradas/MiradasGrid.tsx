@@ -8,6 +8,7 @@ import { SuperTitleReveal } from '@/components/ui/SuperTitleReveal'
 
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import { FormField } from '@/components/ui/FormField'
+import { AuthorAvatar } from '@/components/miradas/AuthorAvatar'
 import { articleHref } from '@/lib/i18n/article-href'
 import type { MiradaMeta } from '@/lib/content/miradas'
 
@@ -19,7 +20,7 @@ const PLACEHOLDER_COVERS = Array.from(
 )
 
 function getCover(article: MiradaMeta, index: number): string {
-  return article.cover ?? PLACEHOLDER_COVERS[index % PLACEHOLDER_COVERS.length]
+  return article.image ?? PLACEHOLDER_COVERS[index % PLACEHOLDER_COVERS.length]
 }
 
 /* ─── Date format ──────────────────────────────────────────── */
@@ -43,16 +44,7 @@ function formatDate(dateStr: string): string {
 function AuthorBlock({ author, publishedAt }: { author: string; publishedAt: string }) {
   return (
     <div className="flex flex-col">
-      <div className="relative w-[60px] h-[63px] overflow-hidden flex-shrink-0 bg-muted">
-        <Image
-          src="/identidad/team.jpg"
-          alt={author}
-          fill
-          sizes="60px"
-          className="object-cover"
-          style={{ objectPosition: '22% 10%' }}
-        />
-      </div>
+      <AuthorAvatar author={author} size="sm" />
       <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
         {author}, {formatDate(publishedAt)}
       </span>

@@ -10,7 +10,7 @@ export interface MiradaFrontmatter {
   publishedAt: string
   author: string
   category: string
-  cover?: string
+  image?: string
   /**
    * Tags del artículo — claves que mapean al namespace i18n
    * `miradas.grid.categories` (las mismas que aparecen como filtros en

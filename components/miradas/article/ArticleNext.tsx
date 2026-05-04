@@ -15,7 +15,7 @@ const PLACEHOLDER_COVERS = Array.from(
 )
 
 function getCover(article: MiradaMeta): string {
-  if (article.cover) return article.cover
+  if (article.image) return article.image
   let h = 0
   for (let i = 0; i < article.slug.length; i++) h = ((h << 5) - h + article.slug.charCodeAt(i)) | 0
   return PLACEHOLDER_COVERS[Math.abs(h) % PLACEHOLDER_COVERS.length]

@@ -102,7 +102,7 @@ interactius-web/
 │   ├── capacity/            # CapacityHero, CapacityIntro, CapacityServices, CapacityOthers
 │   ├── identidad/           # IdentidadHero, Intro, Valores, Liminal, Metodologia, Gente, JoinUs
 │   ├── contact/             # ContactHero, ContactForm
-│   └── miradas/             # MiradasGrid, MDXContent
+│   └── miradas/             # MiradasGrid, MDXContent, AuthorAvatar
 │
 ├── lib/
 │   ├── i18n/                # config.ts (locales), routing.ts (mapping)
@@ -111,13 +111,14 @@ interactius-web/
 │   └── content/             # miradas.ts (fs + gray-matter reader)
 │
 ├── content/
-│   └── miradas/             # Artículos MDX por categoría
-│       ├── design/          # 4 artículos
-│       ├── ux/              # 1 artículo
-│       ├── research/        # 2 artículos
-│       ├── estrategia/      # 1 artículo
-│       ├── diseno-inclusivo/ # 1 artículo
-│       └── ia/              # 3 artículos
+│   └── miradas/             # Artículos MDX por categoría (125 totales)
+│       ├── design/          # 40 artículos
+│       ├── ux/              # 29 artículos
+│       ├── research/        # 26 artículos
+│       ├── ia/              # 13 artículos
+│       ├── estrategia/      # 11 artículos
+│       ├── workshops/       # 4 artículos
+│       └── diseno-inclusivo/ # 2 artículos
 │
 ├── messages/                # UI strings por locale × namespace
 │   ├── es/ {common, footer, nav, forms, meta, home}.json
@@ -206,7 +207,6 @@ interactius-web/
 - Sitemap dinámico (`app/sitemap.ts`) incluyendo todas las Miradas
 - `robots.txt` diferenciado prod/staging
 - Aviso legal con contenido real
-- Migración de los 96 artículos restantes de Miradas (se migraron 12 de 108)
 - GSC verification tag (`NEXT_PUBLIC_GSC_VERIFICATION`)
 - Swap endpoints API → Hubspot/provider real
 
@@ -222,7 +222,7 @@ interactius-web/
 | `components/ui/Wordmark.tsx` | Placeholder tipográfico SVG | Reemplazar paths SVG con asset real |
 | OG image `/og-default.png` | No existe | Crear 1200×630 o usar `app/opengraph-image.tsx` |
 | `components/identidad/IdentidadGente.tsx` | 5 placeholders de foto | Reemplazar con fotos reales del equipo |
-| `content/miradas/` | 12 de 108 artículos migrados | Migrar los 96 restantes |
+| `content/miradas/` | 125 artículos migrados ✅ | — |
 
 ---
 
@@ -242,7 +242,11 @@ En páginas de artículo (`/miradas/[cat]/[slug]`), next-intl necesita recibir `
 
 ### MDX rendering — server component
 
-Los artículos se compilan en el servidor con `@mdx-js/mdx` `evaluate`. No usa `next-mdx-remote` (no instalado). Los frontmatter se leen con `gray-matter` en `lib/content/miradas.ts`.
+Los artículos se compilan en el servidor con `@mdx-js/mdx` `evaluate`. No usa `next-mdx-remote` (no instalado). Los frontmatter se leen con `gray-matter` en `lib/content/miradas.ts`. Los componentes JSX disponibles dentro de los `.mdx` se registran en el map `components` de `MDXContent.tsx` — actualmente: `ImageWithCaption` (figura con `<figcaption>`) y `PullQuote` (cita con regla vertical). Cualquier nuevo componente usado desde un `.mdx` debe añadirse ahí.
+
+### Foto del autor en Miradas — `AuthorAvatar`
+
+`components/miradas/AuthorAvatar.tsx` resuelve el campo `author:` del frontmatter contra una tabla `AUTHOR_PHOTOS` derivada de `public/identidad/fotos-team/team.md`. Normaliza el nombre (lowercase + strip acentos vía `\p{Diacritic}`) y mapea a un `.webp` de esa carpeta. Sin match → fallback visual con la inicial del autor en `font-serif font-light` sobre `bg-muted`, mismas dimensiones para no romper el layout. Sustituye los 3 sitios donde antes se usaba la foto grupal `/identidad/team.jpg`: card del listado (`size="sm"` → 60×63), detail desktop (`size="lg"` → 120×126) y detail mobile (`size="sm"`). Para mapear un autor histórico (`Adria Altarriba`, `Elena` sin apellido, etc.), añadir su entrada a `AUTHOR_PHOTOS` — sin tocar más ficheros.
 
 ### Reduced-motion
 
@@ -261,9 +265,8 @@ Hook `useReducedMotion` + regla CSS global agresiva. Animaciones JS quedan gated
 3. **Traducciones CA/EN** — primera pasada. Requiere revisión de hablante nativo.
 4. **Social URLs** (LinkedIn, Instagram, YouTube) — confirmar handles reales en `lib/seo/metadata.config.ts`.
 5. **GSC verification** — pendiente de pegar código al deploy.
-6. **Miradas — 96 artículos pendientes** — solo se migraron los 12 más visitados.
-7. **Imágenes en artículos MDX** — sin soporte todavía (el `MDXContent` no mapea `img` a `next/image`).
-8. **iPad Pro landscape** (1024×1366) — validar rendimiento del hero scroll-driven.
+6. **Imágenes en MDX como `<img>` plano** — `MDXContent` aún no mapea `img` a `next/image`. Las imágenes históricas de Miradas (113 nuevas) se sirven directamente desde `public/miradas/<cat>/<slug>/`.
+7. **iPad Pro landscape** (1024×1366) — validar rendimiento del hero scroll-driven.
 
 ---
 
