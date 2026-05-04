@@ -8,12 +8,16 @@
     "altEmail": "info@interactius.com"
   },
   "newsletter": {
-    "title": "Subscriu-te a la nostra newsletter",
-    "copy": "Sovint, el problema no és la manca de respostes, sinó no saber quines preguntes val la pena fer-se. Cada mes enviem la nostra newsletter amb aprenentatges que uneixen la reflexió amb l'acció, sense soroll i amb intenció."
+    "title": "La nostra newsletter. On aturar-se també és avançar.",
+    "copy1": "Cada mes obrim una pausa per explorar tensions i desenvolupar idees amb profunditat. Sense soroll. Sense pressa. Amb criteri.",
+    "copy2": "Subscriu-te."
   },
   "testers": {
-    "title": "La teva veu importa i volem escoltar-la",
-    "copy": "Un espai per a persones que volen participar i aportar la seva experiència en la millora de productes i serveis. No busquem perfils ideals. Busquem realitats. Aquí la teva veu es converteix en part del procés: entrevistes, tests i dinàmiques on l'important no és opinar, sinó ajudar a entendre millor el que està passant. Perquè les millors decisions no es prenen sense escoltar les persones."
+    "title": "La teva experiència ens inspira a dissenyar millor",
+    "intro": "Participa en entrevistes, tests o enquestes des de casa i rep una recompensa.",
+    "step1": "<strong>Registra't aquí.</strong> Deixa'ns les teves dades perquè et puguem contactar.",
+    "step2": "<strong>Participa des d'on vulguis.</strong> La majoria de sessions són online, per videotrucada. Pots connectar-te des del mòbil o l'ordinador.",
+    "step3": "<strong>T'ho agraïm com es mereix!</strong> El teu temps val diners. Per això rebràs una recompensa per cada participació."
   },
   "avisoLegal": {
     "title": "Avís legal",

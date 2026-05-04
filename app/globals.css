@@ -23,7 +23,7 @@
     /* ----- Grid y layout ----- */
     --grid-margin: clamp(20px, 12vw - 45px, 128px);
     --grid-gutter: clamp(16px, 2.2vw, 32px);
-    --grid-max-w: 1440px;
+    --grid-max-w: 100vw;
     --sidebar-w: 128px;
 
     /* ----- Section spacing fluido ----- */
@@ -102,6 +102,19 @@
     tab-size: 4;
   }
 
+  /* Wrapping canónico — algoritmo no-greedy que evita huérfanos, viudas y
+     saltos awkward (e.g. "de" suelto al final de línea). Soportado en
+     Chrome 117+, Safari 17.4+, Firefox 121+, Edge 117+. Para los pocos
+     navegadores antiguos cae al algoritmo greedy normal sin romper. */
+  p {
+    text-wrap: pretty;
+  }
+  /* Para titulares: balance distribuye texto uniformemente entre líneas,
+     mejor para headings cortos. Mismo soporte. */
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
   body {
     min-height: 100vh;
     background: var(--c-bg);
@@ -111,7 +124,6 @@
     font-weight: 400;
     font-size: 16px;
     line-height: 1.5;
-    padding-left: var(--sidebar-w);
     overflow-x: hidden;
   }
 
@@ -239,6 +251,144 @@
     padding-bottom: 0.2em;
     margin-bottom: -0.2em;
   }
+
+  /* Scoped: a tamaño Super (clamp 80-240px) la tinta de glifos serif sobresale
+     del bounding box métrico (puntos de "i", tildes, descenders de "g").
+     Damos al mask padding extra para evitar clipping. Margins negativos
+     compensan a nivel layout. Solo aplica dentro de elementos `text-super`. */
+  .text-super .st-mask {
+    padding-top: 0.15em;
+    padding-bottom: 0.35em;
+    margin-top: -0.15em;
+    margin-bottom: -0.50em;
+  }
+
+  /* Chrome elements that hide when the footer reveals. Hamburger stays visible.
+     Logo: solo fade (sin translate), pediste que no haga movimiento.
+     Header CTA: fade + slide up (mantiene el lift que ya tenía). */
+  [data-sidebar-logo] {
+    transition: opacity 0.45s ease;
+  }
+  [data-header-cta] {
+    transition: opacity 0.45s ease, transform 0.45s ease;
+  }
+
+  body[data-footer-visible='true'] [data-sidebar-logo] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  body[data-footer-visible='true'] [data-header-cta] {
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+     Link hover underline — opacidad 60→100 + wipe-in del subrayado.
+     --------------------------------------------------------------------
+     Patrón canónico para todos los links con subrayado del proyecto:
+     · Estado base: texto + subrayado a `opacity: 0.6` (gris).
+     · En hover/focus-visible: opacity sube a 1 (transición 0.5s) y el
+       subrayado desaparece y reaparece animándose de izquierda a derecha
+       con cubic-bezier(.45,0,.15,1).
+     Funciona en fondo dark y light usando `currentColor` como color del
+     subrayado y `opacity` como dimming → respeta el color del texto.
+     IMPORTANTE: el callsite debe usar el color a alpha completo
+     (p.ej. `text-warm-light`, `text-fg`), no `/60`. La utility añade el
+     dimming; aplicar /60 doblaría la transparencia.
+     ──────────────────────────────────────────────────────────────────── */
+  .hover-wipe-underline {
+    position: relative;
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.5s cubic-bezier(.45, 0, .15, 1);
+  }
+  .hover-wipe-underline:hover,
+  .hover-wipe-underline:focus-visible {
+    opacity: 1;
+  }
+  .hover-wipe-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(1);
+    transform-origin: left;
+    pointer-events: none;
+  }
+  .hover-wipe-underline:hover::after,
+  .hover-wipe-underline:focus-visible::after {
+    animation: link-wipe-in 0.5s cubic-bezier(.45, 0, .15, 1) forwards;
+  }
+  @keyframes link-wipe-in {
+    0%   { transform: scaleX(0); transform-origin: left; }
+    100% { transform: scaleX(1); transform-origin: left; }
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+     Line-mask flip on hover — pattern editorial. El texto sale de la
+     máscara hacia ARRIBA y reaparece desde ABAJO en un solo movimiento
+     continuo (siempre hacia arriba). Usa el parent con `overflow:hidden`
+     para recortar fuera de la mascara.
+     · 0% → 50%: translateY 0% → -100% (sube y se oculta por arriba).
+     · 50% → 50.01%: jump instantáneo a translateY 100% (parte inferior).
+     · 50.01% → 100%: translateY 100% → 0% (vuelve a su sitio desde abajo).
+     · NO `forwards` → tras la animación vuelve al estado inline (GSAP
+       dejó translateY 0%, opacity 1).
+     ──────────────────────────────────────────────────────────────────── */
+  /* Trigger en el ancestro hoverable; target en el inner span con
+     inline-block (necesario para que `transform` aplique). */
+  .hover-text-flip:hover .hover-text-flip-target,
+  .hover-text-flip:focus-visible .hover-text-flip-target {
+    animation: line-mask-flip 0.5s cubic-bezier(.45, 0, .15, 1);
+  }
+
+  @keyframes line-mask-flip {
+    0%     { transform: translateY(0%); }
+    49.99% { transform: translateY(-100%); }
+    50%    { transform: translateY(100%); }
+    100%   { transform: translateY(0%); }
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+     Hover-arrow slide — flecha oculta debajo del mask por defecto. En hover
+     sube a su sitio; al salir el hover vuelve a esconderse hacia abajo
+     (transición bidireccional simétrica).
+     · Trigger: ancestro con `.hover-text-flip`.
+     · Requiere parent con `overflow:hidden` y dimensiones explícitas.
+     · El `+1px` asegura 0 peek por subpíxel.
+     ──────────────────────────────────────────────────────────────────── */
+  .hover-arrow-slide-target {
+    transform: translateY(calc(100% + 1px));
+    transition: transform 0.5s cubic-bezier(.45, 0, .15, 1);
+  }
+  .hover-text-flip:hover .hover-arrow-slide-target,
+  .hover-text-flip:focus-visible .hover-arrow-slide-target {
+    animation: arrow-bounce-in 0.6s cubic-bezier(.34, 1.7, .64, 1) forwards;
+  }
+  /* Bezier back-out: la propia curva sobrepasa y=1 en el camino → la flecha
+     llega a su sitio, hace overshoot suave y se asienta sin necesidad de
+     keyframe intermedio. Más natural que dos easings concatenados. */
+  @keyframes arrow-bounce-in {
+    0%   { transform: translateY(calc(100% + 1px)); }
+    100% { transform: translateY(0%); }
+  }
+
+  /* Loading dots — 3 puntitos con stagger. Usado por el scroll infinito
+     de Miradas y cualquier estado de carga in-page. */
+  .loading-dots > span {
+    animation: loading-dot-pulse 1.05s ease-in-out infinite;
+  }
+  .loading-dots > span:nth-child(2) { animation-delay: 0.18s; }
+  .loading-dots > span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes loading-dot-pulse {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }
+    40%           { transform: translateY(-4px); opacity: 1; }
+  }
+
 }
 
 

@@ -63,6 +63,7 @@ function ButtonPrimaryComponent<T extends ElementType = 'button'>(
     <Tag
       ref={ref as React.Ref<never>}
       aria-disabled={disabled || undefined}
+      {...(Tag === 'button' ? { disabled } : {})}
       {...defaultType}
       {...rest}
       className={`

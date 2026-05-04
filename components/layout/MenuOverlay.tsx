@@ -1,21 +1,15 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { useTranslations, useLocale } from 'next-intl'
-import { useParams } from 'next/navigation'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 
-import { Link, usePathname, type RouteId } from '@/lib/i18n/routing'
-import { articleHref, type IntlHref } from '@/lib/i18n/article-href'
-import { LOCALES } from '@/lib/i18n/config'
-import { useMenuStore } from '@/lib/store/menu'
+import { Link, useRouter, type RouteId } from '@/lib/i18n/navigation'
+import { useMenuStore, resetSavedScroll } from '@/lib/store/menu'
+import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
-import { RotatedLogo } from '@/components/ui/RotatedLogo'
-
-// gsap + SplitType se importan de forma lazy dentro del useEffect para que
-// no engrosen el bundle del layout (critical path). Solo se cargan la primera
-// vez que el menú se abre.
+import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher'
+// gsap se importa lazy dentro del useEffect para no engrosar el bundle del layout.
 
 /* ==========================================================================
    Nav item definitions
@@ -23,21 +17,35 @@ import { RotatedLogo } from '@/components/ui/RotatedLogo'
 
 const PRIMARY_ITEMS = [
   { route: '/pensamiento-estrategico', labelKey: 'nav.pensamiento', num: '1' },
-  { route: '/activacion-de-soluciones', labelKey: 'nav.activacion', num: '2' },
+  { route: '/diseno-de-experiencias', labelKey: 'nav.experiencias', num: '2' },
   { route: '/transformacion-cultural', labelKey: 'nav.transformacion', num: '3' },
 ] as const
 
 const SECONDARY_ITEMS = [
-  { route: '/miradas', labelKey: 'nav.miradas' },
   { route: '/identidad', labelKey: 'nav.identidad' },
+  { route: '/miradas', labelKey: 'nav.miradas' },
   { route: '/contacto', labelKey: 'nav.contacto' },
+  { route: '/testers', labelKey: 'nav.testers' },
 ] as const
 
-const SOCIAL_LINKS = [
-  { href: 'https://www.linkedin.com/company/interactius', label: 'Linkedin' },
-  { href: 'https://www.instagram.com/interactius', label: 'Instagram' },
-  { href: 'https://www.youtube.com/@interactius', label: 'YouTube' },
-] as const
+/**
+ * Rutas que viven en el grupo (contact) — tienen su propia cortina (ContactOverlay).
+ * Al navegar a ellas desde el menú NO corremos la cortina del menú: el layout
+ * cambia y el panel desmontaría a mitad de animación. Link nativo cierra el
+ * menú vía PageTransition y Contact gestiona su transición.
+ */
+const CONTACT_ROUTES = new Set<string>(['/contacto', '/newsletter', '/testers'])
+
+/**
+ * Breakpoint en el que el panel pasa de full-width a half-width.
+ * Coincide con Tailwind lg (default 1024px).
+ */
+const HALF_CLIP_MEDIA = '(min-width: 1024px)'
+
+function getHalfClipRight(): string {
+  if (typeof window === 'undefined') return '50%'
+  return window.matchMedia(HALF_CLIP_MEDIA).matches ? '50%' : '0%'
+}
 
 /* ==========================================================================
    MenuOverlay
@@ -45,141 +53,243 @@ const SOCIAL_LINKS = [
 
 export function MenuOverlay() {
   const t = useTranslations()
-  const locale = useLocale()
-  const pathname = usePathname()
-  const params = useParams()
+  const router = useRouter()
   const isOpen = useMenuStore((s) => s.isOpen)
-  const close = useMenuStore((s) => s.close)
+  const beginCurtainStore = useMenuStore((s) => s.beginCurtain)
+  const endCurtainStore = useMenuStore((s) => s.endCurtain)
+  const curtainCloseSignal = useMenuStore((s) => s.curtainCloseSignal)
+  const beginPageCurtain = usePageCurtainStore((s) => s.beginPageCurtain)
 
-  // Locales distintos al actual para el switcher
-  const otherLocales = LOCALES.filter((l) => l !== locale)
-
-  // Href para el locale switcher — igual que LocaleSwitcher: Link + locale prop
-  const cat = params.cat as string | undefined
-  const slug = params.slug as string | undefined
-  const localeSwitcherHref: IntlHref = cat && slug
-    ? articleHref(cat, slug)
-    : (pathname as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
-
-  // isVisible controls DOM presence — lags behind isOpen to allow close animation
   const [isVisible, setIsVisible] = useState(false)
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const containerRef = useRef<HTMLDivElement>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const splitsRef = useRef<any[]>([])
+  const panelRef = useRef<HTMLDivElement>(null)
+  const backdropRef = useRef<HTMLButtonElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tlRef = useRef<any>(null)
+  const curtainInProgressRef = useRef(false)
 
-  useFocusTrap(containerRef, isOpen, close)
+  /* ----------------------------------------------------------------------
+   * Cortina de cierre (con o sin navegación)
+   *
+   *   fade content 0.15s → cover 0.5s → [navegar] → uncover 0.9s → endCurtain
+   *
+   * Todo close/link click pasa por aquí. endCurtain() libera el scroll-lock
+   * y pone isOpen=false (lo que dispara el morph X→hamburger en MenuTrigger).
+   * ---------------------------------------------------------------------- */
+  const beginCurtain = useCallback(
+    (navigate?: () => void) => {
+      if (curtainInProgressRef.current) return
+      curtainInProgressRef.current = true
+      beginCurtainStore()
 
-  // Manage DOM visibility (mount immediately on open, unmount after close animation)
+      const container = containerRef.current
+      const panel = panelRef.current
+      if (!container || !panel) {
+        navigate?.()
+        endCurtainStore()
+        curtainInProgressRef.current = false
+        return
+      }
+
+      void import('gsap').then(({ default: gsap }) => {
+        tlRef.current?.kill()
+        const reduced = getReducedMotion()
+        // Curtain ease: power4.inOut (simétrico, cinemático) — se aparta del
+        // ease-expo canónico del proyecto porque la cortina full-screen es un
+        // wipe/transición, no un reveal. Ambos extremos importan.
+        const ease = 'power4.inOut'
+
+        const content = container.querySelectorAll<HTMLElement>(
+          '[data-primary-block], [data-secondary-link], [data-social-link], [data-locale-switcher]',
+        )
+        const backdrop = backdropRef.current
+
+        if (reduced) {
+          navigate?.()
+          endCurtainStore()
+          curtainInProgressRef.current = false
+          return
+        }
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            endCurtainStore()
+            curtainInProgressRef.current = false
+          },
+        })
+        tlRef.current = tl
+
+        // Fase 1 — fade content (el backdrop se mantiene hasta que el panel
+        // cubra todo; de otro modo se vería la página nítida por la derecha
+        // antes de estar tapada)
+        tl.to(content, { opacity: 0, duration: 0.15, ease: 'power2.out', overwrite: true }, 0)
+
+        // Fase 2 — cover (clip → 0%) desde el half-clip actual hasta full
+        tl.to(panel, { clipPath: 'inset(0 0% 0 0)', duration: 0.7, ease, overwrite: true }, 0.15)
+
+        // Fase 2.5 — panel cubriendo full-width (t=0.85). Instantes coordinados:
+        //   · backdrop opacity → 0 (se descarta tras el panel opaco; invisible)
+        //   · navigate(): DISPARO AQUÍ, no antes. Si se llama antes, el swap de
+        //     DOM de Next.js se ve a través del backdrop blur (glitch visual).
+        //     El panel full-cover lo oculta por completo.
+        if (backdrop) {
+          tl.set(backdrop, { opacity: 0 }, 0.85)
+        }
+        if (navigate) {
+          tl.call(() => {
+            navigate()
+            // Tras navegar, resetear el savedScrollY para que el unlock
+            // del scroll-lock no restaure la posición de la página anterior.
+            // Sin esto, la nueva página empieza al scroll-y donde estaba la previa.
+            resetSavedScroll()
+          }, [], 0.85)
+        }
+
+        // Fase 2.75 — hold 0.15s en full-cover. Da a Next.js tiempo de render
+        // antes de destapar. Con prefetch (hover Link) es casi instantáneo;
+        // sin prefetch este buffer evita que el uncover revele contenido a medio
+        // hidratar.
+        // Fase 3 — uncover: panel se pliega hacia la derecha (left-inset crece
+        // 0 → 100%). Equivale a transformOrigin:right + scaleX 1→0 del referente.
+        tl.to(panel, { clipPath: 'inset(0 0% 0 100%)', duration: 1.25, ease }, 1.0)
+      })
+    },
+    [beginCurtainStore, endCurtainStore],
+  )
+
+  // Handler para ESC: cerrar con cortina (no close directo).
+  const handleEscape = useCallback(() => beginCurtain(), [beginCurtain])
+
+  useFocusTrap(containerRef, isOpen, handleEscape)
+
+  // Mount/unmount diferido: esperar a que termine la animación de cierre.
   useEffect(() => {
     if (isOpen) {
       clearTimeout(closeTimerRef.current)
       setIsVisible(true)
     } else {
-      closeTimerRef.current = setTimeout(() => setIsVisible(false), 450)
+      // Tras endCurtain, damos tiempo a que acabe el último tween (0.9s uncover).
+      closeTimerRef.current = setTimeout(() => setIsVisible(false), 1000)
     }
     return () => clearTimeout(closeTimerRef.current)
   }, [isOpen])
 
-  // GSAP animations — runs after DOM is visible
+  // Animación de APERTURA — panel reveal + contenidos.
   useEffect(() => {
-    if (!isVisible || !containerRef.current) return
+    if (!isVisible || !isOpen || !containerRef.current) return
     const container = containerRef.current
+    const panel = panelRef.current
 
-    if (isOpen) {
-      void (async () => {
-        const [{ default: gsap }, { default: SplitType }] = await Promise.all([
-          import('gsap'),
-          import('split-type'),
-        ])
+    void (async () => {
+      const { default: gsap } = await import('gsap')
+      tlRef.current?.kill()
 
-        tlRef.current?.kill()
-        splitsRef.current.forEach((s) => s.revert())
-        splitsRef.current = []
+      const reduced = getReducedMotion()
+      const tl = gsap.timeline()
+      tlRef.current = tl
+      const halfClipRight = getHalfClipRight()
 
-        const reduced = getReducedMotion()
-        const tl = gsap.timeline()
-        tlRef.current = tl
-
-        // Primary nav: line-mask reveal (SplitType + GSAP)
-        // t=0.48s + i×0.12s per spec
-        const primaryLinks = container.querySelectorAll<HTMLElement>('[data-primary-link]')
-        primaryLinks.forEach((link, i) => {
-          if (reduced) {
-            gsap.set(link, { opacity: 1 })
-            return
-          }
-          const split = new SplitType(link, { types: 'lines' })
-          splitsRef.current.push(split)
-          const lines = split.lines ?? []
-          gsap.set(lines, { y: 60, opacity: 0 })
+      // Panel warm-light — reveal lateral canónico (clip-path de imagen)
+      if (panel) {
+        if (reduced) {
+          gsap.set(panel, { clipPath: `inset(0 ${halfClipRight} 0 0)` })
+        } else {
+          gsap.set(panel, { clipPath: 'inset(0 100% 0 0)' })
           tl.to(
-            lines,
-            { y: 0, opacity: 1, duration: 1, ease: 'power4.out', stagger: 0.08 },
-            0.48 + i * 0.12,
-          )
-        })
-
-        // Secondary links: opacity fade at t=860ms (+380ms after 480ms)
-        const secondaryLinks = container.querySelectorAll<HTMLElement>('[data-secondary-link]')
-        gsap.set(secondaryLinks, { opacity: 0 })
-        tl.to(
-          secondaryLinks,
-          { opacity: 1, duration: reduced ? 0 : 0.5, stagger: reduced ? 0 : 0.06 },
-          reduced ? 0 : 0.86,
-        )
-
-        // Social links: opacity fade at t=980ms (+500ms after 480ms)
-        const socialLinks = container.querySelectorAll<HTMLElement>('[data-social-link]')
-        gsap.set(socialLinks, { opacity: 0 })
-        tl.to(
-          socialLinks,
-          { opacity: 1, duration: reduced ? 0 : 0.4, stagger: reduced ? 0 : 0.04 },
-          reduced ? 0 : 0.98,
-        )
-
-        // Locale switcher: fade in with secondary links
-        const localeSwitcher = container.querySelector<HTMLElement>('[data-locale-switcher]')
-        if (localeSwitcher) {
-          gsap.set(localeSwitcher, { opacity: 0 })
-          tl.to(
-            localeSwitcher,
-            { opacity: 1, duration: reduced ? 0 : 0.5 },
-            reduced ? 0 : 0.86,
+            panel,
+            {
+              clipPath: `inset(0 ${halfClipRight} 0 0)`,
+              duration: 0.9,
+              ease: 'power4.inOut',
+            },
+            0,
           )
         }
-      })()
-    } else {
-      // Close: fade all content (200ms), panel clips via CSS (400ms)
-      void import('gsap').then(({ default: gsap }) => {
-        tlRef.current?.kill()
-        const allLinks = container.querySelectorAll<HTMLElement>(
-          '[data-primary-link], [data-secondary-link], [data-social-link], [data-locale-switcher]',
+      }
+
+      // Primary nav — line-mask aplicada al bloque entero
+      const primaryBlocks = container.querySelectorAll<HTMLElement>('[data-primary-block]')
+      if (reduced) {
+        gsap.set(primaryBlocks, { y: '0%', opacity: 1 })
+      } else {
+        gsap.set(primaryBlocks, { y: '100%', opacity: 0 })
+        tl.to(
+          primaryBlocks,
+          { y: '0%', opacity: 1, duration: 1, ease: 'power4.out', stagger: 0.10 },
+          0.55,
         )
-        gsap.to(allLinks, { opacity: 0, duration: 0.2, ease: 'none', overwrite: true })
-      })
-    }
+      }
+
+      // Secondary links + locale switcher items — fade + y staggered
+      const secondaryLinks = container.querySelectorAll<HTMLElement>(
+        '[data-secondary-link], [data-locale-switcher] li',
+      )
+      if (reduced) {
+        gsap.set(secondaryLinks, { opacity: 1, y: 0 })
+      } else {
+        gsap.set(secondaryLinks, { opacity: 0, y: 20 })
+        tl.to(
+          secondaryLinks,
+          { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06 },
+          0.75,
+        )
+      }
+    })()
   }, [isOpen, isVisible])
 
-  // Popstate: close menu on navigation
   useEffect(() => {
     if (!isOpen) return
-    const handlePopState = () => close()
+    const handlePopState = () => beginCurtain()
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
-  }, [isOpen, close])
+  }, [isOpen, beginCurtain])
 
-  // Cleanup on unmount
+  // Señal externa (MenuTrigger) solicitando cierre con cortina.
+  const lastSignalRef = useRef(0)
+  useEffect(() => {
+    if (curtainCloseSignal === 0 || curtainCloseSignal === lastSignalRef.current) return
+    lastSignalRef.current = curtainCloseSignal
+    if (isOpen) beginCurtain()
+  }, [curtainCloseSignal, isOpen, beginCurtain])
+
   useEffect(() => {
     return () => {
       tlRef.current?.kill()
-      splitsRef.current.forEach((s) => s.revert())
       clearTimeout(closeTimerRef.current)
     }
   }, [])
+
+  // Warm up de rutas contact al abrir el menú. Una sola vez por sesión:
+  // garantiza que el destino esté listo cuando el cover de PageCurtain
+  // termine, evitando que el uncover muestre la página vieja a medio swap.
+  const contactPrefetchedRef = useRef(false)
+  useEffect(() => {
+    if (!isOpen || contactPrefetchedRef.current) return
+    contactPrefetchedRef.current = true
+    CONTACT_ROUTES.forEach((route) => {
+      router.prefetch(route as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
+    })
+  }, [isOpen, router])
+
+  // Click handler para Links del menú. Cmd/Ctrl/Shift/Alt click → dejar default
+  // (abrir en nueva pestaña, etc).
+  //
+  // CANÓNICO: TODAS las rutas (incluido el grupo (main) y (contact)) pasan por
+  // PageCurtain global (root layout). PageCurtain renderiza el imago "ius" con
+  // reveal letra a letra, espera al pathChange + 2 RAF y refresca ScrollTrigger
+  // al destapar — UX consistente para cualquier navegación.
+  // PageCurtain ejecuta `useMenuStore.close()` en el navigate (t=0.7s, cover
+  // full), por lo que el menú se cierra detrás del panel sin salto visible.
+  const handleLinkClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, route: string) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+      e.preventDefault()
+      beginPageCurtain(route)
+    },
+    [beginPageCurtain],
+  )
 
   if (!isVisible) return null
 
@@ -194,86 +304,48 @@ export function MenuOverlay() {
       {...(!isOpen ? { inert: true } : {})}
       className="fixed inset-0 z-menu-overlay overflow-hidden"
     >
-      {/* ── Background: flipped landscape image + blur overlay ── */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0" style={{ transform: 'scaleY(-1)' }}>
-          <Image
-            src="/menu/bg.jpg"
-            alt=""
-            fill
-            className="object-cover object-bottom"
-            priority
-          />
-        </div>
-        <div
-          className={`absolute inset-0 backdrop-blur-[20px] bg-[rgba(232,230,227,0.2)]
-                      transition-opacity ease-expo
-                      ${isOpen ? 'opacity-100 duration-menu-in' : 'opacity-0 duration-menu-out'}`}
-        />
-      </div>
-
-      {/* ── Left warm panel — 50vw (960px de 1920px) — TÉCNICA LATERAL canónica ── */}
-      <div
-        className={`absolute inset-y-0 left-0 w-1/2 bg-warm-light transition-[clip-path] ease-expo
-                    ${isOpen ? 'duration-menu-in' : 'duration-menu-out'}`}
-        style={{
-          clipPath: isOpen ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)',
-        }}
+      {/* Backdrop — página real blurreada + oscurecida. Click cierra vía cortina. */}
+      <button
+        ref={backdropRef}
+        type="button"
+        aria-label={t('common.menu.close')}
+        onClick={() => beginCurtain()}
+        className={`absolute inset-0 backdrop-blur-[10px] bg-dark/25
+                    transition-opacity ease-expo
+                    ${isOpen ? 'opacity-100 duration-menu-in' : 'opacity-0 duration-menu-out'}`}
       />
 
-      {/* ── Sidebar column: X close button + vertical logo ── */}
-      <div className="absolute inset-y-0 left-0 z-10 hidden w-sidebar lg:block">
-        <div className="absolute left-1/2 top-[26px] -translate-x-1/2">
-          <button
-            type="button"
-            onClick={close}
-            aria-label={t('common.menu.close')}
-            className="flex size-10 items-center justify-center text-fg
-                       transition-opacity duration-fast ease-expo hover:opacity-70"
-          >
-            <CloseIcon />
-          </button>
-        </div>
+      {/* Panel warm-light — cubre viewport completo; clip-path controla porción visible.
+          Closed: inset(0 100% 0 0). Half-open (lg): inset(0 50% 0 0). Mobile/full-cover: inset(0 0% 0 0). */}
+      <div
+        ref={panelRef}
+        className="absolute inset-0 bg-warm-light"
+        style={{ clipPath: 'inset(0 100% 0 0)' }}
+      />
 
-        <Link
-          href="/"
-          onClick={close}
-          className="absolute left-1/2 top-20 -translate-x-1/2
-                     transition-opacity duration-fast ease-expo hover:opacity-70"
-          aria-label={t('common.logo.home')}
-        >
-          <RotatedLogo />
-        </Link>
-      </div>
-
-      {/* ── Nav content — positioned after sidebar + grid margin ── */}
+      {/* Nav content — absolute sobre el panel (z-10) con animaciones independientes */}
       <div
         className="absolute inset-y-0 z-10"
         style={{ left: 'calc(var(--sidebar-w) + var(--grid-margin))' }}
       >
-        {/* Locale switcher — posición Figma: ~52px desde el top del viewport */}
-        {otherLocales.length > 0 && (
-          <div
-            data-locale-switcher=""
-            className="absolute flex gap-10 font-mono text-title-mono text-fg"
-            style={{ top: '52px' }}
+        {/* Home link — alineado verticalmente con la X del Sidebar (top:26px),
+            mismo estilo que los secondary nav links. El wrapper carga
+            `data-secondary-link` (lo anima GSAP); el Link queda libre con la
+            utility canónica `hover-wipe-underline` (opacity 60→100). */}
+        <div
+          data-secondary-link=""
+          className="absolute top-[26px]"
+        >
+          <Link
+            href="/"
+            onClick={(e) => handleLinkClick(e, '/')}
+            className="hover-wipe-underline w-fit font-mono text-body-sm text-fg"
           >
-            {otherLocales.map((l) => (
-              <Link
-                key={l}
-                href={localeSwitcherHref}
-                locale={l}
-                onClick={close}
-                className="underline underline-offset-4 opacity-40
-                           hover:opacity-100 transition-opacity duration-fast ease-expo"
-              >
-                {l.toUpperCase()}
-              </Link>
-            ))}
-          </div>
-        )}
+            {t('nav.home')}
+          </Link>
+        </div>
 
-        {/* Primary nav: 3 capacity routes, serif ~42px, numbered with border dividers */}
+        {/* Primary nav */}
         <nav
           aria-label={t('common.menu.primaryNav')}
           className="absolute"
@@ -282,85 +354,97 @@ export function MenuOverlay() {
           {PRIMARY_ITEMS.map(({ route, labelKey, num }) => (
             <div
               key={route}
-              className="border-t border-fg/20"
-              style={{
-                width: 'calc(50vw - var(--sidebar-w) - var(--grid-margin))',
-              }}
+              className="overflow-hidden w-[calc(100vw-var(--grid-margin)*2)]
+                         lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]"
             >
-              <span className="block pt-[9px] font-mono text-card-sm text-fg leading-none">
-                {num}
-              </span>
+              <div data-primary-block="" className="border-t border-fg/20">
+                <span className="block pt-[9px] font-mono text-card-sm text-fg/40 leading-none">
+                  {num}
+                </span>
+                <Link
+                  href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+                  onClick={(e) => handleLinkClick(e, route)}
+                  className="hover-text-flip block mt-[14px] pb-[9px]
+                             font-serif font-light text-title-sm text-fg
+                             focus-visible:opacity-90"
+                >
+                  <span className="flex w-full items-center justify-between gap-3 pr-[30px]">
+                    <span className="st-mask">
+                      <span className="hover-text-flip-target inline-block">
+                        {t(labelKey)}
+                      </span>
+                    </span>
+                    {/* Mask custom para flecha — sin padding/margin de st-mask
+                        (que añadía clearance para descenders y dejaba 1px de
+                        peek). Caja 32x32 (no cambia layout); el clipping se
+                        hace con clip-path polygon que se extiende 10px arriba
+                        para permitir el bounce overshoot del keyframe sin que
+                        la flecha se corte. translateY de la base lleva 1px
+                        extra para garantizar 0 peek por abajo. Padre con
+                        pr-[30px] alinea right edge con LocaleSwitcher. */}
+                    <span
+                      aria-hidden="true"
+                      className="inline-block leading-none align-middle"
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        transform: 'translateY(5px)',
+                        clipPath: 'polygon(0 -10px, 100% -10px, 100% 100%, 0 100%)',
+                      }}
+                    >
+                      <span className="hover-arrow-slide-target block">
+                        <svg
+                          width="32"
+                          height="32"
+                          viewBox="0 0 40 40"
+                          fill="none"
+                          className="shrink-0"
+                        >
+                          <line x1="10" y1="27" x2="33" y2="3" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+                          <polyline points="7,3 33,3 33,30" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+                        </svg>
+                      </span>
+                    </span>
+                  </span>
+                </Link>
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        {/* Secondary nav — agrupado y separado del primary. Sube top para
+            compensar el extra de gap entre items, mantiene centro óptico. */}
+        <div
+          className="absolute flex flex-col gap-6"
+          style={{ top: '68vh' }}
+        >
+          {SECONDARY_ITEMS.map(({ route, labelKey }) => (
+            <div key={route} data-secondary-link="">
               <Link
                 href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
-                onClick={close}
-                data-primary-link=""
-                className="block mt-[14px] pb-[9px] overflow-hidden
-                           font-serif font-light text-title text-fg
-                           transition-opacity duration-fast ease-expo
-                           hover:opacity-60 focus-visible:opacity-60"
+                onClick={(e) => handleLinkClick(e, route)}
+                className="hover-wipe-underline w-fit font-mono text-body-sm text-fg"
               >
                 {t(labelKey)}
               </Link>
             </div>
           ))}
-        </nav>
-
-        {/* Secondary nav: Miradas / Identidad / Contacto — mono 20px underlined */}
-        <div
-          className="absolute flex flex-col gap-menu-col"
-          style={{ top: '64vh' }}
-        >
-          {SECONDARY_ITEMS.map(({ route, labelKey }) => (
-            <Link
-              key={route}
-              href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
-              onClick={close}
-              data-secondary-link=""
-              className="font-mono text-title-mono text-fg underline underline-offset-4
-                         transition-opacity duration-fast ease-expo
-                         hover:opacity-60 focus-visible:opacity-60"
-            >
-              {t(labelKey)}
-            </Link>
-          ))}
         </div>
 
-        {/* Social links: Linkedin / Instagram / YouTube — mono 18px opacity-40 */}
+        {/* Locale switcher — top-right del panel, alineado verticalmente con
+            Home y la X. Stack vertical (ES/CA/EN uno debajo del otro). */}
         <div
-          className="absolute flex items-center gap-menu-social"
-          style={{ top: 'min(93.9vh, calc(100vh - env(safe-area-inset-bottom, 0px) - 40px))' }}
+          data-locale-switcher=""
+          className="absolute top-[26px]
+                     w-[calc(100vw-var(--grid-margin)*2)]
+                     lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]
+                     pointer-events-none"
         >
-          {SOCIAL_LINKS.map(({ href, label }) => (
-            <a
-              key={href}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-social-link=""
-              className="font-mono text-body-sm text-fg/40 underline underline-offset-4
-                         transition-opacity duration-fast ease-expo hover:opacity-70"
-            >
-              {label}
-              <span className="sr-only"> {t('common.newWindow')}</span>
-            </a>
-          ))}
+          <div className="flex justify-end pr-[30px]">
+            <LocaleSwitcher className="pointer-events-auto" />
+          </div>
         </div>
       </div>
     </div>
-  )
-}
-
-/* ==========================================================================
-   Close icon (X) — static version, hamburger→X is handled by MenuTrigger
-   ========================================================================== */
-
-function CloseIcon() {
-  return (
-    <span className="relative block size-6" aria-hidden="true">
-      <span className="absolute inset-0 flex items-center justify-center">
-        <span className="absolute h-[1.5px] w-6 bg-current rotate-45" />
-        <span className="absolute h-[1.5px] w-6 bg-current -rotate-45" />
-      </span>
-    </span>
   )
 }

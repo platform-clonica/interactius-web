@@ -6,16 +6,16 @@
   "pensamiento": {
     "hero": {
       "title": "Pensament estratègic",
-      "lead": "Som ments curioses, analítiques i crítiques. Habitem l'espai que està per definir. Integrem criteri i visió de futur per decidir en entorns complexos."
+      "lead": "<strong>Som ments curioses, analítiques i crítiques.</strong><p>Habitem l'espai que està per definir. Integrem criteri i visió de futur per ajudar a decidir en entorns complexos.</p>"
     },
     "intro": {
-      "statement": "Aportem / claredat / per identificar oportunitats rellevants i construir propostes de valor que perdurin en el temps.",
-      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo"
+      "statement": "Aportem <strong>claredat</strong> per identificar oportunitats rellevants i construir propostes de valor que perdurin en el temps.",
+      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo  —"
     },
     "services": [
       {
         "name": "Disseny estratègic",
-        "description": "Definim el problema abans de resoldre'l. Analitzem el context de negoci, les necessitats de les persones i les oportunitats del mercat per construir una direcció estratègica clara.",
+        "description": "<strong>Definim el problema abans de resoldre'l.</strong> Analitzem el context de negoci, les necessitats de les persones i les oportunitats del mercat per construir una direcció estratègica clara.",
         "deliverables": [
           "Diagnòstic de negoci i experiència de client",
           "Definició de visió i direcció estratègica",
@@ -25,7 +25,7 @@
       },
       {
         "name": "Prospectiva estratègica",
-        "description": "Naveguem la complexitat del present per dissenyar futurs possibles. Identifiquem senyals de canvi per construir escenaris plausibles i desitjables i transformar-los en oportunitats concretes de producte, negoci i experiència.",
+        "description": "<strong>Naveguem la complexitat del present per dissenyar futurs possibles.</strong> Identifiquem senyals de canvi per construir escenaris plausibles i desitjables i transformar-los en oportunitats concretes de producte, negoci i experiència.",
         "deliverables": [
           "Anàlisi de senyals i tendències",
           "Disseny d'escenaris i narratives de futurs",
@@ -36,7 +36,7 @@
       },
       {
         "name": "Estratègia de marca",
-        "description": "Comuniquem amb claredat. Definim propòsit, posicionament i narratives per traslladar-los amb consistència al llenguatge, el disseny i l'experiència de les marques.",
+        "description": "<strong>Comuniquem amb claredat.</strong> Definim propòsit, posicionament i narratives per traslladar-los amb consistència al llenguatge, el disseny i l'experiència de les marques.",
         "deliverables": [
           "Auditoria de marca",
           "Arquitectura de marca",
@@ -46,7 +46,7 @@
       },
       {
         "name": "Estratègies d'innovació",
-        "description": "Construïm estratègies connectades amb objectius reals de negoci. Identifiquem oportunitats de valor i dissenyem models d'exploració viables perquè la innovació generi impacte mesurable.",
+        "description": "<strong>Construïm estratègies connectades amb objectius reals de negoci.</strong> Identifiquem oportunitats de valor i dissenyem models d'exploració viables perquè la innovació generi impacte mesurable.",
         "deliverables": [
           "Identificació i priorització d'oportunitats",
           "Disseny de processos i models d'innovació",
@@ -57,30 +57,30 @@
     ],
     "others": [
       {
-        "title": "Disseny d'experiències",
+        "title": "Disseny\nd'experiències",
         "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       },
       {
-        "title": "Transformació cultural",
+        "title": "Transformació\ncultural",
         "description": "Adopció d'IA, canvi organitzacional i formació.",
         "href": "/transformacion-cultural"
       }
     ]
   },
-  "activacion": {
+  "experiencias": {
     "hero": {
       "title": "Disseny d'experiències",
-      "lead": "Investiguem, dissenyem i validem. Operem el terreny on les idees es fan tangibles. Aportem evidència i rigor metodològic per escalar solucions amb criteri."
+      "lead": "<strong>Investiguem, dissenyem i validem.</strong><p>Operem el terreny on les idees es fan tangibles. Aportem evidència i rigor metodològic per escalar solucions amb criteri.</p>"
     },
     "intro": {
-      "statement": "Activem / solucions / autèntiques i coherents a partir de metodologies pròpies i eines d'intel·ligència artificial aplicada amb criteri humà.",
-      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh"
+      "statement": "Activem <strong>solucions</strong> autèntiques i coherents a partir de metodologies pròpies i eines d'intel·ligència artificial aplicada amb criteri humà.",
+      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh  —"
     },
     "services": [
       {
         "name": "Disseny de Productes i Serveis",
-        "description": "Entenem les persones, dissenyem per a elles. Dissenyem experiències digitals, físiques i híbrides, des de la definició del concepte fins al detall de la interacció, assegurant-nos que cada decisió de disseny respon a una necessitat real i a un objectiu de negoci clar.",
+        "description": "<strong>Entenem les persones, dissenyem per a elles.</strong> Dissenyem experiències digitals, físiques i híbrides, des de la definició del concepte fins al detall de la interacció, assegurant-nos que cada decisió de disseny respon a una necessitat real i a un objectiu de negoci clar.",
         "deliverables": [
           "Investigació qualitativa i quantitativa amb usuaris",
           "Disseny de fluxos i experiències d'usuari",
@@ -90,7 +90,7 @@
       },
       {
         "name": "Validació de productes",
-        "description": "Contrastar per decidir amb seguretat. Validem productes i serveis en qualsevol fase —des del concepte fins a la producció— per reduir el risc abans d'escalar. Substituïm les suposicions per evidència, optimitzant recursos i assegurant que cada correcció tingui lloc en el moment oportú.",
+        "description": "<strong>Contrastar per decidir amb seguretat.</strong> Validem productes i serveis en qualsevol fase —des del concepte fins a la producció— per reduir el risc abans d'escalar. Substituïm les suposicions per evidència, optimitzant recursos i assegurant que cada correcció tingui lloc en el moment oportú.",
         "deliverables": [
           "Validació de conceptes i prototips",
           "Anàlisi heurística",
@@ -100,7 +100,7 @@
       },
       {
         "name": "Clonica© — Investigació amb usuaris sintètics",
-        "description": "La investigació amb persones és l'origen; la intel·ligència artificial l'accelerador. Clonica© és la nostra plataforma pròpia d'usuaris sintètics entrenats amb investigació primària real. Reflecteixen comportaments, contextos i contradiccions amb un 93% de similitud. No substitueixen les persones: amplien la nostra capacitat de comprendre-les, permetent validar i testejar en qualsevol fase sense les barreres de temps i cost de la investigació tradicional.",
+        "description": "<strong>La investigació amb persones és l'origen; la intel·ligència artificial l'accelerador.</strong> Clonica© és la nostra plataforma pròpia d'usuaris sintètics entrenats amb investigació primària real. Reflecteixen comportaments, contextos i contradiccions amb un 93% de similitud. No substitueixen les persones: amplien la nostra capacitat de comprendre-les, permetent validar i testejar en qualsevol fase sense les barreres de temps i cost de la investigació tradicional.",
         "deliverables": [
           "Arquetipat i segments actitudinals amb IA",
           "Continuous discovery assistit per IA",
@@ -110,7 +110,7 @@
       },
       {
         "name": "Insight Panel© — Reclutament d'usuaris per a investigació",
-        "description": "Accés immediat a persones reals. El nostre servei propi de captació i gestió d'usuaris per a estudis qualitatius i quantitatius. Resolem tot el procés: identificació, reclutament i coordinació perquè el teu equip pugui centrar-se a extreure aprenentatge, no a gestionar logística.",
+        "description": "<strong>Accés immediat a persones reals.</strong> El nostre servei propi de captació i gestió d'usuaris per a estudis qualitatius i quantitatius. Resolem tot el procés: identificació, reclutament i coordinació perquè el teu equip pugui centrar-se a extreure aprenentatge, no a gestionar logística.",
         "deliverables": [
           "Perfilat d'usuaris (screener)",
           "Captació i reclutament",
@@ -121,12 +121,12 @@
     ],
     "others": [
       {
-        "title": "Pensament estratègic",
+        "title": "Pensament\nestratègic",
         "description": "Integrem visió de futur per decidir en entorns complexos.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Transformació cultural",
+        "title": "Transformació\ncultural",
         "description": "Adopció d'IA, canvi organitzacional i formació.",
         "href": "/transformacion-cultural"
       }
@@ -135,16 +135,16 @@
   "transformacion": {
     "hero": {
       "title": "Transformació cultural",
-      "lead": "Facilitem, impulsem i divulguem. Habitem el canvi des de dins per ajudar les organitzacions a pensar, treballar i relacionar-se amb el futur. El canvi més difícil no és tecnològic ni estructural, és cultural."
+      "lead": "<strong>Facilitem, impulsem i divulguem.</strong><p>Habitem el canvi des de dins per ajudar les organitzacions a pensar, treballar i relacionar-se amb el futur. La transformació més difícil no és tecnològica ni estructural, és cultural.</p>"
     },
     "intro": {
-      "statement": "Impulsem canvis reals i sostinguts integrant noves mentalitats i eines d'intel·ligència artificial que / amplifiquen / el talent. Desenvolupem la capacitat interna necessària perquè els equips avancin amb autonomia.",
-      "clients": "Novartis — Adeslas — Nestlé — MWC"
+      "statement": "Impulsem canvis integrant mentalitats que amplifiquin el <strong>talent</strong>. Desenvolupem la capacitat interna perquè els equips avancin amb autonomia.",
+      "clients": "Novartis — Adeslas — Nestlé — MWC  —"
     },
     "services": [
       {
         "name": "Cultura Organitzacional",
-        "description": "Les organitzacions canvien quan canvien les persones que les formen, no només els processos ni les eines. Acompanyem equips i organitzacions en processos de transformació cultural, des de la definició d'una nova forma de treballar fins a l'activació del canvi en el dia a dia. Un acompanyament que respecta el que ja existeix i construeix sobre això, sense imposar models externs que no encaixen amb la realitat interna.",
+        "description": "<strong>Les organitzacions canvien quan canvien les persones que les formen, no només els processos ni les eines.</strong> Acompanyem equips i organitzacions en processos de transformació cultural, des de la definició d'una nova forma de treballar fins a l'activació del canvi en el dia a dia. Un acompanyament que respecta el que ja existeix i construeix sobre això, sense imposar models externs que no encaixen amb la realitat interna.",
         "deliverables": [
           "Diagnòstic de cultura organitzacional",
           "Disseny de processos de canvi",
@@ -153,7 +153,7 @@
       },
       {
         "name": "Organitzacions Augmentades",
-        "description": "Amplificar el talent, no substituir-lo. Una organització augmentada no és una organització automatitzada: és una on les persones treballen millor perquè la intel·ligència artificial amplifica la seva capacitat de pensar, decidir i crear. Ajudem les organitzacions a fer aquest salt, no des de la tecnologia, sinó des de les persones.",
+        "description": "<strong>Amplificar el talent, no substituir-lo.</strong> Una organització augmentada no és una organització automatitzada: és una on les persones treballen millor perquè la intel·ligència artificial amplifica la seva capacitat de pensar, decidir i crear. Ajudem les organitzacions a fer aquest salt, no des de la tecnologia, sinó des de les persones.",
         "deliverables": [
           "Diagnòstic de maduresa en IA",
           "Disseny de rutes d'aprenentatge en IA",
@@ -163,28 +163,25 @@
       },
       {
         "name": "Bootcamps i workshops",
-        "description": "Aprendre fent és la forma més ràpida que un equip canviï com pensa i treballa. Dissenyem i facilitem experiències intensives a mida per a empreses que necessiten activar capacitats concretes, explorar oportunitats d'innovació, anticipar futurs o integrar la IA generativa en la seva forma de treballar.",
-        "deliverables": [
-          "Innovació disruptiva — Exploració d'oportunitats no convencionals",
-          "Disseny de futurs — Foresight aplicat per a decisions de llarg termini",
-          "IA generativa aplicada — Sessions pràctiques connectades a problemes reals"
-        ]
+        "description": "<strong>Aprendre fent és la forma més ràpida que un equip canviï com pensa i treballa.</strong> Dissenyem i facilitem experiències intensives a mida per a empreses que necessiten activar capacitats concretes, explorar oportunitats d'innovació, anticipar futurs o integrar la IA generativa en la seva forma de treballar.\n\n<strong>Innovació disruptiva.</strong> Exploració d'oportunitats de negoci no convencionals, ruptura de models mentals establerts i generació d'idees amb potencial transformador.\n\n<strong>Disseny de futurs.</strong> Construcció d'escenaris a mitjà i llarg termini per prendre millors decisions avui, fent servir metodologies de foresight aplicat.\n\n<strong>IA generativa aplicada.</strong> Sessions pràctiques de generació d'idees i solucions fent servir eines d'intel·ligència artificial generativa, connectades sempre a problemes reals de l'equip.",
+        "deliverables": []
       }
     ],
     "manifiesto": {
       "title": "Manifest IA",
-      "body": "Entenem la IA no com un fi, sinó com una responsabilitat. La fem servir per ampliar el criteri, no per substituir-lo; per explorar i dissenyar millor, no més ràpid."
+      "body1": "Entenem la IA no com un fi, sinó com una responsabilitat. La fem servir per ampliar el criteri, no per substituir-lo; per explorar i <strong>dissenyar millor</strong>, no més ràpid.",
+      "body2": "Ens comprometem a aplicar-la amb rigor, amb sentit ètic i pensament crític per detectar els seus biaixos i assegurar el sentit humà i l'impacte real."
     },
     "others": [
       {
-        "title": "Pensament estratègic",
+        "title": "Pensament\nestratègic",
         "description": "Integrem visió de futur per decidir en entorns complexos.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Disseny d'experiències",
+        "title": "Disseny\nd'experiències",
         "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       }
     ]
   }

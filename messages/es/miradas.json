@@ -1,24 +1,20 @@
 {
   "hero": {
-    "subtitlePrefix": "/",
-    "subtitleBold": "Miradas",
-    "subtitleSuffix": "/ que abordan problemas reales, cuestionan lo establecido y conectan diseño, negocio, tecnología y personas."
+    "subtitle": "<strong>Miradas</strong> que abordan problemas reales, cuestionan lo establecido y conectan diseño, negocio, tecnología y personas."
   },
   "grid": {
     "superTitle": "Miradas",
     "searchPlaceholder": "Buscar por palabra",
     "searchAriaLabel": "Buscar artículos",
     "noResults": "No hay artículos que coincidan.",
-    "interstitialQuote": "Trabajamos en el espacio donde una decisión de negocio y una verdad humana tienen que encontrarse.",
-    "loadMore": "Quiero <u>más</u>.",
     "categories": {
-      "design": "Design",
-      "ia": "IA",
-      "ux": "UX",
+      "ux-design": "UX Design",
+      "innovacion": "Innovación",
       "research": "Research",
       "estrategia": "Estrategia",
-      "workshops": "Workshops",
-      "diseno-inclusivo": "Diseño Inclusivo"
+      "ui-design": "UI Design",
+      "tendencias": "Tendencias",
+      "product-design": "Product Design"
     }
   }
 }

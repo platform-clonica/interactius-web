@@ -2,12 +2,13 @@
   "hero": {
     "title": "Strategy and design to inhabit change.",
     "imageAlt": "Interactius team",
-    "body1": "Interactius was born in <strong>2013</strong> from a collaboration between a fine arts professor, Josep, and a computer engineering student, Carlos.",
-    "body2": "Those two worlds soon evolved into a simple essence of what we are today: a companion, a collaborator, a <strong>partner</strong>.",
-    "body3": "After all these years, we have only one certainty: we don't wait for change to happen, nor do we allow it to sweep us away; <strong>change is what drives us</strong>."
+    "body1": "Interactius was born in <strong>2012</strong> from a collaboration between a fine arts professor, Josep, and a computer engineering student, Carlos.",
+    "body2": "From that tension between the artistic and the technical emerges what we are today: a <strong>multidisciplinary team</strong> committed to humanizing technology.",
+    "body3": "We don't fit neatly into labels, nor do we wear them. We are a <strong>partner</strong>: close, committed, and focused on what truly matters. Working with rigour, naturalness and judgment.",
+    "body4": "We don't wait for change to happen, nor do we let it sweep us away. We inhabit it. And from there, we move forward."
   },
   "intro": {
-    "quote": "We exist to prevent design <strong>decisions</strong> from being made while ignoring the reality and context of people."
+    "quote": "Leading <strong>change</strong> lies in understanding human complexity and its context."
   },
   "valores": {
     "0": {
@@ -32,12 +33,15 @@
     }
   },
   "liminal": {
-    "title": "Liminal Thinkers",
-    "body": "Nothing new happens at the center. The center is predictable, safe, and today the fastest place to become irrelevant. What matters rarely happens where everyone looks. We design at the margin, in ambiguity, in the uncertain. Where unnamed tensions exist, users with a voice and futures to be drawn. <strong>We work where there is still no answer. That's where we choose to be</strong>.",
+    "title": "Liminal Attitude",
+    "body1": "Nothing new happens at the center. It is predictable, comfortable, and today, the fastest way to become irrelevant.",
+    "body2": "That's why we chose to operate at the margins: in the ambiguous, the uncertain, <strong>what changes.</strong> That's where human truths live. And that's where we decided to stay.",
+    "body3": "We work from that liminal space, between what is and what's yet to come. We do it by questioning the obvious and shifting focus, with judgment and human perspective.",
+    "body4": "With this lens, we help organizations use <strong>design and strategy</strong> to inhabit change, think differently, and doubt better.",
     "quote": "We inhabit the margin to live within change."
   },
   "metodologia": {
-    "title": "Methodology",
+    "title": "Approach",
     "pasos": {
       "0": { "label": "Think", "description": "We name what has no shape yet." },
       "1": { "label": "Activate", "description": "We set in motion what matters." },

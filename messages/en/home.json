@@ -4,6 +4,9 @@
   },
   "intro": {
     "ariaLabel": "Introduction",
+    "solo": "We help organisations in moments of <strong>transformation</strong> to decide with judgement. We turn strategy into solutions that endure.",
+    "revealTitle": "We design for transition.",
+    "revealBody": "Allowing us to see what isn't yet evident. Avoiding quick answers. Opening space to define something that truly makes sense for what is yet to come.",
     "p1": "That place has no name in any service catalogue.",
     "p2": "We have spent years building there.",
     "p3": "We combine strategic design, human judgement and technology to help organisations make better decisions.",
@@ -11,36 +14,37 @@
     "p4": "We turn strategy into validated products and services to activate sustainable cultural change."
   },
   "services": {
-    "title": "What we do",
+    "title": "Services",
+    "lead": "We combine strategic design, human judgement and technology.",
     "pillars": [
       {
         "number": "1",
-        "name": "Strategic thinking",
-        "description": "We design the decision architecture that guides organisations in contexts of uncertainty.",
+        "name": "Strategic\nthinking",
+        "description": "We bring clarity to identify opportunities and build lasting value propositions.",
         "services": [
           "Strategic design",
+          "Strategic foresight",
           "Brand strategies",
-          "Innovation strategies",
-          "Strategic foresight"
+          "Innovation strategies"
         ],
         "href": "/pensamiento-estrategico"
       },
       {
         "number": "2",
-        "name": "Experience design",
-        "description": "We turn strategy into validated products and services, reducing risk and accelerating impact.",
+        "name": "Experience\ndesign",
+        "description": "We activate coherent, validated solutions through proprietary methodology and AI applied with human judgement.",
         "services": [
           "Product and service design",
           "Product validation",
           "Clonica\u00ae Synthetic users",
           "Insight Panel\u00ae User recruitment"
         ],
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       },
       {
         "number": "3",
-        "name": "Cultural transformation",
-        "description": "We accompany organisational evolution by aligning culture, capabilities and technology to transform the way the organisation decides and acts.",
+        "name": "Cultural\ntransformation",
+        "description": "We drive lasting change by integrating new mindsets and AI to develop teams capable of leading change.",
         "services": [
           "Organisational culture",
           "Applied Artificial Intelligence",
@@ -53,6 +57,6 @@
   "work": {
     "ariaLabel": "Work and clients",
     "heading": "Our clients",
-    "description": "We work with organisations that operate in complex contexts and understand that moving forward is not about doing more, but about deciding better."
+    "description": "We work with organisations that operate in complex contexts and understand that moving forward is not about doing more, but about <strong>deciding better</strong>."
   }
 }

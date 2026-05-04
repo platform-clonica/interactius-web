@@ -1,15 +1,17 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
-import { CapacityHero } from '@/components/capacity/CapacityHero'
-import { CapacityIntro } from '@/components/capacity/CapacityIntro'
+import { CapacityHeroSequence } from '@/components/capacity/CapacityHeroSequence'
 import { CapacityServices } from '@/components/capacity/CapacityServices'
 import { CapacityOthers } from '@/components/capacity/CapacityOthers'
+import { CapacityManifiesto } from '@/components/capacity/CapacityManifiesto'
+import { ClientsMarquee } from '@/components/capacity/ClientsMarquee'
+import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
 import type { CapacityOtherItem } from '@/components/capacity/CapacityOthers'
-import type { RouteId } from '@/lib/i18n/routing'
+import type { RouteId } from '@/lib/i18n/navigation'
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
-import { getAlternates, localizedPath } from '@/lib/i18n/routing'
+import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
 interface PageProps {
@@ -37,43 +39,36 @@ export default async function TransformacionCultural({ params }: PageProps) {
 
   return (
     <>
-      <CapacityHero
+      <CapacityHeroSequence
         title={capacityTitle}
-        lead={t('transformacion.hero.lead')}
-        imageSrc="/capacidades/transformacion-cultural.jpg"
+        lead={t.rich('transformacion.hero.lead', {
+          strong: (chunks) => (
+            <h2 className="font-serif text-title-sm font-light text-fg">{chunks}</h2>
+          ),
+          p: (chunks) => <p>{chunks}</p>,
+        })}
+        statement={t.rich('transformacion.intro.statement', richComponents.boldWord)}
+        imageSrc="/capacidades/transformacion-hero-right.webp"
+        imageBottomSrc="/capacidades/transformacion-hero-bottom.webp"
       />
 
-      <CapacityIntro
-        statement={t('transformacion.intro.statement')}
-        clients={t('transformacion.intro.clients')}
-        imageSrc="/capacidades/transformacion-intro.jpg"
-      />
+      <ClientsMarquee clients={t('transformacion.intro.clients')} />
 
       <CapacityServices
         services={services}
         sectionLabel={t('sections.services')}
         capacityLabel={capacityTitle}
+        accentColor="#5999A6"
+        shapeKind="wave"
       />
 
-      <section className="w-full bg-dark" aria-labelledby="manifiesto-title">
-        <div className="section-inner py-section">
-          <div className="grid grid-cols-12 gap-grid-gutter">
-            <div className="col-span-12 lg:col-span-4">
-              <h2
-                id="manifiesto-title"
-                className="font-serif font-light text-pure-white text-section"
-              >
-                {t('transformacion.manifiesto.title')}
-              </h2>
-            </div>
-            <div className="col-span-12 lg:col-span-7 lg:col-start-6">
-              <p className="font-mono text-body text-pure-white/80 max-w-[52ch]">
-                {t('transformacion.manifiesto.body')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Manifiesto IA — sección exclusiva de Transformación cultural. NO replicar en otros servicios. */}
+      <CapacityManifiesto
+        title={t('transformacion.manifiesto.title')}
+        body1={t.rich('transformacion.manifiesto.body1', richComponents.bold)}
+        body2={t('transformacion.manifiesto.body2')}
+        imageSrc="/capacidades/transformacion3.webp"
+      />
 
       <CapacityOthers
         items={others.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityOtherItem, CapacityOtherItem]}

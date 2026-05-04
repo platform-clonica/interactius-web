@@ -41,10 +41,11 @@ export async function POST(request: Request) {
     if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
       console.log('[contact] stub — received', {
-        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName,
         company: data.company,
         email: data.email,
-        messagePreview: data.message.slice(0, 80),
+        messagePreview: data.message?.slice(0, 80),
       })
     }
     return NextResponse.json({ ok: true }, { status: 200 })
@@ -53,10 +54,11 @@ export async function POST(request: Request) {
   const result = await submitToHubspot({
     formId,
     fields: [
-      { name: 'firstname', value: data.name },
+      { name: 'firstname', value: data.firstName },
+      { name: 'lastname', value: data.lastName },
       { name: 'email', value: data.email },
       { name: 'company', value: data.company ?? '' },
-      { name: 'message', value: data.message },
+      { name: 'message', value: data.message ?? '' },
     ],
     pageUri: request.headers.get('referer') ?? undefined,
   })

@@ -1,0 +1,41 @@
+{
+  "banner": {
+    "title": "Esta web usa cookies",
+    "body": "Usamos cookies necesarias para que la web funcione y, con tu permiso, otras para entender cómo se usa, recordar tus preferencias y mejorarla.",
+    "policyLink": "Más información",
+    "acceptAll": "Aceptar todo",
+    "rejectAll": "Rechazar todo",
+    "customize": "Personalizar"
+  },
+  "settings": {
+    "title": "Preferencias de cookies",
+    "intro": "Activa las categorías que aceptas. Las cookies necesarias no se pueden desactivar porque son imprescindibles para que la web funcione.",
+    "save": "Guardar mis preferencias",
+    "acceptAll": "Aceptar todo",
+    "rejectAll": "Rechazar todo",
+    "close": "Cerrar sin guardar",
+    "alwaysOn": "Siempre activa",
+    "categories": {
+      "necessary": {
+        "name": "Necesarias",
+        "desc": "Imprescindibles para que la web funcione: sesión, preferencias de idioma, seguridad. No se pueden desactivar."
+      },
+      "preferences": {
+        "name": "Preferencias",
+        "desc": "Recuerdan elecciones que mejoran tu experiencia, como el idioma o la región."
+      },
+      "analytics": {
+        "name": "Analíticas",
+        "desc": "Nos ayudan a entender de forma agregada cómo se usa la web para mejorarla. Sin estas cookies no sabemos qué funciona."
+      },
+      "marketing": {
+        "name": "Marketing",
+        "desc": "Para mostrarte contenido relevante en otras plataformas. Hoy no usamos cookies de marketing; activarlas aquí solo tendrá efecto si en el futuro las añadimos."
+      }
+    },
+    "moreInfo": "Más información en la Política de Cookies y la Política de Privacidad."
+  },
+  "footer": {
+    "managePreferences": "Gestionar preferencias"
+  }
+}

@@ -15,13 +15,24 @@ import { create } from 'zustand'
 
 interface MenuState {
   isOpen: boolean
+  /** True mientras corre la cortina de transición. PageTransition lo consulta
+   *  para NO disparar close() mid-cortina cuando cambia el pathname. */
+  curtainActive: boolean
+  /** Contador que incrementa cada vez que un componente externo al MenuOverlay
+   *  (ej. MenuTrigger) pide cierre con cortina. MenuOverlay escucha. */
+  curtainCloseSignal: number
   open: () => void
   close: () => void
   toggle: () => void
+  beginCurtain: () => void
+  endCurtain: () => void
+  requestCurtainClose: () => void
 }
 
 export const useMenuStore = create<MenuState>((set, get) => ({
   isOpen: false,
+  curtainActive: false,
+  curtainCloseSignal: 0,
   open: () => {
     if (get().isOpen) return
     lockBodyScroll(true)
@@ -37,6 +48,13 @@ export const useMenuStore = create<MenuState>((set, get) => ({
     lockBodyScroll(next)
     set({ isOpen: next })
   },
+  beginCurtain: () => set({ curtainActive: true }),
+  endCurtain: () => {
+    lockBodyScroll(false)
+    set({ isOpen: false, curtainActive: false })
+  },
+  requestCurtainClose: () =>
+    set((s) => ({ curtainCloseSignal: s.curtainCloseSignal + 1 })),
 }))
 
 /* ==========================================================================
@@ -45,6 +63,15 @@ export const useMenuStore = create<MenuState>((set, get) => ({
    ========================================================================== */
 
 let savedScrollY = 0
+
+/**
+ * Resetea el scroll guardado a 0. Llamar después de un navigate() para que
+ * cuando el menú cierre el unlockBodyScroll no restaure la posición de la
+ * página ANTERIOR — la nueva página debe empezar arriba del todo.
+ */
+export function resetSavedScroll(): void {
+  savedScrollY = 0
+}
 
 function lockBodyScroll(lock: boolean): void {
   if (typeof document === 'undefined') return

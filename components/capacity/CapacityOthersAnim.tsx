@@ -1,10 +1,12 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useCallback, useRef, useEffect } from 'react'
 
-import { Link } from '@/lib/i18n/routing'
-import type { RouteId } from '@/lib/i18n/routing'
+import { Link } from '@/lib/i18n/navigation'
+import type { RouteId } from '@/lib/i18n/navigation'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { usePageCurtainStore } from '@/lib/store/curtain'
+import { PlusArrowFlipIcon } from '@/components/ui/PlusArrowFlipIcon'
 
 /* ==========================================================================
    CapacityOthersAnim — tarjetas con clip-path lateral (sección 4/4)
@@ -32,6 +34,19 @@ export function CapacityOthersAnim({
   items,
   sectionLabel,
 }: CapacityOthersAnimProps) {
+  const beginPageCurtain = usePageCurtainStore((s) => s.beginPageCurtain)
+
+  // Click handler — intercepta navegación interna y dispara la cortina global.
+  // Cmd/Ctrl/Shift/Alt clicks o middle-click se dejan pasar (abrir en pestaña).
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+      e.preventDefault()
+      beginPageCurtain(href)
+    },
+    [beginPageCurtain],
+  )
+
   const containerRef = useRef<HTMLDivElement>(null)
   const card0Ref = useRef<HTMLAnchorElement>(null)
   const card1Ref = useRef<HTMLAnchorElement>(null)
@@ -69,16 +84,23 @@ export function CapacityOthersAnim({
         if (!titleEl) return
         const splits: InstanceType<typeof SplitType>[] = []
 
-        const titleSplit = new SplitType(titleEl, { types: 'lines' })
-        const descSplit  = descEl ? new SplitType(descEl, { types: 'lines' }) : null
-        splits.push(titleSplit)
+        // Title: NO usamos SplitType porque el título ya viene estructurado
+        // con `.st-mask` (uno por línea del split por \n del JSON). Si dejamos
+        // que SplitType reprocese, recalcula el wrap a partir del DOM ya
+        // renderizado y a veces colapsa las líneas a una sola → layout shift
+        // perceptible cuando entra en viewport.
+        const titleLines = Array.from(
+          titleEl.querySelectorAll<HTMLElement>('.st-mask'),
+        )
+
+        const descSplit = descEl ? new SplitType(descEl, { types: 'lines' }) : null
         if (descSplit) splits.push(descSplit)
 
-        gsap.set(titleSplit.lines ?? [], { y: 30, opacity: 0 })
+        gsap.set(titleLines, { y: 30, opacity: 0 })
         if (descSplit?.lines) gsap.set(descSplit.lines, { y: 20, opacity: 0 })
         if (arrowEl) gsap.set(arrowEl, { opacity: 0 })
 
-        gsap.to(titleSplit.lines ?? [], {
+        gsap.to(titleLines, {
           y: 0, opacity: 1,
           duration: 0.8,
           ease: 'power4.out',
@@ -110,7 +132,7 @@ export function CapacityOthersAnim({
           gsap.to(card0, {
             clipPath: 'inset(0 0% 0 0)',
             duration: 0.8,
-            ease: 'cubic-bezier(.16,1,.3,1)',
+            ease: 'power4.inOut',
             onComplete: () => revealCardText(card0),
           })
 
@@ -118,7 +140,7 @@ export function CapacityOthersAnim({
           gsap.to(card1, {
             clipPath: 'inset(0 0% 0 0)',
             duration: 0.8,
-            ease: 'cubic-bezier(.16,1,.3,1)',
+            ease: 'power4.inOut',
             delay: 0.15,
             onComplete: () => revealCardText(card1),
           })
@@ -137,7 +159,7 @@ export function CapacityOthersAnim({
 
   return (
     <section
-      className="w-full border-t border-muted"
+      className="w-full bg-pure-white border-t border-muted"
       aria-label={sectionLabel}
     >
       <div className="section-inner">
@@ -150,26 +172,36 @@ export function CapacityOthersAnim({
               key={item.href}
               ref={i === 0 ? card0Ref : card1Ref}
               href={item.href as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+              onClick={(e) => handleClick(e, item.href)}
               className={`
-                col-span-12 lg:col-span-6
-                flex flex-col gap-4 py-12 lg:py-16
+                group hover-text-flip col-span-12 lg:col-span-6
+                flex flex-col gap-2 py-12 lg:py-16
                 ${i === 0 ? 'lg:border-r lg:border-muted lg:pr-grid-gutter' : 'border-t border-muted lg:border-t-0 lg:pl-grid-gutter'}
-                hover:opacity-60 focus-visible:opacity-60
+                focus-visible:opacity-90
               `}
               style={{ clipPath: 'inset(0 100% 0 0)' }}
             >
               <span
                 data-other-arrow
                 aria-hidden="true"
-                className="font-mono text-micro text-fg/40"
+                className="text-fg/40 group-hover:text-fg transition-colors duration-300 ease-expo"
               >
-                →
+                <PlusArrowFlipIcon />
               </span>
               <span
                 data-other-title
-                className="font-serif font-light text-fg text-title"
+                className="block font-serif font-light text-fg text-title-sm"
               >
-                {item.title}
+                {item.title.split('\n').map((line, lineIdx) => (
+                  <span key={lineIdx} className="st-mask">
+                    <span
+                      className="hover-text-flip-target inline-block"
+                      style={{ animationDelay: `${lineIdx * 60}ms` }}
+                    >
+                      {line}
+                    </span>
+                  </span>
+                ))}
               </span>
               <span
                 data-other-desc

@@ -5,14 +5,15 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 
 // Image order matches Figma: img[i] corresponds to valor text[i]
 // Swap sequence from Figma: img1→img2 when text[1] enters, img2→img3 at text[2], img3→img4 at text[3]
 const IMAGES = [
-  '/identidad/valores-01.jpg',
-  '/identidad/valores-02.jpg',
-  '/identidad/valores-03.jpg',
-  '/identidad/valores-04.jpg',
+  '/identidad/valores-01.webp',
+  '/identidad/valores-02.webp',
+  '/identidad/valores-03.webp',
+  '/identidad/valores-04.webp',
 ]
 
 export function IdentidadValores() {
@@ -38,7 +39,7 @@ export function IdentidadValores() {
       gsap.registerPlugin(ScrollTrigger)
 
       const reduced = getReducedMotion()
-      const ease = 'cubic-bezier(.16,1,.3,1)'
+      const ease = 'power4.inOut'
       const cleanups: Array<() => void> = []
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const splits: any[] = []
@@ -110,7 +111,10 @@ export function IdentidadValores() {
         allEls.forEach((el) => {
           const split = new SplitType(el, { types: 'lines' })
           splits.push(split)
-          gsap.set(split.lines ?? [], { y: 60, opacity: 0 })
+          const lines = split.lines ?? []
+          // Line-mask only on h3 titulares; paragraphs keep fade+Y
+          if (el.tagName === 'H3') wrapLinesInMask(lines)
+          gsap.set(lines, { y: 60, opacity: 0 })
         })
 
         const allLines = allEls.flatMap((_, j) => splits[splits.length - allEls.length + j]?.lines ?? [])
@@ -173,6 +177,7 @@ export function IdentidadValores() {
               key={i}
               ref={(el) => { imgRefs.current[i] = el }}
               className="absolute inset-0 will-change-[clip-path]"
+              data-valores-img=""
             >
               <Image
                 src={src}

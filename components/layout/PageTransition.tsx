@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
-import { usePathname } from '@/lib/i18n/routing'
+import { usePathname } from '@/lib/i18n/navigation'
 import { useMenuStore } from '@/lib/store/menu'
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
@@ -15,7 +15,10 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
       firstMount.current = false
       return
     }
-    closeMenu()
+    // Si la cortina está corriendo, no interrumpir: gestionará el close al final.
+    if (!useMenuStore.getState().curtainActive) {
+      closeMenu()
+    }
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [pathname, closeMenu])
 

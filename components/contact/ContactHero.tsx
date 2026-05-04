@@ -47,26 +47,63 @@ export async function ContactHero({
       </>
     ),
     newsletter: (
-      <p>{t('newsletter.copy')}</p>
+      <>
+        <p>{t('newsletter.copy1')}</p>
+        <p className="font-semibold">{t('newsletter.copy2')}</p>
+      </>
     ),
     testers: (
-      <p>{t('testers.copy')}</p>
+      <>
+        <p>{t('testers.intro')}</p>
+        {/* 3 pasos numerados — número en col 1, contenido (lead bold + body)
+            en col 2 con hanging indent automático del grid. */}
+        <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-6 items-start">
+          <span data-step-number className="font-semibold">1.</span>
+          <p>
+            {t.rich('testers.step1', {
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
+          </p>
+          <span data-step-number className="font-semibold">2.</span>
+          <p>
+            {t.rich('testers.step2', {
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
+          </p>
+          <span data-step-number className="font-semibold">3.</span>
+          <p>
+            {t.rich('testers.step3', {
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
+          </p>
+        </div>
+      </>
     ),
   }
 
-  const altEmailMap: Record<Variant, string | undefined> = {
+  // Email alternativo en bottom-left de la columna izquierda — común a las 3
+  // variantes; el copy "O bien, escríbenos un email a" + "info@interactius.com"
+  // mantiene la coherencia visual entre Contacto, Newsletter y Testers.
+  const altEmailMap: Record<Variant, string> = {
     contacto:   t('contacto.altEmail'),
-    newsletter: undefined,
-    testers:    undefined,
+    newsletter: t('contacto.altEmail'),
+    testers:    t('contacto.altEmail'),
+  }
+
+  // Imagen de fondo por variante (override con prop imageSrc si se pasa).
+  const bgMap: Record<Variant, string> = {
+    contacto:   '/contacto/contact-bg.jpg',
+    newsletter: '/contacto/news-contact-bg.jpg',
+    testers:    '/contacto/testers-contact-bg.jpg',
   }
 
   return (
     <ContactHeroAnim
-      imageSrc={imageSrc}
+      imageSrc={imageSrc ?? bgMap[variant]}
       imageAlt={imageAlt}
       title={titleMap[variant]}
       body={bodyMap[variant]}
-      altEmailLabel={altEmailMap[variant] ? t('altEmailText') : undefined}
+      altEmailLabel={t('altEmailText')}
       altEmail={altEmailMap[variant]}
     >
       {children}

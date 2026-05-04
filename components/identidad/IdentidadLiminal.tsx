@@ -1,30 +1,29 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
-import Image from 'next/image'
+import { useRef, useEffect, type ReactNode } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
+
+const liminalComponents = {
+  strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
+}
 
 export function IdentidadLiminal() {
   const t = useTranslations('identidad')
 
   const sectionRef = useRef<HTMLElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const bodyRef = useRef<HTMLParagraphElement>(null)
-  const imageRef = useRef<HTMLDivElement>(null)
-  const panelRef = useRef<HTMLDivElement>(null)
-  const quoteRef = useRef<HTMLParagraphElement>(null)
+  const titleRef   = useRef<HTMLHeadingElement>(null)
+  const bodyRef    = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    const titleEl = titleRef.current
-    const bodyEl = bodyRef.current
-    const imageEl = imageRef.current
-    const panelEl = panelRef.current
-    const quoteEl = quoteRef.current
-    if (!titleEl || !bodyEl || !imageEl || !panelEl || !quoteEl) return
+    const sectionEl = sectionRef.current
+    const titleEl   = titleRef.current
+    const bodyEl    = bodyRef.current
+    if (!sectionEl || !titleEl || !bodyEl) return
 
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
@@ -36,80 +35,67 @@ export function IdentidadLiminal() {
       gsap.registerPlugin(ScrollTrigger)
 
       const reduced = getReducedMotion()
-      const ease = 'cubic-bezier(.16,1,.3,1)'
       const cleanups: Array<() => void> = []
 
-      if (reduced) {
-        gsap.set([imageEl, panelEl], { clipPath: 'inset(0 0% 0 0)' })
-        return
-      }
+      if (reduced) return
 
-      // --- Title + body line-mask reveal (IO 0.12) ---
+      // --- Title: line-mask reveal ---
       const titleSplit = new SplitType(titleEl, { types: 'lines' })
       const titleLines = titleSplit.lines ?? []
+      wrapLinesInMask(titleLines)
       gsap.set(titleLines, { y: 80, opacity: 0 })
 
-      const bodySplit = new SplitType(bodyEl, { types: 'lines' })
-      const bodyLines = bodySplit.lines ?? []
-      gsap.set(bodyLines, { y: 80, opacity: 0 })
+      // --- Body: per-paragraph line reveal ---
+      const bodyPs = Array.from(bodyEl.querySelectorAll<HTMLElement>('[data-body-p]'))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const bodySplits: any[] = bodyPs.map((p) => new SplitType(p, { types: 'lines' }))
+      const allBodyLines = bodySplits.flatMap((s) => s.lines ?? [])
+      gsap.set(allBodyLines, { y: 80, opacity: 0 })
 
+      // Fires when section sticks to top of viewport (text reveals centered)
       const st1 = ScrollTrigger.create({
-        trigger: titleEl,
-        start: 'top 88%',
+        trigger: sectionEl,
+        start: 'top top',
         once: true,
         onEnter: () => {
-          // Title reveal
           gsap.to(titleLines, { y: 0, opacity: 1, duration: 1.2, ease: 'power4.out', stagger: 0.1 })
-          // Body reveal +100ms after title starts
-          gsap.to(bodyLines, {
+          gsap.to(allBodyLines, {
             y: 0,
             opacity: 1,
             duration: 1.2,
             ease: 'power4.out',
-            stagger: 0.1,
-            delay: 0.1,
+            stagger: 0.08,
+            delay: 0.2,
           })
         },
       })
-      cleanups.push(() => { st1.kill(); titleSplit.revert(); bodySplit.revert() })
-
-      // --- Image section sequence (IO 0.12) ---
-      // Initial states
-      gsap.set(imageEl, { clipPath: 'inset(0 100% 0 0)' })
-      gsap.set(panelEl, { clipPath: 'inset(0 100% 0 0)' })
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let quoteSplit: any = null
-      const st2 = ScrollTrigger.create({
-        trigger: imageEl,
-        start: 'top 88%',
-        once: true,
-        onEnter: () => {
-          // Image clip reveal: 0.9s
-          gsap.to(imageEl, { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease })
-
-          // Warm-light panel clip reveal: +300ms, 0.8s
-          gsap.to(panelEl, {
-            clipPath: 'inset(0 0% 0 0)',
-            duration: 0.8,
-            ease,
-            delay: 0.3,
-            onComplete: () => {
-              // Quote line-mask reveal after panel completes
-              quoteSplit = new SplitType(quoteEl, { types: 'lines' })
-              const quoteLines = quoteSplit.lines ?? []
-              gsap.from(quoteLines, {
-                y: 80,
-                opacity: 0,
-                duration: 1.2,
-                ease: 'power4.out',
-                stagger: 0.1,
-              })
-            },
-          })
-        },
+      cleanups.push(() => {
+        st1.kill()
+        titleSplit.revert()
+        bodySplits.forEach((s) => s.revert())
       })
-      cleanups.push(() => { st2.kill(); quoteSplit?.revert() })
+
+      // --- Mask out all Valores images as Liminal scrolls in ---
+      // Lateral right-to-left clip on the full stack so no lower image peeks through
+      const valoresImgs = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-valores-img]'),
+      )
+      if (valoresImgs.length) {
+        const st2 = ScrollTrigger.create({
+          trigger: sectionEl,
+          start: 'top bottom',
+          end: 'top top',
+          scrub: 0.3,
+          onUpdate: (self) => {
+            const clip = `inset(0 ${self.progress * 100}% 0 0)`
+            valoresImgs.forEach((el) => { el.style.clipPath = clip })
+          },
+        })
+        cleanups.push(() => {
+          st2.kill()
+          valoresImgs.forEach((el) => { el.style.clipPath = '' })
+        })
+      }
 
       cleanupRef.current = () => cleanups.forEach((fn) => fn())
     })()
@@ -118,87 +104,42 @@ export function IdentidadLiminal() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="w-full bg-warm-light" aria-labelledby="liminal-title">
-      <div className="section-inner pt-section pb-0">
-        <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-span-12 lg:col-span-3">
+    <section ref={sectionRef} className="relative w-full bg-warm-light" aria-labelledby="liminal-title">
+      {/* Sticky text panel — holds pinned while the 200vh spacer scrolls */}
+      <div className="sticky top-0 min-h-screen section-inner flex items-center py-section">
+        <div className="grid grid-cols-12 gap-grid-gutter w-full">
+          {/* Mismo estilo que los titulares de las páginas legales y los heros
+              de Capacidades: text-[clamp(40px,7.5vw,120px)], leading 1.0,
+              tracking -0.03. Un escalón por debajo del text-super. */}
+          <div className="col-span-12 lg:col-start-2 lg:col-span-4">
             <h2
               ref={titleRef}
               id="liminal-title"
-              className="font-serif font-normal text-section text-fg tracking-[-0.02em] leading-[1.2]"
+              className="font-serif font-normal text-fg select-none text-[clamp(40px,7.5vw,120px)] leading-[1.0] tracking-[-0.03em]"
             >
               {t('liminal.title')}
             </h2>
           </div>
-          <div className="col-span-12 lg:col-span-8 lg:col-start-5 mt-8 lg:mt-0">
-            <p
+          {/* mt aprox = 2 × line-height del título (= 2 × clamp(40px,7.5vw,120px)
+              = clamp(80px,15vw,240px)). Así el TOP del párrafo coincide con
+              el BOTTOM del título. La sección usa items-center → al ser el
+              bloque más alto, el título sube proporcionalmente. */}
+          <div className="col-span-12 mt-10 lg:col-start-6 lg:col-span-6 lg:mt-[clamp(120px,17vw,280px)]">
+            <div
               ref={bodyRef}
-              className="font-mono text-body-sm text-fg leading-[1.5]"
+              className="flex flex-col gap-6 font-mono text-body-sm text-fg leading-[1.5]"
             >
-              {t.rich('liminal.body', { strong: (chunks) => <strong>{chunks}</strong> })}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom image area */}
-      {/*
-        Mobile:  imagen full-width (300px) + panel cita debajo (full-width)
-        Desktop: imagen full-width (533px) con panel cita superpuesto en el tercio derecho
-      */}
-      <div className="mt-section w-full">
-
-        {/* Image + desktop panel wrapper */}
-        <div className="relative h-[300px] lg:h-[533px] w-full overflow-hidden">
-
-          {/* Blurred background image — clip-path reveal */}
-          <div
-            ref={imageRef}
-            className="absolute inset-x-0 top-0 bottom-0 will-change-[clip-path]"
-            aria-hidden="true"
-          >
-            <div className="absolute inset-[-8%]">
-              <Image
-                src="/identidad/liminal-bg.jpg"
-                alt=""
-                fill
-                sizes="100vw"
-                className="object-cover object-center blur-[15px]"
-              />
+              <p data-body-p="">{t.rich('liminal.body1', liminalComponents)}</p>
+              <p data-body-p="">{t.rich('liminal.body2', liminalComponents)}</p>
+              <p data-body-p="">{t.rich('liminal.body3', liminalComponents)}</p>
+              <p data-body-p="">{t.rich('liminal.body4', liminalComponents)}</p>
             </div>
           </div>
-
-          {/* Warm-light panel (right side, desktop only) — clip-path reveal, +300ms */}
-          <div
-            ref={panelRef}
-            className="hidden lg:block absolute bottom-0 top-0 bg-warm-light will-change-[clip-path]"
-            style={{ left: 'calc(50% + 18.4%)', right: 0 }}
-            aria-hidden="true"
-          />
-
-          {/* Quote desktop — line-mask reveal after panel completes */}
-          <div
-            className="hidden lg:flex absolute top-1/2 -translate-y-1/2 items-center justify-center text-center"
-            style={{ left: 'calc(50% + 18.4%)', right: 0 }}
-          >
-            <p
-              ref={quoteRef}
-              className="font-serif font-light text-section text-fg leading-[1.2] tracking-[-0.02em] px-8 max-w-[24ch]"
-            >
-              {t('liminal.quote')}
-            </p>
-          </div>
-        </div>
-
-        {/* Quote mobile — visible below image on small screens */}
-        <div className="lg:hidden bg-warm-light flex items-center justify-center text-center px-grid-margin py-12">
-          <p
-            className="font-serif font-light text-section text-fg leading-[1.2] tracking-[-0.02em] max-w-[24ch]"
-          >
-            {t('liminal.quote')}
-          </p>
         </div>
       </div>
+
+      {/* Spacer — keeps the sticky text pinned for a reading beat */}
+      <div style={{ height: '200vh' }} aria-hidden="true" />
     </section>
   )
 }

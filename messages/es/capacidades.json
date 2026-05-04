@@ -6,16 +6,16 @@
   "pensamiento": {
     "hero": {
       "title": "Pensamiento estratégico",
-      "lead": "Somos mentes curiosas, analíticas y críticas. Habitamos el espacio que está por definir. Integramos criterio y visión de futuro para decidir en entornos complejos."
+      "lead": "<strong>Somos mentes curiosas, analíticas y críticas.</strong><p>Habitamos el espacio que está por definir. Integramos criterio y visión de futuro para ayudar a decidir en entornos complejos.</p>"
     },
     "intro": {
-      "statement": "Aportamos / claridad / para identificar oportunidades relevantes y construir propuestas de valor que perduren en el tiempo.",
-      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo"
+      "statement": "Aportamos <strong>claridad</strong> para identificar oportunidades relevantes y construir propuestas de valor que perduren en el tiempo.",
+      "clients": "Bershka — Ecoembes — Mahou — Frit Ravich — Serveo  —"
     },
     "services": [
       {
         "name": "Diseño estratégico",
-        "description": "Definimos el problema antes de resolverlo. Analizamos el contexto de negocio, las necesidades de las personas y las oportunidades del mercado para construir una dirección estratégica clara.",
+        "description": "<strong>Definimos el problema antes de resolverlo.</strong> Analizamos el contexto de negocio, las necesidades de las personas y las oportunidades del mercado para construir una dirección estratégica clara.",
         "deliverables": [
           "Diagnóstico de negocio y experiencia de cliente",
           "Definición de visión y dirección estratégica",
@@ -25,7 +25,7 @@
       },
       {
         "name": "Prospectiva estratégica",
-        "description": "Navegamos la complejidad del presente para diseñar futuros posibles. Identificamos señales de cambio para construir escenarios plausibles y deseables y transformarlos en oportunidades concretas de producto, negocio y experiencia.",
+        "description": "<strong>Navegamos la complejidad del presente para diseñar futuros posibles.</strong> Identificamos señales de cambio para construir escenarios plausibles y deseables y transformarlos en oportunidades concretas de producto, negocio y experiencia.",
         "deliverables": [
           "Análisis de señales y tendencias",
           "Diseño de escenarios y narrativas de futuros",
@@ -36,7 +36,7 @@
       },
       {
         "name": "Estrategia de marca",
-        "description": "Comunicamos con claridad. Definimos propósito, posicionamiento y narrativas para trasladarlos con consistencia al lenguaje, el diseño y la experiencia de las marcas.",
+        "description": "<strong>Comunicamos con claridad.</strong> Definimos propósito, posicionamiento y narrativas para trasladarlos con consistencia al lenguaje, el diseño y la experiencia de las marcas.",
         "deliverables": [
           "Auditoría de marca",
           "Arquitectura de marca",
@@ -46,7 +46,7 @@
       },
       {
         "name": "Estrategias de innovación",
-        "description": "Construimos estrategias conectadas con objetivos reales de negocio. Identificamos oportunidades de valor y diseñamos modelos de exploración viables para que la innovación genere impacto medible.",
+        "description": "<strong>Construimos estrategias conectadas con objetivos reales de negocio.</strong> Identificamos oportunidades de valor y diseñamos modelos de exploración viables para que la innovación genere impacto medible.",
         "deliverables": [
           "Identificación y priorización de oportunidades",
           "Diseño de procesos y modelos de innovación",
@@ -57,30 +57,30 @@
     ],
     "others": [
       {
-        "title": "Diseño de experiencias",
+        "title": "Diseño de\nexperiencias",
         "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       },
       {
-        "title": "Transformación cultural",
+        "title": "Transformación\ncultural",
         "description": "Adopción de IA, cambio organizacional y formación.",
         "href": "/transformacion-cultural"
       }
     ]
   },
-  "activacion": {
+  "experiencias": {
     "hero": {
       "title": "Diseño de experiencias",
-      "lead": "Investigamos, diseñamos y validamos. Operamos el terreno donde las ideas se vuelven tangibles. Aportamos evidencia y rigor metodológico para escalar soluciones con criterio."
+      "lead": "<strong>Investigamos, diseñamos y validamos.</strong><p>Operamos el terreno donde las ideas se vuelven tangibles. Aportamos evidencia y rigor metodológico para escalar soluciones con criterio.</p>"
     },
     "intro": {
-      "statement": "Activamos / soluciones / auténticas y coherentes a partir de metodologías propias y herramientas de inteligencia artificial aplicada con criterio humano.",
-      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh"
+      "statement": "Activamos <strong>soluciones</strong> auténticas y coherentes a partir de metodologías propias y herramientas de inteligencia artificial aplicada con criterio humano.",
+      "clients": "CatSalut — Imagin — Massimo Dutti — Tecnocasa — ING — Ricoh  —"
     },
     "services": [
       {
         "name": "Diseño de Productos y Servicios",
-        "description": "Entendemos a las personas, diseñamos para ellas. Diseñamos experiencias digitales, físicas e híbridas, desde la definición del concepto hasta el detalle de la interacción, asegurándonos de que cada decisión de diseño responde a una necesidad real y a un objetivo de negocio claro.",
+        "description": "<strong>Entendemos a las personas, diseñamos para ellas.</strong> Diseñamos experiencias digitales, físicas e híbridas, desde la definición del concepto hasta el detalle de la interacción, asegurándonos de que cada decisión de diseño responde a una necesidad real y a un objetivo de negocio claro.",
         "deliverables": [
           "Investigación cualitativa y cuantitativa con usuarios",
           "Diseño de flujos y experiencias de usuario",
@@ -90,7 +90,7 @@
       },
       {
         "name": "Validación de productos",
-        "description": "Contrastar para decidir con seguridad. Validamos productos y servicios en cualquier fase —desde el concepto hasta la producción— para reducir el riesgo antes de escalar. Sustituimos las suposiciones por evidencia, optimizando recursos y asegurando que cada corrección ocurra en el momento oportuno.",
+        "description": "<strong>Contrastar para decidir con seguridad.</strong> Validamos productos y servicios en cualquier fase —desde el concepto hasta la producción— para reducir el riesgo antes de escalar. Sustituimos las suposiciones por evidencia, optimizando recursos y asegurando que cada corrección ocurra en el momento oportuno.",
         "deliverables": [
           "Validación de conceptos y prototipos",
           "Análisis heurístico",
@@ -100,7 +100,7 @@
       },
       {
         "name": "Clonica© — Investigación con usuarios sintéticos",
-        "description": "La investigación con personas es el origen; la inteligencia artificial el acelerador. Clonica© es nuestra plataforma propia de usuarios sintéticos entrenados con investigación primaria real. Reflejan comportamientos, contextos y contradicciones con un 93% de similitud. No sustituyen a las personas: amplían nuestra capacidad de comprenderlas, permitiendo validar y testear en cualquier fase sin las barreras de tiempo y coste de la investigación tradicional.",
+        "description": "<strong>La investigación con personas es el origen; la inteligencia artificial el acelerador.</strong> Clonica© es nuestra plataforma propia de usuarios sintéticos entrenados con investigación primaria real. Reflejan comportamientos, contextos y contradicciones con un 93% de similitud. No sustituyen a las personas: amplían nuestra capacidad de comprenderlas, permitiendo validar y testear en cualquier fase sin las barreras de tiempo y coste de la investigación tradicional.",
         "deliverables": [
           "Arquetipado y segmentos actitudinales con IA",
           "Continuous discovery asistido por IA",
@@ -110,7 +110,7 @@
       },
       {
         "name": "Insight Panel© — Reclutamiento de usuarios para investigación",
-        "description": "Acceso inmediato a personas reales. Nuestro servicio propio de captación y gestión de usuarios para estudios cualitativos y cuantitativos. Resolvemos todo el proceso: identificación, reclutamiento y coordinación para que tu equipo pueda centrarse en extraer aprendizaje, no en gestionar logística.",
+        "description": "<strong>Acceso inmediato a personas reales.</strong> Nuestro servicio propio de captación y gestión de usuarios para estudios cualitativos y cuantitativos. Resolvemos todo el proceso: identificación, reclutamiento y coordinación para que tu equipo pueda centrarse en extraer aprendizaje, no en gestionar logística.",
         "deliverables": [
           "Perfilado de usuarios (screener)",
           "Captación y reclutamiento",
@@ -121,12 +121,12 @@
     ],
     "others": [
       {
-        "title": "Pensamiento estratégico",
+        "title": "Pensamiento\nestratégico",
         "description": "Integramos visión de futuro para decidir en entornos complejos.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Transformación cultural",
+        "title": "Transformación\ncultural",
         "description": "Adopción de IA, cambio organizacional y formación.",
         "href": "/transformacion-cultural"
       }
@@ -135,16 +135,16 @@
   "transformacion": {
     "hero": {
       "title": "Transformación cultural",
-      "lead": "Facilitamos, impulsamos y divulgamos. Habitamos el cambio desde dentro para ayudar a las organizaciones a pensar, trabajar y relacionarse con el futuro. El cambio más difícil no es tecnológico ni estructural, es cultural."
+      "lead": "<strong>Facilitamos, impulsamos y divulgamos.</strong><p>Habitamos el cambio desde dentro para ayudar a las organizaciones a pensar, trabajar y relacionarse con el futuro. La transformación más difícil no es tecnológica ni estructural, es cultural.</p>"
     },
     "intro": {
-      "statement": "Impulsamos cambios reales y sostenidos integrando nuevas mentalidades y herramientas de inteligencia artificial que / amplifican / el talento. Desarrollamos la capacidad interna necesaria para que los equipos avancen con autonomía.",
-      "clients": "Novartis — Adeslas — Nestlé — MWC"
+      "statement": "Impulsamos cambios integrando mentalidades que amplifiquen el <strong>talento</strong>. Desarrollamos la capacidad interna para que los equipos avancen con autonomía.",
+      "clients": "Novartis — Adeslas — Nestlé — MWC  —"
     },
     "services": [
       {
         "name": "Cultura Organizacional",
-        "description": "Las organizaciones cambian cuando cambian las personas que las forman, no solo los procesos ni las herramientas. Acompañamos equipos y organizaciones en procesos de transformación cultural, desde la definición de una nueva forma de trabajar hasta la activación del cambio en el día a día. Un acompañamiento que respeta lo que ya existe y construye sobre ello, sin imponer modelos externos que no encajan con la realidad interna.",
+        "description": "<strong>Las organizaciones cambian cuando cambian las personas que las forman, no solo los procesos ni las herramientas.</strong> Acompañamos equipos y organizaciones en procesos de transformación cultural, desde la definición de una nueva forma de trabajar hasta la activación del cambio en el día a día. Un acompañamiento que respeta lo que ya existe y construye sobre ello, sin imponer modelos externos que no encajan con la realidad interna.",
         "deliverables": [
           "Diagnóstico de cultura organizacional",
           "Diseño de procesos de cambio",
@@ -153,7 +153,7 @@
       },
       {
         "name": "Organizaciones Aumentadas",
-        "description": "Amplificar el talento, no sustituirlo. Una organización aumentada no es una organización automatizada: es una donde las personas trabajan mejor porque la inteligencia artificial amplifica su capacidad de pensar, decidir y crear. Ayudamos a las organizaciones a dar ese salto, no desde la tecnología, sino desde las personas.",
+        "description": "<strong>Amplificar el talento, no sustituirlo.</strong> Una organización aumentada no es una organización automatizada: es una donde las personas trabajan mejor porque la inteligencia artificial amplifica su capacidad de pensar, decidir y crear. Ayudamos a las organizaciones a dar ese salto, no desde la tecnología, sino desde las personas.",
         "deliverables": [
           "Diagnóstico de madurez en IA",
           "Diseño de rutas de aprendizaje en IA",
@@ -163,28 +163,25 @@
       },
       {
         "name": "Bootcamps y workshops",
-        "description": "Aprender haciendo es la forma más rápida de que un equipo cambie cómo piensa y trabaja. Diseñamos y facilitamos experiencias intensivas a medida para empresas que necesitan activar capacidades concretas, explorar oportunidades de innovación, anticipar futuros o integrar la IA generativa en su forma de trabajar.",
-        "deliverables": [
-          "Innovación disruptiva — Exploración de oportunidades no convencionales",
-          "Diseño de futuros — Foresight aplicado para decisiones de largo plazo",
-          "IA generativa aplicada — Sesiones prácticas conectadas a problemas reales"
-        ]
+        "description": "<strong>Aprender haciendo es la forma más rápida de que un equipo cambie cómo piensa y trabaja.</strong> Diseñamos y facilitamos experiencias intensivas a medida para empresas que necesitan activar capacidades concretas, explorar oportunidades de innovación, anticipar futuros o integrar la IA generativa en su forma de trabajar.\n\n<strong>Innovación disruptiva.</strong> Exploración de oportunidades de negocio no convencionales, ruptura de modelos mentales establecidos y generación de ideas con potencial transformador.\n\n<strong>Diseño de futuros.</strong> Construcción de escenarios a medio y largo plazo para tomar mejores decisiones hoy, usando metodologías de foresight aplicado.\n\n<strong>IA generativa aplicada.</strong> Sesiones prácticas de generación de ideas y soluciones usando herramientas de inteligencia artificial generativa, conectadas siempre a problemas reales del equipo.",
+        "deliverables": []
       }
     ],
     "manifiesto": {
       "title": "Manifiesto IA",
-      "body": "Entendemos la IA no como un fin, sino como una responsabilidad. La usamos para ampliar el criterio, no para sustituirlo; para explorar y diseñar mejor, no más rápido."
+      "body1": "Entendemos la IA no como un fin, sino como una responsabilidad. La usamos para ampliar el criterio, no para sustituirlo; para explorar y <strong>diseñar mejor</strong>, no más rápido.",
+      "body2": "Nos comprometemos a aplicarla con rigor, con sentido ético y pensamiento crítico para detectar sus sesgos y asegurar el sentido humano e impacto real."
     },
     "others": [
       {
-        "title": "Pensamiento estratégico",
+        "title": "Pensamiento\nestratégico",
         "description": "Integramos visión de futuro para decidir en entornos complejos.",
         "href": "/pensamiento-estrategico"
       },
       {
-        "title": "Diseño de experiencias",
+        "title": "Diseño de\nexperiencias",
         "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
-        "href": "/activacion-de-soluciones"
+        "href": "/diseno-de-experiencias"
       }
     ]
   }

@@ -149,19 +149,19 @@ export const PAGE_COPY: Record<string, RouteCopyMap> = {
     },
   },
 
-  '/activacion-de-soluciones': {
+  '/diseno-de-experiencias': {
     es: {
-      title: 'Activación de soluciones',
+      title: 'Diseño de experiencias',
       description:
         'Convertimos la estrategia en productos y servicios validados. Reducimos riesgo antes de escalar.',
     },
     ca: {
-      title: 'Activació de solucions',
+      title: 'Disseny d’experiències',
       description:
         'Convertim l’estratègia en productes i serveis validats. Reduïm el risc abans d’escalar.',
     },
     en: {
-      title: 'Solution activation',
+      title: 'Experience design',
       description:
         'We turn strategy into validated products and services. Reduce risk before scaling.',
     },

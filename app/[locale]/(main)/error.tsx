@@ -1,16 +1,12 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-
-import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
 
 /**
  * Error boundary — se activa cuando una page.tsx lanza una excepción no capturada.
  * IMPORTANTE: debe ser 'use client' (restricción de Next.js App Router).
- *
- * Muestra un mensaje genérico de error con opción de reintentar.
- * Los errores de Suspense boundaries activan el archivo loading.tsx correspondiente.
  */
 
 interface ErrorPageProps {
@@ -31,33 +27,31 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-bg px-grid-margin">
-      <div className="flex flex-col gap-8 max-w-[40ch]">
-        {/* Decorative code */}
-        <p className="font-mono text-micro text-fg/40">500</p>
+      <div className="flex flex-col gap-8 max-w-[44ch]">
+        <p className="font-mono text-body-sm text-fg/40">500</p>
 
         <h1 className="font-serif font-light text-title text-fg leading-none tracking-[-0.02em]">
           {t('error.title')}
         </h1>
 
-        <p className="font-mono text-body-sm text-fg/60 leading-[1.5]">
+        {/* Estilo párrafo canónico (text-body-sm, leading-[1.6], color full). */}
+        <p className="font-mono text-body-sm text-fg leading-[1.6]">
           {t('error.body')}
         </p>
 
-        <div className="flex gap-4 flex-wrap">
-          <ButtonPrimary variant="dark" onClick={reset}>
+        {/* Botones estilo Underline canónico (hover-wipe-underline). */}
+        <div className="flex flex-wrap gap-x-8 gap-y-3 font-mono text-body-sm text-fg">
+          <button
+            type="button"
+            onClick={reset}
+            className="hover-wipe-underline w-fit text-fg"
+          >
             {t('error.retry')}
-          </ButtonPrimary>
-          <ButtonPrimary as="a" href="/" variant="light">
+          </button>
+          <Link href="/" className="hover-wipe-underline w-fit text-fg">
             {t('actions.back')}
-          </ButtonPrimary>
+          </Link>
         </div>
-
-        {/* Digest for support reference — only in dev */}
-        {process.env.NODE_ENV !== 'production' && error.digest && (
-          <p className="font-mono text-caption text-fg/30">
-            digest: {error.digest}
-          </p>
-        )}
       </div>
     </div>
   )

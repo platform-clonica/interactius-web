@@ -42,8 +42,8 @@ export function IdentidadIntro() {
       wrapLinesInMask(lines)
       gsap.set(lines, { y: 60, opacity: 0 })
 
-      // Fire shortly after the line-mask reveal settles
-      const transformDelay = 1.2 + (lines.length - 1) * 0.08 + 0.2
+      // Fire shortly after the last line has revealed (~0.4s buffer)
+      const transformDelay = 1.2 + (lines.length - 1) * 0.08 + 0.4
       let delayed: ReturnType<typeof gsap.delayedCall> | null = null
 
       const st = ScrollTrigger.create({
@@ -57,32 +57,48 @@ export function IdentidadIntro() {
             const wordEl = quoteEl.querySelector<HTMLElement>('[data-word]')
             if (!wordEl?.parentNode) return
 
-            // Create and insert slashes dynamically — zero DOM cost before animation
+            // Defensive: limpia residuos si el efecto se ejecuta dos veces
+            // (StrictMode dev, remount tras navegación) — evita duplicados.
+            quoteEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+            wordEl.style.removeProperty('-webkit-text-stroke')
+
+            // Slashes inserted hidden — no space taken until phase 2
             const slashL = document.createElement('span')
             slashL.textContent = '/ '
             slashL.dataset.slashDynamic = ''
-            slashL.style.display = 'inline-block'
+            slashL.style.display = 'none'
 
             const slashR = document.createElement('span')
             slashR.textContent = ' /'
             slashR.dataset.slashDynamic = ''
-            slashR.style.display = 'inline-block'
+            slashR.style.display = 'none'
 
             wordEl.parentNode.insertBefore(slashL, wordEl)
             wordEl.parentNode.insertBefore(slashR, wordEl.nextSibling)
 
-            // Set slashes invisible before they enter the DOM visually
-            gsap.set(slashL, { opacity: 0, x: -3 })
-            gsap.set(slashR, { opacity: 0, x:  3 })
+            const proxy = { v: 0 }
+            const tl = gsap.timeline()
 
-            // Full fade-out completely hides the weight snap (300 → 400).
-            // Word + slashes all fade back in together as one unified moment.
-            gsap.timeline()
-              .to(wordEl, { opacity: 0, duration: 0.35, ease: 'power2.in' })
-              .call(() => { wordEl.classList.add('font-normal') })
-              .to(wordEl,  { opacity: 1, duration: 0.55, ease: 'power2.out' }, '+=0.04')
-              .to(slashL,  { opacity: 1, x: 0, duration: 0.55, ease: 'power2.out' }, '<')
-              .to(slashR,  { opacity: 1, x: 0, duration: 0.55, ease: 'power2.out' }, '<0.08')
+            // Phase 1: word strokes bold smoothly (no font-weight snap)
+            tl.to(proxy, {
+              v: 0.6,
+              duration: 1.4,
+              ease: 'sine.inOut',
+              onUpdate: () => {
+                wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
+              },
+            })
+
+            // Animar font-size 0 → natural sobre display:inline. El baseline
+            // y el line-box quedan idénticos al texto vecino (no hay
+            // desalineación) y el desplazamiento sigue siendo gradual.
+            slashL.style.display = ''
+            slashR.style.display = ''
+            const fontSize = window.getComputedStyle(slashL).fontSize
+            gsap.set(slashL, { fontSize: 0, opacity: 0 })
+            gsap.set(slashR, { fontSize: 0, opacity: 0 })
+            tl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
+            tl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
           })
         },
       })
@@ -104,7 +120,7 @@ export function IdentidadIntro() {
       {/* Sticky panel */}
       <div className="sticky top-0 section-inner flex items-center min-h-screen py-section">
         <div className="grid grid-cols-12 gap-grid-gutter w-full">
-          <div className="col-span-12 lg:col-span-10 lg:col-start-1">
+          <div className="col-span-12 lg:col-span-10 lg:col-start-2">
             <p
               ref={quoteRef}
               className="font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
@@ -115,8 +131,8 @@ export function IdentidadIntro() {
         </div>
       </div>
 
-      {/* 100vh spacer — one full 16:9 section of reading pause */}
-      <div style={{ height: '100vh' }} aria-hidden="true" />
+      {/* 200vh spacer — keeps text sticky long enough for the word effect to play */}
+      <div style={{ height: '200vh' }} aria-hidden="true" />
     </section>
   )
 }

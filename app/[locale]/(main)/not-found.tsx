@@ -1,35 +1,31 @@
+import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
-
-import { Link } from '@/lib/i18n/routing'
-import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
 
 /**
  * Not Found — se activa cuando notFound() es llamado desde una page.tsx
- * o cuando la URL no coincide con ninguna ruta.
- *
- * Server Component — puede usar getTranslations directamente.
+ * o cuando la URL no coincide con ninguna ruta. Server Component.
  */
-
 export default async function NotFoundPage() {
   const t = await getTranslations('common')
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-bg px-grid-margin">
-      <div className="flex flex-col gap-8 max-w-[40ch]">
-        {/* Decorative code */}
-        <p className="font-mono text-micro text-fg/40">404</p>
+      <div className="flex flex-col gap-8 max-w-[44ch]">
+        <p className="font-mono text-body-sm text-fg/40">404</p>
 
         <h1 className="font-serif font-light text-title text-fg leading-none tracking-[-0.02em]">
           {t('notFound.title')}
         </h1>
 
-        <p className="font-mono text-body-sm text-fg/60 leading-[1.5]">
+        <p className="font-mono text-body-sm text-fg leading-[1.6]">
           {t('notFound.body')}
         </p>
 
-        <ButtonPrimary as={Link} href="/" variant="dark">
-          {t('actions.back')}
-        </ButtonPrimary>
+        <div className="flex flex-wrap gap-x-8 gap-y-3 font-mono text-body-sm text-fg">
+          <Link href="/" className="hover-wipe-underline w-fit text-fg">
+            {t('actions.back')}
+          </Link>
+        </div>
       </div>
     </div>
   )

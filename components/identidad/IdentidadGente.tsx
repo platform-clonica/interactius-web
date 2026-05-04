@@ -1,62 +1,112 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
+import { TEAM, type TeamMember } from '@/lib/data/team'
 
-// Team members — placeholder data; replace with CMS data when available
-const TEAM = [
-{ src: '/identidad/fotos-team/team-Tom.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Adrian.png', name: 'Adrián Yanes', role: '' }, 
-{ src: '/identidad/fotos-team/team-Ale.png', name: 'Alejandro Madeira', role: '' }, 
-{ src: '/identidad/fotos-team/team-Aleix.png', name: 'Aleix Martí', role: '' }, 
-{ src: '/identidad/fotos-team/team-Alex.png', name: 'Alex Cuadrado', role: '' }, 
-{ src: '/identidad/fotos-team/team-Alexa.png', name: 'Alexa ', role: '' }, 
-{ src: '/identidad/fotos-team/team-Berta.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Carlos.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Diana.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Diego.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Edmond.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Elena_C.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Elena_S.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Eli.png', name: 'Eli López', role: '' }, 
-{ src: '/identidad/fotos-team/team-Francesc.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Isaac.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Joha.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Josep.png', name: 'Tomas Modroño', role: '' },
-{ src: '/identidad/fotos-team/team-Lucho.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Marce.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-María.png', name: 'Tomas Modroño', role: '' },
-{ src: '/identidad/fotos-team/team-Martina.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Oscar.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Pamela_B.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Pamela_C.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Pol.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Riccardo.png', name: 'Tomas Modroño', role: '' }, 
-{ src: '/identidad/fotos-team/team-Sara.png', name: 'Tomas Modroño', role: '' }
-] as const
+/* ==========================================================================
+   Fisher-Yates shuffle — orden aleatorio cliente al refrescar.
+   ========================================================================== */
+function shuffle<T>(arr: readonly T[]): T[] {
+  const out = arr.slice()
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
+}
 
+/* ==========================================================================
+   Scattered layout — 12 slots in 3 vertical bands, alternating so
+   adjacent slots never share a band. All photos same size, no overlap.
+   y: % of viewport height · x: px offset within the REEL_WIDTH cycle
+   ========================================================================== */
 
-// Staggered heights for depth effect (matching Figma proportions)
-const HEIGHTS = ['h-[clamp(180px,29vh,317px)]', 'h-[clamp(160px,26vh,280px)]', 'h-[clamp(200px,32vh,350px)]', 'h-[clamp(170px,27vh,295px)]', 'h-[clamp(185px,30vh,325px)]'] as const
+// 3 vertical bands, distribuidas en orden 1→2→3 con leve variación de y por
+// banda para mantener el feel scattered. 28 slots = 28 miembros; cada uno
+// renderiza con la foto correspondiente del array `team` (barajado en mount).
+const SLOTS: { y: number; x: number }[] = [
+  { y: 12, x: 0 },     { y: 45, x: 280 },   { y: 64, x: 560 },
+  { y: 8,  x: 840 },   { y: 48, x: 1120 },  { y: 68, x: 1400 },
+  { y: 16, x: 1680 },  { y: 42, x: 1960 },  { y: 62, x: 2240 },
+  { y: 10, x: 2520 },  { y: 50, x: 2800 },  { y: 66, x: 3080 },
+  { y: 14, x: 3360 },  { y: 46, x: 3640 },  { y: 63, x: 3920 },
+  { y: 9,  x: 4200 },  { y: 49, x: 4480 },  { y: 67, x: 4760 },
+  { y: 15, x: 5040 },  { y: 43, x: 5320 },  { y: 65, x: 5600 },
+  { y: 11, x: 5880 },  { y: 47, x: 6160 },  { y: 64, x: 6440 },
+  { y: 13, x: 6720 },  { y: 44, x: 7000 },  { y: 66, x: 7280 },
+  { y: 17, x: 7560 },
+]
+
+const REEL_WIDTH = 7840 // 280px × 28 slots
+const DRIFT_SPEED = 100 // px per second — same velocity for entry and drift
+const PHOTO_W = 200     // px — reference for wrap calculation
+
+/* ==========================================================================
+   Component
+   ========================================================================== */
 
 export function IdentidadGente() {
   const t = useTranslations('identidad')
 
+  // Server-render usa el orden canónico (TEAM); en el primer commit cliente
+  // se baraja para que cada refresh muestre un set distinto en los 12 slots.
+  // Esto evita hydration mismatch (ambos renders coinciden con el orden
+  // canónico) y la barajada queda imperceptible.
+  const [team, setTeam] = useState<readonly TeamMember[]>(TEAM)
+  useEffect(() => {
+    setTeam(shuffle(TEAM))
+  }, [])
+
   const sectionRef = useRef<HTMLElement>(null)
+  const pinRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const descRef = useRef<HTMLParagraphElement>(null)
-  const trackRef = useRef<HTMLDivElement>(null)
+  const photosLayerRef = useRef<HTMLDivElement>(null)
+  const photoItemsRef = useRef<(HTMLDivElement | null)[]>([])
+  const dragHintRef = useRef<HTMLDivElement>(null)
+
+  // Drift state held in ref to avoid re-renders on every frame.
+  // entryOffset starts at 1600 → all photos are off-screen right. The entry
+  // tween animates it down to 0 (bringing the visible subset in from the
+  // right) and only then does driftActive flip to true.
+  const ENTRY_OFFSET_START = 1600
+
+  const driftRef = useRef({
+    baseX: 0,
+    dragDelta: 0,
+    dragStartX: 0,
+    dragStartDelta: 0,
+    isDragging: false,
+    driftActive: false,
+    entryOffset: ENTRY_OFFSET_START,
+  })
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
+    const section = sectionRef.current
+    const pinEl = pinRef.current
     const titleEl = titleRef.current
     const descEl = descRef.current
-    const trackEl = trackRef.current
-    if (!titleEl || !descEl || !trackEl) return
+    if (!section || !pinEl || !titleEl || !descEl) return
+
+    // Detección síncrona: ¿en qué fase está la sección AL MOMENTO DEL MOUNT?
+    // Si la página se carga (o se navega via PageCurtain) con el scroll ya
+    // dentro o pasado Gente, los imports async de GSAP llegarían tarde y los
+    // ScrollTriggers `once+onEnter` no dispararían (ya estamos pasados el
+    // start) → texto oculto sin animar, drift inactivo, fotos off-screen.
+    // Saltamos las animaciones de entrada y dejamos el estado final.
+    const rect = section.getBoundingClientRect()
+    const vh = window.innerHeight
+    const pastTopBottom = rect.top < vh         // texto debería estar revelado
+    const pastTop30 = rect.top < vh * 0.3       // drift debería estar activo
+    const pastTopTop = rect.top <= 0            // bg-fade debería estar en dark
 
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
@@ -70,47 +120,220 @@ export function IdentidadGente() {
       const reduced = getReducedMotion()
       const cleanups: Array<() => void> = []
 
-      // 1. Title line-mask reveal
+      // 1. Pin the sticky container for 200vh of scroll (gives more room for
+      //    reading + watching photos drift in one by one)
+      const pinST = ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: '+=200%',
+        pin: pinEl,
+        pinSpacing: true,
+        anticipatePin: 1,
+      })
+      cleanups.push(() => pinST.kill())
+
+      // 2. Title + description line-mask reveal — fires when 2/3 of the
+      //    Metodología mask has covered the viewport (Gente top at ~33%vh)
       const titleSplit = new SplitType(titleEl, { types: 'lines' })
-      const titleLines = titleSplit.lines ?? []
-      gsap.set(titleLines, { y: 80, opacity: 0 })
-
-      // 2. Description line-mask reveal
       const descSplit = new SplitType(descEl, { types: 'lines' })
+      const titleLines = titleSplit.lines ?? []
       const descLines = descSplit.lines ?? []
-      gsap.set(descLines, { y: 80, opacity: 0 })
+      wrapLinesInMask(titleLines)
+      wrapLinesInMask(descLines)
 
-      const st1 = ScrollTrigger.create({
-        trigger: titleEl,
-        start: 'top 88%',
-        once: true,
-        onEnter: () => {
-          if (reduced) {
-            gsap.set([titleLines, descLines], { y: 0, opacity: 1 })
-            return
-          }
-          gsap.to(titleLines, { y: 0, opacity: 1, duration: 1.2, ease: 'power4.out', stagger: 0.1 })
-          gsap.to(descLines, {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
-            ease: 'power4.out',
-            stagger: 0.1,
-            delay: 0.15,
+      if (reduced || pastTopBottom) {
+        // Ya entró en viewport antes de que GSAP cargara — dejamos el texto
+        // en su estado final visible, sin animación, sin flash invisible.
+        gsap.set([...titleLines, ...descLines], { y: 0, opacity: 1 })
+        cleanups.push(() => { titleSplit.revert(); descSplit.revert() })
+      } else {
+        gsap.set(titleLines, { y: 80, opacity: 0 })
+        gsap.set(descLines, { y: 80, opacity: 0 })
+        const revealST = ScrollTrigger.create({
+          trigger: section,
+          start: 'top bottom',
+          once: true,
+          onEnter: () => {
+            gsap.to(titleLines, {
+              y: 0,
+              opacity: 1,
+              duration: 1.2,
+              ease: 'power4.out',
+              stagger: 0.08,
+            })
+            gsap.to(descLines, {
+              y: 0,
+              opacity: 1,
+              duration: 1.2,
+              ease: 'power4.out',
+              stagger: 0.08,
+              delay: 0.15,
+            })
+          },
+        })
+        cleanups.push(() => { revealST.kill(); titleSplit.revert(); descSplit.revert() })
+      }
+
+      // 3. Background fade warm-light → dark
+      //    Si la sección ya está pasada `top top` cuando montamos (deep-link,
+      //    navegación con scroll restaurado), forzamos estado final dark sin
+      //    animar para evitar flash + línea horizontal de la máscara.
+      if (!reduced) {
+        if (pastTopTop) {
+          gsap.set(section, { backgroundColor: '#1c1a17' })
+          gsap.set([titleEl, descEl], { color: '#f5f2ed' })
+        } else {
+          gsap.set([titleEl, descEl], { color: '#1c1a17' })
+          const bgTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: 'top top',
+              toggleActions: 'play none none reverse',
+            },
           })
+          bgTl
+            .to(section, {
+              backgroundColor: '#1c1a17',
+              duration: 0.5,
+              ease: 'power2.inOut',
+              overwrite: 'auto',
+            }, 0)
+            .to([titleEl, descEl], {
+              color: '#f5f2ed',
+              duration: 0.5,
+              ease: 'power2.inOut',
+              overwrite: 'auto',
+            }, 0)
+          const bgSt = bgTl.scrollTrigger
+          if (bgSt) cleanups.push(() => bgSt.kill())
+          cleanups.push(() => bgTl.kill())
+        }
+      }
+
+      // 3b. Photo drift — activates at the same point as the text reveal and
+      //     bg fade. Drift consumes the entryOffset at the same speed it'll
+      //     later consume baseX — photos come in one by one from the right
+      //     with constant velocity throughout the animation.
+      //
+      //     Si la sección ya está pasado `top 30%` cuando montamos (deep-link,
+      //     hot reload, navegación con scroll restaurado), forzamos el estado
+      //     final desde el primer tick: drift activo, entryOffset consumido,
+      //     fotos en sus posiciones cíclicas naturales.
+      if (pastTop30) {
+        driftRef.current.driftActive = true
+        driftRef.current.entryOffset = 0
+      }
+      const entryST = ScrollTrigger.create({
+        trigger: section,
+        start: 'top 30%',
+        onEnter: () => {
+          driftRef.current.driftActive = true
+        },
+        onLeaveBack: () => {
+          driftRef.current.driftActive = false
+          driftRef.current.entryOffset = ENTRY_OFFSET_START
+          driftRef.current.baseX = 0
+          driftRef.current.dragDelta = 0
         },
       })
-      cleanups.push(() => { st1.kill(); titleSplit.revert(); descSplit.revert() })
+      cleanups.push(() => entryST.kill())
 
-      // 3. Continuous marquee — GSAP infinite x scroll
-      if (!reduced) {
-        const tween = gsap.to(trackEl, {
-          x: '-50%',
-          ease: 'none',
-          duration: 70,
-          repeat: -1,
+      // 4. Parallax lag on exit — photos translate slower than text
+      if (!reduced && photosLayerRef.current) {
+        const lagTw = gsap.fromTo(
+          photosLayerRef.current,
+          { yPercent: 0 },
+          {
+            yPercent: 25,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'bottom bottom',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          },
+        )
+        const lagSt = lagTw.scrollTrigger
+        if (lagSt) cleanups.push(() => lagSt.kill())
+        cleanups.push(() => lagTw.kill())
+      }
+
+      // 5. RAF loop — continuous right-to-left drift + drag offset
+      if (reduced) {
+        SLOTS.forEach((slot, i) => {
+          const el = photoItemsRef.current[i]
+          if (!el) return
+          el.style.transform = `translate3d(${slot.x}px, 0, 0)`
         })
-        cleanups.push(() => tween.kill())
+      } else {
+        let rafId = 0
+        let lastT = performance.now()
+
+        const tick = (now: number) => {
+          const dt = now - lastT
+          lastT = now
+
+          const state = driftRef.current
+
+          if (state.driftActive && !state.isDragging) {
+            const delta = (DRIFT_SPEED * dt) / 1000
+            // Single continuous motion: drift consumes entryOffset first
+            // (photos sliding in from right), then baseX (normal cycling).
+            if (state.entryOffset > 0) {
+              state.entryOffset = Math.max(0, state.entryOffset - delta)
+            } else {
+              state.baseX -= delta
+            }
+          }
+
+          // Durante entry: shift lineal (drag + drift sólo desplazan, sin
+          // ciclo). El wrap modular sólo tiene sentido cuando los slots
+          // están en sus posiciones cíclicas naturales — al sumar el
+          // entryOffset post-wrap, slots con slot.x cercano a REEL_WIDTH
+          // (slot 26) tienen una región de wrap muy estrecha y un drag de
+          // pocos píxeles los empujaba fuera de esa región, provocando
+          // que apareciesen/desapareciesen de golpe.
+          //
+          // Una vez `entryOffset === 0`, los slots están en cycle range
+          // y se vuelve a aplicar la math de ciclo + wrap canónica.
+          if (state.entryOffset > 0) {
+            const linearShift = state.baseX + state.dragDelta + state.entryOffset
+            SLOTS.forEach((slot, i) => {
+              const el = photoItemsRef.current[i]
+              if (!el) return
+              el.style.transform = `translate3d(${slot.x + linearShift}px, 0, 0)`
+            })
+          } else {
+            const combined = state.baseX + state.dragDelta
+            const modBase =
+              ((combined % REEL_WIDTH) + REEL_WIDTH) % REEL_WIDTH - REEL_WIDTH
+            SLOTS.forEach((slot, i) => {
+              const el = photoItemsRef.current[i]
+              if (!el) return
+              let x = slot.x + modBase
+              if (x < -PHOTO_W) x += REEL_WIDTH
+              el.style.transform = `translate3d(${x}px, 0, 0)`
+            })
+          }
+
+          rafId = requestAnimationFrame(tick)
+        }
+        rafId = requestAnimationFrame(tick)
+        cleanups.push(() => cancelAnimationFrame(rafId))
+      }
+
+      // 6. "Arrastrar" hint — tracking continuo de posición sobre la layer.
+      //    La VISIBILIDAD se gestiona en handlePhotoEnter/Leave (sólo aparece
+      //    sobre fotos, no sobre el espacio vacío de la layer).
+      const layer = photosLayerRef.current
+      const hintEl = dragHintRef.current
+      if (layer && hintEl && !reduced) {
+        const onLayerMove = (e: MouseEvent) => {
+          gsap.set(hintEl, { x: e.clientX + 12, y: e.clientY + 12 })
+        }
+        layer.addEventListener('mousemove', onLayerMove)
+        cleanups.push(() => layer.removeEventListener('mousemove', onLayerMove))
       }
 
       cleanupRef.current = () => cleanups.forEach((fn) => fn())
@@ -119,71 +342,205 @@ export function IdentidadGente() {
     return () => cleanupRef.current?.()
   }, [])
 
-  // Duplicate team items for seamless loop
-  const loopItems = [...TEAM, ...TEAM]
+  /* ========================================================================
+     Pointer handlers — click+drag horizontal on the photos layer.
+     Drift pauses during drag; delta merges into baseX on release so the
+     drift resumes smoothly from the exact point the user let go.
+     ======================================================================== */
+
+  const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const state = driftRef.current
+    state.isDragging = true
+    state.dragStartX = e.clientX
+    state.dragStartDelta = state.dragDelta
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+
+  const handlePointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const state = driftRef.current
+    if (!state.isDragging) return
+    state.dragDelta = state.dragStartDelta + (e.clientX - state.dragStartX)
+  }
+
+  const handlePointerUp = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const state = driftRef.current
+    if (!state.isDragging) return
+    state.isDragging = false
+    state.baseX += state.dragDelta
+    state.dragDelta = 0
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    }
+  }
+
+  /* ========================================================================
+     Hover en foto — reveal lateral canónico (cubic-bezier(.16,1,.3,1))
+     entrando desde la izquierda; al salir, fold inverso al borde derecho
+     (mismo patrón que la PageCurtain / IdentidadHero exit).
+     ======================================================================== */
+  const LATERAL_EASE = 'cubic-bezier(.16,1,.3,1)'
+  const handlePhotoEnter = async (e: ReactPointerEvent<HTMLDivElement>) => {
+    const labels = e.currentTarget.querySelector<HTMLElement>('[data-photo-labels]')
+    const hint = dragHintRef.current
+    const { default: gsap } = await import('gsap')
+    if (labels) {
+      gsap.killTweensOf(labels)
+      gsap.fromTo(
+        labels,
+        { clipPath: 'inset(0 100% 0 0)' },
+        { clipPath: 'inset(0 0% 0 0)', duration: 0.6, ease: LATERAL_EASE },
+      )
+    }
+    if (hint) {
+      gsap.killTweensOf(hint)
+      gsap.to(hint, { opacity: 1, duration: 0.2, ease: 'power2.out' })
+    }
+  }
+  const handlePhotoLeave = async (e: ReactPointerEvent<HTMLDivElement>) => {
+    const labels = e.currentTarget.querySelector<HTMLElement>('[data-photo-labels]')
+    const hint = dragHintRef.current
+    const { default: gsap } = await import('gsap')
+    if (labels) {
+      gsap.killTweensOf(labels)
+      gsap.to(labels, {
+        clipPath: 'inset(0 0 0 100%)',
+        duration: 0.6,
+        ease: LATERAL_EASE,
+        onComplete: () => {
+          gsap.set(labels, { clipPath: 'inset(0 100% 0 0)' })
+        },
+      })
+    }
+    if (hint) {
+      gsap.killTweensOf(hint)
+      gsap.to(hint, { opacity: 0, duration: 0.15, ease: 'power2.out' })
+    }
+  }
 
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-dark overflow-hidden"
+      className="relative w-full bg-warm-light"
       aria-labelledby="gente-title"
     >
-      <div className="section-inner pt-section pb-16">
-        <h2
-          ref={titleRef}
-          id="gente-title"
-          className="font-serif font-normal text-section text-warm-light"
+      {/* Pinned sticky container — bg animates warm-light → dark */}
+      <div
+        ref={pinRef}
+        className="relative w-full h-screen overflow-hidden"
+      >
+        {/* Titular "Nuestra gente" — text-title like Actitud Liminal, top-left.
+            Color tweened by GSAP from fg → warm-light in sync with body bg. */}
+        <div
+          className="absolute top-[clamp(210px,17.7vh,234px)] inset-x-0 section-inner pointer-events-none"
         >
-          {t('gente.title')}
-        </h2>
-
-        <p
-          ref={descRef}
-          className="mt-16 font-serif font-light text-display text-warm-light text-center mx-auto max-w-[18ch]"
-        >
-          {t('gente.description')}
-        </p>
-      </div>
-
-      {/* Marquee — 2× duplicated for seamless loop */}
-      <div className="pb-section overflow-hidden">
-        <div ref={trackRef} className="flex gap-4 w-max">
-          {loopItems.map((member, i) => (
-            <div
-              key={i}
-              className={`group relative flex-shrink-0 cursor-pointer overflow-hidden ${HEIGHTS[i % HEIGHTS.length]} w-[clamp(160px,15.8vw,303px)] ${
-                i % 3 === 0 ? 'mb-12 md:mb-24'
-                : i % 3 === 1 ? 'mb-0'
-                : 'mb-8 md:mb-16'
-              }`}
+          <div className="grid grid-cols-12 gap-grid-gutter">
+            <h2
+              ref={titleRef}
+              id="gente-title"
+              className="col-span-10 lg:col-span-6 lg:col-start-2 font-serif font-normal text-section leading-[1.2] tracking-[-0.02em]"
             >
-              <Image
-                src={member.src}
-                alt={member.name}
-                fill
-                sizes="16vw"
-                className="object-cover grayscale transition-[filter] duration-[400ms] ease-expo group-hover:grayscale-0"
-                onError={(e) => {
-                  // Fallback to team.jpg placeholder if individual photo not found
-                  ;(e.target as HTMLImageElement).src = '/identidad/team.jpg'
+              {t('gente.title')}
+            </h2>
+          </div>
+        </div>
+
+        {/* Descripción — párrafo de fondo, 10 columnas centrales, centrado vertical */}
+        <div
+          className="absolute inset-x-0 top-1/2 -translate-y-1/2 section-inner pointer-events-none"
+        >
+          <div className="grid grid-cols-12 gap-grid-gutter">
+            <p
+              ref={descRef}
+              className="col-start-2 col-span-10 font-serif font-light text-title text-center leading-[1.1] tracking-[-0.02em]"
+            >
+              {t('gente.description')}
+            </p>
+          </div>
+        </div>
+
+        {/* Scattered photos layer — drift + drag. All photos same size, non-overlapping. */}
+        <div
+          ref={photosLayerRef}
+          className="absolute inset-0 overflow-hidden cursor-grab active:cursor-grabbing select-none touch-pan-y"
+          style={{ willChange: 'transform' }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          aria-hidden="true"
+        >
+          {SLOTS.map((slot, i) => {
+            const member = team[i % team.length]
+            return (
+              <div
+                key={i}
+                ref={(el) => { photoItemsRef.current[i] = el }}
+                onPointerEnter={handlePhotoEnter}
+                onPointerLeave={handlePhotoLeave}
+                className="group absolute w-[clamp(160px,13vw,210px)] aspect-square will-change-transform"
+                style={{
+                  top: `${slot.y}%`,
+                  left: 0,
+                  // Pre-aplicado: nacen off-screen-right (slot.x + entry offset)
+                  // para evitar el flash de 1 frame con todas apiladas en left:0
+                  // antes de que el RAF aplique el primer transform.
+                  transform: `translate3d(${slot.x + ENTRY_OFFSET_START}px, 0, 0)`,
                 }}
-              />
-              {/* Hover labels */}
-              <div className="absolute bottom-0 left-0 right-0 opacity-0 translate-y-2 transition-all duration-300 ease-expo group-hover:opacity-100 group-hover:translate-y-0">
-                <div className="px-[6px] py-[2px] bg-dark">
-                  <p className="font-mono text-card-sm text-warm-light leading-[1.5] whitespace-nowrap">
-                    {member.role}
-                  </p>
-                </div>
-                <div className="px-[6px] py-[2px] bg-dark">
-                  <p className="font-serif font-light text-[clamp(20px,2.4vw,34px)] text-warm-light leading-none whitespace-nowrap">
-                    {member.name}
-                  </p>
+              >
+                <div className="relative h-full w-full overflow-hidden">
+                  <Image
+                    src={member.src}
+                    alt=""
+                    fill
+                    sizes="16vw"
+                    loading="eager"
+                    draggable={false}
+                    className="object-cover grayscale transition-[filter] duration-[400ms] ease-expo group-hover:grayscale-0 pointer-events-none"
+                    onError={(e) => {
+                      ;(e.target as HTMLImageElement).src = '/identidad/team.jpg'
+                    }}
+                  />
+                  {/* Labels — bottom-left dentro de la imagen. Reveal lateral
+                      cubic-bezier(.16,1,.3,1) en hover, inverso al salir
+                      (clip-path canónico). */}
+                  <div
+                    data-photo-labels
+                    className="absolute bottom-0 left-0 flex flex-col pointer-events-none"
+                    style={{ clipPath: 'inset(0 100% 0 0)' }}
+                  >
+                    <div className="bg-warm-light px-[6px] py-[2px] self-start">
+                      <p className="font-mono text-micro text-fg leading-[1.4] whitespace-nowrap">
+                        {member.role}
+                      </p>
+                    </div>
+                    <div className="bg-warm-light px-[6px] py-[2px] self-start">
+                      <p className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-none whitespace-nowrap">
+                        {member.name}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
+      </div>
+
+      {/* "Arrastrar" hint — fixed sibling, sigue al cursor con mix-blend
+          difference. Mismo pipeline que el hint del Hero (HeroScroll). */}
+      <div
+        ref={dragHintRef}
+        aria-hidden="true"
+        className="fixed pointer-events-none top-0 left-0 font-mono text-body-sm"
+        style={{
+          opacity: 0,
+          zIndex: 410,
+          mixBlendMode: 'difference',
+          color: 'var(--c-warm-light)',
+          willChange: 'transform, opacity',
+        }}
+      >
+        Arrastrar
       </div>
     </section>
   )

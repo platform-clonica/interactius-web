@@ -1,7 +1,9 @@
 import { getTranslations } from 'next-intl/server'
 
-import { Link } from '@/lib/i18n/routing'
-import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
+import { ManagePreferencesButton } from '@/components/consent/ManagePreferencesButton'
+
+import { CurtainLink } from './CurtainLink'
+import { FooterNewsletterCTA } from './FooterNewsletterCTA'
 
 export async function Footer() {
   const t = await getTranslations('footer')
@@ -10,79 +12,72 @@ export async function Footer() {
   return (
     <footer
       role="contentinfo"
-      className="relative w-full bg-dark text-pure-white"
+      className="relative flex min-h-screen w-full flex-col bg-dark text-warm-light"
     >
-      <div className="section-inner py-section">
-        {/* Top grid */}
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:gap-grid-gutter">
-          {/* Newsletter CTA */}
+      <div className="section-inner flex flex-1 flex-col py-section">
+        {/* TOP — Wordmark right-aligned, 5 últimas columnas (8-12) */}
+        <div className="grid grid-cols-12 gap-grid-gutter">
+          <div className="col-span-12 flex items-start justify-end lg:col-start-8 lg:col-end-13">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo/interactius_w.svg"
+              alt="Interactius"
+              style={{ width: '100%', height: 'auto' }}
+            />
+          </div>
+        </div>
+
+        {/* NEWSLETTER — alta-izquierda, cols 1-5 */}
+        <div className="mt-16 grid grid-cols-12 gap-grid-gutter lg:mt-24">
           <section
             aria-labelledby="footer-newsletter-title"
-            className="lg:col-span-7"
+            className="col-span-12 lg:col-span-5"
           >
             <h2
               id="footer-newsletter-title"
-              className="font-serif text-title-sm font-light text-pure-white"
+              className="whitespace-pre-line font-serif text-title-sm font-light text-warm-light"
             >
               {t('newsletter.tagline')}
             </h2>
 
-            <p className="mt-6 font-mono text-body-sm text-pure-white/60">
+            <p className="mt-8 max-w-md font-mono text-body-sm text-warm-light/60">
               {t('newsletter.subtitle')}
             </p>
 
             <div className="mt-8">
-              <ButtonPrimary
-                as={Link}
-                href="/newsletter"
-                variant="outline"
-              >
-                {t('newsletter.cta')}{' '}
-                <span aria-hidden="true">↗</span>
-              </ButtonPrimary>
+              <FooterNewsletterCTA label={t('newsletter.cta')} />
             </div>
           </section>
+        </div>
 
-          {/* Wordmark + dirección + social */}
-          <div className="flex flex-col gap-10 lg:col-span-5">
-            <div className="flex items-start">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/logo/interactius_w.svg"
-                alt="Interactius"
-                style={{ height: 'clamp(60px, 7vw, 95px)', width: 'auto' }}
-              />
-            </div>
+        {/* Spacer */}
+        <div className="min-h-20 flex-1" />
 
-            <div className="flex flex-col gap-4 font-mono text-body-sm">
-              <address className="not-italic text-pure-white/80">
+        {/* ADDRESS + SOCIAL — baja-derecha, cols 8-12 (subgrid 9/3) */}
+        <div className="grid grid-cols-12 gap-grid-gutter">
+          <div className="col-span-12 grid grid-cols-12 gap-grid-gutter lg:col-span-5 lg:col-start-8">
+            <div className="col-span-12 flex flex-col gap-1 font-mono text-body-sm text-warm-light/60 sm:col-span-9">
+              <address className="not-italic">
                 <p>Pau Claris, 100 Planta 2</p>
                 <p>08009 Barcelona</p>
               </address>
-
-              <ul className="flex flex-col gap-1">
-                <li>
-                  <a
-                    href="tel:+34936243913"
-                    className="text-pure-white hover:opacity-60"
-                  >
-                    Tel. 936 24 39 13
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="mailto:hola@interactius.com"
-                    className="text-pure-white hover:opacity-60"
-                  >
-                    hola@interactius.com
-                  </a>
-                </li>
-              </ul>
+              <a
+                href="tel:+34936243913"
+                className="transition-colors hover:text-warm-light"
+              >
+                Tel. 936 24 39 13
+              </a>
+              <a
+                href="mailto:hola@interactius.com"
+                className="hover-wipe-underline w-fit text-warm-light"
+              >
+                hola@interactius.com
+              </a>
             </div>
 
             <ul
-              className="flex items-center gap-4"
               aria-label={t('social.label')}
+              className="col-span-12 flex flex-col gap-2 font-mono text-body-sm text-warm-light/60 sm:col-span-3 sm:h-full sm:items-end sm:justify-between sm:gap-0"
             >
               <li>
                 <a
@@ -90,10 +85,9 @@ export async function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={t('social.linkedin')}
-                  className="inline-flex size-10 items-center justify-center
-                             text-pure-white hover:opacity-60"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
-                  <LinkedInIcon />
+                  LinkedIn
                 </a>
               </li>
               <li>
@@ -102,10 +96,9 @@ export async function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={t('social.instagram')}
-                  className="inline-flex size-10 items-center justify-center
-                             text-pure-white hover:opacity-60"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
-                  <InstagramIcon />
+                  Instagram
                 </a>
               </li>
               <li>
@@ -114,92 +107,64 @@ export async function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={t('social.youtube')}
-                  className="inline-flex size-10 items-center justify-center
-                             text-pure-white hover:opacity-60"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
-                  <YouTubeIcon />
+                  YouTube
                 </a>
               </li>
             </ul>
           </div>
         </div>
+      </div>
 
-        {/* Bottom bar */}
-        <div
-          className="mt-24 grid grid-cols-1 gap-4 border-t border-pure-white/20 pt-8
-                     lg:grid-cols-12 lg:gap-grid-gutter"
-        >
-          <p className="font-mono text-micro text-pure-white/60 lg:col-span-4">
+      {/* BOTTOM — línea full-width + copyright/legal pegados al bottom */}
+      <div className="border-t border-warm-light/20">
+        <div className="section-inner flex flex-col gap-4 py-6 lg:flex-row lg:items-center lg:justify-between">
+          <p className="font-mono text-micro text-warm-light/60">
             ©2012–{year} Interactius
           </p>
 
-          <nav
-            aria-label={t('legal.label')}
-            className="lg:col-span-8"
-          >
-            <ul className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-micro">
+          <nav aria-label={t('legal.label')}>
+            <ul className="flex flex-wrap gap-x-8 gap-y-2 font-mono text-micro text-warm-light/60">
               <li>
-                <span
-                  aria-disabled="true"
-                  className="text-pure-white/40 cursor-not-allowed"
+                <CurtainLink
+                  href="/politica-privacidad"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
                   {t('legal.privacy')}
-                </span>
+                </CurtainLink>
               </li>
               <li>
-                <span
-                  aria-disabled="true"
-                  className="text-pure-white/40 cursor-not-allowed"
+                <CurtainLink
+                  href="/politica-cookies"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
                   {t('legal.cookies')}
-                </span>
+                </CurtainLink>
               </li>
               <li>
-                <span
-                  aria-disabled="true"
-                  className="text-pure-white/40 cursor-not-allowed"
+                <CurtainLink
+                  href="/terminos"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
                   {t('legal.terms')}
-                </span>
+                </CurtainLink>
               </li>
               <li>
-                <Link
+                <CurtainLink
                   href="/aviso-legal"
-                  className="text-pure-white/60 hover:text-pure-white focus-visible:text-pure-white"
+                  className="hover-wipe-underline w-fit text-warm-light"
                 >
                   {t('legal.notice')}
-                </Link>
+                </CurtainLink>
+              </li>
+              <li>
+                <ManagePreferencesButton />
               </li>
             </ul>
           </nav>
         </div>
       </div>
     </footer>
-  )
-}
-
-function LinkedInIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      <path d="M3.6 6.8v9.7H.4V6.8h3.2zM2 .2a1.8 1.8 0 110 3.6 1.8 1.8 0 010-3.6zM19.6 16.5h-3.2v-4.7c0-1.1 0-2.6-1.6-2.6s-1.8 1.2-1.8 2.5v4.8H9.8V6.8h3v1.3h.1a3.3 3.3 0 013-1.6c3.2 0 3.7 2.1 3.7 4.8v5.2z" />
-    </svg>
-  )
-}
-
-function InstagramIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-      <rect x="2" y="2" width="16" height="16" rx="4" />
-      <circle cx="10" cy="10" r="3.5" />
-      <circle cx="14.5" cy="5.5" r="0.8" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
-
-function YouTubeIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      <path d="M19.6 5.8a2.5 2.5 0 00-1.7-1.7C16.4 3.7 10 3.7 10 3.7s-6.4 0-7.9.4A2.5 2.5 0 00.4 5.8C0 7.3 0 10 0 10s0 2.7.4 4.2a2.5 2.5 0 001.7 1.7c1.5.4 7.9.4 7.9.4s6.4 0 7.9-.4a2.5 2.5 0 001.7-1.7c.4-1.5.4-4.2.4-4.2s0-2.7-.4-4.2zM8 13V7l5.2 3L8 13z" />
-    </svg>
   )
 }

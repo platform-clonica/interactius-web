@@ -1,6 +1,6 @@
 import createMiddleware from 'next-intl/middleware'
 
-import { routing } from '@/lib/i18n/routing'
+import { routing } from './lib/i18n/routing'
 
 /**
  * Middleware de i18n — delega completamente en next-intl.

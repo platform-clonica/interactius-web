@@ -9,17 +9,18 @@ import { useTranslations } from 'next-intl'
 import { FormField } from '@/components/ui/FormField'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
-import { Link } from '@/lib/i18n/routing'
+import { Link } from '@/lib/i18n/navigation'
 
 /* ==========================================================================
    Types
    ========================================================================== */
 
 type ContactoData = {
-  name: string
-  company: string
+  firstName: string
+  lastName: string
   email: string
-  message: string
+  company?: string
+  message?: string
   privacy: true
 }
 
@@ -113,6 +114,8 @@ interface FormShellProps {
   successBody: string
   submitLabel: string
   submittingLabel: string
+  /** Si true, el botón submit queda inhabilitado (además de durante el envío). */
+  submitDisabled?: boolean
   onSubmit: (e: React.FormEvent) => void
   children: React.ReactNode
 }
@@ -124,6 +127,7 @@ function FormShell({
   successBody,
   submitLabel,
   submittingLabel,
+  submitDisabled,
   onSubmit,
   children,
 }: FormShellProps) {
@@ -136,12 +140,14 @@ function FormShell({
     )
   }
 
+  const disabled = status === 'submitting' || !!submitDisabled
+
   return (
     <form
       noValidate
       onSubmit={onSubmit}
       aria-busy={status === 'submitting'}
-      className="flex flex-col gap-6"
+      className="flex flex-col gap-3"
     >
       {children}
 
@@ -156,10 +162,9 @@ function FormShell({
           as="button"
           type="submit"
           variant="dark"
-          disabled={status === 'submitting'}
+          disabled={disabled}
         >
-          {status === 'submitting' ? submittingLabel : submitLabel}{' '}
-          <span aria-hidden="true">↗</span>
+          {status === 'submitting' ? submittingLabel : submitLabel}
         </ButtonPrimary>
       </div>
     </form>
@@ -208,10 +213,11 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
   const schema = useMemo(
     () =>
       z.object({
-        name: z.string().min(2, t('validation.name')),
-        company: z.string().min(1, t('validation.company')),
+        firstName: z.string().min(2, t('validation.name')),
+        lastName: z.string().min(2, t('validation.lastName')),
         email: z.string().email(t('validation.email')),
-        message: z.string().min(10, t('validation.messageMin')),
+        company: z.string().optional(),
+        message: z.string().optional(),
         privacy: z.literal(true, {
           errorMap: () => ({ message: t('validation.privacy') }),
         }),
@@ -222,8 +228,11 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ContactoData>({ resolver: zodResolver(schema), mode: 'onBlur' })
+
+  const privacyAccepted = watch('privacy') === true
 
   const onSubmit: SubmitHandler<ContactoData> = async (data) => {
     setStatus('submitting')
@@ -250,27 +259,28 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
       successBody={t('success.body')}
       submitLabel={t('submit')}
       submittingLabel={t('submitting')}
+      submitDisabled={!privacyAccepted}
       onSubmit={handleSubmit(onSubmit)}
     >
       <div data-contact-field>
         <FormField
-          {...register('name')}
+          {...register('firstName')}
           label={t('labels.name')}
-          name="name"
+          name="firstName"
           type="text"
-          autoComplete="name"
-          error={errors.name?.message}
+          autoComplete="given-name"
+          error={errors.firstName?.message}
           required
         />
       </div>
       <div data-contact-field>
         <FormField
-          {...register('company')}
-          label={t('labels.company')}
-          name="company"
+          {...register('lastName')}
+          label={t('labels.lastName')}
+          name="lastName"
           type="text"
-          autoComplete="organization"
-          error={errors.company?.message}
+          autoComplete="family-name"
+          error={errors.lastName?.message}
           required
         />
       </div>
@@ -287,15 +297,25 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
       </div>
       <div data-contact-field>
         <FormField
+          {...register('company')}
+          label={t('labels.company')}
+          name="company"
+          type="text"
+          autoComplete="organization"
+          error={errors.company?.message}
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
           {...register('message')}
           as="textarea"
           label={t('labels.message')}
           name="message"
           error={errors.message?.message}
-          required
           autoResize
         />
       </div>
+      <p data-contact-field className="font-mono text-micro text-fg/40">{t('requiredHint')}</p>
       <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )
@@ -321,8 +341,11 @@ function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: Su
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<NewsletterData>({ resolver: zodResolver(schema), mode: 'onBlur' })
+
+  const privacyAccepted = watch('privacy') === true
 
   const onSubmit: SubmitHandler<NewsletterData> = async (data) => {
     setStatus('submitting')
@@ -349,6 +372,7 @@ function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: Su
       successBody={t('success.body')}
       submitLabel={t('submit')}
       submittingLabel={t('submitting')}
+      submitDisabled={!privacyAccepted}
       onSubmit={handleSubmit(onSubmit)}
     >
       <div data-contact-field>
@@ -394,6 +418,7 @@ function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: Su
           required
         />
       </div>
+      <p data-contact-field className="font-mono text-micro text-fg/40">{t('requiredHint')}</p>
       <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )
@@ -422,8 +447,11 @@ function TestersForm({ status, setStatus, errorMessage, setErrorMessage }: SubFo
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<TestersData>({ resolver: zodResolver(schema), mode: 'onBlur' })
+
+  const privacyAccepted = watch('privacy') === true
 
   const onSubmit: SubmitHandler<TestersData> = async (data) => {
     setStatus('submitting')
@@ -450,6 +478,7 @@ function TestersForm({ status, setStatus, errorMessage, setErrorMessage }: SubFo
       successBody={t('success.body')}
       submitLabel={t('submit')}
       submittingLabel={t('submitting')}
+      submitDisabled={!privacyAccepted}
       onSubmit={handleSubmit(onSubmit)}
     >
       <div data-contact-field>
@@ -533,6 +562,7 @@ function TestersForm({ status, setStatus, errorMessage, setErrorMessage }: SubFo
           required
         />
       </div>
+      <p data-contact-field className="font-mono text-micro text-fg/40">{t('requiredHint')}</p>
       <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
     </FormShell>
   )

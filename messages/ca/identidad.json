@@ -2,12 +2,13 @@
   "hero": {
     "title": "Estratègia i disseny per habitar el canvi.",
     "imageAlt": "Equip Interactius",
-    "body1": "Interactius neix l'any <strong>2013</strong> de la mà d'un professor de belles arts, Josep, i un alumne d'enginyeria informàtica, Carlos.",
-    "body2": "Aquells dos mons aviat van evolucionar a una senzilla essència sobre el que avui som: un company, un còmplice, un <strong>partner</strong>.",
-    "body3": "Després de tots aquests anys, només tenim una certesa: no esperem que el canvi passi ni permetem que ens arrossegui; <strong>el canvi és el que ens mou</strong>."
+    "body1": "Interactius neix l'any <strong>2012</strong> de la mà d'un professor de belles arts, Josep, i un alumne d'enginyeria informàtica, Carlos.",
+    "body2": "D'aquella tensió entre l'artístic i el tècnic sorgeix el que avui som: un <strong>equip multidisciplinari</strong> que aposta per humanitzar la tecnologia.",
+    "body3": "No encaixem en etiquetes ni ens en vestim. Som un <strong>partner</strong>: proper, implicat i enfocat en el que realment importa. Treballar amb rigor, naturalitat i criteri.",
+    "body4": "No esperem que el canvi passi ni deixem que ens arrossegui. L'habitem. I des d'aquí, avancem."
   },
   "intro": {
-    "quote": "Existim per evitar que les <strong>decisions</strong> de disseny es prenguin ignorant la realitat i el context de les persones."
+    "quote": "Liderar el <strong>canvi</strong> radica en entendre la complexitat humana i el seu context."
   },
   "valores": {
     "0": {
@@ -32,12 +33,15 @@
     }
   },
   "liminal": {
-    "title": "Liminal Thinkers",
-    "body": "Al centre no passa res de nou. El centre és previsible, és segur i, avui en dia, és el lloc més ràpid per tornar-se irrellevant. El que importa rarament passa on tothom mira. Nosaltres dissenyem al marge, en l'ambigüitat, en l'incert. On existeixen tensions no nomenades, usuaris amb veu i futurs per dibuixar. <strong>Treballem on encara no hi ha resposta. Allà triem estar</strong>.",
+    "title": "Actitud Liminal",
+    "body1": "Al centre no passa res de nou. És previsible, còmode i, avui, la manera més ràpida de tornar-se irrellevant.",
+    "body2": "Per això decidim operar als marges: en l'ambigu, l'incert, <strong>el que canvia.</strong> Allà hi ha les veritats humanes. I allà decidim quedar-nos.",
+    "body3": "Treballem des d'aquest espai liminal, entre el que és i el que està per venir. Ho fem qüestionant l'evident i desplaçant el focus, amb criteri i perspectiva humana.",
+    "body4": "Amb aquesta mirada, ajudem les organitzacions a utilitzar el <strong>disseny i l'estratègia</strong> per habitar el canvi, pensar diferent i dubtar millor.",
     "quote": "Habitem al marge per viure en el canvi."
   },
   "metodologia": {
-    "title": "Metodologia",
+    "title": "Enfocament",
     "pasos": {
       "0": { "label": "Pensar", "description": "Nomenem el que encara no té forma." },
       "1": { "label": "Activar", "description": "Posem en moviment el que importa." },

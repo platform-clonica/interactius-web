@@ -35,7 +35,7 @@ export function IdentidadHero() {
       gsap.registerPlugin(ScrollTrigger)
 
       const reduced = getReducedMotion()
-      const ease = 'cubic-bezier(.16,1,.3,1)'
+      const ease = 'power4.inOut'
       const cleanups: Array<() => void> = []
 
       if (reduced) {
@@ -120,7 +120,7 @@ export function IdentidadHero() {
         style={{ left: '58.2%' }}
       >
         <Image
-          src="/identidad/hero-right.jpg"
+          src="/identidad/hero-right.webp"
           alt={t('hero.imageAlt')}
           fill
           priority
@@ -131,7 +131,7 @@ export function IdentidadHero() {
 
       <div className="relative z-content section-inner">
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-span-12 lg:col-span-6 flex flex-col gap-12 pt-[calc(80px+18vh)] pb-20 lg:pb-32">
+          <div className="col-span-12 lg:col-span-5 lg:col-start-2 flex flex-col gap-12 pt-[calc(80px+18vh)] pb-20 lg:pb-32">
             <h1
               ref={headlineRef}
               className="font-serif font-light text-title text-fg leading-[1.1] tracking-[-0.02em] pt-[5px]"
@@ -143,6 +143,7 @@ export function IdentidadHero() {
               <p data-body-p="" className="pt-[5px]">{t.rich('hero.body1', richComponents.bold)}</p>
               <p data-body-p="">{t.rich('hero.body2', richComponents.bold)}</p>
               <p data-body-p="">{t.rich('hero.body3', richComponents.bold)}</p>
+              <p data-body-p="">{t.rich('hero.body4', richComponents.bold)}</p>
             </div>
           </div>
         </div>
@@ -151,7 +152,7 @@ export function IdentidadHero() {
       {/* Mobile image */}
       <div className="relative w-full aspect-[3/2] lg:hidden overflow-hidden">
         <Image
-          src="/identidad/hero-right.jpg"
+          src="/identidad/hero-right.webp"
           alt={t('hero.imageAlt')}
           fill
           sizes="100vw"

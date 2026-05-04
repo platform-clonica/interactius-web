@@ -2,12 +2,13 @@
   "hero": {
     "title": "Estrategia y diseño para habitar el cambio.",
     "imageAlt": "Equipo Interactius",
-    "body1": "Interactius nace en <strong>2013</strong> de la mano de un profesor de bellas artes, Josep, y un alumno de ingeniería informática, Carlos.",
-    "body2": "Aquellos dos mundos pronto evolucionaron a una sencilla esencia sobre lo que hoy somos: un compañero, un cómplice, un <strong>partner</strong>.",
-    "body3": "Tras todos estos años, solo tenemos una certeza: no esperamos a que el cambio pase ni permitimos que nos arrastre; <strong>el cambio es lo que nos mueve</strong>."
+    "body1": "Interactius nace en <strong>2012</strong> de la mano de un profesor de bellas artes, Josep, y un alumno de ingeniería informática, Carlos.",
+    "body2": "De esa tensión entre lo artístico y lo técnico surge lo que hoy somos: un <strong>equipo multidisciplinar</strong> que apuesta por humanizar la tecnología.",
+    "body3": "No encajamos en etiquetas ni vestimos de ellas. Somos un <strong>partner</strong>: cercano, implicado y enfocado en lo que realmente importa. Trabajar con rigor, naturalidad y criterio.",
+    "body4": "No esperamos a que el cambio ocurra ni dejamos que nos arrastre. Lo habitamos. Y desde ahí, avanzamos."
   },
   "intro": {
-    "quote": "Existimos para evitar que las <strong>decisiones</strong> de diseño se tomen ignorando la realidad y el contexto de las personas."
+    "quote": "Liderar el <strong>cambio</strong> radica en entender la complejidad humana y su contexto."
   },
   "valores": {
     "0": {
@@ -32,12 +33,15 @@
     }
   },
   "liminal": {
-    "title": "Liminal Thinkers",
-    "body": "En el centro no pasa nada nuevo. El centro es previsible, es seguro y, hoy en día, es el lugar más rápido para volverse irrelevante. Lo importante rara vez ocurre donde todos miran. Nosotros diseñamos en el margen, en la ambigüedad, en lo incierto. Donde existen tensiones no nombradas, usuarios con voz y futuros por dibujar. <strong>Trabajamos donde todavía no hay respuesta. Ahí elegimos estar</strong>.",
+    "title": "Actitud Liminal",
+    "body1": "En el centro no pasa nada nuevo. Es previsible, cómodo y, hoy, la forma más rápida de volverse irrelevante.",
+    "body2": "Por eso decidimos operar en los márgenes: en lo ambiguo, lo incierto, <strong>lo que cambia.</strong> Ahí están las verdades humanas. Y ahí decidimos quedarnos.",
+    "body3": "Trabajamos desde ese espacio liminal, entre lo que es y lo que está por venir. Lo hacemos cuestionando lo evidente y desplazando el foco, con criterio y perspectiva humana.",
+    "body4": "Con esta mirada, ayudamos a las organizaciones a utilizar el <strong>diseño y la estrategia</strong> para habitar el cambio, pensar distinto y dudar mejor.",
     "quote": "Habitamos en el margen para vivir en el cambio."
   },
   "metodologia": {
-    "title": "Metodología",
+    "title": "Enfoque",
     "pasos": {
       "0": { "label": "Pensar", "description": "Nombramos lo que aún no tiene forma." },
       "1": { "label": "Activar", "description": "Ponemos en movimiento lo que importa." },

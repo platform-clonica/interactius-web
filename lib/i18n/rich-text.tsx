@@ -48,10 +48,20 @@ const underlineStyle: RichComponents = {
   u: (chunks) => <span className="underline underline-offset-4">{chunks}</span>,
 }
 
+/**
+ * boldWord — <strong> renderizado como <span data-word> para que el efecto
+ * canónico bold (text-stroke 0→0.6px + slashes "/ palabra /" inyectados a
+ * scroll) pueda localizar la palabra. Uso: CapacityStatement, IdentidadIntro.
+ */
+const boldWord: RichComponents = {
+  strong: (chunks) => <span data-word="">{chunks}</span>,
+}
+
 /* ─── Export ─────────────────────────────────────────────────── */
 
 export const richComponents = {
   bold,
   serifEmphasis,
   underlineStyle,
+  boldWord,
 } as const

@@ -1,80 +1,88 @@
-import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 
 import { WorkCard, type WorkCardData } from './WorkCard'
+import { PortfolioOpeningImage } from './PortfolioOpeningImage'
 
 const WORK_DATA: WorkCardData[] = [
   {
     client: 'Imagin',
-    title: 'Sistematización de investigación',
+    title: 'Rediseñando la banca digital desde la estrategia hasta la experiencia',
     bgColor: 'lavender',
     aspectRatio: 'square',
     gridStart: 1,
     gridSpan: 6,
     marginTop: 0,
+    imageUrl: '/home/home-imagin.png',
   },
   {
     client: 'Massimo Dutti',
-    title: 'Experiencia digital',
+    title: 'Rediseño web/app. Del Design System a la experiencia unificada',
     bgColor: 'bordeaux',
     aspectRatio: 'square',
     gridStart: 8,
     gridSpan: 5,
     marginTop: 80,
+    imageUrl: '/home/home-massimo.webp',
   },
   {
     client: 'Serveo',
-    title: 'Optimización operativa',
+    title: 'Cultura y tecnología. Construyendo puentes entre equipos',
     bgColor: 'emerald',
     aspectRatio: '3/4',
     gridStart: 1,
     gridSpan: 4,
     marginTop: 120,
+    imageUrl: '/home/home-serveo.webp',
   },
   {
     client: 'Novartis',
-    title: 'Adopción de IA',
+    title: 'Adopción de IA con propósito. Identificar fricciones y diseñar el aprendizaje',
     bgColor: 'opal',
     aspectRatio: 'square',
     gridStart: 6,
     gridSpan: 7,
     marginTop: 80,
+    imageUrl: '/home/home-novartis.webp',
   },
   {
     client: 'Mahou',
-    title: 'Estrategia de naming',
+    title: 'Redefiniendo la marca Rentabilibar desde su esencia estratégica',
     bgColor: 'bordeaux',
     aspectRatio: 'square',
     gridStart: 2,
     gridSpan: 5,
     marginTop: 160,
+    imageUrl: '/home/home-nexho.webp',
   },
   {
     client: 'Frit Ravich',
-    title: 'Bootcamp de innovación',
+    title: 'Impulsando la innovación disruptiva y el talento interno',
     bgColor: 'lavender',
     aspectRatio: '3/4',
     gridStart: 8,
     gridSpan: 5,
     marginTop: 100,
+    imageUrl: '/home/home-frit2.webp',
   },
   {
     client: 'Grandvalira',
-    title: 'Optimización de conversión',
+    title: 'Optimizando la conversión. Auditoría del asistente de compras',
     bgColor: 'opal',
     aspectRatio: 'square',
     gridStart: 2,
     gridSpan: 5,
     marginTop: 140,
+    imageUrl: '/home/home-grandvalira.webp',
   },
   {
     client: 'Ecoembes',
-    title: 'Experiencia de reciclaje',
+    title: 'Entendiendo la realidad del hogar para impulsar cambios en el reciclaje',
     bgColor: 'emerald',
     aspectRatio: 'square',
     gridStart: 8,
     gridSpan: 5,
     marginTop: 80,
+    imageUrl: '/home/home-ecoembes.webp',
   },
 ]
 
@@ -87,19 +95,11 @@ export async function WorkGrid() {
       aria-label={t('work.ariaLabel')}
       className="relative z-content w-full"
     >
-      {/* Imagen apertura */}
-      <div
-        className="relative mt-10 lg:mt-16 overflow-hidden"
-        style={{ height: 'clamp(240px, 29vw, 550px)', maxWidth: '86%' }}
-      >
-        <Image
-          src="/home/portfolio-opening.jpg"
-          alt=""
-          fill
-          sizes="86vw"
-          className="object-cover object-center"
-          aria-hidden
-        />
+      {/* Imagen de apertura — reveal lateral, cols 1-11 del grid 12 */}
+      <div className="section-inner mt-10 lg:mt-16">
+        <div className="grid grid-cols-12 gap-grid-gutter">
+          <PortfolioOpeningImage />
+        </div>
       </div>
 
       <div className="section-inner py-section">
@@ -108,12 +108,14 @@ export async function WorkGrid() {
           <h2
             id="work-heading"
             className="font-serif text-section font-normal text-fg
-                       lg:col-span-5"
+                       lg:col-start-2 lg:col-span-5"
           >
             {t('work.heading')}
           </h2>
-          <p className="font-mono text-body text-fg/80 lg:col-span-8 lg:col-start-4">
-            {t('work.description')}
+          <p className="font-mono text-body-sm text-fg lg:col-span-8 lg:col-start-4">
+            {t.rich('work.description', {
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
         </header>
 

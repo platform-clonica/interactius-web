@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
-import { CapacityHero } from '@/components/capacity/CapacityHero'
-import { CapacityIntro } from '@/components/capacity/CapacityIntro'
+import { CapacityHeroSequence } from '@/components/capacity/CapacityHeroSequence'
 import { CapacityServices } from '@/components/capacity/CapacityServices'
 import { CapacityOthers } from '@/components/capacity/CapacityOthers'
+import { ClientsMarquee } from '@/components/capacity/ClientsMarquee'
+import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
 import type { CapacityOtherItem } from '@/components/capacity/CapacityOthers'
-import type { RouteId } from '@/lib/i18n/routing'
+import type { RouteId } from '@/lib/i18n/navigation'
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
-import { getAlternates, localizedPath } from '@/lib/i18n/routing'
+import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
 interface PageProps {
@@ -37,22 +38,29 @@ export default async function PensamientoEstrategico({ params }: PageProps) {
 
   return (
     <>
-      <CapacityHero
+      <CapacityHeroSequence
         title={capacityTitle}
-        lead={t('pensamiento.hero.lead')}
-        imageSrc="/capacidades/pensamiento-estrategico.jpg"
+        lead={t.rich('pensamiento.hero.lead', {
+          // <strong> en JSON renderiza como h2 con estilo del tagline de la
+          // home — actúa como titular tipográfico del lead.
+          strong: (chunks) => (
+            <h2 className="font-serif text-title-sm font-light text-fg">{chunks}</h2>
+          ),
+          p: (chunks) => <p>{chunks}</p>,
+        })}
+        statement={t.rich('pensamiento.intro.statement', richComponents.boldWord)}
+        imageSrc="/capacidades/pensamiento-hero-right.webp"
+        imageBottomSrc="/capacidades/pensamiento-hero-bottom.webp"
       />
 
-      <CapacityIntro
-        statement={t('pensamiento.intro.statement')}
-        clients={t('pensamiento.intro.clients')}
-        imageSrc="/capacidades/pensamiento-intro.jpg"
-      />
+      <ClientsMarquee clients={t('pensamiento.intro.clients')} />
 
       <CapacityServices
         services={services}
         sectionLabel={t('sections.services')}
         capacityLabel={capacityTitle}
+        accentColor="#B0B5B0"
+        strokeColor="#7A7F7A"
       />
 
       <CapacityOthers

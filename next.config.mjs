@@ -198,7 +198,6 @@ const nextConfig = {
       { source: '/empleo-ux/', destination: '/contacto/', permanent: true },
       { source: '/STMDL/Digital-transformation-tools.pdf', destination: '/miradas/', permanent: true },
       { source: '/case-study/', destination: '/', permanent: true },
-      { source: '/aviso-legal', destination: '/aviso-legal/', permanent: true },
     ]
   },
 

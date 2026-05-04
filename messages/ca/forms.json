@@ -32,6 +32,7 @@
   },
   "submit": "Enviar",
   "submitting": "Enviant…",
+  "requiredHint": "* Camps obligatoris",
   "success": {
     "title": "Missatge enviat.",
     "body": "Gràcies per escriure'ns. Et respondrem aviat."

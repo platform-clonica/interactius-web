@@ -1,8 +1,8 @@
 {
   "newsletter": {
-    "tagline": "Primero las personas. Después la tecnología. Nuestra newsletter es un espacio para parar, pensar y cuestionar.",
-    "subtitle": "Compartimos aprendizajes reales sobre diseño, estrategia e IA con criterio.",
-    "cta": "Suscribirme"
+    "tagline": "Nuestra Newsletter.\nUn espacio para reflexionar.",
+    "subtitle": "Cada mes compartimos ideas, aprendizajes y casos reales para entender mejor lo que está pasando. Sin ruido. Con intención.",
+    "cta": "Suscríbete"
   },
   "social": {
     "label": "Redes sociales",
@@ -15,6 +15,7 @@
     "privacy": "Política de Privacidad",
     "cookies": "Configuración de cookies",
     "terms": "Términos y condiciones",
-    "notice": "Aviso Legal"
+    "notice": "Aviso Legal",
+    "managePreferences": "Gestionar preferencias"
   }
 }

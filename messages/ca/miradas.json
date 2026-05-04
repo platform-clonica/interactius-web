@@ -1,24 +1,20 @@
 {
   "hero": {
-    "subtitlePrefix": "/",
-    "subtitleBold": "Mirades",
-    "subtitleSuffix": "/ que aborden problemes reals, qüestionen l'establert i connecten disseny, negoci, tecnologia i persones."
+    "subtitle": "<strong>Mirades</strong> que aborden problemes reals, qüestionen l'establert i connecten disseny, negoci, tecnologia i persones."
   },
   "grid": {
     "superTitle": "Mirades",
     "searchPlaceholder": "Cercar per paraula",
     "searchAriaLabel": "Cercar articles",
     "noResults": "No hi ha articles que coincideixin.",
-    "interstitialQuote": "Treballem en l'espai on una decisió de negoci i una veritat humana s'han de trobar.",
-    "loadMore": "Vull <u>més</u>.",
     "categories": {
-      "design": "Disseny",
-      "ia": "IA",
-      "ux": "UX",
+      "ux-design": "UX Design",
+      "innovacion": "Innovació",
       "research": "Recerca",
       "estrategia": "Estratègia",
-      "workshops": "Tallers",
-      "diseno-inclusivo": "Disseny Inclusiu"
+      "ui-design": "UI Design",
+      "tendencias": "Tendències",
+      "product-design": "Product Design"
     }
   }
 }
