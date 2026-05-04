@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { Link } from '@/lib/i18n/navigation'
 import type { RouteId } from '@/lib/i18n/navigation'
@@ -9,35 +9,36 @@ import { usePageCurtainStore } from '@/lib/store/curtain'
 import { PlusArrowFlipIcon } from '@/components/ui/PlusArrowFlipIcon'
 
 /* ==========================================================================
-   CapacityOthersAnim — tarjetas con clip-path lateral (sección 4/4)
+   CapacityOthersAnim — tab strip de los 3 servicios (sección final)
    --------------------------------------------------------------------------
-   Dos tarjetas de "otras capacidades" animadas al entrar en el viewport:
+   3 columnas iguales con los 3 servicios en orden canónico.
+   - Servicio actual (currentHref): bg-warm-light (se funde con la sección),
+     sin flecha, sin link, sin hover.
+   - Otros 2: bg-pure-white (cards levantadas), flecha + link + hover-text-flip.
 
-   IntersectionObserver (threshold 0):
-     Tarjeta 1: clip-path inset(0 100% 0 0) → inset(0 0% 0 0), 0.8s, power3.out
-     Tarjeta 2: mismo, delay 0.15s
-     Tras clip-path complete: SplitType line-mask de textos internos
+   Los 2 cards "inactivos" entran con clip-path lateral (canónico) cuando
+   la sección entra en viewport, con stagger.
    ========================================================================== */
 
-export interface CapacityOtherItem {
+export interface CapacityTabItem {
   title: string
   description: string
   href: RouteId
 }
 
 interface CapacityOthersAnimProps {
-  items: [CapacityOtherItem, CapacityOtherItem]
+  tabs: [CapacityTabItem, CapacityTabItem, CapacityTabItem]
+  currentHref: RouteId
   sectionLabel: string
 }
 
 export function CapacityOthersAnim({
-  items,
+  tabs,
+  currentHref,
   sectionLabel,
 }: CapacityOthersAnimProps) {
   const beginPageCurtain = usePageCurtainStore((s) => s.beginPageCurtain)
 
-  // Click handler — intercepta navegación interna y dispara la cortina global.
-  // Cmd/Ctrl/Shift/Alt clicks o middle-click se dejan pasar (abrir en pestaña).
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
@@ -48,15 +49,17 @@ export function CapacityOthersAnim({
   )
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const card0Ref = useRef<HTMLAnchorElement>(null)
-  const card1Ref = useRef<HTMLAnchorElement>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cardRefs = useRef<Array<HTMLElement | null>>([null, null, null])
   const cleanupRef = useRef<(() => void) | null>(null)
 
   useEffect(() => {
-    const card0 = card0Ref.current
-    const card1 = card1Ref.current
-    if (!card0 || !card1) return
+    const cards = cardRefs.current
+    const inactiveCards = cards
+      .map((el, i) => ({ el, isActive: tabs[i]?.href === currentHref }))
+      .filter((c) => c.el && !c.isActive)
+      .map((c) => c.el as HTMLElement)
+
+    if (inactiveCards.length === 0) return
 
     void (async () => {
       const [{ default: gsap }, { default: SplitType }] = await Promise.all([
@@ -67,15 +70,12 @@ export function CapacityOthersAnim({
       const reduced = getReducedMotion()
 
       if (reduced) {
-        gsap.set([card0, card1], { clearProps: 'all' })
+        gsap.set(inactiveCards, { clearProps: 'all' })
         return
       }
 
-      // ── Estado inicial ─────────────────────────────────────────────────────
-      gsap.set(card0, { clipPath: 'inset(0 100% 0 0)' })
-      gsap.set(card1, { clipPath: 'inset(0 100% 0 0)' })
+      gsap.set(inactiveCards, { clipPath: 'inset(0 100% 0 0)' })
 
-      // ── Función para revelar textos de una tarjeta ────────────────────────
       const revealCardText = (card: HTMLElement) => {
         const titleEl = card.querySelector<HTMLElement>('[data-other-title]')
         const descEl  = card.querySelector<HTMLElement>('[data-other-desc]')
@@ -84,11 +84,6 @@ export function CapacityOthersAnim({
         if (!titleEl) return
         const splits: InstanceType<typeof SplitType>[] = []
 
-        // Title: NO usamos SplitType porque el título ya viene estructurado
-        // con `.st-mask` (uno por línea del split por \n del JSON). Si dejamos
-        // que SplitType reprocese, recalcula el wrap a partir del DOM ya
-        // renderizado y a veces colapsa las líneas a una sola → layout shift
-        // perceptible cuando entra en viewport.
         const titleLines = Array.from(
           titleEl.querySelectorAll<HTMLElement>('.st-mask'),
         )
@@ -117,7 +112,6 @@ export function CapacityOthersAnim({
         }
         if (arrowEl) gsap.to(arrowEl, { opacity: 1, duration: 0.4, delay: 0.2 })
 
-        // Cleanup splits cuando termine
         setTimeout(() => splits.forEach((s) => s.revert()), 2000)
       }
 
@@ -128,21 +122,14 @@ export function CapacityOthersAnim({
           if (!entry?.isIntersecting || triggered) return
           triggered = true
 
-          // Tarjeta 0
-          gsap.to(card0, {
-            clipPath: 'inset(0 0% 0 0)',
-            duration: 0.8,
-            ease: 'power4.inOut',
-            onComplete: () => revealCardText(card0),
-          })
-
-          // Tarjeta 1 con stagger
-          gsap.to(card1, {
-            clipPath: 'inset(0 0% 0 0)',
-            duration: 0.8,
-            ease: 'power4.inOut',
-            delay: 0.15,
-            onComplete: () => revealCardText(card1),
+          inactiveCards.forEach((card, idx) => {
+            gsap.to(card, {
+              clipPath: 'inset(0 0% 0 0)',
+              duration: 0.8,
+              ease: 'power4.inOut',
+              delay: idx * 0.15,
+              onComplete: () => revealCardText(card),
+            })
           })
         },
         { threshold: 0.1 },
@@ -155,30 +142,78 @@ export function CapacityOthersAnim({
     })()
 
     return () => cleanupRef.current?.()
-  }, [])
+  }, [tabs, currentHref])
 
   return (
     <section
-      className="w-full bg-pure-white border-t border-muted"
+      className="w-full bg-warm-light"
       aria-label={sectionLabel}
     >
-      <div className="section-inner">
-        <div
-          ref={containerRef}
-          className="grid grid-cols-12"
-        >
-          {items.map((item, i) => (
+      <div
+        ref={containerRef}
+        className="grid grid-cols-1 lg:grid-cols-3 w-full"
+      >
+        {tabs.map((tab, i) => {
+          const isActive = tab.href === currentHref
+          const nextInactive =
+            i < tabs.length - 1 && tabs[i + 1].href !== currentHref
+          const showSeparator = !isActive && nextInactive
+
+          const titleLines = tab.title.split('\n').map((line, lineIdx) => (
+            <span key={lineIdx} className="st-mask">
+              <span
+                className={isActive ? 'inline-block' : 'hover-text-flip-target inline-block'}
+                style={isActive ? undefined : { animationDelay: `${lineIdx * 60}ms` }}
+              >
+                {line}
+              </span>
+            </span>
+          ))
+
+          // Cada tab ocupa 1/3 de viewport (touching, sin gap). Bg blanco
+          // edge-to-edge en su tercio en inactivos; warm-light en activo.
+          // p-5 = 20px en todos los lados (alrededor del grupo arrow+title+desc).
+          // Separador 1px sólo entre dos inactivos adyacentes.
+          const bgClass = isActive ? 'bg-warm-light' : 'bg-pure-white'
+          const sepClass = showSeparator ? 'lg:border-r lg:border-muted' : ''
+          const commonClasses =
+            `p-5 flex flex-col gap-2 ${bgClass} ${sepClass}`
+
+          if (isActive) {
+            return (
+              <div
+                key={tab.href}
+                ref={(el) => { cardRefs.current[i] = el }}
+                className={commonClasses}
+                aria-current="page"
+              >
+                {/* Spacer invisible: reserva el alto del PlusArrowFlipIcon
+                    (size-10 = 40px) para alinear título y descripción con
+                    las tabs inactivas. */}
+                <span aria-hidden="true" className="block size-10" />
+                <span
+                  data-other-title
+                  className="block font-serif font-light text-fg text-title-sm"
+                >
+                  {titleLines}
+                </span>
+                <span
+                  data-other-desc
+                  className="font-mono text-body-sm text-fg/60 lg:w-3/4"
+                >
+                  {tab.description}
+                </span>
+              </div>
+            )
+          }
+
+          return (
             <Link
-              key={item.href}
-              ref={i === 0 ? card0Ref : card1Ref}
-              href={item.href as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
-              onClick={(e) => handleClick(e, item.href)}
-              className={`
-                group hover-text-flip col-span-12 lg:col-span-6
-                flex flex-col gap-2 py-12 lg:py-16
-                ${i === 0 ? 'lg:border-r lg:border-muted lg:pr-grid-gutter' : 'border-t border-muted lg:border-t-0 lg:pl-grid-gutter'}
-                focus-visible:opacity-90
-              `}
+              key={tab.href}
+              ref={(el) => { cardRefs.current[i] = el }}
+              href={tab.href as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+              onClick={(e) => handleClick(e, tab.href)}
+              className={`group hover-text-flip ${commonClasses} focus-visible:opacity-90`}
               style={{ clipPath: 'inset(0 100% 0 0)' }}
             >
               <span
@@ -192,26 +227,17 @@ export function CapacityOthersAnim({
                 data-other-title
                 className="block font-serif font-light text-fg text-title-sm"
               >
-                {item.title.split('\n').map((line, lineIdx) => (
-                  <span key={lineIdx} className="st-mask">
-                    <span
-                      className="hover-text-flip-target inline-block"
-                      style={{ animationDelay: `${lineIdx * 60}ms` }}
-                    >
-                      {line}
-                    </span>
-                  </span>
-                ))}
+                {titleLines}
               </span>
               <span
                 data-other-desc
-                className="font-mono text-body-sm text-fg/60 max-w-[40ch]"
+                className="font-mono text-body-sm text-fg/60 lg:w-3/4"
               >
-                {item.description}
+                {tab.description}
               </span>
             </Link>
-          ))}
-        </div>
+          )
+        })}
       </div>
     </section>
   )

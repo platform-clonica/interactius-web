@@ -3,6 +3,23 @@
     "services": "Serveis",
     "otherCapacities": "Altres capacitats"
   },
+  "tabs": [
+    {
+      "title": "Pensament\nestratègic",
+      "description": "Integrem visió de futur per decidir en entorns complexos.",
+      "href": "/pensamiento-estrategico"
+    },
+    {
+      "title": "Disseny\nd'experiències",
+      "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
+      "href": "/diseno-de-experiencias"
+    },
+    {
+      "title": "Transformació\ncultural",
+      "description": "Adopció d'IA, canvi organitzacional i formació.",
+      "href": "/transformacion-cultural"
+    }
+  ],
   "pensamiento": {
     "hero": {
       "title": "Pensament estratègic",
@@ -53,18 +70,6 @@
           "Facilitació de tallers d'ideació i estratègia",
           "Validació i testing de conceptes"
         ]
-      }
-    ],
-    "others": [
-      {
-        "title": "Disseny\nd'experiències",
-        "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
-        "href": "/diseno-de-experiencias"
-      },
-      {
-        "title": "Transformació\ncultural",
-        "description": "Adopció d'IA, canvi organitzacional i formació.",
-        "href": "/transformacion-cultural"
       }
     ]
   },
@@ -118,18 +123,6 @@
           "Coordinació de sessions d'investigació"
         ]
       }
-    ],
-    "others": [
-      {
-        "title": "Pensament\nestratègic",
-        "description": "Integrem visió de futur per decidir en entorns complexos.",
-        "href": "/pensamiento-estrategico"
-      },
-      {
-        "title": "Transformació\ncultural",
-        "description": "Adopció d'IA, canvi organitzacional i formació.",
-        "href": "/transformacion-cultural"
-      }
     ]
   },
   "transformacion": {
@@ -171,18 +164,6 @@
       "title": "Manifest IA",
       "body1": "Entenem la IA no com un fi, sinó com una responsabilitat. La fem servir per ampliar el criteri, no per substituir-lo; per explorar i <strong>dissenyar millor</strong>, no més ràpid.",
       "body2": "Ens comprometem a aplicar-la amb rigor, amb sentit ètic i pensament crític per detectar els seus biaixos i assegurar el sentit humà i l'impacte real."
-    },
-    "others": [
-      {
-        "title": "Pensament\nestratègic",
-        "description": "Integrem visió de futur per decidir en entorns complexos.",
-        "href": "/pensamiento-estrategico"
-      },
-      {
-        "title": "Disseny\nd'experiències",
-        "description": "Ajudem les organitzacions a relacionar-se amb el futur.",
-        "href": "/diseno-de-experiencias"
-      }
-    ]
+    }
   }
 }
