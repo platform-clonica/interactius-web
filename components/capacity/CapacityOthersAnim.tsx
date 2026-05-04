@@ -149,12 +149,15 @@ export function CapacityOthersAnim({
       className="w-full bg-warm-light"
       aria-label={sectionLabel}
     >
-      <div
-        ref={containerRef}
-        className="grid grid-cols-1 lg:grid-cols-3 w-full"
-      >
+      <div className="section-inner">
+        <div
+          ref={containerRef}
+          className="grid grid-cols-12 gap-grid-gutter"
+        >
         {tabs.map((tab, i) => {
           const isActive = tab.href === currentHref
+          const isFirst = i === 0
+          const isLast = i === tabs.length - 1
           const nextInactive =
             i < tabs.length - 1 && tabs[i + 1].href !== currentHref
           const showSeparator = !isActive && nextInactive
@@ -170,14 +173,22 @@ export function CapacityOthersAnim({
             </span>
           ))
 
-          // Cada tab ocupa 1/3 de viewport (touching, sin gap). Bg blanco
-          // edge-to-edge en su tercio en inactivos; warm-light en activo.
-          // p-5 = 20px en todos los lados (alrededor del grupo arrow+title+desc).
-          // Separador 1px sólo entre dos inactivos adyacentes.
+          // Cada tab cae en su col canónica (col-span-4 → col-start auto = 1/5/9).
+          // Bg extiende a viewport-edge en first/last y a gutter/2 en lados
+          // internos. Padding-x compensatorio (20px + extensión) → contenido
+          // queda 20px PASADO el borde izq de su col canónica.
+          // Separador 1px entre adyacentes inactivos cae justo donde se juntan
+          // los dos bgs (midpoint del gutter original).
           const bgClass = isActive ? 'bg-warm-light' : 'bg-pure-white'
           const sepClass = showSeparator ? 'lg:border-r lg:border-muted' : ''
+          const lgEdgeLeft = isFirst
+            ? 'lg:ml-[calc(-1_*_var(--grid-margin))] lg:pl-[calc(20px_+_var(--grid-margin))]'
+            : 'lg:ml-[calc(-1_*_var(--grid-gutter)_/_2)] lg:pl-[calc(20px_+_var(--grid-gutter)_/_2)]'
+          const lgEdgeRight = isLast
+            ? 'lg:mr-[calc(-1_*_var(--grid-margin))] lg:pr-[calc(20px_+_var(--grid-margin))]'
+            : 'lg:mr-[calc(-1_*_var(--grid-gutter)_/_2)] lg:pr-[calc(20px_+_var(--grid-gutter)_/_2)]'
           const commonClasses =
-            `p-5 flex flex-col gap-2 ${bgClass} ${sepClass}`
+            `col-span-12 lg:col-span-4 p-5 flex flex-col gap-2 ${bgClass} ${sepClass} ${lgEdgeLeft} ${lgEdgeRight}`
 
           if (isActive) {
             return (
@@ -238,6 +249,7 @@ export function CapacityOthersAnim({
             </Link>
           )
         })}
+        </div>
       </div>
     </section>
   )
