@@ -1,6 +1,37 @@
 import { evaluate } from '@mdx-js/mdx'
 import * as runtime from 'react/jsx-runtime'
+import type { ReactNode } from 'react'
 import type { MDXComponents } from 'mdx/types'
+
+function ImageWithCaption({
+  src,
+  alt,
+  caption,
+}: {
+  src?: string
+  alt?: string
+  caption?: string
+}) {
+  if (!src) return null
+  return (
+    <figure className="my-10">
+      <img src={src} alt={alt ?? ''} loading="lazy" className="w-full h-auto" />
+      {caption ? (
+        <figcaption className="mt-3 font-mono text-body-sm text-fg/60 leading-[1.5]">
+          {caption}
+        </figcaption>
+      ) : null}
+    </figure>
+  )
+}
+
+function PullQuote({ children }: { children?: ReactNode }) {
+  return (
+    <blockquote className="my-12 border-l-2 border-fg/30 pl-6 lg:pl-8 font-serif font-light italic text-section text-fg leading-tight">
+      {children}
+    </blockquote>
+  )
+}
 
 /* ==========================================================================
    MDXContent — render canónico de los artículos de Miradas
@@ -81,6 +112,11 @@ const components: MDXComponents = {
       {children}
     </a>
   ),
+  img: ({ src, alt }) => (
+    <img src={src} alt={alt ?? ''} loading="lazy" className="my-10 w-full h-auto" />
+  ),
+  ImageWithCaption,
+  PullQuote,
 }
 
 interface MDXContentProps {

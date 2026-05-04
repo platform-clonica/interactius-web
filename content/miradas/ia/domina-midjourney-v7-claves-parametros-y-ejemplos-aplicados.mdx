@@ -1,88 +1,155 @@
 ---
-title: "Domina Midjourney V7: claves, parámetros y ejemplos aplicados"
-description: "Con la llegada de Midjourney V7, generar imágenes con un realismo casi fotográfico es más accesible que nunca. Claves, parámetros y ejemplos prácticos."
-publishedAt: "2025-06-13"
-author: "Berta Abad"
-category: "ia"
+title: 'Domina Midjourney V7: claves, parámetros y ejemplos aplicados'
+description: >-
+  Lleva tus prompts de Midjourney V7 al siguiente nivel con dirección de arte, realismo fotográfico y parámetros
+  creativos
+publishedAt: '2025-06-13'
+modifiedAt: '2025-06-13'
+author: Berta Abad
+category: ia
+slug: domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados
+image: /miradas/ia/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/IA-portada-_1_-scaled.webp
+tags:
+  - design
+  - innovacion
+  - tendencias
 ---
 
-Con la llegada de Midjourney V7, generar imágenes con un realismo casi fotográfico es más accesible que nunca. Esta versión ha dado un salto notable en tres aspectos clave: mejor interpretación de los prompts, texturas más creíbles y detalles mucho más coherentes (sí, incluso las manos). Pero para sacarle todo el partido, no basta con escribir cualquier cosa: hay que saber construir buenos prompts y hacerlo con intención.
+Con la llegada de Midjourney V7, generar imágenes con un realismo casi fotográfico es más accesible que nunca. Esta versión ha dado un salto notable en tres aspectos clave: mejor interpretación de los prompts, texturas más creíbles y detalles mucho más coherentes (sí, incluso las manos). Pero para sacarle todo el partido, no basta con escribir cualquier cosa: hay que saber construir buenos prompts… y hacerlo con intención.
+
+Y para que veas la diferencia en cada paso, vamos a trabajar con un mismo ejemplo base, desde lo más simple hasta su versión más refinada.
 
 ## El punto de partida
 
 Queremos generar una imagen tipo retrato. Empezamos con algo básico:
 
 ```
-a woman portrait, neutral background, soft light
+“a woman portrait, neutral background, soft light”
 ```
 
 Este será nuestro punto de partida. Iremos aplicando ajustes para ver cómo mejora visualmente en cada iteración.
+
+---
 
 ## ChatGPT como copiloto creativo
 
 No siempre sabemos describir lo que imaginamos. Aquí es donde ChatGPT se convierte en una herramienta creativa increíble. Puedes pedirle que enriquezca tu prompt, que lo haga más visual, o que explore estilos concretos.
 
 Prompt básico:
+
 ```
 a woman portrait, neutral background, soft light
 ```
 
 Reformulación con ChatGPT (más visual y detallado):
+
 ```
-editorial portrait of a young woman wearing a linen blouse, neutral grey backdrop,
-soft diffused light, 50mm lens, natural skin texture, cinematic tones
+editorial portrait of a young woman wearing a linen blouse, neutral grey backdrop, soft diffused light, 50mm lens, natural skin texture, cinematic tones
 ```
+
+```
+editorial portrait of a young woman with Mediterranean features, wearing a linen blouse, neutral grey backdrop, soft diffused light, 50mm lens, natural skin texture, cinematic tones, subtle melancholic expression --ar 2:3 --style raw --s 100 --v 7
+```
+
+Aquí el lenguaje ya no solo describe: dirige.
+
+---
 
 ## Técnicas intermedias para optimizar tu prompt
 
-### Aspect ratio (`--ar`)
+Ahora empezamos a afinar:
 
-`1:1` / `4:3` / `2:3` / `16:9` / `9:16`
+-   **Aspect ratio** (--ar)  
+    1:1 / 4:3 / 2:3 / 16:9 / 9:16   
+    Para retratos verticales clásicos:  
+    \--ar 2:3  
+    
+-   **Estilización** (--s)  
+    Indica cuánta libertad tiene Midjourney para interpretar el prompt:  
+    Valor bajo = más fidelidad al text  
+    Valor alto = más creatividad visual  
+    → Para realismo: --s 100  
+    → Junto con --style raw lograrás un look más natural, sin filtros artísticos añadidos  
+    
+-   **Calidad** (--q)  
+    Aumenta la resolución visual:  
+    \--q 2  
+    
+-   **Peso visual** (::) (solo funciona en versiones inferiores a la V7)  
+    Si quieres enfatizar más el rostro que el fondo: a woman::2 portrait, neutral backdrop::1
 
-Para retratos verticales clásicos: `--ar 2:3`
-
-### Estilización (`--s`)
-
-Indica cuánta libertad tiene Midjourney para interpretar el prompt:
-
-- Valor bajo = más fidelidad al texto
-- Valor alto = más creatividad visual
-
-Para realismo: `--s 100`. Junto con `--style raw` lograrás un look más natural, sin filtros artísticos añadidos.
-
-### Calidad (`--q`)
-
-- `--q 1` — calidad estándar (más rápido)
-- `--q 2` — alta calidad (más lento, más detalle)
-
-### Versión (`--v`)
-
-Siempre especifica `--v 7` para asegurarte de usar la última versión y sus mejoras.
+---
 
 ## Novedades de Midjourney V7
 
-### `--ow` (Omni-Reference Weight)
+#### **\--ow** **(Omni-Reference Weight)**
 
-El parámetro ajusta el peso de una imagen de referencia en el resultado final, especialmente útil para mantener consistencia de estilo, personaje, objeto o ambientación en diferentes generaciones.
+El parámetro ajusta el peso de una imagen de referencia en el resultado final, especialmente útil para mantener consistencia de estilo, personaje, objeto o ambientación en diferentes generaciones. Es parte del sistema **Omni-Reference**.
 
-### `--p` (Personalización)
+Aplica una imagen de referencia (Omni Ref) y permite controlar cuánta influencia tiene sobre el resultado. Se utiliza principalmente para proyectos que requieren consistencia visual o de identidad (por ejemplo, personajes continuos, campañas editoriales, marcas).  
 
-V7 introduce un modo de personalización que aprende de tus preferencias a medida que valoras imágenes. Cuantas más imágenes valoras, más afinado queda el modelo a tu estilo.
+### Cómo usarlo:
 
-### Mejor coherencia de manos y anatomía
+Añade la imagen de referencia con el comando **--oref** y su URL.
 
-Una de las quejas históricas de Midjourney era la representación de manos. V7 ha mejorado significativamente este aspecto, aunque sigue siendo recomendable especificar explícitamente en el prompt cuando las manos son relevantes.
+Ajusta la fuerza de la referencia con **--ow** (por defecto 100; puedes subir hasta 1000 para máxima fidelidad visual).
 
-## Prompt final optimizado
+### **Ejemplo básico:**
 
-Partiendo del ejemplo base, así quedaría el prompt completamente optimizado:
+<ImageWithCaption
+  src="/miradas/ia/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/AD_4nXflLojgMG1cWVXScBurdd7y1o5shUO3Eh3Hjrj_DtzKYAuTOCQbZzhTQRc6BZHGOniciAHgm-Pbf2JDrm4eGZHzW49lcuUmcsNO4jRYOAGPibm1VsdmRogEfKkKSD23GUYRrKSEkeyuSPckoJHVufeY3piu5_oJtuV.png"
+  alt=""
+  caption=""
+/>
 
-```
-editorial portrait of a young woman wearing a linen blouse, neutral grey backdrop,
-soft diffused light, 50mm lens, natural skin texture, cinematic tones
---ar 2:3 --s 100 --style raw --q 2 --v 7
-```
+#### **\--exp** **(Exploración estética experimental)**
 
-## Conclusión
+El parámetro --exp activa un motor estético alternativo que permite explorar renders más dinámicos y detallados. Es especialmente útil si buscas imágenes con una narrativa visual más marcada o composiciones con más riqueza visual y estilo artístico. Se puede combinar con --stylize para controlar el grado de estilización.
 
-Midjourney V7 es la versión más potente y accesible hasta la fecha. La clave para dominarla no está en conocer todos los parámetros de memoria, sino en desarrollar un criterio visual claro: saber qué quieres generar antes de escribir el primer prompt. La IA es una herramienta; el criterio es tuyo.
+Puedes probar con valores como --exp 5, 10, 25, 50, o 100.
+
+De --exp 5 a --exp 50, el salto es muy perceptible y de  --exp 50 a --exp 100, la diferencia es más sutil, pero añade un extra de complejidad estética y decisiones visuales menos literales.
+
+**Ejemplo básico:**
+
+<ImageWithCaption
+  src="/miradas/ia/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/AD_4nXef-snqLFCRI32Zzj7JQT8Nxw79w0wcWcX1YY9ZiyffON1GSpgEaTkO2OCBqzp3Zm8nWtwqw4Oxbf2Dt2SOu6wIHr9aGCU7j0bOW8_0DKZmTnok-S1Aum0_ZnvlXXLOCEnqt1gLLgkeyuSPckoJHVufeY3piu5_oJtuV.png"
+  alt=""
+  caption=""
+/>
+
+---
+
+## Cómo lograr realismo auténtico en Midjourney
+
+Si buscas imágenes que parezcan captadas por cámara, ten en cuenta estos puntos:
+
+-   **Referencias técnicas:**_shot on Canon EOS R5_, _realistic lens flare_, _Fujifilm XT3_, _50mm_, _color graded in Capture One_…  
+    
+-   **Defectos reales:**Añadir imperfecciones humaniza:  
+    _fine facial hair_, _visible pores_, _slight skin blemishes_, _creased fabric_, _messy hair_...  
+    
+-   **Evita lo genérico:**No pongas _“beautiful woman”_, mejor:  
+    _“30-year-old woman with olive-toned skin and strong cheekbones”_
+-   **Emociones sutiles:**_melancholic_, _serene_, _joyful_, _tense_…  
+    
+-   **Pide realismo explícitamente:**_photo-realistic_, _magazine-quality_
+
+Prompt enriquecido con microdetalles:  
+photo-realistic editorial portrait of a young woman with linen blouse, neutral grey backdrop, soft diffused light, Canon EOS R5, 50mm lens, slight blemishes, detailed skin pores, shallow depth of field, creased fabric --ar 2:3 --q 2 --s 100
+
+---
+
+## Conclusión: piensa como un director de arte
+
+No se trata solo de “escribir bonito”. Se trata de pensar como un director de arte. Midjourney tiene el talento técnico; tú aportas la visión. Y ChatGPT puede ayudarte a traducir esa visión en lenguaje visual eficaz.
+
+Usa siempre ejemplos concretos, prueba variantes, y afina cada parámetro con intención. Porque al final, una imagen potente no se improvisa: se diseña desde el texto. Añadir pequeñas cargas emocionales en el lenguaje puede marcar la diferencia entre una imagen correcta y una que conecte.
+
+<ImageWithCaption
+  src="/miradas/ia/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/AD_4nXdUHsXXa4z7R-57kFlkXHRP0JAMt-c1IKXFIFXul5thTXae5PERKQxLDQsTqLONv-4SIfUKDnyEiXUle701Fp5zH2B_tJom-KFZ70FdPgAnAlRa60Md__v2vLnb3qrhgFEGV_GIVgkeyuSPckoJHVufeY3piu5_oJtuV.png"
+  alt=""
+  caption=""
+/>
+
+Una última recomendación: si estás empezando a generar prompts o quieres una base sólida para dar tus primeros pasos, [Midjourneyesref](https://midjourneysref.com/es/midjourney-prompt-helper) es una herramienta gratuita en español que te facilita el proceso de forma visual e intuitiva.

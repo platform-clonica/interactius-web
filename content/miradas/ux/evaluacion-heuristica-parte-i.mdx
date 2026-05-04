@@ -1,0 +1,254 @@
+---
+title: Evaluación Heurística (PARTE I)
+description: >-
+  Metodología de inspección de la usabilidad sin usuarios que consiste en examinar la calidad de uso de una interfaz a
+  partir del cumplimiento de unos principios 
+publishedAt: '2017-09-01'
+modifiedAt: '2024-12-05'
+author: Tomas
+category: ux
+slug: evaluacion-heuristica-parte-i
+image: /miradas/ux/evaluacion-heuristica-parte-i/pexels-erik-mclean-5120083-scaled.jpg
+tags:
+  - design
+  - research
+  - ux
+---
+
+En el pasado mes de marzo hablábamos sobre los [Recorridos cognitivos](https://www.interactius.com/user-experience/metodologias-de-ux-walkthrough-recorrido-cognitivo/). Siguiendo con la colección de posts sobre ‘Metodologías de UX’, esta vez nos toca poner foco en otros métodos de inspección como son la **Evaluación Heurístic**a. Que probablemente sean, junto a los propios ‘Test con usuarios’, las técnicas más populares y extendidas en el universo de la Ingeniería de la Usabilidad.
+
+Este post se divide en dos publicaciones: en la **primera parte** se explican los **fundamentos teóricos** de las evaluaciones heurísticas, junto con un repaso de cada uno de los heurísticos de Nielsen y Molich (acompañados de **ejemplos reales de buenas y malas prácticas**); y por otro lado, la [**segunda parte**](https://blog.interactius.com/metodolog%C3%ADas-de-ux-evaluaci%C3%B3n-heur%C3%ADstica-parte-ii-8fbf97e1e5b8) se centra en conocer qué **metodología** usar para llevar a cabo evaluación heurística, así como **presentar sus resultados**.
+
+## ¿Qué es una Evaluación Heurística?
+
+Una Evaluación Heurística (EH) es un **método de inspección de la usabilidad sin usuarios**. Este, consiste en examinar la calidad de uso de una interfaz por parte de varios **evaluadores expertos**, a partir del cumplimiento de unos principios reconocidos de usabilidad: **los heurísticos**.
+
+Al igual que los _Walkthroughs_, el principal objetivo de la EH es medir la calidad de la interfaz de cualquier aplicativo en relación a su facilidad para ser aprendido y usado por primera vez. Sin embargo, mientras los primeros se centran en la consecución de tareas, las EH **inspeccionan problemas potenciales** . Ya que el evaluador se pone en la piel del usuario real del sistema, intentando **predecir los errores** que podrá encontrarse.
+
+## Tipos de Evaluación Heurística
+
+El origen de los principios heurísticos como tales se presentaron en una primera versión en 1990 por **Jakob Nielsen** y **Rolf Molich**, en el libro ‘Improving a human-computer dialogue‘. Años más tarde, en su libro _‘Usability Inspection Methods’_ (1994) , Nielsen los revisó y resumió, para crear así sus célebres ’10 [**Principios Heurísticos de Nielsen’**](https://www.nngroup.com/articles/ten-usability-heuristics/).
+
+Aunque estos últimos sean probablemente los heurísticos más populares y utilizados, existen **multitud de listas** creadas por otros expertos del sector que son igualmente válidas y útiles. Simplemente, se deben valorar cuáles son las más adecuadas según la interfaz, el dispositivo y el contexto de uso a analizar.
+
+Algunas de las más significantes son:
+
+-   Las [**‘8 reglas de oro’**](https://www.cs.umd.edu/users/ben/goldenrules.html) de **Ben Schneiderman**, de su libro _‘Designing the User Interface: Strategies for Effective Human-Computer Interaction’_ (1987).  
+    Estas ocho reglas fueron el embrión para que posteriormente Molich y Nielsen presentaran sus diez principios.
+-   La [**_‘Lista de comprobación de ítems’_**](https://ucdmanager.net/heuristics/xerox-13-usability-heuristics) de **Deniese Pierotti** (2004). Esta lista utilizada por la empresa Xerox Corporation para evaluar la usabilidad de interfaces, se caracteriza por añadir tres principios heurísticos más a los de Nielsen:
+
+**Habilidades**: el sistema debe apoyar, ampliar, complementar o mejorar las habilidades del usuario, conocimientos básicos y experiencia, y no sustituirlas.
+
+**Interacción placentera y respetuosa con el usuario**: la interacción del usuario con el sistema debe mejorar la calidad de su vida. El usuario debe ser tratado con respeto. El diseño debe ser estéticamente agradable, tanto como valor artístico, así como funcional.
+
+**Privacidad**: el sistema debe ayudar al usuario a proteger la información personal o privada, tanto la que pertenece al usuario como la que pertenece a sus clientes. Además, para cada uno de ellos, detalla una serie de sub-heurísticas basadas en preguntas concretas que ayudan en la búsqueda de errores de usabilidad
+
+-   Los [**_‘First Principles of Interaction Design’_**](http://asktog.com/atc/principles-of-interaction-design/) de **Bruce Tognazzini** (2003).
+-   Los [**‘Principios heurísticos de D. Mayhew’**](http://www.ouxinstitute.com/FacultyOffices/FacultyBios/Mayhew.php) de su libro _‘The Usability Engineering Lifecycle’_ (1992).
+-   Los **‘Principios heurísticos de Larry Constantine’**, de su libro [**_‘Software for use’_**](https://www.amazon.com/gp/product/0201924781/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0201924781&linkCode=as2&tag=uxma09-20&linkId=6VHUDGF3GBH7ZWEU) (1994).
+-   Los **‘Principios heurísticos de Keith Instone’**, de su informe [**_‘Usability engineering for the web’_**](http://instone.org/files/KEI-Ueweb-19990126.pdf) (1996).
+-   Los [**‘Principios de Ingeniería cognitiva’**](https://en.wikipedia.org/wiki/Heuristic_evaluation#Gerhardt-Powals.E2.80.99_cognitive_engineering_principles) de [**Jill Gerhardt-Powals**](http://loki.stockton.edu/~gerhardj/) (1996).
+
+## Los 10 Principios Heurísticos de Nielsen
+
+A continuación se presentan uno por uno los principios heurísticos postulados por Jakob Nielsen.
+
+Para entender cómo se deben aplicar en la evaluación de la usabilidad de un sistema interactivo, se añadirán para cada uno, ejemplos de buenas y malas prácticas de webs y aplicaciones reales:
+
+### **1-Visibilidad del estado del sistema**
+
+El sistema siempre debe mantener a los usuarios informados sobre lo que ocurre, a través de una retroalimentación apropiada en un tiempo razonable.
+
+-   **Buena práctica**: En la web de [Vueling](http://www.vueling.com/) el usuario sabe en todo momento el estado del sistema. Se le informa qué información ha buscado previamente y en qué página del proceso de compra se encuentra. Es importante indicar siempre dónde se encuentra el usuario respecto a la estructura de la página, así cómo de dónde viene y hacia dónde puede ir.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_00_UBDRikxVdV1X_u.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica**: En la web de compra on-line de [FNAC](https://www.fnac.es/), aunque a priori se indica dónde se encuentra el usuario mediante _breadcrumbs_ y títulos de página, es confuso que no se seleccione ninguna opción de menú cuando se navega por él.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0URIclY8JsMxytKAI.jpg"
+  alt=""
+  caption=""
+/>
+
+### **2 -Empate entre el sistema y el mundo real**
+
+El sistema debe hablar en el lenguaje del usuario, con palabras, frases y conceptos familiares para él. Utilizar convenciones del mundo real, haciendo que la información aparezca en un orden natural y lógico.
+
+-   **Buena práctica:** En todas las páginas donde se debe hacer una búsqueda por fecha, se usa (con más o menos variantes) el ya clásico _datepicker_. Su uso y apariencia están tan interiorizados por todos los usuarios, que se ha convertido en un estándar.  
+    Así mismo, también lo hace [Airbnb](http://www.airbnb.com/) en su buscador principal.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0npl6uj-nalzNSZMc.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** Una muy mala práctica referente a este heurístico, es el uso de un vocabulario o jerga que no sean familiares al lenguaje que suelen usar los usuarios.Por ejemplo, en la web de [British Airways](http://www.britishairways.com/) con el idioma ‘español’ seleccionado, el calendario aparece en el sistema anglosajón, mostrando el ‘Domingo’ como primer día de la semana. Este detalle seguramente será confuso para el usuario hispanohablante medio.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0OWYvH0TzjMuDw5mm.jpg"
+  alt=""
+  caption=""
+/>
+
+### **3-Control y libertad del usuario**
+
+A menudo los usuarios eligen funcionalidades por error y necesitan una ‘puerta de emergencia’ para salir del estado indeseado. Ofrecer soporte para deshacer y rehacer acciones.
+
+-   **Buena práctica:** A veces cuando se realiza una acción (como por ejemplo la de suprimir un producto de un carrito de compra) es mejor permitir deshacer la acción que preguntar a través de un molesto aviso si realmente se quiere suprimir dicho producto.  
+    [Gmail](https://mail.google.com/) lleva años permitiendo deshacer la acción de envío de correos electrónicos, evitando así esos embarazosos correos con destinatario erróneo.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0e4otfQYMe33a8ZsH.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** Una mala práctica muy común la encontramos en los anuncios en portales de vídeo como [Youtube](https://www.youtube.com/). Por un lado se permite correctamente al usuario “Saltar el anuncio”, pero por el otro se limita su libertad de interacción al intentar navegar por la barra de control del video.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0FrQvDwYbSEi16q8q.jpg"
+  alt=""
+  caption=""
+/>
+
+### **4-Consistencia y estándares**
+
+Los usuarios no deben tener que preguntarse si las diversas palabras, situaciones, o acciones significan las misma cosa. Que se sigan las normas y convenciones de la plataforma sobre la que está implementando el sistema.
+
+-   **Buena práctica:** La consistencia es una de la claves, por no decir LA CLAVE, a la hora de diseñar UI’s usables. Un elemento, como por ejemplo un botón de acción, debe verse exactamente igual en todas las pantallas de la web. Esto hace que se limiten el número de acciones y operaciones que se representan, asegurando que los usuarios no deban aprender nuevas funcionalidades en cada tarea que realicen. Una de las principales ventajas de utilizar _frameworks_ de diseño _front-end_, como por ejemplo [Bootstrap](https://getbootstrap.com/), es que la consistencia de todos sus elementos está asegurada.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0b7yhMF0Yu7vaYbpz.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** Un mal ejemplo de aplicación de la consistencia y los estándares lo encontramos en la tienda online de [Pull&Bear](https://www.pullandbear.com/). Dónde sitúan el formulario de búsqueda en una zona muy poco común para esta finalidad: la parte izquierda, justo antes del logotipo de la marca. Situemos siempre los elementos dónde los usuarios esperan encontrarlos.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_05-J1wwKtUrpHtyfo.jpg"
+  alt=""
+  caption=""
+/>
+
+### **5-Prevención de errores**
+
+Antes que diseñar buenos mensajes de error, es mejor evitar que el problema ocurra.
+
+-   **Buena práctica:** Un escenario clásico donde ocurren muchos errores es en la validación de formularios. Esto ocurre cuando no se informan debidamente los requisitos de cada campo, y el usuario obtiene errores no esperados. Como ejemplo de formulario bien diseñado encontramos el del proceso de ‘Registro’ de [Facebook](https://www.interactius.com/user-experience/metodologias-de-ux-evaluacion-heuristica-parte/www.facebook.com). Dónde en todo momento se indican los detalles necesarios para completar cada campo.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0iIBpAYOucoCxGNjb.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** Sin embargo, en el formulario de alta de la web de [Correos](http://www.correos.es/) no se informa de las características que debe tener cada campo. Cosa que hace que hasta que el usuario no valida el formulario, éste no sabe que por ejemplo el campo ‘Contraseña’ debe tener un mínimo 8 caracteres.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0VOe5fiPoaLdI3haX.jpg"
+  alt=""
+  caption=""
+/>
+
+### **6-Reconocimiento mejor que recuerdo**
+
+Minimizar la carga de memoria del usuario haciendo que los objetos, las acciones y las opciones estén visibles. El usuario no debería tener que recordar la información de una parte del diálogo a otra.
+
+-   **Buena práctica:** Siempre se deben indicar los campos por los cuales se ha realizado una búsqueda. Por ejemplo, en la página web de [Atrápalo](https://www.atrapalo.com/) se muestra una leyenda en la parte superior con los parámetros por los cuales se ha buscado un hotel.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0YiwCiA0dOw3JGnfw.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** Sin embargo, en la web de [Wallapop](https://www.wallapop.com/) no se especifican claramente los conceptos ni los filtros a modo de resumen. Obligando así al usuario a revisar distintas zonas de la pantalla para recordar qué había buscado previamente.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0ib8k3A1t2DJVVGb0.jpg"
+  alt=""
+  caption=""
+/>
+
+### **7-Flexibilidad y eficiencia de uso**
+
+Los aceleradores, no vistos por el usuario principiante, mejoran la interacción para el usuario experto de tal manera que el sistema puede servir para usuarios inexpertos y experimentados. Es importante que el sistema permita personalizar acciones frecuentes.
+
+-   **Buena práctica:** Los atajos de teclado (_shortcuts_) son el clásico ejemplo de ‘aceleradores’ que mejoran la interacción de los usuarios expertos. Permitiendo así realizar acciones de manera más rápida y automatizada. Por ejemplo, [Twitter](https://twitter.com/), como hacen muchas otras webs, proporciona los siguientes:
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0iFP7K-R_ZHI3jPze.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** En este sentido, se deben evitar casuísticas y acciones que afecten considerablemente al tiempo que invierte el usuario para llevarlas a cabo. Por ejemplo, el típico formulario en el que si una vez se valida y existe un error, se borran todos los campos previamente informados. Comportando que el usuario pierda el tiempo y en definitiva, la paciencia.
+
+### **8-Diseño estético y minimalista**
+
+Los diálogos no deberían contener información irrelevante o que se necesite raramente. Cada unidad extra de información en un diálogo compite con la información importante, disminuyendo su visibilidad relativa.
+
+-   **Buena práctica:** ¡Menos es más! En el diseño de una página solamente se debe mostrar aquella información que realmente es importante para el usuario. Evitando así, ruido y elementos innecesarios que no cumplen con el fin principal de esa página. Por ejemplo, [Google](https://www.google.com/) lleva años resistiéndose a añadir más información en su página inicial. Dando así protagonismo a su funcionalidad principal: el buscador.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0tpp18EaP5G1djm3L.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** Sin embargo el portal [Yahoo](https://es.yahoo.com/), aunque haya mejorado sustancialmente su diseño en los últimos años, siempre ha presentado una estética sobrecargada y con demasiados elementos.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0jGBVT0jkpdy5-aMA.jpg"
+  alt=""
+  caption=""
+/>
+
+### **9-Ayudar a reconocer, diagnosticar y recuperarse de errores**
+
+Los mensajes de error deben estar expresados en lenguaje llano (sin códigos), indicando con precisión el problema y sugiriendo una solución.
+
+-   **Buena práctica:** Un muy buen ejemplo de página de _error 404_ la encontramos en la web oficial de [Spotify](https://www.spotify.com/). Dónde se informa correctamente del problema sucedido y de las posibles salidas para solucionarlo: “Preguntas frecuentes”, “Comunidad” y “Volver”.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0pP3nN5nXQ8j4i2oM.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** Por el otro lado, como ejemplo de mala práctica encontramos la web de [Renfe](http://www.renfe.com/). Dónde en el proceso de compra de un billete, aparecen múltiples mensajes de error con un sistema de numeración que el usuario difícilmente entenderá.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0IoTvaFSsL88_ZKOU.jpg"
+  alt=""
+  caption=""
+/>
+
+### **10-Ayuda y documentación**
+
+Aunque es mejor que se pueda usar el sistema sin documentación, es necesario proveer al usuario de ayuda y documentación. Esta tiene que ser fácil de buscar, centrada en la tareas del usuario, con información de las etapas a realizar y que no sea muy extensa.
+
+-   **Buena práctica:** El portal [Stackoverflow](https://stackoverflow.com/) proporciona una detallada sección de ayuda en su ‘Help center’. En una misma página se puede encontrar un buscador, un módulo de _Onboarding_ y las _F.A.Q’s_.
+
+<ImageWithCaption
+  src="/miradas/ux/evaluacion-heuristica-parte-i/2_0XhmWSlUUaeCW8_u8.jpg"
+  alt=""
+  caption=""
+/>
+
+-   **Mala práctica:** Cualquier página web que no presente ninguna sección de ayuda, documentación o incluso de contacto, posiblemente provocará desamparo e incertidumbre al usuario.
+
+## Conclusiones
+
+La Evaluación heurística es una **técnica crucial y muy útil** a la hora de encontrar errores de usabilidad, sobre todo en fases **muy tempranas** de un proyecto de diseño web. Sin embargo, la popularización de los heurísticos de Nielsen ha creado una **falsa creencia** que da a entender que solamente con cumplir una serie de principios heurísticos ya basta para considerar una aplicación como usable.
+
+Debemos entender entonces que la evaluación heurística **en ningún caso sustituyen las evaluaciones de usabilidad con usuarios reales**. Solamente las complementan. Y es que, aunque en el global del proceso de definición, diseño e implementación de un sistema interactivo se deben tener en cuenta distintas técnicas para asegurar la usabilidad, siempre se debe considerar al usuario como centro de todo el proceso.
+
+[Para terminar, solo añadir que en mi próximo post habrá una segunda parte de esta publicación dónde se profundizará en la metodología a seguir para preparar, ejecutar y analizar una evaluación heurística.](/2018/01/12/evaluacion-heuristica-parte-ii/)
