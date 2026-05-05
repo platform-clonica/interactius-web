@@ -2,17 +2,26 @@ import type { MetadataRoute } from 'next'
 
 import { LOCALES } from '@/lib/i18n/config'
 import { PATHNAMES, localizedUrl, type RouteId } from '@/lib/i18n/navigation'
-import { getAllSlugs } from '@/lib/content/miradas'
+import { getAllMiradas } from '@/lib/content/miradas'
+import {
+  MIRADAS_PARENT_CATEGORIES,
+  MIRADAS_SUBCATEGORIES,
+} from '@/lib/miradas/frontmatter.schema'
+import {
+  localizeParentSlug,
+  localizeSubSlug,
+} from '@/lib/miradas/i18n-routing'
+import type { MiradasSubcategory } from '@/lib/miradas/frontmatter.schema'
 
 /* ==========================================================================
    Sitemap dinámico
    --------------------------------------------------------------------------
-   - Rutas estáticas: todas las entradas de PATHNAMES × 3 locales.
-   - Rutas dinámicas: artículos Miradas × 3 locales.
-   - Excluidas: /newsletter (transaccional), /aviso-legal (legal, baja prioridad).
+   - Rutas estáticas: entradas de PATHNAMES × 3 locales.
+   - Listings de madre y sub Miradas: 3 madres + 10 subs × 3 locales.
+   - Artículos Miradas: 125 × 3 locales (slug del segmento parentOrSub
+     localizado).
    ========================================================================== */
 
-/** Rutas estáticas que deben aparecer en el sitemap. */
 const STATIC_ROUTES: RouteId[] = [
   '/',
   '/pensamiento-estrategico',
@@ -23,7 +32,6 @@ const STATIC_ROUTES: RouteId[] = [
   '/miradas',
 ]
 
-/** Prioridad por ruta canónica. */
 const ROUTE_PRIORITY: Partial<Record<RouteId, number>> = {
   '/': 1.0,
   '/pensamiento-estrategico': 0.8,
@@ -38,11 +46,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = []
   const now = new Date()
 
-  // ── Rutas estáticas ────────────────────────────────────────────────────────
+  // Rutas estáticas
   for (const routeId of STATIC_ROUTES) {
-    // Asegurar que la ruta existe en PATHNAMES (typeguard en runtime)
     if (!(routeId in PATHNAMES)) continue
-
     for (const locale of LOCALES) {
       entries.push({
         url: localizedUrl(routeId, locale),
@@ -53,17 +59,50 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // ── Artículos Miradas (dinámicos) ──────────────────────────────────────────
-  const slugs = getAllSlugs()
-  for (const { cat, slug } of slugs) {
+  // Listings de madre Miradas
+  for (const parent of MIRADAS_PARENT_CATEGORIES) {
     for (const locale of LOCALES) {
       entries.push({
-        url: localizedUrl('/miradas/[cat]/[slug]', locale, {
-          params: { cat, slug },
+        url: localizedUrl('/miradas/[parentOrSub]', locale, {
+          params: { parentOrSub: localizeParentSlug(parent, locale) },
+        }),
+        lastModified: now,
+        changeFrequency: 'weekly',
+        priority: 0.7,
+      })
+    }
+  }
+
+  // Listings de sub Miradas
+  for (const sub of MIRADAS_SUBCATEGORIES) {
+    for (const locale of LOCALES) {
+      entries.push({
+        url: localizedUrl('/miradas/[parentOrSub]', locale, {
+          params: { parentOrSub: localizeSubSlug(sub, locale) },
         }),
         lastModified: now,
         changeFrequency: 'weekly',
         priority: 0.6,
+      })
+    }
+  }
+
+  // Artículos Miradas
+  const articles = getAllMiradas()
+  for (const article of articles) {
+    for (const locale of LOCALES) {
+      entries.push({
+        url: localizedUrl('/miradas/[parentOrSub]/[slug]', locale, {
+          params: {
+            parentOrSub: localizeSubSlug(article.category as MiradasSubcategory, locale),
+            slug: article.slug,
+          },
+        }),
+        lastModified: article.modifiedAt
+          ? new Date(article.modifiedAt)
+          : new Date(article.publishedAt),
+        changeFrequency: 'weekly',
+        priority: 0.5,
       })
     }
   }

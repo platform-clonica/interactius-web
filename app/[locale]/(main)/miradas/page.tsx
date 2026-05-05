@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
 
-import { buildPageMetadata } from '@/lib/seo/metadata.config'
+import { buildPageMetadata, SITE_CONFIG } from '@/lib/seo/metadata.config'
 import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 import { getAllMiradas } from '@/lib/content/miradas'
-import { MiradasHero } from '@/components/miradas/MiradasHero'
-import { MiradasGrid } from '@/components/miradas/MiradasGrid'
+import { MiradasGlobalHome } from '@/components/miradas/MiradasGlobalHome'
 
 interface PageProps {
   params: Promise<{ locale: Locale }>
@@ -24,13 +23,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function MiradasPage({ params }: PageProps) {
-  await params
+  const { locale } = await params
   const articles = getAllMiradas()
+
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Miradas',
+    url: `${SITE_CONFIG.baseUrl}${localizedPath('/miradas', locale)}`,
+  }
 
   return (
     <>
-      <MiradasHero />
-      <MiradasGrid articles={articles} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      <MiradasGlobalHome articles={articles} locale={locale} />
     </>
   )
 }

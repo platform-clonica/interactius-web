@@ -79,7 +79,7 @@ export function PageCurtain() {
       if (mode === 'back') {
         router.back()
       } else if (targetHref) {
-        router.push(targetHref as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
+        router.push(targetHref as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>)
         // Forzamos top en push (navegación nueva). No tocamos en mode 'back'
         // porque ahí queremos que el navegador restaure la posición previa
         // (scrollRestoration de Next). Se llama mientras la cortina cubre el

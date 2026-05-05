@@ -2,22 +2,37 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
+import type {
+  MiradaFrontmatter as MiradaFrontmatterStrict,
+  MiradasParentCategory,
+  MiradasSubcategory,
+} from '@/lib/miradas/frontmatter.schema'
+
 const CONTENT_DIR = path.join(process.cwd(), 'content/miradas')
 
+/**
+ * Frontmatter type used at runtime (loose) — gray-matter returns whatever is
+ * in the YAML. Para validación estricta pasar por
+ * `MiradaFrontmatterSchema.parse()` en `lib/miradas/frontmatter.schema.ts`.
+ *
+ * `category` y `parentCategory` se tipan estrictamente para que el resto
+ * del codebase tenga autocomplete correcto.
+ */
 export interface MiradaFrontmatter {
   title: string
   description: string
   publishedAt: string
+  modifiedAt?: string
   author: string
-  category: string
+  category: MiradasSubcategory
+  parentCategory: MiradasParentCategory
+  slug: string
   image?: string
-  /**
-   * Tags del artículo — claves que mapean al namespace i18n
-   * `miradas.grid.categories` (las mismas que aparecen como filtros en
-   * la home de Miradas). Primer elemento = chip destacado (dark bg).
-   */
   tags?: string[]
 }
+
+// Re-export para que el resto del codebase no tenga que importar dos veces
+export type { MiradasParentCategory, MiradasSubcategory, MiradaFrontmatterStrict }
 
 export interface MiradaMeta extends MiradaFrontmatter {
   slug: string

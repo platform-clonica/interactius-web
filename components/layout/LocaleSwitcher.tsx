@@ -9,36 +9,58 @@ import {
 } from '@/lib/i18n/config'
 import { Link, usePathname } from '@/lib/i18n/navigation'
 import type { RouteId } from '@/lib/i18n/navigation'
-import { articleHref, type IntlHref } from '@/lib/i18n/article-href'
+import {
+  articleHref,
+  parentListingHref,
+  subListingHref,
+  type IntlHref,
+} from '@/lib/i18n/article-href'
+import { parseParentOrSubSlug } from '@/lib/miradas/i18n-routing'
 
 /**
  * LocaleSwitcher — 3 botones ES / CA / EN en línea.
  *
- * Estrategia: usamos usePathname() de next-intl que devuelve el pathname
- * CANÓNICO (sin prefijo, antes de localizar). Al pasarle el mismo pathname
- * canónico al <Link> con locale distinto, next-intl traduce al slug del locale
- * destino automáticamente.
+ * Para rutas de Miradas con segmentos localizados ([parentOrSub], opcional
+ * [slug]), construimos el href con la versión LOCALIZADA al locale destino.
+ * El segmento `parentOrSub` cambia por idioma, así que no podemos pasar el
+ * pathname tal cual a Link con `locale={target}` — necesitamos relocalizar.
  *
- * Si la ruta actual tiene params dinámicos (Miradas article), el pathname
- * canónico ya los incluye como segmentos concretos — no necesitamos
- * manipularlos manualmente.
+ * Para el resto de rutas (estáticas o sin slug localizado), `usePathname()`
+ * devuelve el path canónico que `Link` traduce automáticamente.
  */
 export function LocaleSwitcher({ className }: { className?: string }) {
   const pathname = usePathname()
   const params = useParams()
   const currentLocale = (params.locale as Locale) ?? 'es'
 
-  // Para rutas de artículo dinámicas, next-intl necesita el template + params,
-  // no el path concreto. Detectamos por la presencia de cat + slug en useParams.
-  const cat = params.cat as string | undefined
+  const parentOrSub = params.parentOrSub as string | undefined
   const slug = params.slug as string | undefined
-  const isDynamicArticle = Boolean(cat && slug)
 
-  // articleHref() encapsula la aserción de tipo necesaria para rutas dinámicas
-  // de next-intl. Ver lib/i18n/article-href.ts para contexto.
-  const linkHref: IntlHref = isDynamicArticle
-    ? articleHref(cat!, slug!)
-    : (pathname as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
+  /**
+   * Build el href para un locale target. Las rutas Miradas dinámicas requieren
+   * relocalización del segmento parentOrSub.
+   */
+  function hrefForLocale(target: Locale): IntlHref {
+    if (parentOrSub) {
+      const parsed = parseParentOrSubSlug(parentOrSub, currentLocale)
+      if (parsed) {
+        if (slug && parsed.kind === 'sub') {
+          return articleHref(parsed.canonical, slug, target)
+        }
+        if (parsed.kind === 'sub') {
+          return subListingHref(parsed.canonical, target)
+        }
+        if (parsed.kind === 'parent') {
+          return parentListingHref(parsed.canonical, target)
+        }
+      }
+    }
+    // Resto de rutas — pathname canónico, next-intl traduce al locale destino.
+    return pathname as Exclude<
+      RouteId,
+      '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'
+    >
+  }
 
   return (
     <ul
@@ -50,15 +72,12 @@ export function LocaleSwitcher({ className }: { className?: string }) {
         return (
           <li key={locale}>
             {isCurrent ? (
-              <span
-                aria-current="true"
-                className="uppercase text-fg/40"
-              >
+              <span aria-current="true" className="uppercase text-fg/40">
                 {LOCALE_META[locale].nativeName}
               </span>
             ) : (
               <Link
-                href={linkHref}
+                href={hrefForLocale(locale)}
                 locale={locale}
                 className="hover-wipe-underline w-fit uppercase text-fg
                            focus-visible:opacity-90"

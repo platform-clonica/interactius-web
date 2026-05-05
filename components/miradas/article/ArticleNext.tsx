@@ -4,9 +4,11 @@ import { CurtainLink } from '@/components/layout/CurtainLink'
 import { PlusArrowFlipIcon } from '@/components/ui/PlusArrowFlipIcon'
 import { articleHref } from '@/lib/i18n/article-href'
 import type { MiradaMeta } from '@/lib/content/miradas'
+import type { Locale } from '@/lib/i18n/config'
 
 interface ArticleNextProps {
   article: MiradaMeta
+  locale: Locale
 }
 
 const PLACEHOLDER_COVERS = Array.from(
@@ -37,10 +39,10 @@ function formatDate(dateStr: string): string {
  *   · `group` en la raíz para disparar el group-hover del icono.
  * Pegado al footer sin padding-bottom.
  */
-export function ArticleNext({ article }: ArticleNextProps) {
+export function ArticleNext({ article, locale }: ArticleNextProps) {
   return (
     <CurtainLink
-      href={articleHref(article.cat, article.slug)}
+      href={articleHref(article.category, article.slug, locale)}
       className="group block w-full"
       aria-label={`Siguiente artículo: ${article.title}`}
     >
