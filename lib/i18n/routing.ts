@@ -87,14 +87,20 @@ const PATHNAMES = {
     ca: '/mirades',
     en: '/thoughts',
   },
-  // Artículo — parámetros dinámicos [cat] y [slug].
-  // Las categorías comparten slug en los 3 idiomas (design, ux, research, ia,
-  // estrategia, workshops, diseno-inclusivo). Decisión consciente para
-  // preservar los 108 redirects 301 ya preparados.
-  '/miradas/[cat]/[slug]': {
-    es: '/miradas/[cat]/[slug]',
-    ca: '/mirades/[cat]/[slug]',
-    en: '/thoughts/[cat]/[slug]',
+  // Listing de madre o sub — el segmento [parentOrSub] recibe el slug
+  // **localizado** (decisión D). Resolución a canónica via
+  // `parseParentOrSubSlug()` en server-side.
+  '/miradas/[parentOrSub]': {
+    es: '/miradas/[parentOrSub]',
+    ca: '/mirades/[parentOrSub]',
+    en: '/thoughts/[parentOrSub]',
+  },
+  // Artículo — solo bajo sub (decisión A: URL solo subcategoría, sin madre).
+  // El segmento [parentOrSub] aquí es siempre una sub localizada.
+  '/miradas/[parentOrSub]/[slug]': {
+    es: '/miradas/[parentOrSub]/[slug]',
+    ca: '/mirades/[parentOrSub]/[slug]',
+    en: '/thoughts/[parentOrSub]/[slug]',
   },
 
   // Legal

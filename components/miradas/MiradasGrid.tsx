@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
+
+import type { Locale } from '@/lib/i18n/config'
 
 import { SuperTitleReveal } from '@/components/ui/SuperTitleReveal'
 
@@ -56,14 +58,16 @@ function ArticleCard({
   article,
   cover,
   priority = false,
+  locale,
 }: {
   article: MiradaMeta
   cover: string
   priority?: boolean
+  locale: Locale
 }) {
   return (
     <CurtainLink
-      href={articleHref(article.cat, article.slug)}
+      href={articleHref(article.category, article.slug, locale)}
       className="group relative block overflow-hidden"
     >
       {/* Image area — único bloque del card. Author + title se apilan desde
@@ -104,13 +108,15 @@ function ArticleCard({
 function FeaturedCard({
   article,
   cover,
+  locale,
 }: {
   article: MiradaMeta
   cover: string
+  locale: Locale
 }) {
   return (
     <CurtainLink
-      href={articleHref(article.cat, article.slug)}
+      href={articleHref(article.category, article.slug, locale)}
       className="group relative col-span-12 lg:col-start-2 lg:col-span-10 block overflow-hidden"
     >
       {/* Image area — único bloque del card. Layout canónico bottom-up via
@@ -158,6 +164,7 @@ function FeaturedCard({
 
 export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
   const t = useTranslations('miradas')
+  const locale = useLocale() as Locale
   const [search, setSearch] = useState('')
   const [activeCategories, setActiveCategories] = useState<string[]>([])
   const [, startTransition] = useTransition()
@@ -338,6 +345,7 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
               <FeaturedCard
                 article={featured}
                 cover={getCover(featured, 0)}
+                locale={locale}
               />
             </div>
           )}
@@ -353,6 +361,7 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
                     article={article}
                     cover={getCover(article, i * 2 + 1)}
                     priority={i === 0}
+                    locale={locale}
                   />
                 ))}
               </div>
@@ -365,6 +374,7 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
                     article={article}
                     cover={getCover(article, i * 2 + 2)}
                     priority={i === 0}
+                    locale={locale}
                   />
                 ))}
               </div>

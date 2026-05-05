@@ -171,7 +171,7 @@ export function CapacityOthersAnim({
             <Link
               key={item.href}
               ref={i === 0 ? card0Ref : card1Ref}
-              href={item.href as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+              href={item.href as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
               onClick={(e) => handleClick(e, item.href)}
               className={`
                 group hover-text-flip col-span-12 lg:col-span-6
