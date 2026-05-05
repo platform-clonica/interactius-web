@@ -190,29 +190,15 @@ export function HeroScroll({
         })
         cleanups.push(() => split.revert())
 
-        // Bold effect canonical (feedback_bold_effect.md) sobre [data-word]
+        // Bold canónico — slashes pre-renderizados via richComponents.boldWord.
+        // Aquí solo animamos el text-stroke 0→0.6px del word (regular → semi).
         const wordEl = h1.querySelector<HTMLElement>('[data-word]')
-        if (wordEl?.parentNode) {
+        if (wordEl) {
           const transformDelay = 0.2 + 1.2 + (lines.length - 1) * 0.1 + 0.4
           const delayed = gsap.delayedCall(transformDelay, () => {
-            const parent = wordEl.parentNode
-            if (!parent) return
-            // Defensive: limpia residuos si el efecto se ejecuta dos veces.
-            h1.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
             wordEl.style.removeProperty('-webkit-text-stroke')
-            const slashL = document.createElement('span')
-            slashL.textContent = '/ '
-            slashL.dataset.slashDynamic = ''
-            slashL.style.display = 'none'
-            const slashR = document.createElement('span')
-            slashR.textContent = ' /'
-            slashR.dataset.slashDynamic = ''
-            slashR.style.display = 'none'
-            parent.insertBefore(slashL, wordEl)
-            parent.insertBefore(slashR, wordEl.nextSibling)
             const proxy = { v: 0 }
-            const btl = gsap.timeline()
-            btl.to(proxy, {
+            gsap.to(proxy, {
               v: 0.6,
               duration: 1.4,
               ease: 'sine.inOut',
@@ -220,18 +206,10 @@ export function HeroScroll({
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
-            // Animar font-size 0 → natural (display:inline) — baseline alineado
-            slashL.style.display = ''
-            slashR.style.display = ''
-            const fontSize = window.getComputedStyle(slashL).fontSize
-            gsap.set(slashL, { fontSize: 0, opacity: 0 })
-            gsap.set(slashR, { fontSize: 0, opacity: 0 })
-            btl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
-            btl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
           })
           cleanups.push(() => {
             delayed.kill()
-            h1.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+            wordEl.style.removeProperty('-webkit-text-stroke')
           })
         }
       } else if (h1 && reduced) {

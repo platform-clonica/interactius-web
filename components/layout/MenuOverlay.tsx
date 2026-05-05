@@ -22,6 +22,7 @@ const PRIMARY_ITEMS = [
 ] as const
 
 const SECONDARY_ITEMS = [
+  { route: '/', labelKey: 'nav.home' },
   { route: '/identidad', labelKey: 'nav.identidad' },
   { route: '/miradas', labelKey: 'nav.miradas' },
   { route: '/contacto', labelKey: 'nav.contacto' },
@@ -323,38 +324,44 @@ export function MenuOverlay() {
         style={{ clipPath: 'inset(0 100% 0 0)' }}
       />
 
-      {/* Nav content — absolute sobre el panel (z-10) con animaciones independientes */}
+      {/* Nav content — mobile: flex column con slots top/center/bottom.
+          Desktop (lg): bloque absoluto, hijos posicionados absolute con vh tops.
+          El cambio de layout se hace via `lg:contents`/`lg:block` para que
+          en lg los hijos posicionen relative al contenedor outer (positioning
+          context = `absolute inset-y-0`). */}
       <div
-        className="absolute inset-y-0 z-10"
+        className="absolute inset-y-0 z-10
+                   flex flex-col
+                   pt-[26px] pb-[var(--grid-margin)] pr-[var(--grid-margin)]
+                   gap-10
+                   lg:block lg:p-0 lg:gap-0"
         style={{ left: 'calc(var(--sidebar-w) + var(--grid-margin))' }}
       >
-        {/* Home link — alineado verticalmente con la X del Sidebar (top:26px),
-            mismo estilo que los secondary nav links. El wrapper carga
-            `data-secondary-link` (lo anima GSAP); el Link queda libre con la
-            utility canónica `hover-wipe-underline` (opacity 60→100). */}
+        {/* Locale switcher — top-right del panel. Home se movió a la columna
+            secondary nav (primer item, ver SECONDARY_ITEMS). */}
         <div
-          data-secondary-link=""
-          className="absolute top-[26px]"
+          data-locale-switcher=""
+          className="self-end
+                     lg:absolute lg:top-[26px]
+                     lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]
+                     lg:pr-[30px]
+                     lg:pointer-events-none"
         >
-          <Link
-            href="/"
-            onClick={(e) => handleLinkClick(e, '/')}
-            className="hover-wipe-underline w-fit font-mono text-body-sm text-fg"
-          >
-            {t('nav.home')}
-          </Link>
+          <div className="flex justify-end">
+            <LocaleSwitcher className="pointer-events-auto" />
+          </div>
         </div>
 
-        {/* Primary nav */}
+        {/* Primary nav — mobile flex-1 vertical center; lg absolute top:27.7vh */}
         <nav
           aria-label={t('common.menu.primaryNav')}
-          className="absolute"
-          style={{ top: '27.7vh' }}
+          className="flex-1 flex flex-col justify-center
+                     lg:absolute lg:flex-none lg:top-[calc(27.7vh-40px)] lg:block"
         >
           {PRIMARY_ITEMS.map(({ route, labelKey, num }) => (
             <div
               key={route}
-              className="overflow-hidden w-[calc(100vw-var(--grid-margin)*2)]
+              className="overflow-hidden w-full
                          lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]"
             >
               <div data-primary-block="" className="border-t border-fg/20">
@@ -412,11 +419,11 @@ export function MenuOverlay() {
           ))}
         </nav>
 
-        {/* Secondary nav — agrupado y separado del primary. Sube top para
-            compensar el extra de gap entre items, mantiene centro óptico. */}
+        {/* Secondary nav — mobile: anclado al bottom (mt-auto);
+            lg: absolute top:68vh (mantiene centro óptico desktop) */}
         <div
-          className="absolute flex flex-col gap-6"
-          style={{ top: '68vh' }}
+          className="flex flex-col gap-6 mt-auto
+                     lg:absolute lg:mt-0 lg:top-[calc(68vh-50px)]"
         >
           {SECONDARY_ITEMS.map(({ route, labelKey }) => (
             <div key={route} data-secondary-link="">
@@ -429,20 +436,6 @@ export function MenuOverlay() {
               </Link>
             </div>
           ))}
-        </div>
-
-        {/* Locale switcher — top-right del panel, alineado verticalmente con
-            Home y la X. Stack vertical (ES/CA/EN uno debajo del otro). */}
-        <div
-          data-locale-switcher=""
-          className="absolute top-[26px]
-                     w-[calc(100vw-var(--grid-margin)*2)]
-                     lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]
-                     pointer-events-none"
-        >
-          <div className="flex justify-end pr-[30px]">
-            <LocaleSwitcher className="pointer-events-auto" />
-          </div>
         </div>
       </div>
     </div>

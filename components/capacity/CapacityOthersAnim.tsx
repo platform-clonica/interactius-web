@@ -182,13 +182,13 @@ export function CapacityOthersAnim({
           const bgClass = isActive ? 'bg-warm-light' : 'bg-pure-white'
           const sepClass = showSeparator ? 'lg:border-r lg:border-muted' : ''
           const lgEdgeLeft = isFirst
-            ? 'lg:ml-[calc(-1_*_var(--grid-margin))] lg:pl-[calc(20px_+_var(--grid-margin))]'
-            : 'lg:ml-[calc(-1_*_var(--grid-gutter)_/_2)] lg:pl-[calc(20px_+_var(--grid-gutter)_/_2)]'
+            ? 'lg:ml-[calc(-1_*_var(--grid-margin))] lg:pl-[calc(40px_+_var(--grid-margin))]'
+            : 'lg:ml-[calc(-1_*_var(--grid-gutter)_/_2)] lg:pl-[calc(40px_+_var(--grid-gutter)_/_2)]'
           const lgEdgeRight = isLast
-            ? 'lg:mr-[calc(-1_*_var(--grid-margin))] lg:pr-[calc(20px_+_var(--grid-margin))]'
-            : 'lg:mr-[calc(-1_*_var(--grid-gutter)_/_2)] lg:pr-[calc(20px_+_var(--grid-gutter)_/_2)]'
+            ? 'lg:mr-[calc(-1_*_var(--grid-margin))] lg:pr-[calc(40px_+_var(--grid-margin))]'
+            : 'lg:mr-[calc(-1_*_var(--grid-gutter)_/_2)] lg:pr-[calc(40px_+_var(--grid-gutter)_/_2)]'
           const commonClasses =
-            `col-span-12 lg:col-span-4 p-5 flex flex-col gap-2 ${bgClass} ${sepClass} ${lgEdgeLeft} ${lgEdgeRight}`
+            `col-span-12 lg:col-span-4 p-10 flex flex-col gap-2 ${bgClass} ${sepClass} ${lgEdgeLeft} ${lgEdgeRight}`
 
           if (isActive) {
             return (
@@ -210,7 +210,7 @@ export function CapacityOthersAnim({
                 </span>
                 <span
                   data-other-desc
-                  className="font-mono text-body-sm text-fg/60 lg:w-3/4"
+                  className={`font-mono text-body-sm text-fg/60 ${i === 0 ? 'lg:w-full' : 'lg:w-3/4'}`}
                 >
                   {tab.description}
                 </span>
@@ -242,7 +242,7 @@ export function CapacityOthersAnim({
               </span>
               <span
                 data-other-desc
-                className="font-mono text-body-sm text-fg/60 lg:w-3/4"
+                className={`font-mono text-body-sm text-fg/60 ${i === 0 ? 'lg:w-full' : 'lg:w-3/4'}`}
               >
                 {tab.description}
               </span>

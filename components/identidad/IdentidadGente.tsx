@@ -43,7 +43,7 @@ const SLOTS: { y: number; x: number }[] = [
 ]
 
 const REEL_WIDTH = 7840 // 280px × 28 slots
-const DRIFT_SPEED = 100 // px per second — same velocity for entry and drift
+const DRIFT_SPEED = 130 // px per second — same velocity for entry and drift
 const PHOTO_W = 200     // px — reference for wrap calculation
 
 /* ==========================================================================
@@ -106,7 +106,6 @@ export function IdentidadGente() {
     const vh = window.innerHeight
     const pastTopBottom = rect.top < vh         // texto debería estar revelado
     const pastTop30 = rect.top < vh * 0.3       // drift debería estar activo
-    const pastTopTop = rect.top <= 0            // bg-fade debería estar en dark
 
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
@@ -120,17 +119,13 @@ export function IdentidadGente() {
       const reduced = getReducedMotion()
       const cleanups: Array<() => void> = []
 
-      // 1. Pin the sticky container for 200vh of scroll (gives more room for
-      //    reading + watching photos drift in one by one)
-      const pinST = ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: '+=200%',
-        pin: pinEl,
-        pinSpacing: true,
-        anticipatePin: 1,
-      })
-      cleanups.push(() => pinST.kill())
+      // Pin eliminado intencionalmente: causaba bugs intermitentes al
+      // navegar via PageCurtain (el pinSpacing se calculaba con layout
+      // incompleto y el sticky no enganchaba → texto se escapaba al hacer
+      // scroll y las fotos aparecían solapadas con la siguiente sección).
+      // Ahora la sección es un bloque normal de scroll: 100vh de altura
+      // (h-screen del pinEl), las fotos hacen drift mientras está en
+      // viewport, y la sección sale naturalmente al seguir scrolleando.
 
       // 2. Title + description line-mask reveal — fires when 2/3 of the
       //    Metodología mask has covered the viewport (Gente top at ~33%vh)
@@ -174,41 +169,10 @@ export function IdentidadGente() {
         cleanups.push(() => { revealST.kill(); titleSplit.revert(); descSplit.revert() })
       }
 
-      // 3. Background fade warm-light → dark
-      //    Si la sección ya está pasada `top top` cuando montamos (deep-link,
-      //    navegación con scroll restaurado), forzamos estado final dark sin
-      //    animar para evitar flash + línea horizontal de la máscara.
-      if (!reduced) {
-        if (pastTopTop) {
-          gsap.set(section, { backgroundColor: '#1c1a17' })
-          gsap.set([titleEl, descEl], { color: '#f5f2ed' })
-        } else {
-          gsap.set([titleEl, descEl], { color: '#1c1a17' })
-          const bgTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: section,
-              start: 'top top',
-              toggleActions: 'play none none reverse',
-            },
-          })
-          bgTl
-            .to(section, {
-              backgroundColor: '#1c1a17',
-              duration: 0.5,
-              ease: 'power2.inOut',
-              overwrite: 'auto',
-            }, 0)
-            .to([titleEl, descEl], {
-              color: '#f5f2ed',
-              duration: 0.5,
-              ease: 'power2.inOut',
-              overwrite: 'auto',
-            }, 0)
-          const bgSt = bgTl.scrollTrigger
-          if (bgSt) cleanups.push(() => bgSt.kill())
-          cleanups.push(() => bgTl.kill())
-        }
-      }
+      // Bg fade eliminado intencionalmente: la sección tiene bg-dark fijo
+      // desde el primer paint y los textos warm-light por className. Eliminar
+      // este timeline corrige los bugs de "texto desaparece + pin no engancha"
+      // que aparecían al navegar a /identidad via PageCurtain.
 
       // 3b. Photo drift — activates at the same point as the text reveal and
       //     bg fade. Drift consumes the entryOffset at the same speed it'll
@@ -420,13 +384,15 @@ export function IdentidadGente() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-warm-light"
+      className="relative w-full bg-dark"
       aria-labelledby="gente-title"
     >
-      {/* Pinned sticky container — bg animates warm-light → dark */}
+      {/* CSS sticky canónico: el contenido se queda fijo 100vh mientras el
+          spacer de 100vh debajo aporta la duración del pin. Sin GSAP pin,
+          sin pinSpacing, sin race conditions. */}
       <div
         ref={pinRef}
-        className="relative w-full h-screen overflow-hidden"
+        className="sticky top-0 w-full h-screen overflow-hidden"
       >
         {/* Titular "Nuestra gente" — text-title like Actitud Liminal, top-left.
             Color tweened by GSAP from fg → warm-light in sync with body bg. */}
@@ -437,7 +403,7 @@ export function IdentidadGente() {
             <h2
               ref={titleRef}
               id="gente-title"
-              className="col-span-10 lg:col-span-6 lg:col-start-2 font-serif font-normal text-section leading-[1.2] tracking-[-0.02em]"
+              className="col-span-10 lg:col-span-6 lg:col-start-2 font-serif font-normal text-warm-light text-section leading-[1.2] tracking-[-0.02em]"
             >
               {t('gente.title')}
             </h2>
@@ -451,7 +417,7 @@ export function IdentidadGente() {
           <div className="grid grid-cols-12 gap-grid-gutter">
             <p
               ref={descRef}
-              className="col-start-2 col-span-10 font-serif font-light text-title text-center leading-[1.1] tracking-[-0.02em]"
+              className="col-start-2 col-span-10 font-serif font-light text-warm-light text-title text-center leading-[1.1] tracking-[-0.02em]"
             >
               {t('gente.description')}
             </p>
@@ -525,6 +491,11 @@ export function IdentidadGente() {
           })}
         </div>
       </div>
+
+      {/* Spacer 100vh — aporta el "pin time" del CSS sticky de arriba.
+          Mientras el viewport scrollea estos 100vh, el pinEl permanece fijo
+          en top:0 (comportamiento nativo de position:sticky). */}
+      <div style={{ height: '100vh' }} aria-hidden="true" />
 
       {/* "Arrastrar" hint — fixed sibling, sigue al cursor con mix-blend
           difference. Mismo pipeline que el hint del Hero (HeroScroll). */}

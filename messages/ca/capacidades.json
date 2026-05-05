@@ -22,7 +22,7 @@
   ],
   "pensamiento": {
     "hero": {
-      "title": "Pensament estratègic",
+      "title": "Pensament\nestratègic",
       "lead": "<strong>Som ments curioses, analítiques i crítiques.</strong><p>Habitem l'espai que està per definir. Integrem criteri i visió de futur per ajudar a decidir en entorns complexos.</p>"
     },
     "intro": {
@@ -75,7 +75,7 @@
   },
   "experiencias": {
     "hero": {
-      "title": "Disseny d'experiències",
+      "title": "Disseny\nd'experiències",
       "lead": "<strong>Investiguem, dissenyem i validem.</strong><p>Operem el terreny on les idees es fan tangibles. Aportem evidència i rigor metodològic per escalar solucions amb criteri.</p>"
     },
     "intro": {
@@ -127,7 +127,7 @@
   },
   "transformacion": {
     "hero": {
-      "title": "Transformació cultural",
+      "title": "Transformació\ncultural",
       "lead": "<strong>Facilitem, impulsem i divulguem.</strong><p>Habitem el canvi des de dins per ajudar les organitzacions a pensar, treballar i relacionar-se amb el futur. La transformació més difícil no és tecnològica ni estructural, és cultural.</p>"
     },
     "intro": {

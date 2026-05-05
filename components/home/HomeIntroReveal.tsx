@@ -161,10 +161,12 @@ export function HomeIntroReveal() {
     <section
       ref={sectionRef}
       className="relative w-full bg-warm-light"
-      style={{ minHeight: '400vh' }}
+      style={{ minHeight: '300vh' }}
       aria-label="Diseñamos para la transición"
     >
-      {/* Sticky pin — sticks for ~300vh (75% del scroll de la sección) */}
+      {/* Sticky pin — sticks for ~225vh (75% del scroll de la sección).
+          Reducido de 400→300vh para aligerar el ritmo: el scrub del crop
+          (20%→50%) escala automáticamente con la altura de la sección. */}
       <div className="sticky top-0 w-full h-screen">
         {/* Imagen full-width con reveal lateral — sin blur */}
         <div

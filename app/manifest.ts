@@ -27,9 +27,9 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ['business', 'productivity'],
     icons: [
       {
-        src: '/favicon.ico',
-        sizes: '48x48',
-        type: 'image/x-icon',
+        src: '/favicon.png',
+        sizes: 'any',
+        type: 'image/png',
       },
       {
         // SVG escala a cualquier tamaño — suficiente hasta que lleguen los PNG

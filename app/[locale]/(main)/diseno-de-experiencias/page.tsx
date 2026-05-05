@@ -54,15 +54,15 @@ export default async function DisenoDeExperiencias({ params }: PageProps) {
         imageBottomSrc="/capacidades/experiencias-hero-bottom.webp"
       />
 
-      <ClientsMarquee clients={t('experiencias.intro.clients')} singleLine />
-
       <CapacityServices
         services={services}
         sectionLabel={t('sections.services')}
-        capacityLabel={capacityTitle}
+        capacityLabel={capacityTitle.replace(/\n/g, ' ')}
         accentColor="#99335F"
         shapeKind="ellipse"
       />
+
+      <ClientsMarquee clients={t('experiencias.intro.clients')} bottomSpacing="large" />
 
       <CapacityOthers
         tabs={tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityTabItem, CapacityTabItem, CapacityTabItem]}

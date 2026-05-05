@@ -1,16 +1,11 @@
 'use client'
 
-import { useRef, useEffect, type ReactNode } from 'react'
+import { useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
-
-// Renders <strong> as a plain span with a data attr — no hidden elements,
-// no layout side-effects. Slashes are injected dynamically at scroll time.
-const introComponents = {
-  strong: (chunks: ReactNode) => <span data-word="">{chunks}</span>,
-}
+import { richComponents } from '@/lib/i18n/rich-text'
 
 export function IdentidadIntro() {
   const t = useTranslations('identidad')
@@ -55,32 +50,15 @@ export function IdentidadIntro() {
 
           delayed = gsap.delayedCall(transformDelay, () => {
             const wordEl = quoteEl.querySelector<HTMLElement>('[data-word]')
-            if (!wordEl?.parentNode) return
+            if (!wordEl) return
 
-            // Defensive: limpia residuos si el efecto se ejecuta dos veces
-            // (StrictMode dev, remount tras navegación) — evita duplicados.
-            quoteEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
             wordEl.style.removeProperty('-webkit-text-stroke')
 
-            // Slashes inserted hidden — no space taken until phase 2
-            const slashL = document.createElement('span')
-            slashL.textContent = '/ '
-            slashL.dataset.slashDynamic = ''
-            slashL.style.display = 'none'
-
-            const slashR = document.createElement('span')
-            slashR.textContent = ' /'
-            slashR.dataset.slashDynamic = ''
-            slashR.style.display = 'none'
-
-            wordEl.parentNode.insertBefore(slashL, wordEl)
-            wordEl.parentNode.insertBefore(slashR, wordEl.nextSibling)
-
+            // Única animación canónica: text-stroke 0 → 0.6px (regular → semi).
+            // Los slashes "/ palabra /" están renderizados desde el primer paint
+            // (richComponents.boldWord) → wrap estable, sin reflow.
             const proxy = { v: 0 }
-            const tl = gsap.timeline()
-
-            // Phase 1: word strokes bold smoothly (no font-weight snap)
-            tl.to(proxy, {
+            gsap.to(proxy, {
               v: 0.6,
               duration: 1.4,
               ease: 'sine.inOut',
@@ -88,17 +66,6 @@ export function IdentidadIntro() {
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
-
-            // Animar font-size 0 → natural sobre display:inline. El baseline
-            // y el line-box quedan idénticos al texto vecino (no hay
-            // desalineación) y el desplazamiento sigue siendo gradual.
-            slashL.style.display = ''
-            slashR.style.display = ''
-            const fontSize = window.getComputedStyle(slashL).fontSize
-            gsap.set(slashL, { fontSize: 0, opacity: 0 })
-            gsap.set(slashR, { fontSize: 0, opacity: 0 })
-            tl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
-            tl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
           })
         },
       })
@@ -106,8 +73,7 @@ export function IdentidadIntro() {
       cleanupRef.current = () => {
         st.kill()
         delayed?.kill()
-        // Remove dynamically inserted slashes before SplitType reverts
-        quoteEl.querySelectorAll('[data-slash-dynamic]').forEach(el => el.remove())
+        quoteEl.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('-webkit-text-stroke')
         split.revert()
       }
     })()
@@ -125,14 +91,14 @@ export function IdentidadIntro() {
               ref={quoteRef}
               className="font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
             >
-              {t.rich('intro.quote', introComponents)}
+              {t.rich('intro.quote', richComponents.boldWord)}
             </p>
           </div>
         </div>
       </div>
 
-      {/* 200vh spacer — keeps text sticky long enough for the word effect to play */}
-      <div style={{ height: '200vh' }} aria-hidden="true" />
+      {/* 100vh spacer — pin corto, ritmo canónico para textos solitarios sticky */}
+      <div style={{ height: '100vh' }} aria-hidden="true" />
     </section>
   )
 }

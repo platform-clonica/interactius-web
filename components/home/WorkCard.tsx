@@ -159,13 +159,15 @@ export function WorkCard({ data, responsive = 'desktop' }: WorkCardProps) {
         </div>
 
         {/* Labels — pill de cliente + pill de título, cada una con clip-path
-            propio. Mismo lenguaje que las labels del equipo (IdentidadGente). */}
+            propio. Pill cliente usa text-card-sm (14px) — más grande que las
+            pills del equipo (text-micro 12px) por la mayor anchura de las
+            cards de proyecto. */}
         <div className="absolute bottom-0 left-0 flex flex-col pointer-events-none max-w-[calc(100%-12px)]">
           <div
             ref={clientLabelRef}
             className="bg-warm-light px-[6px] py-[2px] self-start"
           >
-            <p className="font-mono text-micro text-fg leading-[1.4] whitespace-nowrap">
+            <p className="font-mono text-[clamp(14px,1.4vw,16px)] text-fg leading-[1.4] whitespace-nowrap">
               {data.client}
             </p>
           </div>

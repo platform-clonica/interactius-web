@@ -20,9 +20,12 @@ interface RotatedLogoProps {
   className?: string
 }
 
-// Dimensiones extraídas de Figma × 0.8
-const LOGO_H = '24.78px'   // 30.975 × 0.8
-const LOGO_W = '175.356px' // 219.195 × 0.8
+// Dimensiones canónicas de Figma × 0.8. ANCHO visible (rotated short side)
+// se mantiene a 24.78px; el LARGO (rotated long side) se recalcula con el
+// nuevo aspect ratio del logo (3131:404 ≈ 7.75:1).
+//   long = 24.78 × (3131 / 404) = 192.07
+const LOGO_H = '24.78px'   // visible width tras rotación (≡ logo natural height)
+const LOGO_W = '192.07px'  // visible height tras rotación (≡ logo natural width)
 
 export function RotatedLogo({ className = '' }: RotatedLogoProps) {
   return (

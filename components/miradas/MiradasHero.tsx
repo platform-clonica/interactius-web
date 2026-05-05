@@ -1,23 +1,13 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 import { usePageCurtainStore } from '@/lib/store/curtain'
-
-// Wrap del bold con white-space: nowrap → el slashed unit "/ Miradas /"
-// nunca se rompe en mitad. Si la línea no cabe, salta el unit entero a
-// la siguiente sin partir las palabras vecinas (ej. "lo establecido")
-const introComponents = {
-  strong: (chunks: ReactNode) => (
-    <span data-word="" style={{ whiteSpace: 'nowrap' }}>
-      {chunks}
-    </span>
-  ),
-}
+import { richComponents } from '@/lib/i18n/rich-text'
 
 export function MiradasHero() {
   const t = useTranslations('miradas')
@@ -73,43 +63,23 @@ export function MiradasHero() {
             delay: 0.25,
             onComplete: () => {
               const wordEl = subtitleEl.querySelector<HTMLElement>('[data-word]')
-              if (!wordEl?.parentNode) return
+              if (!wordEl) return
 
-              subtitleEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+              // Reset defensivo (revisita / hot-reload)
               wordEl.style.removeProperty('-webkit-text-stroke')
 
-              const slashL = document.createElement('span')
-              slashL.textContent = '/ '
-              slashL.dataset.slashDynamic = ''
-              slashL.style.display = 'none'
-
-              const slashR = document.createElement('span')
-              slashR.textContent = ' /'
-              slashR.dataset.slashDynamic = ''
-              slashR.style.display = 'none'
-
-              wordEl.parentNode.insertBefore(slashL, wordEl)
-              wordEl.parentNode.insertBefore(slashR, wordEl.nextSibling)
-
+              // Única animación: text-stroke 0 → 0.6px (engrosa el trazo
+              // del word de regular a semi, sin cambiar el ancho del glifo).
               const proxy = { v: 0 }
-              const tl = gsap.timeline({ delay: 0.4 })
-
-              tl.to(proxy, {
+              gsap.to(proxy, {
                 v: 0.6,
                 duration: 1.4,
                 ease: 'sine.inOut',
+                delay: 0.4,
                 onUpdate: () => {
                   wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
                 },
               })
-
-              slashL.style.display = ''
-              slashR.style.display = ''
-              const fontSize = window.getComputedStyle(slashL).fontSize
-              gsap.set(slashL, { fontSize: 0, opacity: 0 })
-              gsap.set(slashR, { fontSize: 0, opacity: 0 })
-              tl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
-              tl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
             },
           })
         }
@@ -135,7 +105,7 @@ export function MiradasHero() {
       cleanupRef.current = () => {
         cleanups.forEach((fn) => fn())
         splits.forEach((s) => s.revert())
-        subtitleEl?.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+        subtitleEl?.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('-webkit-text-stroke')
       }
     })()
 
@@ -187,7 +157,7 @@ export function MiradasHero() {
             ref={subtitleRef}
             className="col-span-12 lg:col-start-2 lg:col-span-8 font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
           >
-            {t.rich('hero.subtitle', introComponents)}
+            {t.rich('hero.subtitle', richComponents.boldWord)}
           </p>
         </div>
       </div>

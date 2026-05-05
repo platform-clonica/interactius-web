@@ -114,38 +114,47 @@ export function PageCurtain() {
       const initialPath = window.location.pathname
 
       // Glyph "loading": cada letra (i, u, s) hace REVEAL LATERAL (clip-path
-      // izquierda→derecha) con stagger, y el ciclo se repite en bucle mientras
-      // la cortina cubre la pantalla. Mismo lenguaje canónico que el resto de
-      // reveals laterales del proyecto (cubic-bezier(.16,1,.3,1), 0.6s).
+      // izquierda→derecha) en SECUENCIA — primero i, luego u, luego s. La
+      // siguiente letra empieza solo cuando la anterior ha terminado.
+      // Mismo easing canónico (cubic-bezier(.16,1,.3,1)).
       const letters = panel.querySelectorAll<SVGGElement>('[data-curtain-letter]')
+      const glyphSvg = panel.querySelector<SVGElement>('[data-curtain-glyph]')
       const lateralEase = 'cubic-bezier(.16,1,.3,1)'
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let loopTl: any = null
       const startGlyphLoop = () => {
         if (!letters.length) return
+        // El SVG nace con opacity:0 inline para que NO sea visible durante
+        // el cover del panel. Lo mostramos justo antes del primer reveal.
+        if (glyphSvg) gsap.set(glyphSvg, { opacity: 1 })
         gsap.set(letters, { clipPath: 'inset(0 100% 0 0)' })
         loopTl = gsap.timeline({ repeat: -1, repeatDelay: 0.25 })
-        // Reveal: cada letra desclipa de izq→derecha, stagger 0.16s
+        // Reveal con OVERLAP: stagger 0.3 < duration 0.6 → la siguiente letra
+        // arranca cuando la anterior está al ~50%. Encadenado fluido: i→u→s.
         loopTl.to(letters, {
           clipPath: 'inset(0 0% 0 0)',
-          duration: 0.55,
-          stagger: 0.16,
+          duration: 0.6,
+          stagger: 0.3,
           ease: lateralEase,
         })
         // Hold breve y reset (re-clipar desde la derecha para que el próximo
-        // ciclo vuelva a entrar limpio desde la izquierda)
+        // ciclo vuelva a entrar limpio desde la izquierda). Reset también
+        // secuencial pero más rápido — solo es la "limpieza" entre ciclos.
         loopTl.to(letters, {
           clipPath: 'inset(0 0 0 100%)',
-          duration: 0.4,
-          stagger: 0.08,
+          duration: 0.3,
+          stagger: 0.3,
           ease: lateralEase,
-        }, '+=0.5')
+        }, '+=0.4')
         loopTl.set(letters, { clipPath: 'inset(0 100% 0 0)' })
       }
       const stopGlyphLoop = () => {
         loopTl?.kill()
         loopTl = null
         if (letters.length) gsap.set(letters, { clipPath: 'inset(0 0% 0 0)' })
+        // Volver a ocultar el SVG para la próxima cortina (durante el uncover
+        // y el siguiente cover, no debe verse).
+        if (glyphSvg) gsap.set(glyphSvg, { opacity: 0 })
       }
 
       const startUncover = () => {
