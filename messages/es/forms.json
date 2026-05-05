@@ -7,6 +7,9 @@
     "messageMin": "El mensaje debe tener al menos 10 caracteres",
     "profession": "Introduce tu profesión",
     "city": "Introduce tu ciudad",
+    "state": "Introduce tu provincia",
+    "country": "Introduce tu país",
+    "householdSituation": "Indica tu situación del hogar",
     "birthdate": "Introduce tu fecha de nacimiento",
     "privacy": "Debes aceptar la política para continuar"
   },
@@ -21,6 +24,9 @@
     "profession": "Profesión",
     "gender": "Género (opcional)",
     "city": "Ciudad",
+    "state": "Provincia",
+    "country": "País",
+    "householdSituation": "Situación",
     "birthdate": "Fecha de nacimiento"
   },
   "genderOptions": {
@@ -29,6 +35,13 @@
     "nonBinary": "No binario",
     "other": "Otro",
     "preferNotToSay": "Prefiero no decirlo"
+  },
+  "householdOptions": {
+    "solo": "Solo",
+    "pareja": "Pareja",
+    "soloConHijos": "Solo con hij@/s",
+    "parejaConHijos": "Pareja con hij@/s",
+    "pisoCompartido": "Piso compartido"
   },
   "submit": "Enviar",
   "submitting": "Enviando…",
