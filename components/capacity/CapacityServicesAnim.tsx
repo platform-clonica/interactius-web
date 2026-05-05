@@ -260,7 +260,7 @@ export function CapacityServicesAnim({
             ancho y gap → cols alineadas pixel-perfect con el sistema
             canónico. Patrón equivalente al de IdentidadValores: panel
             sticky a la izquierda + paneles full-viewport scrolleando. ────── */}
-      <div className="section-inner py-section relative">
+      <div className="section-inner pt-section-md pb-section relative">
         <div ref={blocksRef} className="grid grid-cols-12 gap-grid-gutter">
           {services.map((svc, i) => (
             <div

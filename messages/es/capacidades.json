@@ -22,7 +22,7 @@
   ],
   "pensamiento": {
     "hero": {
-      "title": "Pensamiento estratégico",
+      "title": "Pensamiento\nestratégico",
       "lead": "<strong>Somos mentes curiosas, analíticas y críticas.</strong><p>Habitamos el espacio que está por definir. Integramos criterio y visión de futuro para ayudar a decidir en entornos complejos.</p>"
     },
     "intro": {
@@ -75,7 +75,7 @@
   },
   "experiencias": {
     "hero": {
-      "title": "Diseño de experiencias",
+      "title": "Diseño\nde experiencias",
       "lead": "<strong>Investigamos, diseñamos y validamos.</strong><p>Operamos el terreno donde las ideas se vuelven tangibles. Aportamos evidencia y rigor metodológico para escalar soluciones con criterio.</p>"
     },
     "intro": {
@@ -127,7 +127,7 @@
   },
   "transformacion": {
     "hero": {
-      "title": "Transformación cultural",
+      "title": "Transformación\ncultural",
       "lead": "<strong>Facilitamos, impulsamos y divulgamos.</strong><p>Habitamos el cambio desde dentro para ayudar a las organizaciones a pensar, trabajar y relacionarse con el futuro. La transformación más difícil no es tecnológica ni estructural, es cultural.</p>"
     },
     "intro": {

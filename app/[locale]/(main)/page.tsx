@@ -11,6 +11,7 @@ import { ClientsMarquee } from '@/components/home/ClientsMarquee'
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
 import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
+import { richComponents } from '@/lib/i18n/rich-text'
 
 /* ==========================================================================
    Metadata
@@ -61,7 +62,7 @@ export default async function HomePage({ params }: PageProps) {
           <h1 className="col-span-12 lg:col-start-2 lg:col-span-9 font-serif text-section font-light text-fg">
             {t.rich('hero.tagline', {
               em: (chunks) => <em>{chunks}</em>,
-              strong: (chunks) => <span data-word="">{chunks}</span>,
+              ...richComponents.boldWord,
             })}
           </h1>
         </div>

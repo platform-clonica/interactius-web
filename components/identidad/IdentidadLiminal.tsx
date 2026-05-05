@@ -138,8 +138,8 @@ export function IdentidadLiminal() {
         </div>
       </div>
 
-      {/* Spacer — keeps the sticky text pinned for a reading beat */}
-      <div style={{ height: '200vh' }} aria-hidden="true" />
+      {/* 100vh spacer — pin corto, ritmo canónico para textos solitarios sticky */}
+      <div style={{ height: '100vh' }} aria-hidden="true" />
     </section>
   )
 }

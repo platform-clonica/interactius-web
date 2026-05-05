@@ -197,13 +197,6 @@ export function IdentidadMetodologia() {
         </div>
       </div>
 
-      {/* Breathing space — warm-light expanse antes de Gente. Acortado para
-          que el cambio de sección no sienta tanto un vacío en blanco; queda
-          el aire suficiente para que las cards no peguen contra el titular. */}
-      <div
-        aria-hidden="true"
-        className="h-[clamp(20vh,28vh,36vh)]"
-      />
     </section>
   )
 }

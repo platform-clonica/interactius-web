@@ -1,7 +1,10 @@
+import { getTranslations } from 'next-intl/server'
+
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import { Link } from '@/lib/i18n/navigation'
 import { ArticleCardSimple } from '@/components/miradas/ArticleCardSimple'
 import { MiradasHero } from '@/components/miradas/MiradasHero'
+import { SuperTitleReveal } from '@/components/ui/SuperTitleReveal'
 import { parentListingHref } from '@/lib/i18n/article-href'
 import type { Locale } from '@/lib/i18n/config'
 import type { MiradaMeta } from '@/lib/content/miradas'
@@ -24,10 +27,26 @@ interface MiradasGlobalHomeProps {
  *
  * Hero compartido (`MiradasHero`) se renderiza al inicio.
  */
-export function MiradasGlobalHome({ articles, locale }: MiradasGlobalHomeProps) {
+export async function MiradasGlobalHome({ articles, locale }: MiradasGlobalHomeProps) {
+  const t = await getTranslations({ locale, namespace: 'miradas' })
+
   return (
     <>
       <MiradasHero />
+
+      {/* Super title "Miradas" — sangrado izquierdo canónico + line-mask reveal.
+          Mismo patrón que ServicesRows / IdentidadMetodologia / MiradasGrid.
+          Padding asimétrico: poco arriba (cerca del hero subtitle) y canónico
+          abajo (espacio para respirar antes de los artículos). */}
+      <div className="relative overflow-hidden pt-8 lg:pt-12 pb-section">
+        <h2
+          className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
+          style={{ marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))' }}
+          aria-hidden="true"
+        >
+          <SuperTitleReveal>{t('grid.superTitle')}</SuperTitleReveal>
+        </h2>
+      </div>
 
       {MIRADAS_PARENT_CATEGORIES.map((parent) => {
         const childSubs = SUBS_BY_PARENT[parent]
@@ -56,12 +75,12 @@ export function MiradasGlobalHome({ articles, locale }: MiradasGlobalHomeProps) 
                   {totalInParent}
                 </span>
               </h2>
-              <div className="col-span-12 lg:col-start-10 lg:col-span-3 flex lg:justify-end">
+              <div className="col-span-12 lg:col-start-2 lg:col-span-10 flex lg:justify-end lg:-translate-y-[50px]">
                 <CurtainLink
                   href={parentListingHref(parent, locale)}
                   className="hover-wipe-underline font-mono text-body-sm text-fg"
                 >
-                  Ver todos →
+                  Ver todos
                 </CurtainLink>
               </div>
             </div>

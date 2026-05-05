@@ -77,29 +77,14 @@ export function CapacityStatement({
 
           delayed = gsap.delayedCall(transformDelay, () => {
             const wordEl = quoteEl.querySelector<HTMLElement>('[data-word]')
-            if (!wordEl?.parentNode) return
+            if (!wordEl) return
 
-            // Defensive: limpia residuos si el efecto se ejecuta dos veces.
-            quoteEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
             wordEl.style.removeProperty('-webkit-text-stroke')
 
-            const slashL = document.createElement('span')
-            slashL.textContent = '/ '
-            slashL.dataset.slashDynamic = ''
-            slashL.style.display = 'none'
-
-            const slashR = document.createElement('span')
-            slashR.textContent = ' /'
-            slashR.dataset.slashDynamic = ''
-            slashR.style.display = 'none'
-
-            wordEl.parentNode.insertBefore(slashL, wordEl)
-            wordEl.parentNode.insertBefore(slashR, wordEl.nextSibling)
-
+            // Slashes pre-renderizados via richComponents.boldWord.
+            // Única animación: text-stroke 0→0.6px del word.
             const proxy = { v: 0 }
-            const tl = gsap.timeline()
-
-            tl.to(proxy, {
+            gsap.to(proxy, {
               v: 0.6,
               duration: 1.4,
               ease: 'sine.inOut',
@@ -107,15 +92,6 @@ export function CapacityStatement({
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
-
-            // Animar font-size 0 → natural (display:inline) — baseline alineado
-            slashL.style.display = ''
-            slashR.style.display = ''
-            const fontSize = window.getComputedStyle(slashL).fontSize
-            gsap.set(slashL, { fontSize: 0, opacity: 0 })
-            gsap.set(slashR, { fontSize: 0, opacity: 0 })
-            tl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
-            tl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
           })
         },
       })
@@ -157,7 +133,7 @@ export function CapacityStatement({
         delayed?.kill()
         marqueeTw?.kill()
         marqueeParallaxST?.kill()
-        quoteEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+        quoteEl.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('-webkit-text-stroke')
         split.revert()
       }
     })()

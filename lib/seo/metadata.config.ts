@@ -76,9 +76,9 @@ export const SITE_CONFIG = {
     alt: 'Interactius',
   },
 
-  /** Iconos. Placeholders — assets reales llegan en Sprint 6 de lanzamiento. */
+  /** Iconos. */
   icons: {
-    favicon: '/favicon.ico',
+    favicon: '/favicon.png',
     appleTouchIcon: '/apple-touch-icon.png',
     manifest: '/manifest.webmanifest',
   },

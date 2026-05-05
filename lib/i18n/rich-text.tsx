@@ -49,12 +49,23 @@ const underlineStyle: RichComponents = {
 }
 
 /**
- * boldWord — <strong> renderizado como <span data-word> para que el efecto
- * canónico bold (text-stroke 0→0.6px + slashes "/ palabra /" inyectados a
- * scroll) pueda localizar la palabra. Uso: CapacityStatement, IdentidadIntro.
+ * boldWord — <strong> renderizado con slashes "/ palabra /" desde el primer
+ * paint, dentro de un wrapper nowrap. La animación canónica solo engrosa
+ * el trazo del word con `text-stroke 0→0.6px` (regular → semi); los slashes
+ * NO se animan, ya están visibles. Render estático = wrap estable a
+ * cualquier viewport, sin reflow durante la animación.
+ *
+ * Uso: CapacityStatement, IdentidadIntro, HomeIntroText, HeroScroll,
+ * CapacityHeroSequence, MiradasHero.
  */
 const boldWord: RichComponents = {
-  strong: (chunks) => <span data-word="">{chunks}</span>,
+  strong: (chunks) => (
+    <span style={{ whiteSpace: 'nowrap' }}>
+      <span aria-hidden="true">{'/ '}</span>
+      <span data-word="">{chunks}</span>
+      <span aria-hidden="true">{' /'}</span>
+    </span>
+  ),
 }
 
 /* ─── Export ─────────────────────────────────────────────────── */

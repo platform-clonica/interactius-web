@@ -18,11 +18,17 @@ export async function Footer() {
         {/* TOP — Wordmark right-aligned, 5 últimas columnas (8-12) */}
         <div className="grid grid-cols-12 gap-grid-gutter">
           <div className="col-span-12 flex items-start justify-end lg:col-start-8 lg:col-end-13">
+            {/* Único SVG (dark) — invertido a blanco vía filter para que un
+                cambio futuro del logo solo requiera tocar un archivo. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/logo/interactius_w.svg"
+              src="/logo/interactius.svg"
               alt="Interactius"
-              style={{ width: '100%', height: 'auto' }}
+              style={{
+                width: '100%',
+                height: 'auto',
+                filter: 'brightness(0) invert(1)',
+              }}
             />
           </div>
         </div>

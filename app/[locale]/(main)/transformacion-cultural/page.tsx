@@ -52,15 +52,15 @@ export default async function TransformacionCultural({ params }: PageProps) {
         imageBottomSrc="/capacidades/transformacion-hero-bottom.webp"
       />
 
-      <ClientsMarquee clients={t('transformacion.intro.clients')} />
-
       <CapacityServices
         services={services}
         sectionLabel={t('sections.services')}
-        capacityLabel={capacityTitle}
+        capacityLabel={capacityTitle.replace(/\n/g, ' ')}
         accentColor="#5999A6"
         shapeKind="wave"
       />
+
+      <ClientsMarquee clients={t('transformacion.intro.clients')} />
 
       {/* Manifiesto IA — sección exclusiva de Transformación cultural. NO replicar en otros servicios. */}
       <CapacityManifiesto

@@ -177,7 +177,7 @@ export function CapacityManifiesto({
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-warm-light py-section"
+      className="w-full bg-warm-light pt-section pb-[clamp(120px,15vw,200px)]"
       aria-labelledby="manifiesto-title"
       aria-label={ariaLabel}
     >

@@ -22,7 +22,7 @@
   ],
   "pensamiento": {
     "hero": {
-      "title": "Strategic thinking",
+      "title": "Strategic\nthinking",
       "lead": "<strong>We are curious, analytical and critical minds.</strong><p>We inhabit the space that is yet to be defined. We integrate judgement and future vision to help make decisions in complex environments.</p>"
     },
     "intro": {
@@ -75,7 +75,7 @@
   },
   "experiencias": {
     "hero": {
-      "title": "Experience design",
+      "title": "Experience\ndesign",
       "lead": "<strong>We research, design and validate.</strong><p>We operate the ground where ideas become tangible. We bring evidence and methodological rigour to scale solutions with judgement.</p>"
     },
     "intro": {
@@ -127,7 +127,7 @@
   },
   "transformacion": {
     "hero": {
-      "title": "Cultural transformation",
+      "title": "Cultural\ntransformation",
       "lead": "<strong>We facilitate, drive and disseminate.</strong><p>We inhabit change from within to help organisations think, work and relate to the future. The hardest transformation isn't technological or structural — it's cultural.</p>"
     },
     "intro": {

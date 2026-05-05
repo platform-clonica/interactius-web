@@ -53,15 +53,15 @@ export default async function PensamientoEstrategico({ params }: PageProps) {
         imageBottomSrc="/capacidades/pensamiento-hero-bottom.webp"
       />
 
-      <ClientsMarquee clients={t('pensamiento.intro.clients')} />
-
       <CapacityServices
         services={services}
         sectionLabel={t('sections.services')}
-        capacityLabel={capacityTitle}
+        capacityLabel={capacityTitle.replace(/\n/g, ' ')}
         accentColor="#B0B5B0"
         strokeColor="#7A7F7A"
       />
+
+      <ClientsMarquee clients={t('pensamiento.intro.clients')} bottomSpacing="large" />
 
       <CapacityOthers
         tabs={tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityTabItem, CapacityTabItem, CapacityTabItem]}

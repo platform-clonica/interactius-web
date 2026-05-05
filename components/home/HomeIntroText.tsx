@@ -1,22 +1,19 @@
 'use client'
 
-import { useRef, useEffect, type ReactNode } from 'react'
+import { useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
+import { richComponents } from '@/lib/i18n/rich-text'
 
 /* ==========================================================================
    HomeIntroText — sección fullscreen warm-light con un único texto solitario.
    --------------------------------------------------------------------------
-   Mismo patrón EXACTO que `IdentidadIntro` (sticky + spacer 200vh + line-mask
-   reveal + efecto bold/slashes en la palabra marcada con <strong>). Mantiene
-   el mismo tiempo de scroll para coherencia entre las dos secciones intro.
+   Mismo patrón que `IdentidadIntro` (sticky + spacer + line-mask reveal +
+   efecto bold canónico). Slashes pre-renderizados via richComponents.boldWord;
+   única animación: text-stroke 0→0.6px del word.
    ========================================================================== */
-
-const introComponents = {
-  strong: (chunks: ReactNode) => <span data-word="">{chunks}</span>,
-}
 
 export function HomeIntroText() {
   const t = useTranslations('home')
@@ -65,30 +62,14 @@ export function HomeIntroText() {
 
           delayed = gsap.delayedCall(transformDelay, () => {
             const wordEl = quoteEl.querySelector<HTMLElement>('[data-word]')
-            if (!wordEl?.parentNode) return
+            if (!wordEl) return
 
-            // Defensive: limpia residuos si el efecto se ejecuta dos veces
-            // (StrictMode dev, remount tras navegación) — evita duplicados.
-            quoteEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
             wordEl.style.removeProperty('-webkit-text-stroke')
 
-            const slashL = document.createElement('span')
-            slashL.textContent = '/ '
-            slashL.dataset.slashDynamic = ''
-            slashL.style.display = 'none'
-
-            const slashR = document.createElement('span')
-            slashR.textContent = ' /'
-            slashR.dataset.slashDynamic = ''
-            slashR.style.display = 'none'
-
-            wordEl.parentNode.insertBefore(slashL, wordEl)
-            wordEl.parentNode.insertBefore(slashR, wordEl.nextSibling)
-
+            // Slashes pre-renderizados via richComponents.boldWord. Aquí solo
+            // animamos text-stroke 0→0.6px del word (regular → semi).
             const proxy = { v: 0 }
-            const tl = gsap.timeline()
-
-            tl.to(proxy, {
+            gsap.to(proxy, {
               v: 0.6,
               duration: 1.4,
               ease: 'sine.inOut',
@@ -96,16 +77,6 @@ export function HomeIntroText() {
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
-
-            // Animar font-size 0 → natural (display:inline) — baseline alineado
-            // con texto vecino y desplazamiento gradual.
-            slashL.style.display = ''
-            slashR.style.display = ''
-            const fontSize = window.getComputedStyle(slashL).fontSize
-            gsap.set(slashL, { fontSize: 0, opacity: 0 })
-            gsap.set(slashR, { fontSize: 0, opacity: 0 })
-            tl.to(slashL, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
-            tl.to(slashR, { fontSize, opacity: 1, duration: 1.4, ease: 'sine.inOut' }, 0)
           })
         },
       })
@@ -113,7 +84,7 @@ export function HomeIntroText() {
       cleanupRef.current = () => {
         st.kill()
         delayed?.kill()
-        quoteEl.querySelectorAll('[data-slash-dynamic]').forEach((el) => el.remove())
+        quoteEl.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('-webkit-text-stroke')
         split.revert()
       }
     })()
@@ -135,15 +106,15 @@ export function HomeIntroText() {
               ref={quoteRef}
               className="font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
             >
-              {t.rich('intro.solo', introComponents)}
+              {t.rich('intro.solo', richComponents.boldWord)}
             </p>
           </div>
         </div>
       </div>
 
-      {/* 200vh spacer — mismo tiempo de scroll que IdentidadIntro para
-          que la palabra "cambio" tenga margen para el efecto bold/slashes. */}
-      <div style={{ height: '200vh' }} aria-hidden="true" />
+      {/* 100vh spacer — pin corto, mantiene el reveal + bold/slashes
+          sin alargar el scroll. Mismo valor en IdentidadIntro/IdentidadLiminal. */}
+      <div style={{ height: '100vh' }} aria-hidden="true" />
     </section>
   )
 }
