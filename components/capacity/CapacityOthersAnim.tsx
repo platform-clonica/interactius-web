@@ -222,7 +222,7 @@ export function CapacityOthersAnim({
             <Link
               key={tab.href}
               ref={(el) => { cardRefs.current[i] = el }}
-              href={tab.href as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+              href={tab.href as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
               onClick={(e) => handleClick(e, tab.href)}
               className={`group hover-text-flip ${commonClasses} focus-visible:opacity-90`}
               style={{ clipPath: 'inset(0 100% 0 0)' }}
