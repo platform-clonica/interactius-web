@@ -1,16 +1,22 @@
 import { CapacityOthersAnim } from './CapacityOthersAnim'
-export type { CapacityOtherItem } from './CapacityOthersAnim'
+import type { CapacityTabItem } from './CapacityOthersAnim'
+import type { RouteId } from '@/lib/i18n/navigation'
+
+export type { CapacityTabItem } from './CapacityOthersAnim'
 
 export function CapacityOthers({
-  items,
+  tabs,
+  currentHref,
   sectionLabel,
 }: {
-  items: [import('./CapacityOthersAnim').CapacityOtherItem, import('./CapacityOthersAnim').CapacityOtherItem]
+  tabs: [CapacityTabItem, CapacityTabItem, CapacityTabItem]
+  currentHref: RouteId
   sectionLabel: string
 }) {
   return (
     <CapacityOthersAnim
-      items={items}
+      tabs={tabs}
+      currentHref={currentHref}
       sectionLabel={sectionLabel}
     />
   )

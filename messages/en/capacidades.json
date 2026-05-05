@@ -3,6 +3,23 @@
     "services": "Services",
     "otherCapacities": "Other capabilities"
   },
+  "tabs": [
+    {
+      "title": "Strategic\nthinking",
+      "description": "We integrate future vision to make decisions in complex environments.",
+      "href": "/pensamiento-estrategico"
+    },
+    {
+      "title": "Experience\ndesign",
+      "description": "We help organisations relate to the future.",
+      "href": "/diseno-de-experiencias"
+    },
+    {
+      "title": "Cultural\ntransformation",
+      "description": "AI adoption, organisational change and training.",
+      "href": "/transformacion-cultural"
+    }
+  ],
   "pensamiento": {
     "hero": {
       "title": "Strategic thinking",
@@ -53,18 +70,6 @@
           "Ideation and strategy workshop facilitation",
           "Concept validation and testing"
         ]
-      }
-    ],
-    "others": [
-      {
-        "title": "Experience\ndesign",
-        "description": "We help organisations relate to the future.",
-        "href": "/diseno-de-experiencias"
-      },
-      {
-        "title": "Cultural\ntransformation",
-        "description": "AI adoption, organisational change and training.",
-        "href": "/transformacion-cultural"
       }
     ]
   },
@@ -118,18 +123,6 @@
           "Research session coordination"
         ]
       }
-    ],
-    "others": [
-      {
-        "title": "Strategic\nthinking",
-        "description": "We integrate future vision to make decisions in complex environments.",
-        "href": "/pensamiento-estrategico"
-      },
-      {
-        "title": "Cultural\ntransformation",
-        "description": "AI adoption, organisational change and training.",
-        "href": "/transformacion-cultural"
-      }
     ]
   },
   "transformacion": {
@@ -171,18 +164,6 @@
       "title": "AI Manifesto",
       "body1": "We understand AI not as an end, but as a responsibility. We use it to expand judgement, not to replace it; to explore and <strong>design better</strong>, not faster.",
       "body2": "We commit to applying it with rigour, ethical sense and critical thinking to detect its biases and safeguard human meaning and real impact."
-    },
-    "others": [
-      {
-        "title": "Strategic\nthinking",
-        "description": "We integrate future vision to make decisions in complex environments.",
-        "href": "/pensamiento-estrategico"
-      },
-      {
-        "title": "Experience\ndesign",
-        "description": "We help organisations relate to the future.",
-        "href": "/diseno-de-experiencias"
-      }
-    ]
+    }
   }
 }

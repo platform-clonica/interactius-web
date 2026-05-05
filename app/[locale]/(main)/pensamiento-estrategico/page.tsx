@@ -7,7 +7,7 @@ import { CapacityOthers } from '@/components/capacity/CapacityOthers'
 import { ClientsMarquee } from '@/components/capacity/ClientsMarquee'
 import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
-import type { CapacityOtherItem } from '@/components/capacity/CapacityOthers'
+import type { CapacityTabItem } from '@/components/capacity/CapacityOthers'
 import type { RouteId } from '@/lib/i18n/navigation'
 import { buildPageMetadata } from '@/lib/seo/metadata.config'
 import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
@@ -32,7 +32,7 @@ export default async function PensamientoEstrategico({ params }: PageProps) {
   const t = await getTranslations({ locale, namespace: 'capacidades' })
 
   const services = t.raw('pensamiento.services') as CapacityService[]
-  const others = t.raw('pensamiento.others') as Array<{ title: string; description: string; href: string }>
+  const tabs = t.raw('tabs') as Array<{ title: string; description: string; href: string }>
 
   const capacityTitle = t('pensamiento.hero.title')
 
@@ -64,7 +64,8 @@ export default async function PensamientoEstrategico({ params }: PageProps) {
       />
 
       <CapacityOthers
-        items={others.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityOtherItem, CapacityOtherItem]}
+        tabs={tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityTabItem, CapacityTabItem, CapacityTabItem]}
+        currentHref="/pensamiento-estrategico"
         sectionLabel={t('sections.otherCapacities')}
       />
     </>

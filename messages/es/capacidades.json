@@ -3,6 +3,23 @@
     "services": "Servicios",
     "otherCapacities": "Otras capacidades"
   },
+  "tabs": [
+    {
+      "title": "Pensamiento\nestratégico",
+      "description": "Integramos visión de futuro para decidir en entornos complejos.",
+      "href": "/pensamiento-estrategico"
+    },
+    {
+      "title": "Diseño de\nexperiencias",
+      "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
+      "href": "/diseno-de-experiencias"
+    },
+    {
+      "title": "Transformación\ncultural",
+      "description": "Adopción de IA, cambio organizacional y formación.",
+      "href": "/transformacion-cultural"
+    }
+  ],
   "pensamiento": {
     "hero": {
       "title": "Pensamiento estratégico",
@@ -53,18 +70,6 @@
           "Facilitación de talleres de ideación y estrategia",
           "Validación y testing de conceptos"
         ]
-      }
-    ],
-    "others": [
-      {
-        "title": "Diseño de\nexperiencias",
-        "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
-        "href": "/diseno-de-experiencias"
-      },
-      {
-        "title": "Transformación\ncultural",
-        "description": "Adopción de IA, cambio organizacional y formación.",
-        "href": "/transformacion-cultural"
       }
     ]
   },
@@ -118,18 +123,6 @@
           "Coordinación de sesiones de investigación"
         ]
       }
-    ],
-    "others": [
-      {
-        "title": "Pensamiento\nestratégico",
-        "description": "Integramos visión de futuro para decidir en entornos complejos.",
-        "href": "/pensamiento-estrategico"
-      },
-      {
-        "title": "Transformación\ncultural",
-        "description": "Adopción de IA, cambio organizacional y formación.",
-        "href": "/transformacion-cultural"
-      }
     ]
   },
   "transformacion": {
@@ -171,18 +164,6 @@
       "title": "Manifiesto IA",
       "body1": "Entendemos la IA no como un fin, sino como una responsabilidad. La usamos para ampliar el criterio, no para sustituirlo; para explorar y <strong>diseñar mejor</strong>, no más rápido.",
       "body2": "Nos comprometemos a aplicarla con rigor, con sentido ético y pensamiento crítico para detectar sus sesgos y asegurar el sentido humano e impacto real."
-    },
-    "others": [
-      {
-        "title": "Pensamiento\nestratégico",
-        "description": "Integramos visión de futuro para decidir en entornos complejos.",
-        "href": "/pensamiento-estrategico"
-      },
-      {
-        "title": "Diseño de\nexperiencias",
-        "description": "Ayudamos a las organizaciones a relacionarse con el futuro.",
-        "href": "/diseno-de-experiencias"
-      }
-    ]
+    }
   }
 }
