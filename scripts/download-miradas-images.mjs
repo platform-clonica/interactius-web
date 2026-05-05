@@ -36,7 +36,7 @@ import { existsSync } from 'node:fs';
 // ─── CLI ────────────────────────────────────────────────────────────────
 const args = parseArgs(process.argv.slice(2));
 const CONTENT_DIR = args.content || './content/miradas';
-const PUBLIC_DIR = args.public || './public/miradas';
+const PUBLIC_DIR = args.public || './public/miradas-assets';
 const XML_PATH = args.xml;
 const DRY_RUN = !!args['dry-run'];
 const CONCURRENCY = parseInt(args.concurrency || '8', 10);
@@ -82,10 +82,10 @@ const SRC_PATTERNS = [
   /<ImageWithCaption[^>]*\ssrc="([^"]+)"/g,
   /<img[^>]*\ssrc="([^"]+)"/g,
   /!\[[^\]]*\]\(([^)\s]+)/g,
-  // Frontmatter `image:` — single-line (`image: /miradas/...`)
-  /^image:[ \t]+(\/miradas\/\S+)/gm,
-  // Frontmatter `image:` — YAML folded multilínea (`image: >-` y valor en línea indentada)
-  /^image:[ \t]*[>|][-+]?[ \t]*\r?\n[ \t]+(\/miradas\/\S+)/gm,
+  // Frontmatter `image:` — single-line (`image: /miradas-assets/...`)
+  /^image:[ \t]+(\/miradas-assets\/\S+)/gm,
+  // Frontmatter `image:` — YAML folded multilínea
+  /^image:[ \t]*[>|][-+]?[ \t]*\r?\n[ \t]+(\/miradas-assets\/\S+)/gm,
 ];
 
 function extractLocalSrcs(text) {
@@ -95,17 +95,17 @@ function extractLocalSrcs(text) {
     let m;
     while ((m = re.exec(text)) !== null) {
       const url = m[1];
-      if (url.startsWith('/miradas/')) found.add(url);
+      if (url.startsWith('/miradas-assets/')) found.add(url);
     }
   }
   return [...found];
 }
 
 function parseLocalPath(url) {
-  // /miradas/<cat>/<slug>/<filename>
-  const m = url.match(/^\/miradas\/([^/]+)\/([^/]+)\/(.+)$/);
+  // /miradas-assets/<slug>/<filename>
+  const m = url.match(/^\/miradas-assets\/([^/]+)\/(.+)$/);
   if (!m) return null;
-  return { cat: m[1], slug: m[2], filename: m[3] };
+  return { slug: m[1], filename: m[2] };
 }
 
 // ─── Construir índice de URLs upstream desde el XML ───────────────────
@@ -189,20 +189,22 @@ async function main() {
   for (const mdx of mdxFiles) {
     const text = await fs.readFile(mdx, 'utf-8');
     const srcs = extractLocalSrcs(text);
+    // Categoría inferida de la carpeta padre del .mdx (sub canónica).
+    const cat = path.basename(path.dirname(mdx));
     for (const src of srcs) {
       const meta = parseLocalPath(src);
       if (!meta) continue;
-      if (ONLY_CAT && meta.cat !== ONLY_CAT) continue;
+      if (ONLY_CAT && cat !== ONLY_CAT) continue;
       if (ONLY_SLUG && meta.slug !== ONLY_SLUG) continue;
 
       const candidates = xmlIndex.get(meta.filename) || [];
       const upstream = candidates[0] || null; // primera coincidencia
-      const diskPath = path.join(PUBLIC_DIR, meta.cat, meta.slug, meta.filename);
+      const diskPath = path.join(PUBLIC_DIR, meta.slug, meta.filename);
       tasks.push({
         upstream,
         diskPath,
         webPath: src,
-        cat: meta.cat,
+        cat,
         slug: meta.slug,
         filename: meta.filename,
         candidates: candidates.length,

@@ -1,0 +1,171 @@
+---
+title: 'Ética y bias en la IA: cómo detectar y corregir sesgos visuales'
+description: >-
+  Cómo los sesgos en la generación de imágenes con IA afectan a la diversidad visual. Estrategias prácticas para
+  detectarlos y corregirlos, creando representacion
+publishedAt: '2025-09-17'
+modifiedAt: '2025-09-17'
+author: Berta Abad
+category: ia-aplicada
+parentCategory: transformacion-cultural
+slug: etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales
+image: /miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/PORTADA-scaled.webp
+tags:
+  - design
+  - ia
+  - tendencias
+---
+
+## **Más allá del prompt: responsabilidad visual**
+
+Generar imágenes con IA no consiste solo en elegir las palabras correctas, como expliqué en mi [anterior post](https://interactius.com/inteligencia-artificial/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/). Detrás de cada prompt hay un imaginario cultural que influye en los resultados. Si no somos conscientes de ello, el **_bias_ en Midjourney** puede colarse en nuestras creaciones y dar lugar a representaciones poco diversas o poco realistas.
+
+## **¿Qué es el bias en generación de imágenes?**
+
+Cuando hablamos de _bias_ (o sesgo) en herramientas como Midjourney, nos referimos a una tendencia repetida en los resultados generados. En otras palabras, la IA no crea desde cero: interpreta los patrones que aprendió de millones de imágenes. Eso significa que, si en los datos predominaban ciertas representaciones, estas se repiten, aunque no sean la opción más justa o equilibrada. Por ejemplo, al pedir: "a doctor in a lab coats" es común que Midjourney muestre a un hombre de mediana edad como médico. 
+
+Eso es debido a que durante su entrenamiento, el modelo encontró mayor cantidad de fotografías de doctores hombres que de doctoras mujeres, y esa desproporción se refleja en las imágenes que genera.
+
+El _bias_ en la generación de imágenes no solo influye en profesiones, sino también en aspectos como:
+
+-   **Roles de género**: asociar liderazgo a hombres y cuidados a mujeres.  
+    
+-   **Etnia y cultura**: sobrerrepresentar personas blancas frente a otras etnias.  
+    
+-   **Edad**: mostrar mayoritariamente personas jóvenes en contextos profesionales.  
+    
+-   **Estilo de vida**: reforzar estereotipos sobre lo que significa “éxito” o “belleza”.  
+    
+
+Detectar este fenómeno es fundamental porque condiciona la narrativa visual que estamos construyendo. Si no intervenimos, podemos estar reforzando estereotipos sin quererlo.
+
+## **¿De dónde vienen esos sesgos?**
+
+Los sesgos no aparecen por casualidad. Tienen su origen en cómo se entrenan y ajustan los modelos de IA. En el caso de Midjourney, los principales factores son:
+
+-   **Datos de entrenamiento**  
+    Midjourney se nutre de millones de imágenes disponibles en Internet. Si en esos datos hay una representación desigual (por ejemplo, más fotos de hombres doctores que de mujeres), el sistema tenderá a replicar esa misma proporción.  
+    
+-   **Optimización del modelo**  
+    Los algoritmos aprenden a generar lo que aparece con más frecuencia en sus datos de origen. Esto significa que, incluso sin intención, refuerzan ciertos patrones y dejan en segundo plano representaciones menos comunes.  
+    
+-   **Lenguaje de los prompts**  
+    Las palabras importan. Términos como _“businessman”_ refuerzan la imagen tradicional de un hombre en traje, mientras que opciones más neutras como _“business professional”_ abren la puerta a resultados más diversos.
+
+## **Cómo detectar bias paso a paso**
+
+1.  **Mira con atención**: Genera varias imágenes a partir del mismo prompt. Analiza no solo la estética, sino _quién aparece_ (género, edad, etnia, rol).  
+      
+    
+2.  **Cuenta resultados**: Si de 20 imágenes de un ingeniero solo 2 son mujeres, hay un desequilibrio.  
+      
+    
+3.  **Apóyate en herramientas**: Existen APIs y softwares de análisis que pueden identificar características como género, edad o etnia en imágenes, devolviéndote porcentajes.
+
+## **Estrategias para mitigar sesgos**
+
+Detectar el problema es solo el primer paso; lo importante es aplicar soluciones concretas. Midjourney ofrece varias formas de ajustar los prompts y reducir los sesgos en las imágenes que generamos. Aquí tienes algunas estrategias efectivas:
+
+-   **Usa lenguaje inclusivo**: Las palabras importan. Cambiar “businessman” por “business professional” evita reforzar estereotipos y abre la puerta a representaciones más variadas.
+-   **Pide diversidad**: Si necesitas un grupo de personas, indícalo en el prompt: género, edad, etnias o incluso estilo de vestimenta. Midjourney tiende a seguir estas instrucciones con bastante fidelidad.
+-   **Excluye estereotipos**: Usa --no si tu versión de Midjourney lo permite. Si detectas que tu prompt siempre genera un mismo patrón (por ejemplo, “young white male”), puedes excluirlo.
+-   **Cambia la semilla**: Prueba con --seed 42 o --seed 99 para ver distintas variantes y escoger la más equilibrada.
+-   **Combina descriptores positivos**: Añadir términos como “diverse”, “inclusive”, “multiethnic” o “balanced” suele dar lugar a imágenes más variadas sin necesidad de alargar demasiado el prompt.
+
+## **Buenas prácticas para un proceso transparente**
+
+Mitigar sesgos no es un esfuerzo aislado: debe convertirse en parte de tu flujo de trabajo creativo. Documentar y revisar lo que haces ayuda a mejorar la calidad y coherencia de los resultados. Aquí algunas recomendaciones:
+
+-   **Registra cada prompt:**  
+    Guarda siempre el texto exacto que usaste, incluyendo parámetros como _**\--seed**, **\--ar**_ o _**\--v 7**_. Esto permite repetir o ajustar resultados sin tener que improvisar de nuevo.  
+    
+-   **Anota decisiones clave:**  
+    Si decidiste usar un _**\--no**_ para excluir un estereotipo o añadiste un descriptor como “diverse” o “inclusive”, apúntalo. Así tendrás claridad sobre por qué llegaste a cierta imagen.  
+    
+-   **Crea un histórico de versiones:**  
+    Genera varias iteraciones de un mismo prompt y guárdalas con su semilla asociada. Esto facilita comparar y seleccionar las opciones más equilibradas.  
+    
+-   **Involucra a diferentes perfiles:**  
+    La percepción de sesgos no siempre es evidente para todos. Pedir a colegas o colaboradores de distintos contextos que revisen tus imágenes puede aportar una mirada más amplia.  
+    
+-   **Sé transparente en proyectos profesionales:**  
+    Si trabajas para clientes, documentar cómo ajustaste los prompts y qué medidas tomaste para evitar sesgos demuestra un compromiso con la ética visual. Esto suma valor a tu proceso creativo.
+
+## **Caso de estudio breve**
+
+```
+Antes:
+/imagine "a CEO portrait" --v 7
+```
+
+⭢ 80 % hombres caucásicos.
+
+```
+Después:
+/imagine "a CEO portrait of a 45-year-old Black woman, business suit, confident pose" --v 7 --ar 2:3
+```
+
+⭢ retrato profesional de mujer negra, equilibrado y representativo.
+
+## **Ejemplos visuales comparativos**
+
+Para ilustrar el impacto de ajustar prompts y parámetros, aquí va una tabla donde puedas insertar capturas reales:
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_doctor_in_a_lab_coat_-chaos_20_-ar_34_-raw_-p_77bdfaa7-7cba-4621-99a6-1004912e28db_2-scaled.png"
+  alt="a doctor in a lab coat"
+  caption="a doctor in a lab coat"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_healthcare_professional_-chaos_20_-ar_34_-raw__1e773f58-8661-42b6-b754-d6c2c1f10f7b_0-scaled.png"
+  alt=""
+  caption="a healthcare professional"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_an_engineer_at_work_-chaos_20_-ar_34_-raw_-prof_750bd562-ec32-48bf-a366-e5656c9debce_3-scaled.png"
+  alt=""
+  caption="an engineer at work"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_team_of_four_engineers_2_women_-chaos_20_-ar_34_1c98bc53-7264-4435-9684-1d492132c544_2-scaled.png"
+  alt=""
+  caption="a team of four engineers (3 women, 1 men)"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_CEO_portrait_-chaos_20_-ar_34_-raw_-profile_2_c18cecfb-7b78-4b72-8048-75e3c520c14a_0-scaled.png"
+  alt=""
+  caption="a CEO portrait"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_CEO_portrait_of_a_45-year-old_Black_woman_busines_f66b4488-ad4d-4e20-842a-c38e6d0295bb_0-scaled.png"
+  alt=""
+  caption="a CEO portrait of a 45-year-old Black woman, business suit, confident pose"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_couple_walking_in_the_park_-chaos_20_-ar_34_-r_2ff4b130-3149-4342-9533-2fff558747e4_2-scaled.png"
+  alt=""
+  caption="a couple walking in the park"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_diverse_couple_walking_hand_in_hand_in_a_sunny_pa_d25bae62-2803-48b6-85a7-53d0771d0363_3-scaled.png"
+  alt=""
+  caption="a diverse couple walking hand in hand in a sunny park, aged 30-40, smiling"
+/>
+
+## **Conclusión**
+
+Ser conscientes de los sesgos en Midjourney es parte del proceso creativo. No se trata solo de generar imágenes bonitas, sino de crear representaciones más amplias, reales y respetuosas. Con pequeños ajustes en los prompts podemos hacer una gran diferencia y construir una narrativa visual más diversa e inclusiva. Cuanto más cuidamos lo que pedimos, más valor tienen las imágenes que obtenemos.
+
+**Una última recomendación:** para generar imágenes con responsabilidad visual, vale la pena inspirarse en la [campaña **“Keep Beauty Real”** de Dove](https://www.dove.com/es/stories/campaigns/keep-beauty-real.html). Allí encontrarás un enfoque práctico sobre cómo representar la diversidad y la belleza real, que puede servir como guía para crear prompts que generen imágenes más auténticas y equilibradas.  
+  
+También te podrás descargar un manual con distintas palabras claves para generar mejores prompts.   
+¡La ética también mejora tu creatividad!
+
+¿Y tú? ¿Has probado a revisar tus prompts con esta mirada más crítica?
