@@ -7,6 +7,9 @@
     "messageMin": "Message must be at least 10 characters",
     "profession": "Please enter your profession",
     "city": "Please enter your city",
+    "state": "Please enter your state or region",
+    "country": "Please enter your country",
+    "householdSituation": "Please tell us about your household situation",
     "birthdate": "Please enter your date of birth",
     "privacy": "You must accept the policy to continue"
   },
@@ -21,6 +24,9 @@
     "profession": "Profession",
     "gender": "Gender (optional)",
     "city": "City",
+    "state": "State or region",
+    "country": "Country",
+    "householdSituation": "Situation",
     "birthdate": "Date of birth"
   },
   "genderOptions": {
@@ -29,6 +35,13 @@
     "nonBinary": "Non-binary",
     "other": "Other",
     "preferNotToSay": "Prefer not to say"
+  },
+  "householdOptions": {
+    "solo": "Living alone",
+    "pareja": "Couple",
+    "soloConHijos": "Single parent",
+    "parejaConHijos": "Couple with kid(s)",
+    "pisoCompartido": "Shared housing"
   },
   "submit": "Send",
   "submitting": "Sending…",

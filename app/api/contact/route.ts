@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       { name: 'lastname', value: data.lastName },
       { name: 'email', value: data.email },
       { name: 'company', value: data.company ?? '' },
-      { name: 'message', value: data.message ?? '' },
+      { name: 'mensaje', value: data.message ?? '' },
     ],
     pageUri: request.headers.get('referer') ?? undefined,
   })

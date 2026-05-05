@@ -7,6 +7,9 @@
     "messageMin": "El missatge ha de tenir almenys 10 caràcters",
     "profession": "Introdueix la teva professió",
     "city": "Introdueix la teva ciutat",
+    "state": "Introdueix la teva província",
+    "country": "Introdueix el teu país",
+    "householdSituation": "Indica la teva situació de la llar",
     "birthdate": "Introdueix la teva data de naixement",
     "privacy": "Has d'acceptar la política per continuar"
   },
@@ -21,6 +24,9 @@
     "profession": "Professió",
     "gender": "Gènere (opcional)",
     "city": "Ciutat",
+    "state": "Província",
+    "country": "País",
+    "householdSituation": "Situació",
     "birthdate": "Data de naixement"
   },
   "genderOptions": {
@@ -29,6 +35,13 @@
     "nonBinary": "No binari",
     "other": "Altre",
     "preferNotToSay": "Prefereixo no dir-ho"
+  },
+  "householdOptions": {
+    "solo": "Sol",
+    "pareja": "Parella",
+    "soloConHijos": "Sol amb fill@/s",
+    "parejaConHijos": "Parella amb fill@/s",
+    "pisoCompartido": "Pis compartit"
   },
   "submit": "Enviar",
   "submitting": "Enviant…",

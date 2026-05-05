@@ -130,7 +130,7 @@ export function HomeIntroText() {
       {/* Sticky panel — texto centrado en pantalla completa warm-light */}
       <div className="sticky top-0 section-inner flex items-center min-h-screen py-section">
         <div className="grid grid-cols-12 gap-grid-gutter w-full">
-          <div className="col-span-12 lg:col-span-10 lg:col-start-2">
+          <div className="col-span-12 lg:col-span-10 lg:col-start-2 3xl:col-span-8 3xl:col-start-2">
             <p
               ref={quoteRef}
               className="font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"

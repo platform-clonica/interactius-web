@@ -23,8 +23,8 @@ export const contactSchema = z.object({
   firstName: z.string().min(2),
   lastName: z.string().min(2),
   email: z.string().email(),
-  company: z.string().optional(),
-  message: z.string().optional(),
+  company: z.string().min(2),
+  message: z.string().min(10),
   privacy: z.literal(true),
 })
 
@@ -37,9 +37,29 @@ export type ContactInput = z.infer<typeof contactSchema>
 export const newsletterSchema = z.object({
   firstName: z.string().min(2),
   lastName: z.string().min(2),
-  company: z.string().optional(),
+  company: z.string().min(2),
   email: z.string().email(),
   privacy: z.literal(true),
 })
 
 export type NewsletterInput = z.infer<typeof newsletterSchema>
+
+/* ==========================================================================
+   Testers — /api/testers
+   ========================================================================== */
+
+export const testersSchema = z.object({
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  email: z.string().email(),
+  profession: z.string().min(2),
+  gender: z.string().optional(),
+  birthdate: z.string().min(1),
+  householdSituation: z.string().min(2),
+  city: z.string().min(2),
+  state: z.string().min(2),
+  country: z.string().min(2),
+  privacy: z.literal(true),
+})
+
+export type TestersInput = z.infer<typeof testersSchema>
