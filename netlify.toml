@@ -8,6 +8,11 @@
   NODE_VERSION = "22"
   # Evita que npm audite en el install step (acelera el build).
   NPM_FLAGS    = "--no-audit --no-fund"
+  # Hubspot portal/form IDs son identificadores públicos (aparecen en el HTML
+  # de cualquier form embebido de Hubspot). Excluimos del secrets scanning
+  # para evitar falsos positivos cuando el ID coincide con números presentes
+  # en otros artefactos del repo (p.ej. el XML de migración de WordPress).
+  SECRETS_SCAN_OMIT_KEYS = "HUBSPOT_PORTAL_ID,HUBSPOT_FORM_ID_NEWSLETTER,HUBSPOT_FORM_ID_CONTACT,HUBSPOT_FORM_ID_TESTERS"
 
 # ─── Next.js plugin ──────────────────────────────────────────────────────────
 # Activa SSR, ISR, Image Optimization y Edge Functions de Next.js en Netlify.
