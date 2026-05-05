@@ -269,7 +269,7 @@ export function MenuOverlay() {
     if (!isOpen || contactPrefetchedRef.current) return
     contactPrefetchedRef.current = true
     CONTACT_ROUTES.forEach((route) => {
-      router.prefetch(route as Exclude<RouteId, '/miradas/[cat]/[slug]'>)
+      router.prefetch(route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>)
     })
   }, [isOpen, router])
 
@@ -362,7 +362,7 @@ export function MenuOverlay() {
                   {num}
                 </span>
                 <Link
-                  href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+                  href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
                   onClick={(e) => handleLinkClick(e, route)}
                   className="hover-text-flip block mt-[14px] pb-[9px]
                              font-serif font-light text-title-sm text-fg
@@ -421,7 +421,7 @@ export function MenuOverlay() {
           {SECONDARY_ITEMS.map(({ route, labelKey }) => (
             <div key={route} data-secondary-link="">
               <Link
-                href={route as Exclude<RouteId, '/miradas/[cat]/[slug]'>}
+                href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
                 onClick={(e) => handleLinkClick(e, route)}
                 className="hover-wipe-underline w-fit font-mono text-body-sm text-fg"
               >
