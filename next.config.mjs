@@ -1,7 +1,5 @@
 import createNextIntlPlugin from 'next-intl/plugin'
 
-import { miradasRedirects } from './config/miradas-redirects.mjs'
-
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 /** @type {import('next').NextConfig} */
@@ -57,15 +55,12 @@ const nextConfig = {
       },
     ]
   },
-  // Redirects 301 — plan de migración SEO. La fuente está en
+  // Redirects 301 legacy SEO: ahora se aplican en `middleware.ts` antes
+  // del rewrite de next-intl. La fuente sigue siendo
   // `config/miradas-redirects.mjs`, generada por
-  // `node scripts/generate-redirects-v2.mjs` desde `taxonomy_v1.json` +
-  // `scripts/legacy-redirects-snapshot.mjs`. NO editar el array aquí —
-  // añadir entradas en el script generador y regenerar.
-  async redirects() {
-    return [...miradasRedirects]
-  },
-
+  // `node scripts/generate-redirects-v2.mjs`. NO definir aquí
+  // `async redirects()` — en Netlify se ejecutaba después del middleware
+  // de next-intl y los 244 redirects devolvían 404.
 
   // TypeScript y ESLint estrictos en build — no dejamos pasar errores.
   typescript: {
