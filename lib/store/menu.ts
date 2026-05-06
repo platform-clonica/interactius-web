@@ -58,38 +58,34 @@ export const useMenuStore = create<MenuState>((set, get) => ({
 }))
 
 /* ==========================================================================
-   Scroll lock — bloquea el scroll del body cuando el overlay está abierto.
-   Guarda el scroll-y previo para restaurarlo al cerrar.
+   Scroll lock — bloquea el scroll del documento cuando el overlay está abierto.
+   Importante: evitamos `body{position:fixed}` porque rompe la composición
+   visual en páginas con capas `position: fixed` (p.ej. Home hero).
    ========================================================================== */
 
-let savedScrollY = 0
-
 /**
- * Resetea el scroll guardado a 0. Llamar después de un navigate() para que
- * cuando el menú cierre el unlockBodyScroll no restaure la posición de la
- * página ANTERIOR — la nueva página debe empezar arriba del todo.
+ * Compat API: antes reseteaba el scroll guardado para el unlock basado en
+ * `body{position:fixed}`. Con el lock actual (overflow hidden) no hace falta,
+ * pero mantenemos la función para no romper callers existentes.
  */
 export function resetSavedScroll(): void {
-  savedScrollY = 0
+  // no-op intencional
 }
 
 function lockBodyScroll(lock: boolean): void {
   if (typeof document === 'undefined') return
+  const root = document.documentElement
   const body = document.body
 
   if (lock) {
-    savedScrollY = window.scrollY
-    body.style.position = 'fixed'
-    body.style.top = `-${savedScrollY}px`
-    body.style.left = '0'
-    body.style.right = '0'
-    body.style.width = '100%'
+    root.style.overflow = 'hidden'
+    body.style.overflow = 'hidden'
+    root.style.overscrollBehavior = 'none'
+    body.style.overscrollBehavior = 'none'
   } else {
-    body.style.position = ''
-    body.style.top = ''
-    body.style.left = ''
-    body.style.right = ''
-    body.style.width = ''
-    window.scrollTo(0, savedScrollY)
+    root.style.overflow = ''
+    body.style.overflow = ''
+    root.style.overscrollBehavior = ''
+    body.style.overscrollBehavior = ''
   }
 }
