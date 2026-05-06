@@ -82,6 +82,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       params: { parentOrSub, slug },
     }),
     alternates,
+    type: 'article',
+    article: {
+      publishedTime: article.publishedAt,
+      modifiedTime: article.modifiedAt,
+      author: article.author,
+      section: SUB_DISPLAY[locale][sub],
+      tags: article.tags,
+    },
   })
 }
 

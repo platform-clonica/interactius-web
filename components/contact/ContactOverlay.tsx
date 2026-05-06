@@ -55,7 +55,7 @@ export function ContactOverlay({ children }: { children: React.ReactNode }) {
           color: '#F5F2ED',
           pointerEvents: 'auto',
         }}
-        className="flex size-10 items-center justify-center hover:opacity-70 transition-opacity duration-fast ease-expo focus:outline-none focus-visible:outline-none left-[var(--grid-margin)] lg:left-[44px]"
+        className="flex size-10 items-center justify-center hover:opacity-70 transition-opacity duration-fast ease-expo focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current left-[var(--grid-margin)] lg:left-[44px]"
       >
         <CloseIcon />
       </button>

@@ -147,7 +147,13 @@ export function IdentidadValores() {
         {([0, 1, 2, 3] as const).map((i) => (
           <div key={i}>
             <div className="relative w-full aspect-[3/2] overflow-hidden">
-              <Image src={IMAGES[i]} alt="" fill sizes="100vw" className="object-cover object-center" />
+              <Image
+                src={IMAGES[i]}
+                alt={t(`valores.${i}.title` as Parameters<typeof t>[0])}
+                fill
+                sizes="100vw"
+                className="object-cover object-center"
+              />
             </div>
             <div className="section-inner py-section">
               <div className="flex flex-col gap-6">
@@ -181,7 +187,7 @@ export function IdentidadValores() {
             >
               <Image
                 src={src}
-                alt=""
+                alt={t(`valores.${i}.title` as Parameters<typeof t>[0])}
                 fill
                 sizes="42vw"
                 className="object-cover object-center"

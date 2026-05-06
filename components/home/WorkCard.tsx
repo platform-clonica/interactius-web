@@ -150,7 +150,7 @@ export function WorkCard({ data, responsive = 'desktop' }: WorkCardProps) {
           {data.imageUrl && (
             <Image
               src={data.imageUrl}
-              alt=""
+              alt={`${data.client} — ${data.title}`}
               fill
               sizes="(min-width: 1280px) 50vw, (min-width: 768px) 50vw, 100vw"
               className="object-cover"

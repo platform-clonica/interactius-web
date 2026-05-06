@@ -100,13 +100,18 @@ function FormFieldComponent(
   const describedBy =
     [error && errorId, hint && hintId].filter(Boolean).join(' ') || undefined
 
-  // Clases compartidas del control (input/textarea/select)
+  // Clases compartidas del control (input/textarea/select).
+  // outline-none por defecto para no romper la estética con mouse;
+  // focus-visible reactiva un outline fino solo cuando el foco viene por
+  // teclado (WCAG 2.4.7 Focus Visible). offset-2 deja respiración respecto
+  // a la línea inferior del field.
   const controlBase = `
     peer
     w-full bg-transparent
     font-mono text-body-sm text-fg
     placeholder:text-transparent
     outline-none
+    focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-fg
     disabled:cursor-not-allowed
     pt-6 pb-2
   `
