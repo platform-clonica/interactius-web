@@ -61,9 +61,9 @@ const underlineStyle: RichComponents = {
 const boldWord: RichComponents = {
   strong: (chunks) => (
     <span style={{ whiteSpace: 'nowrap' }}>
-      <span aria-hidden="true">{'/ '}</span>
+      <span aria-hidden="true" style={{ paddingInlineEnd: '0.25em' }}>/</span>
       <span data-word="">{chunks}</span>
-      <span aria-hidden="true">{' /'}</span>
+      <span aria-hidden="true" style={{ paddingInlineStart: '0.25em' }}>/</span>
     </span>
   ),
 }

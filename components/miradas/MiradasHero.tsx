@@ -73,7 +73,7 @@ export function MiradasHero() {
               const proxy = { v: 0 }
               gsap.to(proxy, {
                 v: 0.6,
-                duration: 1.4,
+                duration: 0.5,
                 ease: 'sine.inOut',
                 delay: 0.4,
                 onUpdate: () => {
@@ -118,24 +118,17 @@ export function MiradasHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full min-h-screen overflow-hidden bg-warm-light"
+      className="relative w-full overflow-hidden bg-warm-light lg:min-h-screen"
       aria-label="Cabecera Miradas"
     >
-      {/* Banner image — top alineado con el FINAL del logo vertical del
-          sidebar (logo: top 80px + altura 175px ≈ 256px). La imagen empieza
-          justo debajo del logo, queda más compacta verticalmente. */}
-      <div
-        className="absolute left-0 right-0 section-inner"
-        style={{
-          top: '256px',
-          bottom: 'clamp(260px, calc(40vh - 100px), 340px)',
-        }}
-      >
-        <div className="grid grid-cols-12 gap-grid-gutter h-full">
-          <div className="col-span-12 lg:col-start-2 lg:col-span-11 h-full">
+      {/* MOBILE/TABLET (<lg): layout en flow normal, altura estable.
+          Imagen aspect-[16/10] justo debajo del header chrome (pt-24).
+          Subtítulo a 40px de la imagen. */}
+      <div className="lg:hidden pt-24 pb-12 section-inner">
+        <div className="grid grid-cols-12 gap-grid-gutter">
+          <div className="col-start-2 col-span-11">
             <div
-              ref={imageRef}
-              className="relative overflow-hidden h-full"
+              className="relative overflow-hidden aspect-[16/10]"
               style={{ width: 'calc(100% + var(--grid-margin))' }}
             >
               <Image
@@ -143,7 +136,41 @@ export function MiradasHero() {
                 alt="Miradas — reflexiones sobre diseño y estrategia"
                 fill
                 priority
-                sizes="(min-width: 901px) calc(100vw - var(--grid-margin)), 100vw"
+                sizes="100vw"
+                className="object-cover object-center"
+              />
+            </div>
+          </div>
+          <p
+            className="col-start-2 col-span-11 mt-10 font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
+          >
+            {t.rich('hero.subtitle', richComponents.boldWord)}
+          </p>
+        </div>
+      </div>
+
+      {/* DESKTOP (≥lg): layout absolute original — imagen entre top:256
+          y bottom:clamp(260,40vh-100,340), subtítulo absolute al bottom. */}
+      <div
+        className="hidden lg:block absolute left-0 right-0 section-inner"
+        style={{
+          top: '256px',
+          bottom: 'clamp(260px, calc(40vh - 100px), 340px)',
+        }}
+      >
+        <div className="grid grid-cols-12 gap-grid-gutter h-full">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-11 h-full">
+            <div
+              ref={imageRef}
+              className="relative overflow-hidden h-full"
+              style={{ width: 'calc(100% + var(--grid-margin))' }}
+            >
+              <Image
+                src="/miradas/hero-banner.webp"
+                alt=""
+                fill
+                priority
+                sizes="calc(100vw - var(--grid-margin))"
                 className="object-cover object-center"
               />
             </div>
@@ -151,11 +178,11 @@ export function MiradasHero() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 section-inner pb-12 lg:pb-16">
+      <div className="hidden lg:block absolute bottom-0 left-0 right-0 section-inner lg:pb-16">
         <div className="grid grid-cols-12 gap-grid-gutter">
           <p
             ref={subtitleRef}
-            className="col-span-12 lg:col-start-2 lg:col-span-8 font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
+            className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-8 font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
           >
             {t.rich('hero.subtitle', richComponents.boldWord)}
           </p>

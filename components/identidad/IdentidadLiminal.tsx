@@ -115,9 +115,19 @@ export function IdentidadLiminal() {
             <h2
               ref={titleRef}
               id="liminal-title"
-              className="font-serif font-normal text-fg select-none text-[clamp(40px,7.5vw,120px)] leading-[1.0] tracking-[-0.03em]"
+              className="font-serif font-normal text-fg select-none text-super leading-[1.0] tracking-[-0.03em]
+                         lg:text-[clamp(40px,7.5vw,120px)]"
             >
-              {t('liminal.title')}
+              {t('liminal.title').split(' ').map((word, i, arr) => (
+                <span key={i}>
+                  {word}
+                  {i < arr.length - 1 && (
+                    <>
+                      <br className="lg:hidden" />{' '}
+                    </>
+                  )}
+                </span>
+              ))}
             </h2>
           </div>
           {/* mt aprox = 2 × line-height del título (= 2 × clamp(40px,7.5vw,120px)

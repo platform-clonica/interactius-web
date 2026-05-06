@@ -35,18 +35,22 @@ export async function MiradasGlobalHome({ articles, locale }: MiradasGlobalHomeP
       <MiradasHero />
 
       {/* Super title "Miradas" — sangrado izquierdo canónico + line-mask reveal.
-          Mismo patrón que ServicesRows / IdentidadMetodologia / MiradasGrid.
-          Padding asimétrico: poco arriba (cerca del hero subtitle) y canónico
-          abajo (espacio para respirar antes de los artículos). */}
-      <div className="relative overflow-hidden pt-8 lg:pt-12 pb-section">
+          Wrapper máscara canónico: paddingBottom 0.2em para acomodar
+          descenders + marginBottom -0.2em para no afectar el layout exterior.
+          El espacio "antes de los artículos" se aporta con el spacer siguiente. */}
+      <div className="relative overflow-hidden pt-8 lg:pt-12">
         <h2
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
-          style={{ marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))' }}
+          style={{
+            marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
+            paddingBottom: '0.2em',
+          }}
           aria-hidden="true"
         >
           <SuperTitleReveal>{t('grid.superTitle')}</SuperTitleReveal>
         </h2>
       </div>
+      <div aria-hidden="true" className="pb-section" />
 
       {MIRADAS_PARENT_CATEGORIES.map((parent) => {
         const childSubs = SUBS_BY_PARENT[parent]

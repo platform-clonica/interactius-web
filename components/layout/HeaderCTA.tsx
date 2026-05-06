@@ -4,6 +4,7 @@ import { useCallback, useEffect, type MouseEvent } from 'react'
 
 import { Link, useRouter } from '@/lib/i18n/navigation'
 import { usePageCurtainStore } from '@/lib/store/curtain'
+import { useMenuStore } from '@/lib/store/menu'
 
 /**
  * HeaderCTA — link "Hablemos" con cortina de transición a /contacto.
@@ -20,6 +21,10 @@ import { usePageCurtainStore } from '@/lib/store/curtain'
 export function HeaderCTA({ label }: { label: string }) {
   const begin = usePageCurtainStore((s) => s.beginPageCurtain)
   const router = useRouter()
+  // En mobile/tablet (<lg) el MenuOverlay es fullscreen y ya tiene "Contacto"
+  // entre los secondary links → ocultamos el CTA "Hablemos" cuando el menú
+  // está abierto para evitar duplicado encima del LocaleSwitcher.
+  const isMenuOpen = useMenuStore((s) => s.isOpen)
 
   // Prefetch programático en montaje. El Link prefetcha en intersección con
   // viewport, pero el header está fixed: garantizamos que /contacto esté
@@ -41,7 +46,7 @@ export function HeaderCTA({ label }: { label: string }) {
     <Link
       href="/contacto"
       onClick={handleClick}
-      className="hover-wipe-underline inline-block w-fit font-mono text-body-sm text-fg"
+      className={`hover-wipe-underline inline-block w-fit font-mono text-body-sm text-fg${isMenuOpen ? ' max-lg:hidden' : ''}`}
       style={{ filter: 'brightness(0) invert(1)' }}
     >
       {label}

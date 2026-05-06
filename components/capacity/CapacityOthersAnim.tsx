@@ -146,7 +146,7 @@ export function CapacityOthersAnim({
 
   return (
     <section
-      className="w-full bg-warm-light"
+      className="w-full bg-warm-light pb-5 lg:pb-0"
       aria-label={sectionLabel}
     >
       <div className="section-inner">
@@ -195,7 +195,7 @@ export function CapacityOthersAnim({
               <div
                 key={tab.href}
                 ref={(el) => { cardRefs.current[i] = el }}
-                className={commonClasses}
+                className={`${commonClasses} hidden lg:flex`}
                 aria-current="page"
               >
                 {/* Spacer invisible: reserva el alto del PlusArrowFlipIcon

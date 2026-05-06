@@ -397,13 +397,14 @@ export function IdentidadGente() {
         {/* Titular "Nuestra gente" — text-title like Actitud Liminal, top-left.
             Color tweened by GSAP from fg → warm-light in sync with body bg. */}
         <div
-          className="absolute top-[clamp(210px,17.7vh,234px)] inset-x-0 section-inner pointer-events-none"
+          className="absolute top-[100px] inset-x-0 section-inner pointer-events-none
+                     lg:top-[clamp(210px,17.7vh,234px)]"
         >
           <div className="grid grid-cols-12 gap-grid-gutter">
             <h2
               ref={titleRef}
               id="gente-title"
-              className="col-span-10 lg:col-span-6 lg:col-start-2 font-serif font-normal text-warm-light text-section leading-[1.2] tracking-[-0.02em]"
+              className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-6 font-serif font-normal text-warm-light text-section leading-[1.2] tracking-[-0.02em]"
             >
               {t('gente.title')}
             </h2>

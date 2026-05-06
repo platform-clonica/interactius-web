@@ -200,7 +200,7 @@ export function HeroScroll({
             const proxy = { v: 0 }
             gsap.to(proxy, {
               v: 0.6,
-              duration: 1.4,
+              duration: 0.5,
               ease: 'sine.inOut',
               onUpdate: () => {
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)

@@ -43,14 +43,14 @@ export function ClientsMarquee({ clients, bottomSpacing = 'normal' }: ClientsMar
   return (
     <section
       aria-label="Clientes"
-      className={`relative z-content w-full bg-warm-light pt-16 ${
-        bottomSpacing === 'large' ? 'pb-[clamp(120px,15vw,200px)]' : 'pb-16'
+      className={`relative z-content w-full bg-warm-light pt-6 lg:pt-16 ${
+        bottomSpacing === 'large' ? 'pb-20 lg:pb-[clamp(120px,15vw,200px)]' : 'pb-20 lg:pb-16'
       }`}
     >
       <div className="section-inner">
         <p
           aria-hidden="true"
-          className="font-serif font-normal text-fg/10 text-title leading-[1.05] text-center [text-wrap:pretty]"
+          className="font-serif font-normal text-fg/10 text-[18px] lg:text-title leading-[1.2] lg:leading-[1.05] text-center [text-wrap:pretty]"
         >
           {CLIENTS.map((c, i) => (
             <Fragment key={c}>

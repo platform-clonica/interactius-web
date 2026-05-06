@@ -110,8 +110,8 @@ export function ServiceRow({ data }: ServiceRowProps) {
             </h3>
           </div>
 
-          {/* Descripción + labels — col 7-11 (desktop) / nueva fila (mobile) */}
-          <div className="col-span-12 lg:col-start-7 lg:col-span-5 mt-6 lg:mt-0">
+          {/* Descripción + labels — col 7-11 (desktop) / col-start-2 col-span-11 (mobile, alineado con el titular) */}
+          <div className="col-start-2 col-span-11 lg:col-start-7 lg:col-span-5 mt-6 lg:mt-0">
             <p className="font-mono text-body-sm text-fg max-w-[52ch]">
               {data.description}
             </p>

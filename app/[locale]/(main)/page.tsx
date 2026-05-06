@@ -59,7 +59,7 @@ export default async function HomePage({ params }: PageProps) {
         videoSrc="/home/hero-poster.mp4"
       >
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <h1 className="col-span-12 lg:col-start-2 lg:col-span-9 font-serif text-section font-light text-fg">
+          <h1 className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-9 font-serif text-section font-light text-fg">
             {t.rich('hero.tagline', {
               em: (chunks) => <em>{chunks}</em>,
               ...richComponents.boldWord,

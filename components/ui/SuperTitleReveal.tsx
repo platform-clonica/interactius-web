@@ -13,8 +13,10 @@ import { getReducedMotion } from '@/components/motion/useReducedMotion'
  *     <SuperTitleReveal>{t('title')}</SuperTitleReveal>
  *   </h2>
  *
- * Mismo patrón que IdentidadMetodologia y MiradasGrid: y:'110%' → 0%,
- * 1.2s power4.out, scroll-trigger `top 90%` once.
+ * Mismo patrón que IdentidadMetodologia y MiradasGrid: y:'130%' → 0%,
+ * 1.2s power4.out, scroll-trigger `top 90%` once. y:130% (no 110%) deja
+ * margen al padding-bottom canónico del wrapper (0.2em para descenders
+ * tipo "q", "g") sin que el span asome en estado inicial.
  */
 export function SuperTitleReveal({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLSpanElement>(null)
@@ -29,7 +31,7 @@ export function SuperTitleReveal({ children }: { children: ReactNode }) {
       ])
       gsap.registerPlugin(ScrollTrigger)
       if (getReducedMotion()) return
-      gsap.set(el, { y: '110%' })
+      gsap.set(el, { y: '130%' })
       const st = ScrollTrigger.create({
         trigger: el,
         start: 'top 90%',

@@ -76,6 +76,15 @@ export function CapacityServicesAnim({
   shapeKind,
 }: CapacityServicesAnimProps) {
   const [activeIndex, setActiveIndex] = useState(0)
+  // Detectar viewport mobile/tablet (<lg) para centrar el vortex en pantalla.
+  const [isVortexMobile, setIsVortexMobile] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1023px)')
+    const update = () => setIsVortexMobile(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
   const sectionRef = useRef<HTMLElement>(null)
   // Trigger del vortex: el wrapper de los bloques de subservicios. Mapea
   // limpio cada bloque a un punto del progress (block 0 top → 0, block N-1
@@ -221,7 +230,7 @@ export function CapacityServicesAnim({
       {accentColor ? (
         <>
           <div
-            className="hidden lg:block absolute inset-0 z-10 pointer-events-none"
+            className="absolute inset-0 z-10 pointer-events-none"
             aria-hidden="true"
           >
             <div className="sticky top-0 h-screen pointer-events-none">
@@ -230,8 +239,10 @@ export function CapacityServicesAnim({
                 accentColor={accentColor}
                 strokeColor={strokeColor}
                 triggerRef={blocksRef}
-                centerXFrac={0.22}
+                centerXFrac={isVortexMobile ? 0.5 : 0.22}
                 shapeKind={shapeKind}
+                radiusFactor={isVortexMobile ? 0.66 : 0.33}
+                lockY={isVortexMobile}
               />
             </div>
           </div>
@@ -301,7 +312,7 @@ export function CapacityServicesAnim({
                       {svc.deliverables.map((tag) => (
                         <li key={tag}>
                           <span
-                            className={`inline-block px-1.5 py-1 font-mono text-label text-fg leading-tight${labelBg ? '' : ' bg-grey'}`}
+                            className={`inline-block px-1.5 py-1 font-mono text-[11px] lg:text-label text-fg leading-tight${labelBg ? '' : ' bg-grey'}`}
                             style={labelBg ? { backgroundColor: labelBg } : undefined}
                           >
                             {renderRich(tag)}

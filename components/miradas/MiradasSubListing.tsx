@@ -63,7 +63,7 @@ export function MiradasSubListing({
   return (
     <section className="section-inner pt-section">
       <div className="grid grid-cols-12 gap-grid-gutter mb-8">
-        <div className="col-span-12 lg:col-start-2 lg:col-span-10">
+        <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
           <Breadcrumb
             items={[
               {
@@ -83,7 +83,7 @@ export function MiradasSubListing({
       </div>
 
       <div className="grid grid-cols-12 gap-grid-gutter mb-8 lg:mb-10">
-        <div className="col-span-12 lg:col-start-2 lg:col-span-10">
+        <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
           <CurtainLink
             href={parentListingHref(parent, locale)}
             className="hover-wipe-underline w-fit font-mono text-body-sm text-fg/70 mb-4 inline-flex"
@@ -91,13 +91,13 @@ export function MiradasSubListing({
             ← {parentLabel}
           </CurtainLink>
         </div>
-        <h1 className="col-span-12 lg:col-start-2 lg:col-span-10 font-serif font-light text-fg text-title leading-tight">
+        <h1 className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 font-serif font-light text-fg text-title leading-tight">
           {subLabel}
         </h1>
       </div>
 
       <div className="grid grid-cols-12 gap-grid-gutter">
-        <div className="col-span-12 lg:col-start-2 lg:col-span-10">
+        <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
           <MiradasSubFilteredGrid
             articles={articles}
             locale={locale}
@@ -108,7 +108,7 @@ export function MiradasSubListing({
 
       {sisters.length > 0 && (
         <div className="grid grid-cols-12 gap-grid-gutter mt-section pb-section">
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
             <h2 className="font-serif font-light text-fg text-title-sm leading-tight mb-6">
               Otras temáticas en {parentLabel}
             </h2>

@@ -12,7 +12,7 @@ export async function Footer() {
   return (
     <footer
       role="contentinfo"
-      className="relative flex min-h-screen w-full flex-col bg-dark text-warm-light"
+      className="relative flex w-full flex-col bg-dark text-warm-light lg:min-h-screen"
     >
       <div className="section-inner flex flex-1 flex-col py-section">
         {/* TOP — Wordmark right-aligned, 5 últimas columnas (8-12) */}
@@ -34,7 +34,7 @@ export async function Footer() {
         </div>
 
         {/* NEWSLETTER — alta-izquierda, cols 1-5 */}
-        <div className="mt-16 grid grid-cols-12 gap-grid-gutter lg:mt-24">
+        <div className="mt-10 grid grid-cols-12 gap-grid-gutter lg:mt-24">
           <section
             aria-labelledby="footer-newsletter-title"
             className="col-span-12 lg:col-span-5"
@@ -56,13 +56,13 @@ export async function Footer() {
           </section>
         </div>
 
-        {/* Spacer */}
-        <div className="min-h-20 flex-1" />
+        {/* Spacer — solo desktop, en mobile el footer es compacto */}
+        <div className="hidden lg:block lg:min-h-20 lg:flex-1" />
 
         {/* ADDRESS + SOCIAL — baja-derecha, cols 8-12 (subgrid 9/3) */}
-        <div className="grid grid-cols-12 gap-grid-gutter">
+        <div className="mt-10 grid grid-cols-12 gap-grid-gutter lg:mt-0">
           <div className="col-span-12 grid grid-cols-12 gap-grid-gutter lg:col-span-5 lg:col-start-8">
-            <div className="col-span-12 flex flex-col gap-1 font-mono text-body-sm text-warm-light/60 sm:col-span-9">
+            <div className="col-span-9 flex flex-col gap-1 font-mono text-body-sm text-warm-light/60 sm:col-span-9">
               <address className="not-italic">
                 <p>Pau Claris, 100 Planta 2</p>
                 <p>08009 Barcelona</p>
@@ -83,7 +83,7 @@ export async function Footer() {
 
             <ul
               aria-label={t('social.label')}
-              className="col-span-12 flex flex-col gap-2 font-mono text-body-sm text-warm-light/60 sm:col-span-3 sm:h-full sm:items-end sm:justify-between sm:gap-0"
+              className="col-span-3 flex flex-col gap-2 items-end font-mono text-body-sm text-warm-light/60 sm:col-span-3 sm:h-full sm:items-end sm:justify-between sm:gap-0"
             >
               <li>
                 <a
@@ -125,13 +125,13 @@ export async function Footer() {
 
       {/* BOTTOM — línea full-width + copyright/legal pegados al bottom */}
       <div className="border-t border-warm-light/20">
-        <div className="section-inner flex flex-col gap-4 py-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="section-inner flex flex-col items-center gap-4 py-6 lg:flex-row lg:items-center lg:justify-between">
           <p className="font-mono text-micro text-warm-light/60">
             ©2012–{year} Interactius
           </p>
 
           <nav aria-label={t('legal.label')}>
-            <ul className="flex flex-wrap gap-x-8 gap-y-2 font-mono text-micro text-warm-light/60">
+            <ul className="flex flex-col items-center gap-2 font-mono text-micro text-warm-light/60 lg:flex-row lg:flex-wrap lg:gap-x-8 lg:gap-y-2">
               <li>
                 <CurtainLink
                   href="/politica-privacidad"

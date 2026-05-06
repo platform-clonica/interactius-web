@@ -9,6 +9,7 @@ import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher'
+import { Logo } from '@/components/ui/Logo'
 // gsap se importa lazy dentro del useEffect para no engrosar el bundle del layout.
 
 /* ==========================================================================
@@ -330,19 +331,21 @@ export function MenuOverlay() {
           en lg los hijos posicionen relative al contenedor outer (positioning
           context = `absolute inset-y-0`). */}
       <div
-        className="absolute inset-y-0 z-10
+        className="absolute inset-y-0 right-0 z-10
                    flex flex-col
                    pt-[26px] pb-[var(--grid-margin)] pr-[var(--grid-margin)]
                    gap-10
-                   lg:block lg:p-0 lg:gap-0"
+                   lg:right-auto lg:block lg:p-0 lg:gap-0"
         style={{ left: 'calc(var(--sidebar-w) + var(--grid-margin))' }}
       >
-        {/* Locale switcher — top-right del panel. Home se movió a la columna
-            secondary nav (primer item, ver SECONDARY_ITEMS). */}
+        {/* Locale switcher — mobile/tablet: bottom-right del panel con
+            margen igual al de la derecha (grid-margin). Desktop (lg): vuelve
+            a top-right como antes. Home se movió a la columna secondary nav
+            (primer item, ver SECONDARY_ITEMS). */}
         <div
           data-locale-switcher=""
-          className="self-end
-                     lg:absolute lg:top-[26px]
+          className="absolute bottom-[var(--grid-margin)] right-[var(--grid-margin)]
+                     lg:bottom-auto lg:right-auto lg:top-[26px]
                      lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]
                      lg:pr-[30px]
                      lg:pointer-events-none"
@@ -355,8 +358,8 @@ export function MenuOverlay() {
         {/* Primary nav — mobile flex-1 vertical center; lg absolute top:27.7vh */}
         <nav
           aria-label={t('common.menu.primaryNav')}
-          className="flex-1 flex flex-col justify-center
-                     lg:absolute lg:flex-none lg:top-[calc(27.7vh-40px)] lg:block"
+          className="flex-1 flex flex-col justify-center -mt-[250px] -mr-[var(--grid-margin)]
+                     lg:mt-0 lg:mr-0 lg:absolute lg:flex-none lg:top-[calc(27.7vh-40px)] lg:block"
         >
           {PRIMARY_ITEMS.map(({ route, labelKey, num }) => (
             <div
@@ -419,11 +422,16 @@ export function MenuOverlay() {
           ))}
         </nav>
 
-        {/* Secondary nav — mobile: anclado al bottom (mt-auto);
-            lg: absolute top:68vh (mantiene centro óptico desktop) */}
+        {/* Secondary nav — mobile: absolute en la mitad inferior del panel
+            (top:50% → bottom:grid-margin), contenido centrado vertical en
+            esa zona. Out of flex flow → no afecta a la posición del primary
+            nav (que sigue centrado vertical en todo el espacio sobrante).
+            lg: absolute top:68vh (mantiene centro óptico desktop). */}
         <div
-          className="flex flex-col gap-6 mt-auto
-                     lg:absolute lg:mt-0 lg:top-[calc(68vh-50px)]"
+          className="absolute top-1/2 bottom-[var(--grid-margin)] left-0 right-0
+                     flex flex-col gap-6 justify-center
+                     lg:top-[calc(68vh-50px)] lg:bottom-auto lg:left-auto lg:right-auto
+                     lg:block"
         >
           {SECONDARY_ITEMS.map(({ route, labelKey }) => (
             <div key={route} data-secondary-link="">
@@ -438,6 +446,19 @@ export function MenuOverlay() {
           ))}
         </div>
       </div>
+
+      {/* Logo home — mobile/tablet only. Top-right del panel a la altura de la
+          X close del menu trigger (top:26px). En desktop el logo vive en el
+          Sidebar fijo, así que aquí queda oculto (lg:hidden). */}
+      <Link
+        href="/"
+        onClick={(e) => handleLinkClick(e, '/')}
+        aria-label={t('common.logo.home')}
+        className="absolute top-[26px] right-[26px] z-10 pointer-events-auto lg:hidden
+                   flex h-10 items-center"
+      >
+        <Logo variant="wordmark" className="h-[22px] w-auto text-fg" aria-hidden="true" />
+      </Link>
     </div>
   )
 }
