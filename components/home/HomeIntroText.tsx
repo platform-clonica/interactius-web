@@ -67,6 +67,7 @@ export function HomeIntroText() {
             const slashWidths = slashEls.map((el) => el.scrollWidth)
 
             wordEl.style.removeProperty('-webkit-text-stroke')
+            wordEl.style.removeProperty('font-weight')
             slashEls.forEach((el) => {
               el.style.width = '0px'
               el.style.opacity = '0'
@@ -81,6 +82,7 @@ export function HomeIntroText() {
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
+            gsap.to(wordEl, { fontWeight: 500, duration: 1.4, ease: 'sine.inOut' })
             slashEls.forEach((el, index) => {
               gsap.to(el, { width: slashWidths[index], opacity: 1, duration: 0.35, ease: 'power2.out' })
             })
@@ -92,6 +94,7 @@ export function HomeIntroText() {
         st.kill()
         delayed?.kill()
         quoteEl.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('-webkit-text-stroke')
+        quoteEl.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('font-weight')
         quoteEl.querySelectorAll<HTMLElement>('[data-slash]').forEach((el) => {
           el.style.width = '0px'
           el.style.opacity = '0'
@@ -112,7 +115,7 @@ export function HomeIntroText() {
       {/* Sticky panel — texto centrado en pantalla completa warm-light */}
       <div className="sticky top-0 section-inner flex items-center min-h-screen py-section">
         <div className="grid grid-cols-12 gap-grid-gutter w-full">
-          <div className="col-span-12 lg:col-start-2 lg:col-span-11 xl:col-span-10 2xl:col-span-9 3xl:col-start-2 3xl:col-span-9">
+          <div className="col-span-12 lg:col-start-2 lg:col-span-11 xl:col-span-9 2xl:col-span-10 3xl:col-start-2 3xl:col-span-9">
             <p
               ref={quoteRef}
               className="font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"

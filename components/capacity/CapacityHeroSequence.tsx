@@ -486,7 +486,7 @@ export function CapacityHeroSequence({
             {/* Statement — últimas 6 cols (7-12), alineado al bottom de la imagen */}
             <p
               ref={statementRef}
-              className="col-span-12 lg:col-start-7 lg:col-span-6 mt-12 lg:mt-0 font-serif text-title-sm font-light text-fg text-pretty"
+              className="col-span-12 lg:col-start-7 lg:col-span-6 3xl:col-start-7 3xl:col-end-12 mt-12 lg:mt-0 font-serif text-title-sm font-light text-fg text-pretty"
             >
               {statement}
             </p>
