@@ -33,7 +33,7 @@ const config: Config = {
       lg: '900px',
       xl: '1280px',
       '2xl': '1440px',
-      'e': '1920px'
+      '3xl': '1920px'
     },
 
     // ----- Colors -----

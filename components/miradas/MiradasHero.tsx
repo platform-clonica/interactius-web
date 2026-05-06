@@ -64,9 +64,15 @@ export function MiradasHero() {
             onComplete: () => {
               const wordEl = subtitleEl.querySelector<HTMLElement>('[data-word]')
               if (!wordEl) return
+              const slashEls = Array.from(subtitleEl.querySelectorAll<HTMLElement>('[data-slash]'))
+              const slashWidths = slashEls.map((el) => el.scrollWidth)
 
               // Reset defensivo (revisita / hot-reload)
               wordEl.style.removeProperty('-webkit-text-stroke')
+              slashEls.forEach((el) => {
+                el.style.width = '0px'
+                el.style.opacity = '0'
+              })
 
               // Única animación: text-stroke 0 → 0.6px (engrosa el trazo
               // del word de regular a semi, sin cambiar el ancho del glifo).
@@ -79,6 +85,15 @@ export function MiradasHero() {
                 onUpdate: () => {
                   wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
                 },
+              })
+              slashEls.forEach((el, index) => {
+                gsap.to(el, {
+                  width: slashWidths[index],
+                  opacity: 1,
+                  duration: 0.35,
+                  ease: 'power2.out',
+                  delay: 0.4,
+                })
               })
             },
           })
@@ -106,6 +121,10 @@ export function MiradasHero() {
         cleanups.forEach((fn) => fn())
         splits.forEach((s) => s.revert())
         subtitleEl?.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('-webkit-text-stroke')
+        subtitleEl?.querySelectorAll<HTMLElement>('[data-slash]').forEach((el) => {
+          el.style.width = '0px'
+          el.style.opacity = '0'
+        })
       }
     })()
 
@@ -155,7 +174,7 @@ export function MiradasHero() {
         <div className="grid grid-cols-12 gap-grid-gutter">
           <p
             ref={subtitleRef}
-            className="col-span-12 lg:col-start-2 lg:col-span-8 font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
+            className="col-span-12 lg:col-start-2 lg:col-span-8 xl:col-span-7 2xl:col-span-6 font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"
           >
             {t.rich('hero.subtitle', richComponents.boldWord)}
           </p>

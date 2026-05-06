@@ -274,12 +274,16 @@ export function CapacityHeroSequence({
                 ease: 'power4.out',
                 stagger: 0.08,
                 onComplete: () => {
-                  // Bold canónico — slashes pre-renderizados via richComponents.boldWord.
-                  // Aquí solo animamos text-stroke 0→0.6px del word.
                   const wordEl = statementEl.querySelector<HTMLElement>('[data-word]')
                   if (!wordEl) return
+                  const slashEls = Array.from(statementEl.querySelectorAll<HTMLElement>('[data-slash]'))
+                  const slashWidths = slashEls.map((el) => el.scrollWidth)
 
                   wordEl.style.removeProperty('-webkit-text-stroke')
+                  slashEls.forEach((el) => {
+                    el.style.width = '0px'
+                    el.style.opacity = '0'
+                  })
 
                   const proxy = { v: 0 }
                   gsap.to(proxy, {
@@ -290,6 +294,15 @@ export function CapacityHeroSequence({
                     onUpdate: () => {
                       wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
                     },
+                  })
+                  slashEls.forEach((el, index) => {
+                    gsap.to(el, {
+                      width: slashWidths[index],
+                      opacity: 1,
+                      duration: 0.35,
+                      ease: 'power2.out',
+                      delay: 0.4,
+                    })
                   })
                 },
               })
@@ -349,6 +362,10 @@ export function CapacityHeroSequence({
         cleanups.forEach((fn) => fn())
         splits.forEach((s) => s.revert())
         statementEl?.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('-webkit-text-stroke')
+        statementEl?.querySelectorAll<HTMLElement>('[data-slash]').forEach((el) => {
+          el.style.width = '0px'
+          el.style.opacity = '0'
+        })
       }
     })()
 

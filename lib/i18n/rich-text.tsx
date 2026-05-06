@@ -49,21 +49,35 @@ const underlineStyle: RichComponents = {
 }
 
 /**
- * boldWord — <strong> renderizado con slashes "/ palabra /" desde el primer
- * paint, dentro de un wrapper nowrap. La animación canónica solo engrosa
- * el trazo del word con `text-stroke 0→0.6px` (regular → semi); los slashes
- * NO se animan, ya están visibles. Render estático = wrap estable a
- * cualquier viewport, sin reflow durante la animación.
+ * boldWord — <strong> renderizado sin reservar espacio para los slashes
+ * en el primer paint. Al disparar la animación, los slashes aparecen y
+ * abren espacio lateral de forma progresiva; a la vez, el word pasa de
+ * peso regular al énfasis canónico (con `text-stroke 0→0.6px`).
  *
  * Uso: CapacityStatement, IdentidadIntro, HomeIntroText, HeroScroll,
  * CapacityHeroSequence, MiradasHero.
  */
 const boldWord: RichComponents = {
   strong: (chunks) => (
-    <span style={{ whiteSpace: 'nowrap' }}>
-      <span aria-hidden="true">{'/ '}</span>
+    <span
+      data-bold-word=""
+      style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'baseline' }}
+    >
+      <span
+        data-slash=""
+        aria-hidden="true"
+        style={{ opacity: 0, display: 'inline-block', overflow: 'hidden', width: 0, whiteSpace: 'pre' }}
+      >
+        {'/ '}
+      </span>
       <span data-word="">{chunks}</span>
-      <span aria-hidden="true">{' /'}</span>
+      <span
+        data-slash=""
+        aria-hidden="true"
+        style={{ opacity: 0, display: 'inline-block', overflow: 'hidden', width: 0, whiteSpace: 'pre' }}
+      >
+        {' /'}
+      </span>
     </span>
   ),
 }

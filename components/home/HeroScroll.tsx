@@ -194,9 +194,15 @@ export function HeroScroll({
         // Aquí solo animamos el text-stroke 0→0.6px del word (regular → semi).
         const wordEl = h1.querySelector<HTMLElement>('[data-word]')
         if (wordEl) {
+          const slashEls = Array.from(h1.querySelectorAll<HTMLElement>('[data-slash]'))
+          const slashWidths = slashEls.map((el) => el.scrollWidth)
           const transformDelay = 0.2 + 1.2 + (lines.length - 1) * 0.1 + 0.4
           const delayed = gsap.delayedCall(transformDelay, () => {
             wordEl.style.removeProperty('-webkit-text-stroke')
+            slashEls.forEach((el) => {
+              el.style.width = '0px'
+              el.style.opacity = '0'
+            })
             const proxy = { v: 0 }
             gsap.to(proxy, {
               v: 0.6,
@@ -206,10 +212,17 @@ export function HeroScroll({
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
+            slashEls.forEach((el, index) => {
+              gsap.to(el, { width: slashWidths[index], opacity: 1, duration: 0.35, ease: 'power2.out' })
+            })
           })
           cleanups.push(() => {
             delayed.kill()
             wordEl.style.removeProperty('-webkit-text-stroke')
+            slashEls.forEach((el) => {
+              el.style.width = '0px'
+              el.style.opacity = '0'
+            })
           })
         }
       } else if (h1 && reduced) {

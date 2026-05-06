@@ -51,12 +51,17 @@ export function IdentidadIntro() {
           delayed = gsap.delayedCall(transformDelay, () => {
             const wordEl = quoteEl.querySelector<HTMLElement>('[data-word]')
             if (!wordEl) return
+            const slashEls = Array.from(quoteEl.querySelectorAll<HTMLElement>('[data-slash]'))
+            const slashWidths = slashEls.map((el) => el.scrollWidth)
 
             wordEl.style.removeProperty('-webkit-text-stroke')
+            slashEls.forEach((el) => {
+              el.style.width = '0px'
+              el.style.opacity = '0'
+            })
 
-            // Única animación canónica: text-stroke 0 → 0.6px (regular → semi).
-            // Los slashes "/ palabra /" están renderizados desde el primer paint
-            // (richComponents.boldWord) → wrap estable, sin reflow.
+            // La palabra empieza con el mismo peso del párrafo.
+            // Al disparar el efecto, aparecen los slashes y se aplica más peso.
             const proxy = { v: 0 }
             gsap.to(proxy, {
               v: 0.6,
@@ -66,6 +71,9 @@ export function IdentidadIntro() {
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
               },
             })
+            slashEls.forEach((el, index) => {
+              gsap.to(el, { width: slashWidths[index], opacity: 1, duration: 0.35, ease: 'power2.out' })
+            })
           })
         },
       })
@@ -74,6 +82,10 @@ export function IdentidadIntro() {
         st.kill()
         delayed?.kill()
         quoteEl.querySelector<HTMLElement>('[data-word]')?.style.removeProperty('-webkit-text-stroke')
+        quoteEl.querySelectorAll<HTMLElement>('[data-slash]').forEach((el) => {
+          el.style.width = '0px'
+          el.style.opacity = '0'
+        })
         split.revert()
       }
     })()
@@ -86,7 +98,8 @@ export function IdentidadIntro() {
       {/* Sticky panel */}
       <div className="sticky top-0 section-inner flex items-center min-h-screen py-section">
         <div className="grid grid-cols-12 gap-grid-gutter w-full">
-          <div className="col-span-12 lg:col-span-10 lg:col-start-2">
+          {/* <div className="col-span-12 lg:col-span-10 lg:col-start-2"> */}
+          <div className="col-span-12 lg:col-start-2">
             <p
               ref={quoteRef}
               className="font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"

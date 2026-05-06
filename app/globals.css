@@ -244,6 +244,15 @@
     column-gap: var(--grid-gutter);
   }
 
+  /* SplitType tiende a inyectar display:inline-block en wrappers inline.
+     Forzamos el wrapper del patrón "/ palabra /" a inline-flex para mantener
+     la composición del conjunto en todos los estados (incluida la animación). */
+  [data-bold-word] {
+    display: inline-flex !important;
+    align-items: baseline !important;
+    white-space: nowrap !important;
+  }
+
   /* Line-mask para SplitType — overflow:hidden que recorta el texto al subir */
   .st-mask {
     display: block;
