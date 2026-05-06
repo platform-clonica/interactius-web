@@ -57,6 +57,16 @@
   "work": {
     "ariaLabel": "Treballs i clients",
     "heading": "Els nostres clients",
-    "description": "Treballem amb organitzacions que operen en contextos complexos i entenen que avan\u00e7ar no \u00e9s qu\u00fcesti\u00f3 de fer m\u00e9s, sin\u00f3 de <strong>decidir millor</strong>."
+    "description": "Treballem amb organitzacions que operen en contextos complexos i entenen que avan\u00e7ar no \u00e9s qu\u00fcesti\u00f3 de fer m\u00e9s, sin\u00f3 de <strong>decidir millor</strong>.",
+    "cards": {
+      "imagin": "Redissenyant la banca digital des de l\u2019estrat\u00e8gia fins a l\u2019experi\u00e8ncia",
+      "massimo": "Redisseny web/app. Del Design System a l\u2019experi\u00e8ncia unificada",
+      "serveo": "Cultura i tecnologia. Construint ponts entre equips",
+      "novartis": "Adopci\u00f3 d\u2019IA amb prop\u00f2sit. Identificar friccions i dissenyar l\u2019aprenentatge",
+      "mahou": "Redefinint la marca Rentabilibar des de la seva ess\u00e8ncia estrat\u00e8gica",
+      "fritRavich": "Impulsant la innovaci\u00f3 disruptiva i el talent intern",
+      "grandvalira": "Optimitzant la conversi\u00f3. Auditoria de l\u2019assistent de compres",
+      "ecoembes": "Entenent la realitat de la llar per impulsar canvis en el reciclatge"
+    }
   }
 }

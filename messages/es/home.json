@@ -57,6 +57,16 @@
   "work": {
     "ariaLabel": "Trabajos y clientes",
     "heading": "Nuestros clientes",
-    "description": "Trabajamos con organizaciones que operan en contextos complejos y entienden que avanzar no es cuestión de hacer más, sino de <strong>decidir mejor</strong>."
+    "description": "Trabajamos con organizaciones que operan en contextos complejos y entienden que avanzar no es cuestión de hacer más, sino de <strong>decidir mejor</strong>.",
+    "cards": {
+      "imagin": "Rediseñando la banca digital desde la estrategia hasta la experiencia",
+      "massimo": "Rediseño web/app. Del Design System a la experiencia unificada",
+      "serveo": "Cultura y tecnología. Construyendo puentes entre equipos",
+      "novartis": "Adopción de IA con propósito. Identificar fricciones y diseñar el aprendizaje",
+      "mahou": "Redefiniendo la marca Rentabilibar desde su esencia estratégica",
+      "fritRavich": "Impulsando la innovación disruptiva y el talento interno",
+      "grandvalira": "Optimizando la conversión. Auditoría del asistente de compras",
+      "ecoembes": "Entendiendo la realidad del hogar para impulsar cambios en el reciclaje"
+    }
   }
 }

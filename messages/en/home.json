@@ -57,6 +57,16 @@
   "work": {
     "ariaLabel": "Work and clients",
     "heading": "Our clients",
-    "description": "We work with organisations that operate in complex contexts and understand that moving forward is not about doing more, but about <strong>deciding better</strong>."
+    "description": "We work with organisations that operate in complex contexts and understand that moving forward is not about doing more, but about <strong>deciding better</strong>.",
+    "cards": {
+      "imagin": "Redesigning digital banking from strategy to experience",
+      "massimo": "Web/app redesign. From Design System to a unified experience",
+      "serveo": "Culture and technology. Building bridges between teams",
+      "novartis": "Purposeful AI adoption. Identifying friction and designing learning",
+      "mahou": "Redefining the Rentabilibar brand from its strategic essence",
+      "fritRavich": "Driving disruptive innovation and internal talent",
+      "grandvalira": "Optimising conversion. Audit of the purchase assistant",
+      "ecoembes": "Understanding the reality of homes to drive change in recycling"
+    }
   }
 }

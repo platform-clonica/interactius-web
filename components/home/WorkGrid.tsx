@@ -3,10 +3,20 @@ import { getTranslations } from 'next-intl/server'
 import { WorkCard, type WorkCardData } from './WorkCard'
 import { PortfolioOpeningImage } from './PortfolioOpeningImage'
 
-const WORK_DATA: WorkCardData[] = [
+type WorkCardId =
+  | 'imagin'
+  | 'massimo'
+  | 'serveo'
+  | 'novartis'
+  | 'mahou'
+  | 'fritRavich'
+  | 'grandvalira'
+  | 'ecoembes'
+
+const WORK_DATA: Array<Omit<WorkCardData, 'title'> & { id: WorkCardId }> = [
   {
+    id: 'imagin',
     client: 'Imagin',
-    title: 'Rediseñando la banca digital desde la estrategia hasta la experiencia',
     bgColor: 'lavender',
     aspectRatio: 'square',
     gridStart: 1,
@@ -15,8 +25,8 @@ const WORK_DATA: WorkCardData[] = [
     imageUrl: '/home/home-imagin.png',
   },
   {
+    id: 'massimo',
     client: 'Massimo Dutti',
-    title: 'Rediseño web/app. Del Design System a la experiencia unificada',
     bgColor: 'bordeaux',
     aspectRatio: 'square',
     gridStart: 8,
@@ -25,8 +35,8 @@ const WORK_DATA: WorkCardData[] = [
     imageUrl: '/home/home-massimo.webp',
   },
   {
+    id: 'serveo',
     client: 'Serveo',
-    title: 'Cultura y tecnología. Construyendo puentes entre equipos',
     bgColor: 'emerald',
     aspectRatio: '3/4',
     gridStart: 1,
@@ -35,8 +45,8 @@ const WORK_DATA: WorkCardData[] = [
     imageUrl: '/home/home-serveo.webp',
   },
   {
+    id: 'novartis',
     client: 'Novartis',
-    title: 'Adopción de IA con propósito. Identificar fricciones y diseñar el aprendizaje',
     bgColor: 'opal',
     aspectRatio: 'square',
     gridStart: 6,
@@ -45,8 +55,8 @@ const WORK_DATA: WorkCardData[] = [
     imageUrl: '/home/home-novartis.webp',
   },
   {
+    id: 'mahou',
     client: 'Mahou',
-    title: 'Redefiniendo la marca Rentabilibar desde su esencia estratégica',
     bgColor: 'bordeaux',
     aspectRatio: 'square',
     gridStart: 2,
@@ -55,8 +65,8 @@ const WORK_DATA: WorkCardData[] = [
     imageUrl: '/home/home-nexho.webp',
   },
   {
+    id: 'fritRavich',
     client: 'Frit Ravich',
-    title: 'Impulsando la innovación disruptiva y el talento interno',
     bgColor: 'lavender',
     aspectRatio: '3/4',
     gridStart: 8,
@@ -65,8 +75,8 @@ const WORK_DATA: WorkCardData[] = [
     imageUrl: '/home/home-frit2.webp',
   },
   {
+    id: 'grandvalira',
     client: 'Grandvalira',
-    title: 'Optimizando la conversión. Auditoría del asistente de compras',
     bgColor: 'opal',
     aspectRatio: 'square',
     gridStart: 2,
@@ -75,8 +85,8 @@ const WORK_DATA: WorkCardData[] = [
     imageUrl: '/home/home-grandvalira.webp',
   },
   {
+    id: 'ecoembes',
     client: 'Ecoembes',
-    title: 'Entendiendo la realidad del hogar para impulsar cambios en el reciclaje',
     bgColor: 'emerald',
     aspectRatio: 'square',
     gridStart: 8,
@@ -88,6 +98,11 @@ const WORK_DATA: WorkCardData[] = [
 
 export async function WorkGrid() {
   const t = await getTranslations('home')
+
+  const cards: WorkCardData[] = WORK_DATA.map(({ id, ...rest }) => ({
+    ...rest,
+    title: t(`work.cards.${id}`),
+  }))
 
   return (
     <section
@@ -122,9 +137,9 @@ export async function WorkGrid() {
         {/* Grid masonry — solo desktop */}
         <ul
           role="list"
-          className="hidden lg:grid lg:grid-cols-12 lg:gap-grid-gutter"
+          className="hidden lg:grid lg:grid-cols-12 lg:gap-grid-gutter 3xl:grid-cols-8"
         >
-          {WORK_DATA.map((card, i) => (
+          {cards.map((card, i) => (
             <li key={card.client} className="contents">
               <WorkCard data={card} index={i} />
             </li>
@@ -136,7 +151,7 @@ export async function WorkGrid() {
           role="list"
           className="hidden md:grid md:grid-cols-2 md:gap-6 lg:hidden"
         >
-          {WORK_DATA.map((card, i) => (
+          {cards.map((card, i) => (
             <li key={card.client} className="contents">
               <WorkCard
                 data={{ ...card, aspectRatio: 'square', gridStart: undefined, gridSpan: undefined, marginTop: 0 }}
@@ -149,7 +164,7 @@ export async function WorkGrid() {
 
         {/* Stack — mobile */}
         <ul role="list" className="flex flex-col gap-6 md:hidden">
-          {WORK_DATA.map((card, i) => (
+          {cards.map((card, i) => (
             <li key={card.client}>
               <WorkCard
                 data={{ ...card, aspectRatio: 'square', gridStart: undefined, gridSpan: undefined, marginTop: 0 }}
