@@ -117,7 +117,7 @@ function FeaturedCard({
   return (
     <CurtainLink
       href={articleHref(article.category, article.slug, locale)}
-      className="group relative col-span-12 lg:col-start-2 lg:col-span-10 block overflow-hidden"
+      className="group relative col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 block overflow-hidden"
     >
       {/* Image area — único bloque del card. Layout canónico bottom-up via
           flex flex-col (NO px fijos, responsive-safe):
@@ -274,11 +274,16 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
 
       {/* ── "Miradas" super title — sangrado izquierdo canónico + line-mask
             reveal. Padding-top reducido (no canónico aquí: queremos el
-            título cerca del subtítulo del hero). ── */}
-      <div className="relative overflow-hidden mt-0 pb-1 lg:pb-2">
+            título cerca del subtítulo del hero). Wrapper máscara con
+            paddingBottom 0.2em para acomodar descenders + marginBottom
+            -0.2em para no afectar el layout exterior. ── */}
+      <div className="relative overflow-hidden mt-0">
         <h2
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
-          style={{ marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))' }}
+          style={{
+            marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
+            paddingBottom: '0.2em',
+          }}
           aria-hidden="true"
         >
           <SuperTitleReveal>{t('grid.superTitle')}</SuperTitleReveal>
@@ -291,7 +296,7 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
           {/* Search — left col. Usa FormField canónico (mismo lenguaje que
               los formularios: floating label, border-b dark/40 → dark on
               focus, font-mono text-body-sm). */}
-          <div className="col-span-12 lg:col-start-2 lg:col-span-5">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-5">
             <FormField
               name="search"
               type="search"

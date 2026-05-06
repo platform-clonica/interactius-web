@@ -35,12 +35,17 @@ export async function ServicesRows() {
       aria-labelledby="services-heading"
       className="relative z-content w-full bg-warm-light"
     >
-      {/* Super title — fuera de section-inner para sangrar a la izquierda */}
-      <div className="relative overflow-hidden pt-section pb-1 lg:pb-2">
+      {/* Super title — fuera de section-inner para sangrar a la izquierda.
+          Wrapper máscara canónico: paddingBottom 0.2em para acomodar
+          descenders + marginBottom -0.2em para no afectar layout exterior. */}
+      <div className="relative overflow-hidden pt-section">
         <h2
           id="services-heading"
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
-          style={{ marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))' }}
+          style={{
+            marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
+            paddingBottom: '0.2em',
+          }}
         >
           <SuperTitleReveal>{t('services.title')}</SuperTitleReveal>
         </h2>
@@ -49,7 +54,7 @@ export async function ServicesRows() {
       {/* Headline lead — section-inner */}
       <div className="section-inner">
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <p className="col-span-12 lg:col-start-2 lg:col-span-11 font-serif font-light text-fg text-title-sm leading-tight">
+          <p className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-11 font-serif font-light text-fg text-title-sm leading-tight">
             {t('services.lead')}
           </p>
         </div>

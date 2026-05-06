@@ -48,18 +48,20 @@ export function IdentidadMetodologia() {
         gsap.set(bgRef.current, { clipPath: 'inset(0 0% 0 0)' })
       }
 
-      // 2. Title line-mask reveal — y 110% → 0% under overflow-hidden parent
+      // 2. Title line-mask reveal — y 130% → 0% under overflow-hidden parent.
+      // Trigger en el propio título (no en la section) para que dispare cuando
+      // el título entra al viewport, no antes. start: 'top 85%'.
       const titleEl = titleRef.current
       if (titleEl) {
         if (reduced) {
           gsap.set(titleEl, { y: 0 })
         } else {
-          gsap.set(titleEl, { y: '110%' })
+          gsap.set(titleEl, { y: '130%' })
           const tw = gsap.to(titleEl, {
             y: '0%',
             duration: 0.8,
             ease: 'power4.out',
-            scrollTrigger: { trigger: section, start: 'top 70%', once: true },
+            scrollTrigger: { trigger: titleEl, start: 'top 85%', once: true },
           })
           const twSt = tw.scrollTrigger
           if (twSt) cleanups.push(() => twSt.kill())
@@ -83,8 +85,10 @@ export function IdentidadMetodologia() {
             card.querySelectorAll<HTMLElement>('[data-ti]').forEach((el) => gsap.set(el, { y: '110%' }))
           })
 
+          // Trigger en la primera card (no en la section) para que dispare
+          // cuando las cards entran al viewport, no antes. start: 'top 85%'.
           const tl = gsap.timeline({
-            scrollTrigger: { trigger: section, start: 'top 55%', once: true },
+            scrollTrigger: { trigger: cards[0]!, start: 'top 85%', once: true },
           })
 
           // All clips in parallel with small stagger — much faster than sequential
@@ -123,13 +127,18 @@ export function IdentidadMetodologia() {
       className="relative w-full bg-warm-light"
       aria-labelledby="metodologia-title"
     >
-      {/* Title — above image, dark on warm-light, bleeds past left edge */}
-      <div className="relative overflow-hidden pt-section pb-6 lg:pb-10">
+      {/* Title — above image, dark on warm-light, bleeds past left edge.
+          Wrapper máscara canónico: paddingBottom 0.2em para acomodar
+          descenders ("q", "g", "p", "j") + marginBottom -0.2em para que el
+          padding extra no afecte el layout exterior. Pareado con y:130%
+          en el span (suficiente para quedar oculto incluso con el padding). */}
+      <div className="relative overflow-hidden pt-section">
         <h2
           id="metodologia-title"
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
           style={{
             marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
+            paddingBottom: '0.2em',
           }}
         >
           <span ref={titleRef} className="inline-block">
@@ -164,8 +173,9 @@ export function IdentidadMetodologia() {
                 ref={(el) => {
                   cardsRef.current[i] = el
                 }}
-                className="bg-pure-white flex flex-col items-center justify-center gap-5 p-10 text-center will-change-[clip-path]"
-                style={{ minHeight: 'clamp(320px, 42vh, 480px)' }}
+                className="bg-pure-white flex flex-col items-center justify-center gap-3 p-5 text-center will-change-[clip-path]
+                           min-h-[140px]
+                           lg:gap-5 lg:p-10 lg:min-h-[clamp(320px,42vh,480px)]"
               >
                 <span className="overflow-hidden block leading-none">
                   <span

@@ -213,13 +213,26 @@ export function ContactHeroAnim({
       {/* Contenedor exterior — centra el cuadro con marco uniforme alrededor */}
       <div className="relative z-content h-full flex items-center justify-center p-grid-margin">
 
-        {/* Cuadro warm-light — visible al instante (la PageCurtain global hace el reveal) */}
-        <div className="w-full max-w-[var(--grid-max-w)] bg-warm-light">
+        {/* Cuadro warm-light — visible al instante (la PageCurtain global hace el reveal).
+            Mobile/tablet: max-h calc(100vh-160px) + overflow-y-auto → cuadro
+            centrado verticalmente con scroll interno (la X close de arriba
+            queda siempre visible, fuera del cuadro). Desktop: sin límite. */}
+        <div className="w-full max-w-[var(--grid-max-w)] bg-warm-light max-h-[calc(100vh-160px)] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden lg:max-h-none lg:overflow-visible">
           <div className="p-[clamp(32px,4vw,64px)]">
             <div className="grid grid-cols-12 gap-grid-gutter">
 
+              {/* Logo — mobile: order-first (arriba del todo), justify-start (alineado al texto).
+                  Desktop: en col 7-12 row 1 (justify-end), izq spans 2 rows. */}
+              <div ref={logoRef} className="col-span-12 lg:col-start-7 lg:col-span-6 flex justify-start lg:justify-end order-first lg:order-none mb-6 lg:mb-0">
+                <Logo
+                  variant="wordmark"
+                  className="h-[32px] lg:h-[clamp(32px,2.4vw,44px)] w-auto text-fg"
+                  aria-label="Interactius"
+                />
+              </div>
+
               {/* ── COLUMNA IZQUIERDA ─────────────────────────────────────── */}
-              <div className="col-span-12 lg:col-span-5 flex flex-col justify-between gap-10 lg:gap-0">
+              <div className="col-span-12 lg:col-span-5 lg:row-span-2 flex flex-col justify-between gap-10 lg:gap-0">
                 <div>
                   <h1
                     ref={headingRef}
@@ -252,21 +265,10 @@ export function ContactHeroAnim({
                 )}
               </div>
 
-              {/* ── COLUMNA DERECHA ───────────────────────────────────────── */}
+              {/* ── COLUMNA DERECHA — SOLO FORMULARIO ────────────────────── */}
               <div className="col-span-12 lg:col-start-7 lg:col-span-6 flex flex-col gap-6">
-
-                {/* Logo — ocupa 3 cols, justificado a la derecha */}
-                <div ref={logoRef} className="flex justify-end">
-                  <Logo
-                    variant="wordmark"
-                    className="h-[32px] lg:h-[clamp(32px,2.4vw,44px)] w-auto text-fg"
-                    aria-label="Interactius"
-                  />
-                </div>
-
                 {/* Formulario — campos animados via [data-contact-field] etc. */}
                 {children}
-
               </div>
             </div>
           </div>

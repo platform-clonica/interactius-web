@@ -200,33 +200,57 @@ export function CapacityManifiesto({
         </div>
       </div>
 
-      {/* Imagen + cuadro blanco — siblings en el mismo grid; el cuadro
-          ocupa cols 7-11 superpuesto sobre la imagen vía gridRow:1. */}
-      <div className="section-inner mt-[clamp(64px,10vw,160px)]">
+      {/* MOBILE/TABLET (<lg): imagen full-width edge-to-edge entre los dos
+          bloques de texto. Aspect 16/9 (más manejable que 16/7 vertical). */}
+      <div
+        className="lg:hidden relative w-full overflow-hidden mt-[clamp(64px,10vw,160px)]"
+        style={{ aspectRatio: '16 / 9' }}
+      >
+        <Image
+          src={imageSrc}
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
+
+      {/* MOBILE/TABLET (<lg): cuadro blanco full-width edge-to-edge con
+          padding lateral = grid-margin → texto interno alineado con body1.
+          Sin imagen superpuesta, sin grid 12-cols, sin clip-path. */}
+      <div
+        className="lg:hidden bg-pure-white"
+        style={{ padding: '40px var(--grid-margin)' }}
+      >
+        <p className="font-mono text-body-sm text-fg">{body2}</p>
+      </div>
+
+      {/* DESKTOP (≥lg): Imagen + cuadro blanco — siblings en el mismo grid;
+          el cuadro ocupa cols 7-11 superpuesto sobre la imagen vía gridRow:1. */}
+      <div className="hidden lg:block section-inner mt-[clamp(64px,10vw,160px)]">
         <div className="grid grid-cols-12 gap-grid-gutter items-center">
           <div
             ref={imageRef}
-            className="col-span-12 lg:col-start-2 lg:col-span-11 relative overflow-hidden"
+            className="lg:col-start-2 lg:col-span-11 relative overflow-hidden"
             style={{
               gridRow: 1,
-              marginRight:
-                'calc(-1 * max(var(--grid-margin), (100vw - var(--grid-max-w)) / 2))',
-              aspectRatio: '16 / 7',
               clipPath: 'inset(0 100% 0 0)',
+              aspectRatio: '16 / 7',
+              marginRight: 'calc(-1 * max(var(--grid-margin), (100vw - var(--grid-max-w)) / 2))',
             }}
           >
             <Image
               src={imageSrc}
               alt=""
               fill
-              sizes="(min-width: 1024px) 92vw, 100vw"
+              sizes="92vw"
               className="object-cover"
             />
           </div>
 
           <div
             ref={whiteBoxRef}
-            className="col-span-12 lg:col-start-7 lg:col-span-5 bg-pure-white relative z-10"
+            className="lg:col-start-7 lg:col-span-5 bg-pure-white relative z-10"
             style={{
               gridRow: 1,
               padding: 'clamp(20px, 2vw, 32px)',

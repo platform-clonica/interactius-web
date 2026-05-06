@@ -86,7 +86,7 @@ export function CapacityStatement({
             const proxy = { v: 0 }
             gsap.to(proxy, {
               v: 0.6,
-              duration: 1.4,
+              duration: 0.5,
               ease: 'sine.inOut',
               onUpdate: () => {
                 wordEl.style.setProperty('-webkit-text-stroke', `${proxy.v}px currentColor`)
@@ -146,7 +146,7 @@ export function CapacityStatement({
       <div className="sticky top-0 min-h-screen flex items-center overflow-hidden">
         <div className="section-inner py-section w-full">
           <div className="grid grid-cols-12 gap-grid-gutter w-full">
-            <div className="col-span-12 lg:col-span-10 lg:col-start-2">
+            <div className="col-start-2 col-span-11 lg:col-span-10 lg:col-start-2">
               <p
                 ref={quoteRef}
                 className="font-serif font-light text-section text-fg tracking-[-0.02em] leading-[1.2]"

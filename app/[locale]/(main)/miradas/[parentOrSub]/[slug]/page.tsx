@@ -196,7 +196,7 @@ export default async function ArticlePage({ params }: PageProps) {
       {/* Hero — cover + título + breadcrumb 4 niveles */}
       <section className="section-inner" aria-label="Cabecera del artículo">
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-span-12 lg:col-start-2 lg:col-span-11 lg:row-start-1 relative">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-11 lg:row-start-1 relative">
             <div
               className="relative overflow-hidden"
               style={{
@@ -241,7 +241,7 @@ export default async function ArticlePage({ params }: PageProps) {
           </div>
 
           {/* Breadcrumb 4 niveles — usa componente compartido */}
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10 mt-6">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 mt-6">
             <Breadcrumb
               withJsonLd={false}
               items={[
@@ -275,7 +275,7 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
 
         <div className="mt-10 lg:mt-12 grid grid-cols-12 gap-grid-gutter">
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
             <ShareRow
               title={article.title}
               url={absoluteUrl}
@@ -287,7 +287,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
       <article className="section-inner pt-16 lg:pt-20 pb-section" aria-label={article.title}>
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-h-[26px] flex flex-wrap gap-x-2.5 gap-y-2.5">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 min-h-[26px] flex flex-wrap gap-x-2.5 gap-y-2.5">
             {tags.map((tag, i) => (
               <span
                 key={tag}
@@ -300,13 +300,13 @@ export default async function ArticlePage({ params }: PageProps) {
             ))}
           </div>
 
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10 mt-8 lg:mt-12">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 mt-8 lg:mt-12">
             <p className="font-serif font-normal text-fg text-title-sm leading-tight tracking-[-0.01em]">
               {article.description}
             </p>
           </div>
 
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10 mt-12 lg:mt-16">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 mt-12 lg:mt-16">
             <MDXContent source={article.content} />
           </div>
         </div>
@@ -314,7 +314,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
       <section className="section-inner pb-section" aria-label="Continúa leyendo">
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10">
+          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
             <ShareRow
               title={article.title}
               url={absoluteUrl}

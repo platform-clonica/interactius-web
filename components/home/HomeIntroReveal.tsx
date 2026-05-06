@@ -197,7 +197,8 @@ export function HomeIntroReveal() {
           style={{ top: 0, height: IMAGE_HEIGHT }}
         >
           <div className="grid grid-cols-12 gap-grid-gutter h-full">
-            <div className="col-start-8 col-span-4 h-full flex items-center justify-end">
+            <div className="col-span-12 h-full flex items-center justify-center
+                            lg:col-start-8 lg:col-span-4 lg:justify-end">
               <div
                 className="relative"
                 style={{ width: SQUARE_SIZE, height: SQUARE_SIZE }}
@@ -244,7 +245,7 @@ export function HomeIntroReveal() {
             <div className="grid grid-cols-12 gap-grid-gutter">
               <p
                 ref={bodyRef}
-                className="col-span-12 lg:col-start-2 lg:col-span-4 font-mono text-body-sm text-fg"
+                className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-4 font-mono text-body-sm text-fg"
               >
                 {t('intro.revealBody')}
               </p>

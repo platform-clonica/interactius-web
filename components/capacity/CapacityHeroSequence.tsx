@@ -284,7 +284,7 @@ export function CapacityHeroSequence({
                   const proxy = { v: 0 }
                   gsap.to(proxy, {
                     v: 0.6,
-                    duration: 1.4,
+                    duration: 0.5,
                     ease: 'sine.inOut',
                     delay: 0.4,
                     onUpdate: () => {
@@ -401,30 +401,33 @@ export function CapacityHeroSequence({
 
       {/* ─── Contenido en flow normal ─────────────────────────────────────── */}
       <div className="relative">
-        {/* Lead — col 3, top */}
-        <div className="section-inner pt-32 lg:pt-[var(--cap-hero-pt-lg)]">
+        {/* Lead — col 3, top — oculto en mobile (texto+imagen del hero se eliminan,
+            la página empieza directamente en el titular). */}
+        <div className="hidden lg:block section-inner pt-32 lg:pt-[var(--cap-hero-pt-lg)]">
           <div className="grid grid-cols-12 gap-grid-gutter">
             <div
               ref={leadRef}
-              className="col-span-12 lg:col-start-2 lg:col-span-4 flex flex-col gap-6 font-mono text-body-sm text-fg"
+              className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-4 flex flex-col gap-6 font-mono text-body-sm text-fg"
             >
               {typeof lead === 'string' ? <p>{lead}</p> : lead}
             </div>
           </div>
         </div>
 
-        {/* Spacer para empujar el título a la siguiente "escena" */}
-        <div className="h-[40vh] lg:h-[50vh]" aria-hidden="true" />
+        {/* Spacer para empujar el título a la siguiente "escena" — sólo desktop */}
+        <div className="hidden lg:block lg:h-[50vh]" aria-hidden="true" />
 
         {/* Title — text-super-sm (mitad de Super), alineado a col-start-2.
-            Tamaño intermedio guardado en guidelines para Capacity hero. */}
-        <div className="relative overflow-hidden pt-12 pb-section lg:pt-16">
+            Tamaño intermedio guardado en guidelines para Capacity hero.
+            En mobile pt-32 compensa el lead+spacer ausentes para que el título
+            no quede pegado al header. */}
+        <div className="relative overflow-hidden pt-32 pb-section lg:pt-16">
           <div className="section-inner">
             <div className="grid grid-cols-12 gap-grid-gutter">
               <h1
                 ref={titleRef}
                 id="capacity-hero-title"
-                className="col-span-12 lg:col-start-2 lg:col-span-11 font-serif font-normal text-fg select-none text-[clamp(40px,7.5vw,120px)] leading-[1.0] tracking-[-0.03em]"
+                className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-11 font-serif font-normal text-fg select-none text-[clamp(40px,7.5vw,120px)] leading-[1.0] tracking-[-0.03em]"
               >
                 {title.split('\n').map((part, i, arr) => (
                   <Fragment key={i}>
@@ -445,15 +448,15 @@ export function CapacityHeroSequence({
             <div className="col-span-12 lg:col-span-5 lg:col-start-1">
               <div
                 ref={bottomImageRef}
-                className="w-full h-[45vh] lg:h-[calc(55vh-40px)] relative"
+                className="h-[45vh] lg:h-[calc(55vh-40px)] relative
+                           -mx-[var(--grid-margin)] w-[calc(100%+2*var(--grid-margin))]
+                           lg:mr-0 lg:w-[calc(100%+var(--grid-margin))]"
                 style={{
                   // Pre-clip inline para que el reveal scroll-triggered
                   // entre limpio cuando el usuario llega scrolleando. La
                   // imagen está bajo el fold al cargar, así que no se ve
                   // "vacía" mientras espera el trigger.
                   clipPath: 'inset(0 100% 0 0)',
-                  marginLeft: 'calc(-1 * var(--grid-margin))',
-                  width: 'calc(100% + var(--grid-margin))',
                 }}
               >
                 <Image
@@ -469,7 +472,7 @@ export function CapacityHeroSequence({
             {/* Statement — últimas 6 cols (7-12), alineado al bottom de la imagen */}
             <p
               ref={statementRef}
-              className="col-span-12 lg:col-start-7 lg:col-span-6 mt-12 lg:mt-0 font-serif text-title-sm font-light text-fg text-pretty"
+              className="col-start-2 col-span-11 lg:col-start-7 lg:col-span-6 mt-12 lg:mt-0 font-serif text-title-sm font-light text-fg lg:text-pretty"
             >
               {statement}
             </p>

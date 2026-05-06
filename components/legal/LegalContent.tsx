@@ -86,13 +86,13 @@ export function LegalContent({ title, intro, sections }: LegalContentProps): Rea
             vertical del sidebar (top:80px + altura 175px ≈ 256px). Usamos
             flex items-end + min-height para que la baseline del h1 caiga
             exactamente en 256px independientemente de su altura. */}
-        <header className="col-span-12 lg:col-start-2 lg:col-span-10 lg:flex lg:items-end lg:min-h-[216px]">
+        <header className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 lg:flex lg:items-end lg:min-h-[216px]">
           <h1 className="font-serif font-normal text-fg select-none text-[clamp(40px,7.5vw,120px)] leading-[1.0] tracking-[-0.03em]">
             {title}
           </h1>
         </header>
 
-        <div className="col-span-12 lg:col-start-2 lg:col-span-9 mt-12 lg:mt-16">
+        <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-9 mt-12 lg:mt-16">
           {intro?.map((p, i) => (
             <p
               key={i}

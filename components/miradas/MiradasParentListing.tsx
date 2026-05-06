@@ -32,7 +32,7 @@ export function MiradasParentListing({
   return (
     <section className="section-inner pt-section">
       <div className="grid grid-cols-12 gap-grid-gutter mb-8">
-        <div className="col-span-12 lg:col-start-2 lg:col-span-10">
+        <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
           <Breadcrumb
             items={[
               {
@@ -47,17 +47,17 @@ export function MiradasParentListing({
       </div>
 
       <div className="grid grid-cols-12 gap-grid-gutter mb-12 lg:mb-16">
-        <h1 className="col-span-12 lg:col-start-2 lg:col-span-10 font-serif font-light text-fg text-title leading-tight">
+        <h1 className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 font-serif font-light text-fg text-title leading-tight">
           {parentLabel}
         </h1>
-        <p className="col-span-12 lg:col-start-2 lg:col-span-8 font-mono text-body-sm text-fg/70 leading-[1.6]">
+        <p className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-8 font-mono text-body-sm text-fg/70 leading-[1.6]">
           Reflexiones desde el territorio de {parentLabel.toLowerCase()}.
         </p>
       </div>
 
       {/* Chips de subs hijas */}
       <div className="grid grid-cols-12 gap-grid-gutter mb-12">
-        <div className="col-span-12 lg:col-start-2 lg:col-span-10 flex flex-wrap gap-x-[10px] gap-y-[10px]">
+        <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 flex flex-wrap gap-x-[10px] gap-y-[10px]">
           {childSubs.map((sub) => (
             <CurtainLink
               key={sub}
@@ -71,7 +71,7 @@ export function MiradasParentListing({
       </div>
 
       <div className="grid grid-cols-12 gap-grid-gutter pb-section">
-        <div className="col-span-12 lg:col-start-2 lg:col-span-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-grid-gutter">
+        <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-grid-gutter">
           {articles.map((a, i) => (
             <ArticleCardSimple
               key={`${a.cat}/${a.slug}`}

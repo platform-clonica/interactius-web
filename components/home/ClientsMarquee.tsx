@@ -38,10 +38,10 @@ export function ClientsMarquee() {
   return (
     <section
       aria-hidden="true"
-      className="relative z-content w-full bg-bg py-16"
+      className="relative z-content w-full bg-bg pt-4 pb-16 lg:py-16"
     >
       <div className="section-inner">
-        <p className="font-serif font-normal text-fg/10 text-title leading-[1.05] text-center [text-wrap:pretty]">
+        <p className="font-serif font-normal text-fg/10 text-[18px] lg:text-title leading-[1.2] lg:leading-[1.05] text-center [text-wrap:pretty]">
           {CLIENTS.map((c, i) => (
             <Fragment key={c}>
               <span

@@ -60,6 +60,13 @@ interface CapacityVortexProps {
    *  círculos con radio modulado por seno (Transformación cultural).
    *  Default 'polygon'. */
   shapeKind?: ShapeKind
+  /** Multiplicador del radio máximo (default RADIUS_FACTOR = 0.33). Subirlo
+   *  hace la figura más grande, pudiéndose recortar por los bordes. */
+  radiusFactor?: number
+  /** Si true, ignora el drift Y de mount-in/mount-out — la figura permanece
+   *  fija en H/2 (centro del canvas). Útil en mobile para evitar que la
+   *  figura "siga el scroll" entrando/saliendo desde el viewport. */
+  lockY?: boolean
 }
 
 const RINGS = 22
@@ -365,6 +372,8 @@ export function CapacityVortex({
   triggerRef,
   centerXFrac = 0.5,
   shapeKind = 'polygon',
+  radiusFactor = RADIUS_FACTOR,
+  lockY = false,
 }: CapacityVortexProps) {
   const gradientStart = strokeColor ?? accentColor
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -400,7 +409,10 @@ export function CapacityVortex({
       // Radio basado en H: el canvas puede ser muy ancho (full-section
       // width) y W no es buen indicador del espacio visual disponible.
       // Cap por W*0.5 evita formas absurdas en viewports muy bajos.
-      const maxR = Math.min(H * RADIUS_FACTOR, W * 0.5)
+      // Cap por W es proporcional al radiusFactor: con default 0.33 → W*0.5;
+      // con radiusFactor mayor (mobile) el cap también crece, permitiendo
+      // que la figura sobresalga por los bordes laterales si hace falta.
+      const maxR = Math.min(H * radiusFactor, W * radiusFactor * 1.5)
       const maxShapes =
         shapeKind === 'ellipse'
           ? ELL_A.length
@@ -532,7 +544,7 @@ export function CapacityVortex({
       morphScale: number,
       noiseT: number,
     ) => {
-      const figRadius = Math.min(H * RADIUS_FACTOR, W * 0.5)
+      const figRadius = Math.min(H * radiusFactor, W * radiusFactor * 1.5)
       const noiseAmp = noiseT > 0 ? figRadius * NOISE_AMP_FRAC : 0
       ctx.clearRect(0, 0, W, H)
 
@@ -555,7 +567,7 @@ export function CapacityVortex({
       // figura recibe el rango completo del degradado (de accent puro a
       // warm-light puro), creando el efecto etéreo de las referencias —
       // un lado vibrante, el opuesto desvanecido sobre el bg warm-light.
-      const figR = Math.min(H * RADIUS_FACTOR, W * 0.5)
+      const figR = Math.min(H * radiusFactor, W * radiusFactor * 1.5)
       const grad = ctx.createLinearGradient(-figR, -figR, figR, figR)
       grad.addColorStop(0, gradientStart)
       grad.addColorStop(1, FADE_COLOR)
@@ -670,7 +682,7 @@ export function CapacityVortex({
       // los cálculos asumen sticky engaged → desalineación durante la
       // fase pre-sticky de mount-in.
       let dy = 0
-      if (mountIn < 1 || mountOut > 0) {
+      if (!lockY && (mountIn < 1 || mountOut > 0)) {
         const canvasRect = canvas.getBoundingClientRect()
         const blocks = trigger.children
         let targetEl: Element | null = null
@@ -751,7 +763,7 @@ export function CapacityVortex({
       mountOutSt?.kill()
       window.removeEventListener('resize', onResize)
     }
-  }, [shapeCount, accentColor, gradientStart, triggerRef, centerXFrac, shapeKind])
+  }, [shapeCount, accentColor, gradientStart, triggerRef, centerXFrac, shapeKind, radiusFactor, lockY])
 
   return <canvas ref={canvasRef} className="block w-full h-full" aria-hidden="true" />
 }

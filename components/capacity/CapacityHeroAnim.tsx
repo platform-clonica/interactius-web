@@ -219,7 +219,7 @@ export function CapacityHeroAnim({
           <h1
             ref={titleRef}
             id="capacity-hero-title"
-            className="col-span-12 lg:col-start-2 lg:col-span-6 font-serif font-light text-fg text-display"
+            className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-6 font-serif font-light text-fg text-display"
           >
             {title}
           </h1>
