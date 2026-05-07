@@ -35,6 +35,17 @@
 [context.branch-deploy.environment]
   NEXT_PUBLIC_SITE_URL = "https://branch-deploy--interactius.netlify.app"
 
+# ─── Redirects ───────────────────────────────────────────────────────────────
+# Redirects para paths que NO pasan por el middleware de Next-intl porque
+# tienen extensión de archivo (matcher excluye `.*\..*`). Ej: PDFs antiguos
+# linkeados desde la web WP. La mayoría de redirects 301 legacy se aplican
+# en `middleware.ts`; aquí solo los casos que el middleware no puede ver.
+[[redirects]]
+  from = "/STMDL/Digital-transformation-tools.pdf"
+  to = "/miradas"
+  status = 301
+  force = true
+
 # ─── Headers ─────────────────────────────────────────────────────────────────
 # Cache-Control para assets estáticos de Next.js (ya inmutables por hash).
 [[headers]]

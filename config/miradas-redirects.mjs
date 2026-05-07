@@ -255,7 +255,9 @@ export const miradasRedirects = [
   { source: '/miradas/research', destination: '/miradas/ux-research', permanent: true },
   { source: '/miradas/ia', destination: '/miradas/ia-aplicada', permanent: true },
   { source: '/miradas/estrategia', destination: '/miradas/innovacion', permanent: true },
-  { source: '/miradas/workshops', destination: '/miradas/workshops', permanent: true },
+  // Eliminado: '/miradas/workshops' → '/miradas/workshops' (no-op, generaba
+  // loop. La sub workshops EXISTE como subcategoría real, no requiere
+  // redirect — el listing sirve directamente).
 
   // ── CORPORATE (9) ──
   { source: '/servicios', destination: '/pensamiento-estrategico', permanent: true },

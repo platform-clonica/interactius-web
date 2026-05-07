@@ -29,7 +29,16 @@ const REDIRECT_MAP = new Map<string, string>(
 const intlMiddleware = createMiddleware(routing)
 
 export default function middleware(req: NextRequest) {
-  const target = REDIRECT_MAP.get(req.nextUrl.pathname)
+  // Decode el pathname antes del lookup para que sources con caracteres
+  // no-ASCII (ñ, á, ü, etc.) coincidan. El browser envía %C3%B1; el Map
+  // tiene 'ñ' raw como llave. Sin decodificar, fallaría el match.
+  let decoded: string
+  try {
+    decoded = decodeURIComponent(req.nextUrl.pathname)
+  } catch {
+    decoded = req.nextUrl.pathname
+  }
+  const target = REDIRECT_MAP.get(decoded)
   if (target) {
     const url = req.nextUrl.clone()
     url.pathname = target
