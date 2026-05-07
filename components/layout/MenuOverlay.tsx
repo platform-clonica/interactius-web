@@ -429,12 +429,12 @@ export function MenuOverlay() {
             lg: absolute top:68vh (mantiene centro óptico desktop). */}
         <div
           className="absolute top-1/2 bottom-[var(--grid-margin)] left-0 right-0
-                     flex flex-col gap-6 justify-center
+                     flex flex-col gap-6 justify-center pointer-events-none
                      lg:top-[calc(68vh-50px)] lg:bottom-auto lg:left-auto lg:right-auto
-                     lg:block"
+                     lg:block lg:space-y-4"
         >
           {SECONDARY_ITEMS.map(({ route, labelKey }) => (
-            <div key={route} data-secondary-link="">
+            <div key={route} data-secondary-link="" className="pointer-events-auto">
               <Link
                 href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
                 onClick={(e) => handleLinkClick(e, route)}
