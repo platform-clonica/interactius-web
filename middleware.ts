@@ -38,7 +38,12 @@ export default function middleware(req: NextRequest) {
   } catch {
     decoded = req.nextUrl.pathname
   }
-  const target = REDIRECT_MAP.get(decoded)
+  // Normalizar trailing slash: las claves del Map están sin slash final,
+  // pero Google y backlinks externos a menudo tienen trailing slash. Sin
+  // esta normalización `/foo/` no matchearía nunca y daría 404.
+  const normalized =
+    decoded.length > 1 && decoded.endsWith('/') ? decoded.slice(0, -1) : decoded
+  const target = REDIRECT_MAP.get(normalized)
   if (target) {
     const url = req.nextUrl.clone()
     url.pathname = target
