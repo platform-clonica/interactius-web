@@ -1,7 +1,7 @@
 {
   "banner": {
     "title": "Aquesta web utilitza cookies",
-    "body": "Utilitzem cookies necessàries perquè la web funcioni i, amb el teu permís, d'altres per entendre com s'utilitza, recordar les teves preferències i millorar-la.",
+    "body": "Utilitzem cookies necessàries perquè la web funcioni i, amb el teu permís, Google Analytics per entendre com s'utilitza, recordar les teves preferències i millorar-la.",
     "policyLink": "Més informació",
     "acceptAll": "Acceptar-ho tot",
     "rejectAll": "Rebutjar-ho tot",
@@ -26,7 +26,7 @@
       },
       "analytics": {
         "name": "Analítiques",
-        "desc": "Ens ajuden a entendre de forma agregada com s'utilitza la web per millorar-la. Sense aquestes cookies no sabem què funciona."
+        "desc": "Google Analytics ens ajuda a entendre de forma agregada com s'utilitza la web per millorar-la. Sense aquestes cookies no sabem què funciona."
       },
       "marketing": {
         "name": "Màrqueting",

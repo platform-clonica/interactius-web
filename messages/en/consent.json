@@ -1,7 +1,7 @@
 {
   "banner": {
     "title": "This website uses cookies",
-    "body": "We use necessary cookies for the site to work and, with your permission, others to understand how it's used, remember your preferences and improve it.",
+    "body": "We use necessary cookies for the site to work and, with your permission, Google Analytics to understand how it's used, remember your preferences and improve it.",
     "policyLink": "Learn more",
     "acceptAll": "Accept all",
     "rejectAll": "Reject all",
@@ -26,7 +26,7 @@
       },
       "analytics": {
         "name": "Analytics",
-        "desc": "Help us understand in aggregate how the site is used so we can improve it. Without these cookies we don't know what's working."
+        "desc": "Google Analytics helps us understand in aggregate how the site is used so we can improve it. Without these cookies we don't know what's working."
       },
       "marketing": {
         "name": "Marketing",

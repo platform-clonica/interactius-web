@@ -9,7 +9,7 @@ import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/seo/schema'
 import { LOCALES, type Locale } from '@/lib/i18n/config'
 import { GridOverlay } from '@/components/dev/GridOverlay'
 import { PageCurtain } from '@/components/layout/PageCurtain'
-import { PlausibleScript } from '@/components/analytics/PlausibleScript'
+import { GA4Script } from '@/components/analytics/GA4Script'
 
 import '../globals.css'
 
@@ -135,7 +135,7 @@ export default async function RootLayout({
           <PageCurtain />
           {process.env.NODE_ENV !== 'production' && <GridOverlay />}
         </NextIntlClientProvider>
-        <PlausibleScript />
+        <GA4Script />
       </body>
     </html>
   )
