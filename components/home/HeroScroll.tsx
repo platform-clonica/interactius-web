@@ -65,9 +65,6 @@ export function HeroScroll({
   const taglineRef = useRef<HTMLDivElement>(null)
   const stripRef   = useRef<HTMLDivElement>(null)
   const arrowRef   = useRef<HTMLDivElement>(null)
-  const playHintRef = useRef<HTMLDivElement>(null)
-  const playVariantRef  = useRef<HTMLDivElement>(null)
-  const closeVariantRef = useRef<HTMLDivElement>(null)
 
   // Estado del lightbox: cuando true, el vídeo se renderiza encima de todo
   // con audio. Cierra al hacer click. El strip/fullscreen vídeo se pausa
@@ -90,11 +87,6 @@ export function HeroScroll({
         }
       }
     }
-    // Swap inmediato del hint variant (play ↔ cerrar).
-    const playV = playVariantRef.current
-    const closeV = closeVariantRef.current
-    if (playV) playV.style.display = isLightboxOpen ? 'none' : 'flex'
-    if (closeV) closeV.style.display = isLightboxOpen ? 'flex' : 'none'
   }, [isLightboxOpen])
 
   // Sync muted del vídeo del lightbox con el estado React (toggle del botón)
@@ -360,66 +352,6 @@ export function HeroScroll({
         applyStripState(1)
       }
 
-      // ── Hover "Play video"/"Cerrar": label sigue al cursor con mix-blend
-      // difference. Variante:
-      //   · Lightbox cerrado → "Play video" (sobre strip o fullscreen)
-      //   · Lightbox abierto → "Cerrar"
-      const playHintEl = playHintRef.current
-      const playVariantEl  = playVariantRef.current
-      const closeVariantEl = closeVariantRef.current
-      let variantIsClose = false
-
-      const updateHintVariant = () => {
-        const next = isLightboxOpenRef.current
-        if (next === variantIsClose) return
-        variantIsClose = next
-        if (playVariantEl)  playVariantEl.style.display  = next ? 'none' : 'flex'
-        if (closeVariantEl) closeVariantEl.style.display = next ? 'flex' : 'none'
-      }
-      updateHintVariant()
-
-      const onStripMouseMove = (e: MouseEvent) => {
-        if (!playHintEl) return
-        // 12px de offset para que el hint no quede exactamente bajo el cursor
-        gsap.set(playHintEl, { x: e.clientX + 12, y: e.clientY + 12 })
-      }
-      const onStripEnter = () => {
-        if (reduced || !playHintEl) return
-        updateHintVariant()
-        gsap.to(playHintEl, { opacity: 1, duration: 0.2, ease: 'power2.out', overwrite: true })
-      }
-      const onStripLeave = () => {
-        if (!playHintEl) return
-        gsap.to(playHintEl, { opacity: 0, duration: 0.15, ease: 'power2.out', overwrite: true })
-      }
-      strip.addEventListener('mouseenter', onStripEnter)
-      strip.addEventListener('mouseleave', onStripLeave)
-      strip.addEventListener('mousemove',  onStripMouseMove)
-      cleanups.push(() => strip.removeEventListener('mouseenter', onStripEnter))
-      cleanups.push(() => strip.removeEventListener('mouseleave', onStripLeave))
-      cleanups.push(() => strip.removeEventListener('mousemove',  onStripMouseMove))
-
-      // Escuchar scroll para swap play/close en tiempo real mientras el cursor
-      // permanece sobre el strip (fullscreen). Usamos el propio ScrollTrigger.
-      const stVariant = ScrollTrigger.create({
-        trigger: spacer,
-        start: 'top top',
-        end: `+=${HERO_SCROLL}`,
-        onUpdate: updateHintVariant,
-      })
-      cleanups.push(() => stVariant.kill())
-
-      // ── Click en el strip: SIEMPRE abre el lightbox encima de todo con
-      // audio. (Antes alternaba fullscreen via scroll; ahora ese estado solo
-      // se alcanza scrolleando manualmente.) El cierre se hace desde el
-      // overlay del lightbox.
-      const onStripClick = () => {
-        if (reduced) return
-        setIsLightboxOpen(true)
-      }
-      strip.addEventListener('click', onStripClick)
-      cleanups.push(() => strip.removeEventListener('click', onStripClick))
-
       cleanupRef.current = () => cleanups.forEach((fn) => fn())
     })()
 
@@ -451,7 +383,7 @@ export function HeroScroll({
            strip inicial (bottom-right) el chrome está visible fuera del strip. */}
       <div
         ref={stripRef}
-        className="fixed overflow-hidden cursor-pointer pointer-events-auto"
+        className="fixed overflow-hidden pointer-events-auto"
         style={{ clipPath: 'inset(0 100% 0 0)', zIndex: 400 }}
       >
         <Image
@@ -540,35 +472,6 @@ export function HeroScroll({
           </div>
         </div>
       )}
-
-      {/* Play/Close hint — fixed sibling, sigue el cursor con mix-blend-mode
-          difference (mismo pipeline conceptual que logo/hamburger). Texto sin
-          fondo. Cambia entre "Play video" / "Close video" según la fase. */}
-      <div
-        ref={playHintRef}
-        aria-hidden="true"
-        className="fixed pointer-events-none top-0 left-0 font-mono text-body-sm"
-        style={{
-          opacity: 0,
-          zIndex: 410,
-          mixBlendMode: 'difference',
-          color: 'var(--c-warm-light)',
-          willChange: 'transform, opacity',
-        }}
-      >
-        <div ref={playVariantRef} className="flex items-center gap-2" style={{ display: 'flex' }}>
-          <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0 L8 5 L0 10 Z" />
-          </svg>
-          <span>Play video</span>
-        </div>
-        <div ref={closeVariantRef} className="flex items-center gap-2" style={{ display: 'none' }}>
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" xmlns="http://www.w3.org/2000/svg">
-            <path d="M1 1 L9 9 M9 1 L1 9" />
-          </svg>
-          <span>Close video</span>
-        </div>
-      </div>
 
       {/* Arrow indicator — fixed, z=400 como el strip, centrado abajo */}
       <div
