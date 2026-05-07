@@ -79,6 +79,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
               <Link
                 href={hrefForLocale(locale)}
                 locale={locale}
+                prefetch={false}
                 className="hover-wipe-underline w-fit uppercase text-fg
                            focus-visible:opacity-90"
               >
