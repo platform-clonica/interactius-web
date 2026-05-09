@@ -12,11 +12,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'legal' })
   return buildPageMetadata({
     locale,
     routeId: '/politica-privacidad',
-    title: t('privacidad.title'),
     pathname: localizedPath('/politica-privacidad', locale),
     alternates: getAlternates('/politica-privacidad'),
   })

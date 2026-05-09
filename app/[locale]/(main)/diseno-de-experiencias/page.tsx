@@ -22,9 +22,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildPageMetadata({
     locale,
     routeId: '/diseno-de-experiencias',
-    title: 'Diseño de experiencias',
-    description:
-      'Investigamos, diseñamos y validamos. Diseñamos experiencias auténticas a partir de metodologías propias y herramientas de IA aplicada con criterio humano.',
     pathname: localizedPath('/diseno-de-experiencias', locale),
     alternates: getAlternates('/diseno-de-experiencias'),
   })

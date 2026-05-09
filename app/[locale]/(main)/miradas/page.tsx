@@ -15,8 +15,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildPageMetadata({
     locale,
     routeId: '/miradas',
-    title: 'Miradas',
-    description: 'Reflexiones sobre diseño, estrategia, investigación e inteligencia artificial.',
     pathname: localizedPath('/miradas', locale),
     alternates: getAlternates('/miradas'),
   })

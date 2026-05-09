@@ -17,15 +17,9 @@ export async function generateMetadata({
   const { locale } = await params
   return buildPageMetadata({
     locale,
-    routeId: '/contacto',
-    title: 'Testers',
-    description:
-      'Participa en nuestras dinámicas de investigación. Tu voz ayuda a mejorar productos y servicios reales.',
-    pathname: localizedPath('/contacto', locale).replace(
-      /contacto$|contacte$|contact$/,
-      'testers',
-    ),
-    alternates: getAlternates('/contacto'),
+    routeId: '/testers',
+    pathname: localizedPath('/testers', locale),
+    alternates: getAlternates('/testers'),
   })
 }
 

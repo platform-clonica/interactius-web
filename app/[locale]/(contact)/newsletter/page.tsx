@@ -17,10 +17,7 @@ export async function generateMetadata({
   const { locale } = await params
   return buildPageMetadata({
     locale,
-    routeId: '/contacto',
-    title: 'Newsletter',
-    description:
-      'Cada mes enviamos aprendizajes sobre diseño, estrategia e IA. Suscríbete.',
+    routeId: '/newsletter',
     pathname: localizedPath('/newsletter', locale),
     alternates: getAlternates('/newsletter'),
   })

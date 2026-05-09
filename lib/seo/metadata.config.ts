@@ -238,6 +238,42 @@ export const PAGE_COPY: Record<string, RouteCopyMap> = {
     },
   },
 
+  '/newsletter': {
+    es: {
+      title: 'Newsletter',
+      description:
+        'Cada mes enviamos aprendizajes sobre diseño, estrategia e IA. Suscríbete.',
+    },
+    ca: {
+      title: 'Newsletter',
+      description:
+        'Cada mes enviem aprenentatges sobre disseny, estratègia i IA. Subscriu-t’hi.',
+    },
+    en: {
+      title: 'Newsletter',
+      description:
+        'Each month we share learnings on design, strategy and AI. Subscribe.',
+    },
+  },
+
+  '/testers': {
+    es: {
+      title: 'Testers',
+      description:
+        'Participa en nuestras dinámicas de investigación. Tu voz ayuda a mejorar productos y servicios reales.',
+    },
+    ca: {
+      title: 'Testers',
+      description:
+        'Participa a les nostres dinàmiques d’investigació. La teva veu ajuda a millorar productes i serveis reals.',
+    },
+    en: {
+      title: 'Testers',
+      description:
+        'Take part in our research sessions. Your voice helps improve real products and services.',
+    },
+  },
+
   '/aviso-legal': {
     es: {
       title: 'Aviso legal',
@@ -250,6 +286,60 @@ export const PAGE_COPY: Record<string, RouteCopyMap> = {
     en: {
       title: 'Legal notice',
       description: 'Legal information for the Interactius website.',
+    },
+  },
+
+  '/politica-privacidad': {
+    es: {
+      title: 'Política de privacidad',
+      description:
+        'Cómo recopilamos, usamos y protegemos tus datos personales en Interactius.',
+    },
+    ca: {
+      title: 'Política de privacitat',
+      description:
+        'Com recollim, fem servir i protegim les teves dades personals a Interactius.',
+    },
+    en: {
+      title: 'Privacy policy',
+      description:
+        'How we collect, use and protect your personal data at Interactius.',
+    },
+  },
+
+  '/terminos': {
+    es: {
+      title: 'Términos y condiciones',
+      description:
+        'Condiciones generales de uso del sitio web y los servicios de Interactius.',
+    },
+    ca: {
+      title: 'Termes i condicions',
+      description:
+        'Condicions generals d’ús del lloc web i els serveis d’Interactius.',
+    },
+    en: {
+      title: 'Terms and conditions',
+      description:
+        'General terms of use for the Interactius website and services.',
+    },
+  },
+
+  '/politica-cookies': {
+    es: {
+      title: 'Política de cookies',
+      description:
+        'Información sobre el uso de cookies en Interactius y cómo configurar tus preferencias.',
+    },
+    ca: {
+      title: 'Política de cookies',
+      description:
+        'Informació sobre l’ús de cookies a Interactius i com configurar les teves preferències.',
+    },
+    en: {
+      title: 'Cookie policy',
+      description:
+        'Information about cookies used on Interactius and how to manage your preferences.',
     },
   },
 }
