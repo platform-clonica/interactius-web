@@ -82,6 +82,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       params: { parentOrSub, slug },
     }),
     alternates,
+    ogImage: {
+      url: getCover(article.slug, article.image),
+      width: 1200,
+      height: 630,
+      alt: article.title,
+    },
     type: 'article',
     article: {
       publishedTime: article.publishedAt,
