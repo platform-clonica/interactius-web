@@ -16,5 +16,11 @@
       "tendencias": "Tendències",
       "product-design": "Product Design"
     }
+  },
+  "listing": {
+    "breadcrumbHome": "Mirades",
+    "viewAll": "Veure'ls tots",
+    "intro": "Reflexions sobre {topic}.",
+    "otherTopics": "Altres temàtiques a {parent}"
   }
 }

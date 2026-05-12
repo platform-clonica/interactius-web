@@ -1,3 +1,5 @@
+import { getTranslations } from 'next-intl/server'
+
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import { ArticleCardSimple } from '@/components/miradas/ArticleCardSimple'
 import { Breadcrumb, absoluteUrl } from '@/components/miradas/Breadcrumb'
@@ -21,11 +23,12 @@ interface MiradasParentListingProps {
  * Listing de categoría madre: hero + chips de subs hijas + grid de artículos.
  * Los artículos vienen ya filtrados por madre desde el caller.
  */
-export function MiradasParentListing({
+export async function MiradasParentListing({
   parent,
   articles,
   locale,
 }: MiradasParentListingProps) {
+  const t = await getTranslations({ locale, namespace: 'miradas' })
   const parentLabel = PARENT_DISPLAY[locale][parent]
   const childSubs = SUBS_BY_PARENT[parent]
 
@@ -36,7 +39,7 @@ export function MiradasParentListing({
           <Breadcrumb
             items={[
               {
-                label: 'Miradas',
+                label: t('listing.breadcrumbHome'),
                 href: '/miradas',
                 absoluteUrl: absoluteUrl(localizedPath('/miradas', locale)),
               },
@@ -51,7 +54,7 @@ export function MiradasParentListing({
           {parentLabel}
         </h1>
         <p className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-8 font-mono text-body-sm text-fg/70 leading-[1.6]">
-          Reflexiones desde el territorio de {parentLabel.toLowerCase()}.
+          {t('listing.intro', { topic: parentLabel.toLowerCase() })}
         </p>
       </div>
 

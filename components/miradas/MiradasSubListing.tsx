@@ -1,3 +1,5 @@
+import { getTranslations } from 'next-intl/server'
+
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import { Breadcrumb, absoluteUrl } from '@/components/miradas/Breadcrumb'
 import { MiradasSubFilteredGrid } from '@/components/miradas/MiradasSubFilteredGrid'
@@ -43,11 +45,12 @@ function topTagsFromArticles(articles: MiradaMeta[], limit: number): string[] {
  * Listing de subcategoría: hero + breadcrumb + filtro de tags + grid +
  * bloque "Otras temáticas en [madre]".
  */
-export function MiradasSubListing({
+export async function MiradasSubListing({
   sub,
   articles,
   locale,
 }: MiradasSubListingProps) {
+  const t = await getTranslations({ locale, namespace: 'miradas' })
   const parent = SUB_TO_PARENT[sub]
   const subLabel = SUB_DISPLAY[locale][sub]
   const parentLabel = PARENT_DISPLAY[locale][parent]
@@ -67,7 +70,7 @@ export function MiradasSubListing({
           <Breadcrumb
             items={[
               {
-                label: 'Miradas',
+                label: t('listing.breadcrumbHome'),
                 href: '/miradas',
                 absoluteUrl: absoluteUrl(localizedPath('/miradas', locale)),
               },
@@ -110,7 +113,7 @@ export function MiradasSubListing({
         <div className="grid grid-cols-12 gap-grid-gutter mt-section pb-section">
           <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
             <h2 className="font-serif font-light text-fg text-title-sm leading-tight mb-6">
-              Otras temáticas en {parentLabel}
+              {t('listing.otherTopics', { parent: parentLabel })}
             </h2>
             <div className="flex flex-wrap gap-x-[10px] gap-y-[10px]">
               {sisters.map((s) => (

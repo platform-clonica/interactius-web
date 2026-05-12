@@ -84,7 +84,7 @@ export async function MiradasGlobalHome({ articles, locale }: MiradasGlobalHomeP
                   href={parentListingHref(parent, locale)}
                   className="hover-wipe-underline font-mono text-body-sm text-fg"
                 >
-                  Ver todos
+                  {t('listing.viewAll')}
                 </CurtainLink>
               </div>
             </div>

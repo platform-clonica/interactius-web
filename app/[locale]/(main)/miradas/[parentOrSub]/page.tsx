@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 
 import { buildPageMetadata, SITE_CONFIG } from '@/lib/seo/metadata.config'
 import { localizedPath } from '@/lib/i18n/navigation'
@@ -36,6 +37,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const parsed = parseParentOrSubSlug(parentOrSub, locale)
   if (!parsed) return {}
 
+  const t = await getTranslations({ locale, namespace: 'miradas' })
+
   const title =
     parsed.kind === 'parent'
       ? PARENT_DISPLAY[locale][parsed.canonical]
@@ -59,7 +62,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     locale,
     routeId: '/miradas/[parentOrSub]',
     title,
-    description: `Reflexiones sobre ${title.toLowerCase()}.`,
+    description: t('listing.intro', { topic: title.toLowerCase() }),
     pathname: localizedPath('/miradas/[parentOrSub]', locale, {
       params: { parentOrSub },
     }),
