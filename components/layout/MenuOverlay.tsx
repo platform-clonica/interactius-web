@@ -461,8 +461,8 @@ export function MenuOverlay() {
                   href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
                   onClick={(e) => handleLinkClick(e, route)}
                   aria-current={active ? 'page' : undefined}
-                  className={`hover-wipe-underline w-fit font-mono text-body-sm text-fg
-                             ${active ? 'font-semibold' : ''}`}
+                  className={`w-fit font-mono text-body-sm text-fg
+                             ${active ? 'font-medium' : 'hover-wipe-underline'}`}
                 >
                   {t(labelKey)}
                 </Link>
