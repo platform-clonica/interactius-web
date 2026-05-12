@@ -26,6 +26,29 @@ const REDIRECT_MAP = new Map<string, string>(
   miradasRedirects.map((r) => [r.source, r.destination]),
 )
 
+/**
+ * Fallback de cola larga: paths con prefijos del WP antiguo cuyo slug
+ * concreto no estaba en el snapshot del generador (ej. backlinks externos
+ * que Google sigue siguiendo). En lugar de 404, redirigimos al listing de
+ * la subcategoría más probable. Los lookups exactos del REDIRECT_MAP tienen
+ * prioridad sobre estos prefijos.
+ *
+ * Orden importante: los prefijos más específicos (`/en/user-experience-en/`)
+ * deben evaluarse antes que los más genéricos para evitar matches incorrectos.
+ */
+const LEGACY_PREFIX_FALLBACK: Array<[string, string]> = [
+  ['/en/user-experience-en/', '/en/thoughts'],
+  ['/user-experience-en/', '/miradas'],
+  ['/user-experience/', '/miradas'],
+  ['/design/', '/miradas/diseno-ux-ui'],
+  ['/ux/', '/miradas/diseno-ux-ui'],
+  ['/research/', '/miradas/ux-research'],
+  ['/ia/', '/miradas/ia-aplicada'],
+  ['/estrategia/', '/miradas/diseno-estrategico'],
+  ['/workshops/', '/miradas/workshops'],
+  ['/diseno-inclusivo/', '/miradas/diseno-ux-ui'],
+]
+
 const intlMiddleware = createMiddleware(routing)
 
 export default function middleware(req: NextRequest) {
@@ -43,12 +66,25 @@ export default function middleware(req: NextRequest) {
   // esta normalización `/foo/` no matchearía nunca y daría 404.
   const normalized =
     decoded.length > 1 && decoded.endsWith('/') ? decoded.slice(0, -1) : decoded
+
+  // 1. Lookup exacto en el Map (244 redirects del snapshot WP).
   const target = REDIRECT_MAP.get(normalized)
   if (target) {
     const url = req.nextUrl.clone()
     url.pathname = target
     return NextResponse.redirect(url, 308)
   }
+
+  // 2. Fallback wildcard: prefijos legacy sin match exacto van al listing
+  //    de la subcategoría más probable.
+  for (const [prefix, dest] of LEGACY_PREFIX_FALLBACK) {
+    if (normalized.startsWith(prefix)) {
+      const url = req.nextUrl.clone()
+      url.pathname = dest
+      return NextResponse.redirect(url, 308)
+    }
+  }
+
   return intlMiddleware(req)
 }
 
