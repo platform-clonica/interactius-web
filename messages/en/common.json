@@ -29,7 +29,8 @@
     "readMore": "Read more",
     "readCase": "View project",
     "back": "Back",
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "close": "Close"
   },
   "newWindow": "(opens in new window)",
   "error": {

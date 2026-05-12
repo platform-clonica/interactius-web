@@ -1,12 +1,16 @@
 {
   "hero": {
-    "subtitle": "<strong>Artículos</strong> que abordan problemas reales, cuestionan lo establecido y conectan diseño, negocio, tecnología y personas."
+    "subtitle": "<strong>Artículos</strong> que abordan problemas reales, cuestionan lo establecido y conectan diseño, negocio, tecnología y personas.",
+    "ariaLabel": "Cabecera Miradas",
+    "fallbackAlt": "Miradas — reflexiones sobre diseño y estrategia"
   },
   "grid": {
     "superTitle": "Miradas",
     "searchPlaceholder": "Buscar por palabra",
     "searchAriaLabel": "Buscar artículos",
     "noResults": "No hay artículos que coincidan.",
+    "articlesLabel": "Artículos",
+    "loadingMore": "Cargando más artículos",
     "categories": {
       "ux-design": "UX Design",
       "innovacion": "Innovación",
@@ -22,5 +26,16 @@
     "viewAll": "Ver todos",
     "intro": "Reflexiones sobre {topic}.",
     "otherTopics": "Otras temáticas en {parent}"
+  },
+  "article": {
+    "minRead": "min. lectura",
+    "share": "Compartir",
+    "copyLink": "Copiar enlace",
+    "linkCopied": "Enlace copiado",
+    "copyLinkAriaLabel": "Copiar enlace al portapapeles",
+    "next": "Siguiente artículo",
+    "nextAriaLabel": "Siguiente artículo: {title}",
+    "backToListing": "Volver a Miradas",
+    "continueReading": "Continúa leyendo"
   }
 }

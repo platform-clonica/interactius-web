@@ -29,7 +29,8 @@
     "readMore": "Llegir més",
     "readCase": "Veure el projecte",
     "back": "Tornar",
-    "viewAll": "Veure tot"
+    "viewAll": "Veure tot",
+    "close": "Tancar"
   },
   "newWindow": "(obre en una nova finestra)",
   "error": {

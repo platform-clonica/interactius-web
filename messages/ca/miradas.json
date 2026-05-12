@@ -1,12 +1,16 @@
 {
   "hero": {
-    "subtitle": "<strong>Articles</strong> que aborden problemes reals, qüestionen l'establert i connecten disseny, negoci, tecnologia i persones."
+    "subtitle": "<strong>Articles</strong> que aborden problemes reals, qüestionen l'establert i connecten disseny, negoci, tecnologia i persones.",
+    "ariaLabel": "Capçalera Mirades",
+    "fallbackAlt": "Mirades — reflexions sobre disseny i estratègia"
   },
   "grid": {
     "superTitle": "Mirades",
     "searchPlaceholder": "Cercar per paraula",
     "searchAriaLabel": "Cercar articles",
     "noResults": "No hi ha articles que coincideixin.",
+    "articlesLabel": "Articles",
+    "loadingMore": "Carregant més articles",
     "categories": {
       "ux-design": "UX Design",
       "innovacion": "Innovació",
@@ -22,5 +26,16 @@
     "viewAll": "Veure'ls tots",
     "intro": "Reflexions sobre {topic}.",
     "otherTopics": "Altres temàtiques a {parent}"
+  },
+  "article": {
+    "minRead": "min. lectura",
+    "share": "Compartir",
+    "copyLink": "Copiar enllaç",
+    "linkCopied": "Enllaç copiat",
+    "copyLinkAriaLabel": "Copiar enllaç al porta-retalls",
+    "next": "Article següent",
+    "nextAriaLabel": "Article següent: {title}",
+    "backToListing": "Tornar a Mirades",
+    "continueReading": "Continua llegint"
   }
 }

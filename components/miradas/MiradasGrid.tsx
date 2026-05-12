@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 
 import type { Locale } from '@/lib/i18n/config'
+import { formatDate } from '@/lib/i18n/formatDate'
 
 import { SuperTitleReveal } from '@/components/ui/SuperTitleReveal'
 
@@ -25,15 +26,7 @@ function getCover(article: MiradaMeta, index: number): string {
   return article.image ?? PLACEHOLDER_COVERS[index % PLACEHOLDER_COVERS.length]
 }
 
-/* ─── Date format ──────────────────────────────────────────── */
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('es-ES', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-}
+/* ─── Date format ─ helper centralizado en lib/i18n/formatDate.ts ─ */
 
 /* ─── Article card ─────────────────────────────────────────── */
 
@@ -43,12 +36,20 @@ function formatDate(dateStr: string): string {
  * items-end del row contenedor. SIN posicionamiento absoluto fijo en px:
  * todo está anclado por flex bottom-up para que sea responsive-safe.
  */
-function AuthorBlock({ author, publishedAt }: { author: string; publishedAt: string }) {
+function AuthorBlock({
+  author,
+  publishedAt,
+  locale,
+}: {
+  author: string
+  publishedAt: string
+  locale: Locale
+}) {
   return (
     <div className="flex flex-col">
       <AuthorAvatar author={author} size="sm" />
       <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
-        {author}, {formatDate(publishedAt)}
+        {author}, {formatDate(publishedAt, locale)}
       </span>
     </div>
   )
@@ -88,7 +89,7 @@ function ArticleCard({
         <div className="absolute inset-x-0 bottom-0 flex flex-col">
           {/* Row above title — solo author (no quote en cards normales) */}
           <div className="flex items-end pl-5">
-            <AuthorBlock author={article.author} publishedAt={article.publishedAt} />
+            <AuthorBlock author={article.author} publishedAt={article.publishedAt} locale={locale} />
           </div>
 
           {/* Title strip — full width en cards normales */}
@@ -140,7 +141,7 @@ function FeaturedCard({
           {/* Row above title — author (left), quote (right, solo lg).
               items-end alinea las BASES de ambos con el title-top. */}
           <div className="flex justify-between items-end pl-5">
-            <AuthorBlock author={article.author} publishedAt={article.publishedAt} />
+            <AuthorBlock author={article.author} publishedAt={article.publishedAt} locale={locale} />
             <div className="hidden lg:flex w-1/2 bg-pure-white p-5 items-center">
               <p className="font-mono text-body-sm text-fg leading-[1.5] line-clamp-3">
                 {article.description}
@@ -270,7 +271,7 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
   const rightCol = rest.filter((_, i) => i % 2 === 1)
 
   return (
-    <section className="w-full" aria-label="Artículos">
+    <section className="w-full" aria-label={t('grid.articlesLabel')}>
 
       {/* ── "Miradas" super title — sangrado izquierdo canónico + line-mask
             reveal. Padding-top reducido (no canónico aquí: queremos el
@@ -396,7 +397,7 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
               className="mt-16 mb-section flex justify-center"
               role="status"
               aria-live="polite"
-              aria-label="Cargando más artículos"
+              aria-label={t('grid.loadingMore')}
             >
               <span className="loading-dots inline-flex items-end gap-1">
                 <span className="block size-1.5 rounded-full bg-fg/60" />

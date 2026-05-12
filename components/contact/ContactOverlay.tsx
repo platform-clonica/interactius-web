@@ -1,6 +1,8 @@
 'use client'
 
 import { useRef, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
+
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 
@@ -19,6 +21,7 @@ import { usePageCurtainStore } from '@/lib/store/curtain'
    ========================================================================== */
 
 export function ContactOverlay({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('common')
   const overlayRef = useRef<HTMLDivElement>(null)
   const isClosing = useRef(false)
   const beginPageCurtainBack = usePageCurtainStore((s) => s.beginPageCurtainBack)
@@ -47,7 +50,7 @@ export function ContactOverlay({ children }: { children: React.ReactNode }) {
       <button
         type="button"
         onClick={handleClose}
-        aria-label="Cerrar"
+        aria-label={t('actions.close')}
         style={{
           position: 'fixed',
           top: '26px',

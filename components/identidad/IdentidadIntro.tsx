@@ -82,7 +82,7 @@ export function IdentidadIntro() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="w-full bg-warm-light relative" aria-label="Declaración">
+    <section ref={sectionRef} className="w-full bg-warm-light relative" aria-label={t('intro.ariaLabel')}>
       {/* Sticky panel */}
       <div className="sticky top-0 section-inner flex items-center min-h-screen py-section">
         <div className="grid grid-cols-12 gap-grid-gutter w-full">

@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
@@ -56,6 +57,7 @@ export function HeroScroll({
   posterAlt = '',
   videoSrc,
 }: HeroScrollProps) {
+  const t = useTranslations('home')
   const isMenuOpen = useMenuStore((s) => s.isOpen)
   const sectionRef = useRef<HTMLElement>(null)
   const spacerRef  = useRef<HTMLDivElement>(null)
@@ -418,7 +420,7 @@ export function HeroScroll({
           className="fixed inset-0 cursor-pointer flex items-center justify-center"
           style={{ zIndex: 2000, backgroundColor: 'rgb(28 26 23 / 0.85)' }}
           onClick={() => setIsLightboxOpen(false)}
-          aria-label="Cerrar vídeo"
+          aria-label={t('hero.closeVideoAriaLabel')}
           role="button"
         >
           <div className="relative">

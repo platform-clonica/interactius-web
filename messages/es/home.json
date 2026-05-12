@@ -1,6 +1,7 @@
 {
   "hero": {
-    "tagline": "Donde la confusión se vuelve posibilidad, la tensión dirección y el <strong>cambio</strong> forma."
+    "tagline": "Donde la confusión se vuelve posibilidad, la tensión dirección y el <strong>cambio</strong> forma.",
+    "closeVideoAriaLabel": "Cerrar vídeo"
   },
   "intro": {
     "ariaLabel": "Introducción",

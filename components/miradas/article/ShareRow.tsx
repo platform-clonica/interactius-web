@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import type { ComponentProps } from 'react'
@@ -35,6 +36,7 @@ export function ShareRow({
   readingTimeMinutes,
   backLink,
 }: ShareRowProps) {
+  const t = useTranslations('miradas')
   const [copied, setCopied] = useState(false)
 
   const onCopy = async () => {
@@ -64,17 +66,17 @@ export function ShareRow({
             {backLink.label}
           </CurtainLink>
         ) : (
-          <span>{readingTimeMinutes} min. lectura</span>
+          <span>{readingTimeMinutes} {t('article.minRead')}</span>
         )}
         <div className="flex flex-wrap items-center gap-x-10 gap-y-2">
-          <span className="text-fg">Compartir</span>
+          <span className="text-fg">{t('article.share')}</span>
           <button
             type="button"
             onClick={onCopy}
-            aria-label="Copiar enlace al portapapeles"
+            aria-label={t('article.copyLinkAriaLabel')}
             className="hover-wipe-underline w-fit text-fg"
           >
-            {copied ? 'Enlace copiado' : 'Copiar enlace'}
+            {copied ? t('article.linkCopied') : t('article.copyLink')}
           </button>
           <a
             href={linkedin}

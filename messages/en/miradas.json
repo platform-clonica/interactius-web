@@ -1,12 +1,16 @@
 {
   "hero": {
-    "subtitle": "<strong>Posts</strong> that tackle real problems, challenge the status quo, and connect design, business, technology, and people."
+    "subtitle": "<strong>Posts</strong> that tackle real problems, challenge the status quo, and connect design, business, technology, and people.",
+    "ariaLabel": "Thoughts header",
+    "fallbackAlt": "Thoughts — reflections on design and strategy"
   },
   "grid": {
     "superTitle": "Perspectives",
     "searchPlaceholder": "Search by keyword",
     "searchAriaLabel": "Search articles",
     "noResults": "No articles match your search.",
+    "articlesLabel": "Articles",
+    "loadingMore": "Loading more articles",
     "categories": {
       "ux-design": "UX Design",
       "innovacion": "Innovation",
@@ -22,5 +26,16 @@
     "viewAll": "View all",
     "intro": "Reflections on {topic}.",
     "otherTopics": "Other topics in {parent}"
+  },
+  "article": {
+    "minRead": "min read",
+    "share": "Share",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied",
+    "copyLinkAriaLabel": "Copy link to clipboard",
+    "next": "Next article",
+    "nextAriaLabel": "Next article: {title}",
+    "backToListing": "Back to Thoughts",
+    "continueReading": "Continue reading"
   }
 }

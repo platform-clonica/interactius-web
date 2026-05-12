@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
 import { buildPageMetadata, SITE_CONFIG } from '@/lib/seo/metadata.config'
+import { formatDate } from '@/lib/i18n/formatDate'
 import { localizedPath, getAlternates } from '@/lib/i18n/navigation'
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import { type Locale, LOCALES } from '@/lib/i18n/config'
@@ -96,14 +97,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       section: SUB_DISPLAY[locale][sub],
       tags: article.tags,
     },
-  })
-}
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('es-ES', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
   })
 }
 
@@ -241,7 +234,7 @@ export default async function ArticlePage({ params }: PageProps) {
             </div>
             <div className="absolute left-0 top-full pointer-events-auto">
               <span className="block bg-pure-white px-1.5 py-1 font-mono text-card-sm text-fg whitespace-nowrap leading-none">
-                {article.author}, {formatDate(article.publishedAt)}
+                {article.author}, {formatDate(article.publishedAt, locale)}
               </span>
             </div>
           </div>
@@ -250,7 +243,7 @@ export default async function ArticlePage({ params }: PageProps) {
           <div className="col-span-12 lg:hidden mt-6 flex items-center gap-3">
             <AuthorAvatar author={article.author} size="sm" />
             <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
-              {article.author}, {formatDate(article.publishedAt)}
+              {article.author}, {formatDate(article.publishedAt, locale)}
             </span>
           </div>
 
@@ -326,20 +319,20 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </article>
 
-      <section className="section-inner pb-section" aria-label="Continúa leyendo">
+      <section className="section-inner pb-section" aria-label={t('article.continueReading')}>
         <div className="grid grid-cols-12 gap-grid-gutter">
           <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
             <ShareRow
               title={article.title}
               url={absoluteUrl}
-              backLink={{ href: '/miradas', label: 'Volver a Miradas' }}
+              backLink={{ href: '/miradas', label: t('article.backToListing') }}
             />
           </div>
         </div>
       </section>
 
       {next && (
-        <section className="w-full" aria-label="Siguiente artículo">
+        <section className="w-full" aria-label={t('article.next')}>
           <ArticleNext article={next} locale={locale} />
         </section>
       )}

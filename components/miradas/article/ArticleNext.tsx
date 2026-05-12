@@ -1,10 +1,12 @@
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import { PlusArrowFlipIcon } from '@/components/ui/PlusArrowFlipIcon'
 import { articleHref } from '@/lib/i18n/article-href'
 import type { MiradaMeta } from '@/lib/content/miradas'
 import type { Locale } from '@/lib/i18n/config'
+import { formatDate } from '@/lib/i18n/formatDate'
 
 interface ArticleNextProps {
   article: MiradaMeta
@@ -23,14 +25,6 @@ function getCover(article: MiradaMeta): string {
   return PLACEHOLDER_COVERS[Math.abs(h) % PLACEHOLDER_COVERS.length]
 }
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('es-ES', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  })
-}
-
 /**
  * Sugerencia del siguiente artículo. Mismo lenguaje canónico que los
  * "otras capacidades" del final de las páginas de Servicios:
@@ -40,11 +34,12 @@ function formatDate(dateStr: string): string {
  * Pegado al footer sin padding-bottom.
  */
 export function ArticleNext({ article, locale }: ArticleNextProps) {
+  const t = useTranslations('miradas')
   return (
     <CurtainLink
       href={articleHref(article.category, article.slug, locale)}
       className="group block w-full"
-      aria-label={`Siguiente artículo: ${article.title}`}
+      aria-label={t('article.nextAriaLabel', { title: article.title })}
     >
       {/* Grid sin altura fija: el bloque blanco define el alto via py-12/16
           (mismo rhythm vertical que los enlaces "otras capacidades" del
@@ -84,7 +79,7 @@ export function ArticleNext({ article, locale }: ArticleNextProps) {
             {article.title}
           </h2>
           <p className="mt-1 font-mono text-card-sm text-fg/60">
-            {article.author}, {formatDate(article.publishedAt)}
+            {article.author}, {formatDate(article.publishedAt, locale)}
           </p>
         </div>
       </div>

@@ -119,7 +119,7 @@ export function MiradasHero() {
     <section
       ref={sectionRef}
       className="relative w-full overflow-hidden bg-warm-light lg:min-h-screen"
-      aria-label="Cabecera Miradas"
+      aria-label={t('hero.ariaLabel')}
     >
       {/* MOBILE/TABLET (<lg): layout en flow normal, altura estable.
           Imagen aspect-[16/10] justo debajo del header chrome (pt-24).
@@ -133,7 +133,7 @@ export function MiradasHero() {
             >
               <Image
                 src="/miradas/hero-banner.webp"
-                alt="Miradas — reflexiones sobre diseño y estrategia"
+                alt={t('hero.fallbackAlt')}
                 fill
                 priority
                 sizes="100vw"

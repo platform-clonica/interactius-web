@@ -96,7 +96,7 @@ export function HomeIntroText() {
     <section
       ref={sectionRef}
       className="w-full bg-warm-light relative"
-      aria-label="Introducción"
+      aria-label={t('intro.ariaLabel')}
     >
       {/* Sticky panel — texto centrado en pantalla completa warm-light */}
       <div className="sticky top-0 section-inner flex items-center min-h-screen py-section">

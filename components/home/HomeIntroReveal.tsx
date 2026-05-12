@@ -162,7 +162,7 @@ export function HomeIntroReveal() {
       ref={sectionRef}
       className="relative w-full bg-warm-light"
       style={{ minHeight: '300vh' }}
-      aria-label="Diseñamos para la transición"
+      aria-label={t('intro.revealTitle')}
     >
       {/* Sticky pin — sticks for ~225vh (75% del scroll de la sección).
           Reducido de 400→300vh para aligerar el ritmo: el scrub del crop
