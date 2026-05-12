@@ -26,7 +26,7 @@ Next.js 15 App Router · React 19 · TypeScript 5.7 · Tailwind 3.4 · next-intl
 ### i18n
 - ES is default **without URL prefix** (`/contacto`), CA and EN use prefixes (`/ca/contacte`, `/en/contact`). Driven by `localePrefix: 'as-needed'` in `lib/i18n/routing.ts`.
 - Slugs per locale are defined by `RouteId` → per-locale pathname. **Never hardcode a localized slug** — always link via `Link` from `@/lib/i18n/routing` with a `RouteId`.
-- Miradas category slugs are intentionally identical across locales to preserve the 108 prepared 301 redirects.
+- Miradas slugs split in two layers: the **category segment** (`[parentOrSub]`) is localized per locale — see `lib/miradas/i18n-routing.ts` (`pensamiento-estrategico` / `pensament-estrategic` / `strategic-thinking`). The **article slug** is invariant in ES across all locales, which is what preserves the 244 prepared 301 redirects from the WordPress migration.
 - UI strings live in `messages/{locale}/{namespace}.json`. Load with `useTranslations(namespace)` (client) or `getTranslations` (server).
 - `LocaleSwitcher` in dynamic routes must receive `{ pathname, params }` — not a concrete path. See `components/layout/LocaleSwitcher.tsx`.
 
