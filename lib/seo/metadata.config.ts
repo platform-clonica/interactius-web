@@ -118,13 +118,11 @@ export const PAGE_COPY: Record<string, RouteCopyMap> = {
         'Diseño estratégico, criterio humano y tecnología para ayudar a las organizaciones a tomar mejores decisiones.',
     },
     ca: {
-      // TODO — translate before launch
       title: 'Interactius',
       description:
         'Disseny estratègic, criteri humà i tecnologia per ajudar les organitzacions a prendre millors decisions.',
     },
     en: {
-      // TODO — translate before launch
       title: 'Interactius',
       description:
         'Strategic design, human judgement and technology helping organisations make better decisions.',
