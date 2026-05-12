@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 
-import { Link, useRouter, type RouteId } from '@/lib/i18n/navigation'
+import { Link, useRouter, usePathname, type RouteId } from '@/lib/i18n/navigation'
 import { useMenuStore, resetSavedScroll } from '@/lib/store/menu'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
@@ -49,6 +49,20 @@ function getHalfClipRight(): string {
   return window.matchMedia(HALF_CLIP_MEDIA).matches ? '50%' : '0%'
 }
 
+/**
+ * ¿El item del menú corresponde a la página actual? Reglas:
+ *  - Home (`/`): match exacto (sin esto, '/' matchearía con cualquier ruta).
+ *  - Resto: igualdad estricta o el pathname empieza con `${route}/`.
+ *    Así `/miradas/diseno-ux-ui/biomimesis-y-diseno` activa "Miradas",
+ *    y `/pensamiento-estrategico/<lo-que-sea>` activa ese primary.
+ *  - Páginas off-menu (aviso-legal, política-cookies, newsletter, 404…)
+ *    no matchean con ningún item → ninguno aparece activo.
+ */
+function isItemActive(itemRoute: string, pathname: string): boolean {
+  if (itemRoute === '/') return pathname === '/'
+  return pathname === itemRoute || pathname.startsWith(itemRoute + '/')
+}
+
 /* ==========================================================================
    MenuOverlay
    ========================================================================== */
@@ -56,6 +70,7 @@ function getHalfClipRight(): string {
 export function MenuOverlay() {
   const t = useTranslations()
   const router = useRouter()
+  const pathname = usePathname()
   const isOpen = useMenuStore((s) => s.isOpen)
   const beginCurtainStore = useMenuStore((s) => s.beginCurtain)
   const endCurtainStore = useMenuStore((s) => s.endCurtain)
@@ -361,7 +376,9 @@ export function MenuOverlay() {
           className="flex-1 flex flex-col justify-center -mt-[250px] -mr-[var(--grid-margin)]
                      lg:mt-0 lg:mr-0 lg:absolute lg:flex-none lg:top-[calc(27.7vh-40px)] lg:block"
         >
-          {PRIMARY_ITEMS.map(({ route, labelKey, num }) => (
+          {PRIMARY_ITEMS.map(({ route, labelKey, num }) => {
+            const active = isItemActive(route, pathname)
+            return (
             <div
               key={route}
               className="overflow-hidden w-full
@@ -374,9 +391,11 @@ export function MenuOverlay() {
                 <Link
                   href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
                   onClick={(e) => handleLinkClick(e, route)}
-                  className="hover-text-flip block mt-[14px] pb-[9px]
-                             font-serif font-light text-title-sm text-fg
-                             focus-visible:opacity-90"
+                  aria-current={active ? 'page' : undefined}
+                  className={`hover-text-flip block mt-[14px] pb-[9px]
+                             font-serif text-title-sm text-fg
+                             focus-visible:opacity-90
+                             ${active ? 'font-normal' : 'font-light'}`}
                 >
                   <span className="flex w-full items-center justify-between gap-3 pr-[30px]">
                     <span className="st-mask">
@@ -419,7 +438,8 @@ export function MenuOverlay() {
                 </Link>
               </div>
             </div>
-          ))}
+            )
+          })}
         </nav>
 
         {/* Secondary nav — mobile: absolute en la mitad inferior del panel
@@ -433,17 +453,22 @@ export function MenuOverlay() {
                      lg:top-[calc(68vh-50px)] lg:bottom-auto lg:left-auto lg:right-auto
                      lg:block lg:space-y-4"
         >
-          {SECONDARY_ITEMS.map(({ route, labelKey }) => (
-            <div key={route} data-secondary-link="" className="pointer-events-auto">
-              <Link
-                href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
-                onClick={(e) => handleLinkClick(e, route)}
-                className="hover-wipe-underline w-fit font-mono text-body-sm text-fg"
-              >
-                {t(labelKey)}
-              </Link>
-            </div>
-          ))}
+          {SECONDARY_ITEMS.map(({ route, labelKey }) => {
+            const active = isItemActive(route, pathname)
+            return (
+              <div key={route} data-secondary-link="" className="pointer-events-auto">
+                <Link
+                  href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
+                  onClick={(e) => handleLinkClick(e, route)}
+                  aria-current={active ? 'page' : undefined}
+                  className={`hover-wipe-underline w-fit font-mono text-body-sm text-fg
+                             ${active ? 'font-semibold' : ''}`}
+                >
+                  {t(labelKey)}
+                </Link>
+              </div>
+            )
+          })}
         </div>
       </div>
 
