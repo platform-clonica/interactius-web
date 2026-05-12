@@ -512,7 +512,7 @@ export function IdentidadGente() {
           willChange: 'transform, opacity',
         }}
       >
-        Arrastrar
+        {t('gente.dragHint')}
       </div>
     </section>
   )

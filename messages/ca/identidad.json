@@ -52,7 +52,8 @@
   "gente": {
     "title": "La nostra gent",
     "description": "Som un col·lectiu de ments inquietes que dissenyen, investiguen i executen productes per al món d'avui.",
-    "imageAlt": "Membre de l'equip"
+    "imageAlt": "Membre de l'equip",
+    "dragHint": "Arrossegar"
   },
   "joinUs": {
     "cta": "Vols unir-te a l'equip?",

@@ -52,7 +52,8 @@
   "gente": {
     "title": "Our people",
     "description": "We are a collective of restless minds who design, research, and build products for today's world.",
-    "imageAlt": "Team member"
+    "imageAlt": "Team member",
+    "dragHint": "Drag"
   },
   "joinUs": {
     "cta": "Want to join the team?",

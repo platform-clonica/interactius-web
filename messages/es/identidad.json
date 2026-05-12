@@ -52,7 +52,8 @@
   "gente": {
     "title": "Nuestra gente",
     "description": "Somos un colectivo de mentes inquietas que diseñan, investigan y ejecutan productos para el mundo de hoy.",
-    "imageAlt": "Miembro del equipo"
+    "imageAlt": "Miembro del equipo",
+    "dragHint": "Arrastrar"
   },
   "joinUs": {
     "cta": "¿Quieres unirte al equipo?",
