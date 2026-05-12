@@ -94,7 +94,7 @@ export const SITE_CONFIG = {
 /* ==========================================================================
    Copy por página — titles y descriptions
    --------------------------------------------------------------------------
-   ⚠ ES completo. CA y EN pendientes de traducción antes de lanzamiento.
+   ES / CA / EN traducidos (1ª pasada — revisar con nativo cuando convenga).
    La voice sigue la guía de estilo (directa, sin jerga vacía, criterio).
    ========================================================================== */
 
@@ -113,17 +113,17 @@ type RouteCopyMap = Record<Locale, RouteCopy>
 export const PAGE_COPY: Record<string, RouteCopyMap> = {
   '/': {
     es: {
-      title: 'Interactius', // sin template — home lleva solo siteName
+      title: 'Interactius. Actitud Liminal', // bypass del template via absolute en buildPageMetadata
       description:
         'Diseño estratégico, criterio humano y tecnología para ayudar a las organizaciones a tomar mejores decisiones.',
     },
     ca: {
-      title: 'Interactius',
+      title: 'Interactius. Actitud Liminal',
       description:
         'Disseny estratègic, criteri humà i tecnologia per ajudar les organitzacions a prendre millors decisions.',
     },
     en: {
-      title: 'Interactius',
+      title: 'Interactius. Liminal Attitude',
       description:
         'Strategic design, human judgement and technology helping organisations make better decisions.',
     },
@@ -516,7 +516,9 @@ export function buildPageMetadata({
   const image = ogImage ?? SITE_CONFIG.ogImage
 
   const metadata: Metadata = {
-    title,
+    // En la home saltamos el template "%s | Interactius" del root metadata —
+    // el título ya incluye la marca, no queremos duplicarla.
+    title: routeId === '/' ? { absolute: title } : title,
     description,
     alternates: {
       canonical: canonicalUrl,

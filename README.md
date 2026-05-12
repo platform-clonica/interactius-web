@@ -1,8 +1,10 @@
 # Interactius — Web 2026
 
-Nueva web corporativa de Interactius construida con Next.js 15 + TypeScript + Tailwind CSS 3.
+Web corporativa de Interactius. Next.js 15 + TypeScript + Tailwind CSS 3.
 
-Estado actual: **Sprints 1–5 completados.** Shell global, Homepage, Formularios, Capacidades + Identidad y Miradas (MDX) funcionales.
+**LIVE en producción desde 2026-05-07** → [https://www.interactius.com](https://www.interactius.com)
+
+Sprints 1–6 completados + operativa post-launch (DNS, GA4 + consent banner, GSC, fix de redirects legacy, i18n exhaustivo, performance fixes).
 
 ---
 
@@ -20,13 +22,13 @@ npm install
 cp .env.example .env.local
 ```
 
-Las variables más relevantes para dev local:
+Para dev local basta con:
 
 ```env
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-El resto de variables (Hubspot, GSC, Newsletter provider) solo son necesarias en producción / Sprint 6.
+Las demás (HubSpot, GA4, GSC) viven en Netlify para producción — ver sección "Operaciones".
 
 ### 3. Arrancar en desarrollo
 
@@ -34,15 +36,15 @@ El resto de variables (Hubspot, GSC, Newsletter provider) solo son necesarias en
 npm run dev
 ```
 
-Abre http://localhost:3000 — verás la home en español.
+Abre http://localhost:3000.
 
-Prueba también:
+Smoke rápido:
 - http://localhost:3000/ca — home en catalán
 - http://localhost:3000/en — home en inglés
 - http://localhost:3000/pensamiento-estrategico — capacidad 1
-- http://localhost:3000/identidad — página sobre Interactius
+- http://localhost:3000/identidad — sobre Interactius
 - http://localhost:3000/miradas — listado de artículos
-- http://localhost:3000/miradas/design/atomic-design-para-dummies — artículo MDX
+- http://localhost:3000/miradas/diseno-ux-ui/biomimesis-y-diseno — artículo MDX
 
 ### 4. Build de producción
 
@@ -54,8 +56,8 @@ npm run start
 ### 5. Type-check y lint
 
 ```bash
-npm run type-check   # tsc --noEmit
-npm run lint         # eslint
+npm run type-check
+npm run lint
 ```
 
 ---
@@ -69,6 +71,7 @@ npm run lint         # eslint
 | `npm run start` | Sirve el build de producción |
 | `npm run lint` | Ejecuta ESLint con config de Next |
 | `npm run type-check` | Valida tipos TypeScript sin emitir |
+| `npm run validate:miradas` | Valida los frontmatters MDX contra zod |
 
 ---
 
@@ -77,63 +80,86 @@ npm run lint         # eslint
 ```
 interactius-web/
 ├── app/
-│   ├── [locale]/            # Todas las rutas localizadas
-│   │   ├── layout.tsx       # RootLayout con i18n, fuentes, SEO
-│   │   ├── page.tsx         # Home (5 secciones scroll-driven)
-│   │   ├── pensamiento-estrategico/page.tsx
-│   │   ├── activacion-de-soluciones/page.tsx
-│   │   ├── transformacion-cultural/page.tsx
-│   │   ├── identidad/page.tsx
-│   │   ├── contacto/page.tsx
-│   │   ├── newsletter/page.tsx
-│   │   ├── testers/page.tsx
-│   │   ├── miradas/
-│   │   │   ├── page.tsx             # Listado de artículos
-│   │   │   └── [cat]/[slug]/page.tsx # Artículo MDX
-│   │   └── aviso-legal/page.tsx
-│   ├── api/                 # API routes (contact, newsletter, testers)
-│   └── globals.css          # CSS vars, reset, reveal primitives
+│   ├── [locale]/
+│   │   ├── layout.tsx                                # RootLayout (i18n, fuentes, SEO, GA4Script)
+│   │   ├── not-found.tsx                             # 404 i18n
+│   │   ├── [...rest]/page.tsx                        # Catch-all → activa not-found localizado
+│   │   ├── (main)/                                   # Chrome completo (Sidebar, Header, MenuOverlay, Footer, PageTransition)
+│   │   │   ├── page.tsx                              # Home
+│   │   │   ├── pensamiento-estrategico/page.tsx
+│   │   │   ├── diseno-de-experiencias/page.tsx
+│   │   │   ├── transformacion-cultural/page.tsx
+│   │   │   ├── identidad/page.tsx
+│   │   │   ├── miradas/page.tsx                      # Listing global
+│   │   │   ├── miradas/[parentOrSub]/page.tsx        # Listing categoría madre/sub
+│   │   │   ├── miradas/[parentOrSub]/[slug]/page.tsx # Detalle artículo
+│   │   │   ├── aviso-legal/page.tsx
+│   │   │   ├── politica-privacidad/page.tsx
+│   │   │   ├── politica-cookies/page.tsx
+│   │   │   └── terminos/page.tsx
+│   │   └── (contact)/                                # Fullscreen overlay sin chrome
+│   │       ├── contacto/page.tsx
+│   │       ├── newsletter/page.tsx
+│   │       └── testers/page.tsx
+│   ├── api/                                          # Form endpoints → HubSpot Forms API
+│   │   ├── contact/route.ts
+│   │   ├── newsletter/route.ts
+│   │   └── testers/route.ts
+│   ├── global-error.tsx                              # Fallback root layout broken (i18n inline ES/CA/EN)
+│   ├── robots.ts                                     # robots.txt prod-aware
+│   ├── sitemap.ts                                    # Sitemap dinámico ~435 URLs
+│   └── globals.css                                   # CSS vars, reset, reveal primitives
 │
 ├── components/
-│   ├── layout/              # Sidebar, Header, MenuOverlay, Footer, PageTransition
-│   ├── ui/                  # Button*, Form*, Logo, Wordmark, Checkbox
-│   ├── motion/              # useReducedMotion, useScrollDirection, useFocusTrap
-│   ├── home/                # Hero*, Intro*, Services*, Work*, ClientsMarquee
-│   ├── capacity/            # CapacityHero, CapacityIntro, CapacityServices, CapacityOthers
-│   ├── identidad/           # IdentidadHero, Intro, Valores, Liminal, Metodologia, Gente, JoinUs
-│   ├── contact/             # ContactHero, ContactForm
-│   └── miradas/             # MiradasGrid, MDXContent, AuthorAvatar
+│   ├── layout/                                       # Sidebar, Header, MenuOverlay, Footer, PageTransition, PageCurtain
+│   ├── ui/                                           # Button*, FormField, Logo, Wordmark, Checkbox, SuperTitleReveal
+│   ├── motion/                                       # useReducedMotion, useScrollDirection, useFocusTrap, wrapLinesInMask
+│   ├── home/                                         # HeroScroll, HomeIntroText, HomeIntroReveal, ServicesRows, WorkGrid, ClientsMarquee
+│   ├── capacity/                                     # CapacityHero, CapacityIntro, CapacityServices, CapacityOthers, CapacityVortex
+│   ├── identidad/                                    # IdentidadHero, IdentidadIntro, IdentidadValores, IdentidadLiminal, IdentidadMetodologia, IdentidadGente
+│   ├── contact/                                      # ContactHero, ContactForm, ContactOverlay
+│   ├── miradas/                                      # MiradasHero, MiradasGrid, MiradasGlobalHome, MiradasParentListing, MiradasSubListing, ArticleCardSimple, AuthorAvatar, Breadcrumb, MDXContent, article/{ShareRow, ArticleNext}
+│   ├── analytics/                                    # GA4Script (gated por consent)
+│   └── consent/                                      # ConsentBanner, ConsentSettings, ConsentMount, ManagePreferencesButton
 │
 ├── lib/
-│   ├── i18n/                # config.ts (locales), routing.ts (mapping)
-│   ├── seo/                 # metadata.config.ts, schema.ts
-│   ├── store/               # menu.ts (Zustand)
-│   └── content/             # miradas.ts (fs + gray-matter reader)
+│   ├── i18n/                                         # config, routing, navigation, formatDate, rich-text
+│   ├── seo/                                          # metadata.config.ts, schema.ts
+│   ├── store/                                        # menu (Zustand), consent (Zustand), curtain
+│   ├── content/                                      # miradas reader (fs + gray-matter)
+│   ├── miradas/                                      # frontmatter.schema (zod), i18n-routing (slugs localizados)
+│   ├── consent/                                      # types, cookie (serialize/parse + cookie persist)
+│   ├── data/                                         # team (datos del equipo)
+│   └── hubspot/                                      # submit (POST a Forms Submissions API)
 │
 ├── content/
-│   └── miradas/             # Artículos MDX por categoría (125 totales)
-│       ├── design/          # 40 artículos
-│       ├── ux/              # 29 artículos
-│       ├── research/        # 26 artículos
-│       ├── ia/              # 13 artículos
-│       ├── estrategia/      # 11 artículos
-│       ├── workshops/       # 4 artículos
-│       └── diseno-inclusivo/ # 2 artículos
+│   └── miradas/                                      # 125 artículos MDX
+│       ├── pensamiento-estrategico/ (×4)             # SUBS: diseno-estrategico (19), innovacion (15), futuros (7), marca (4)
+│       ├── diseno-experiencias/ (×3)                 # SUBS: diseno-ux-ui (34), ux-research (18), clonica (8)
+│       └── transformacion-cultural/ (×3)             # SUBS: ia-aplicada (13), cultura-organizacional (19), workshops (6)
 │
-├── messages/                # UI strings por locale × namespace
-│   ├── es/ {common, footer, nav, forms, meta, home}.json
-│   ├── ca/ {common, footer, nav, forms, meta, home}.json
-│   └── en/ {common, footer, nav, forms, meta, home}.json
+├── config/
+│   └── miradas-redirects.mjs                         # 244 redirects 301 desde WP
+│
+├── messages/                                         # 12 namespaces × 3 locales
+│   ├── es/ {common,nav,footer,forms,home,identidad,capacidades,contacto,miradas,legal,consent,meta}.json
+│   ├── ca/ idem
+│   └── en/ idem
 │
 ├── public/
-│   ├── home/hero-poster.webp   # ⚠ PLACEHOLDER — reemplazar con asset real
-│   └── favicon.ico             # ⚠ PLACEHOLDER — reemplazar con asset real
+│   ├── favicon.png                                   # Asset definitivo
+│   ├── apple-touch-icon.png                          # 180×180
+│   ├── og-default.png                                # 1200×630
+│   ├── home/hero-poster.{mp4,webp}                   # Vídeo + poster del hero
+│   ├── miradas/                                      # Covers + placeholders
+│   └── identidad/fotos-team/                         # 28 fotos del equipo
 │
-├── middleware.ts            # Negociación de locale (next-intl)
-├── i18n.ts                  # Request config de next-intl
-├── next.config.mjs          # Config Next + plugin next-intl
-├── tailwind.config.ts       # Sistema de tokens visual completo
-├── tsconfig.json
+├── middleware.ts                                     # next-intl + 244 redirects + fallback wildcard prefijos legacy
+├── i18n/request.ts                                   # Request config de next-intl
+├── netlify.toml                                      # Build + env vars + plugin + redirects archivo
+├── next.config.mjs                                   # Config Next (transpile gsap, headers seguridad, imágenes)
+├── tailwind.config.ts                                # Sistema de tokens visual completo
+├── CLAUDE.md                                         # Guidance para Claude Code
 └── package.json
 ```
 
@@ -141,140 +167,157 @@ interactius-web/
 
 ## Stack técnico
 
-| Área | Librería / API | Versión |
+| Capa | Tecnología | Versión |
 |---|---|---|
 | Framework | Next.js App Router | 15.x |
 | Tipado | TypeScript | 5.7 |
 | Estilos | Tailwind CSS | 3.4 |
 | Animación principal | Framer Motion | 11.x |
-| Scroll-driven complejo | GSAP + SplitType | 3.12 + 0.3 |
+| Scroll-driven complejo | GSAP + ScrollTrigger + SplitType | 3.12 + 0.3 |
 | Internacionalización | next-intl | 3.x |
 | Formularios | react-hook-form + zod | 7.54 + 3.24 |
 | Estado ligero | Zustand | 5.x |
-| Contenido editorial | MDX + gray-matter + @mdx-js/mdx | Sprint 5 ✅ |
+| Contenido editorial | MDX (@mdx-js/mdx evaluate) + gray-matter | — |
+| Hosting | Netlify (`@netlify/plugin-nextjs` 5.x) | — |
+| Forms backend | HubSpot Forms Submissions API | — |
+| Analytics | Google Analytics 4 (gated por consent) | — |
+| SSL | Let's Encrypt (auto-gestionado por Netlify) | — |
 
 ---
 
-## Qué está implementado (Sprints 1–5)
+## Operaciones
 
-### Sprint 1 — Shell global ✅
-- Sistema de tokens visual (colores, tipografía, spacing, grid).
-- `RootLayout` con i18n, fuentes self-hosted, metadata SEO base, JSON-LD.
-- 3 locales operativos (ES default sin prefijo, CA, EN).
-- Navegación completa: Sidebar (60px fijo), Header (hide-on-scroll), MenuOverlay (focus-trap, stagger, locale switcher), Footer (reveal clip-path, wordmark, social), PageTransition (wipe warm-light).
-- UI primitives: ButtonPrimary (wipe 2-fase), ButtonSecondary (underline wipe), FormField (floating label polymorphic), Checkbox (tick púrpura).
-- SEO: metadata helper + schema.org Organization/WebSite/BreadcrumbList/Article.
+### Hosting & deploy
+- **Netlify** con `@netlify/plugin-nextjs` (configurado en `netlify.toml`, no en dashboard).
+- **Auto-deploy** en push a `main`. Build context aplica env vars por entorno:
+  - `production`: `NEXT_PUBLIC_SITE_URL=https://www.interactius.com`.
+  - `deploy-preview` y `branch-deploy`: URLs `*.netlify.app` (robots noindex automático).
 
-### Sprint 2 — Homepage ✅
-- HeroScroll con 3 fases scroll-driven + clip-path animado + poster LCP-optimized + Ken-Burns.
-- HeroTagline con SplitType line-mask reveal.
-- IntroScroll con 4 fases + 3 bloques (body / quote / body) + fade-out final.
-- ServicesRows con 3 filas de pilares y reveal clip-path lateral.
-- WorkGrid masonry 8 cards con offsets + stagger reveal.
-- ClientsMarquee CSS puro con 5 filas alternadas.
+### DNS
+- **Registrar**: Hostytec.
+- **Nameservers**: delegados a Netlify DNS (`dns1-4.p07.nsone.net`).
+- **Zona DNS** gestionada desde el dashboard de Netlify.
+- Apex `interactius.com` → 301 a `www.interactius.com` (Netlify primary).
+- Subdominio `legacy.interactius.com` → A `35.214.209.83` (WordPress antiguo en SiteGround, mantenido como backup).
+- MX en Google Workspace (correo intacto).
 
-### Sprint 3 — Formularios transaccionales ✅
-- `ContactHero` reutilizable con imagen fullscreen + panel blanco + reveals.
-- `ContactForm` polymorphic con 3 variants (contacto/newsletter/testers).
-- Validación client-side + server-side con zod.
-- 3 endpoints API: `/api/contact`, `/api/newsletter`, `/api/testers` — stubs funcionales listos para Hubspot.
-- Checkbox GDPR obligatorio en los 3 forms.
-- Estados `idle | submitting | success | error` con feedback accesible.
-
-### Sprint 4 — Capacidades e Identidad ✅
-- 4 componentes compartidos: `CapacityHero`, `CapacityIntro`, `CapacityServices`, `CapacityOthers`.
-- 3 páginas de capacidad con contenido real extraído de Figma:
-  - `/pensamiento-estrategico` — 4 servicios, clientes reales
-  - `/activacion-de-soluciones` — 4 servicios incl. Clonica© e Insight Panel©
-  - `/transformacion-cultural` — 3 servicios + Manifiesto IA inline
-- Página `/identidad` con 7 secciones: Hero, Intro, Valores (×4), Liminal Thinkers, Metodología, Nuestra gente, JoinUs.
-
-### Sprint 5 — Miradas (MDX) ✅
-- 12 artículos reales migrados del site actual (`content/miradas/[cat]/[slug].mdx`).
-- 6 categorías: `design`, `ux`, `research`, `estrategia`, `diseno-inclusivo`, `ia`.
-- `lib/content/miradas.ts` — reader tipado con `fs` + `gray-matter`.
-- `MDXContent` — server component que compila MDX con `@mdx-js/mdx` evaluate.
-- Listing `/miradas` con grid 3 columnas + stagger reveal.
-- Artículo `/miradas/[cat]/[slug]` con layout editorial 8 columnas.
-- `generateStaticParams` para prerender en build.
-- `LocaleSwitcher` corregido para rutas dinámicas (pasa `{ pathname, params }` en vez del path concreto).
-
----
-
-## Pendiente (Sprint 6)
-
-- Redirects 301 desde `interactius_redirects_301_FINAL.xlsx` (108 URLs) → `next.config.mjs`
-- Sitemap dinámico (`app/sitemap.ts`) incluyendo todas las Miradas
-- `robots.txt` diferenciado prod/staging
-- Aviso legal con contenido real
-- GSC verification tag (`NEXT_PUBLIC_GSC_VERIFICATION`)
-- Swap endpoints API → Hubspot/provider real
-
----
-
-## Assets placeholder a reemplazar
-
-| Ruta | Estado | Acción requerida |
+### Env vars en Netlify
+| Variable | Scope | Notas |
 |---|---|---|
-| `public/favicon.ico` | Placeholder "I" | Reemplazar con favicon real |
-| `public/home/hero-poster.webp` | Placeholder gradiente | Reemplazar con poster real 1649×550 WebP |
-| `components/ui/Logo.tsx` | Placeholder tipográfico SVG | Reemplazar paths SVG con asset real |
-| `components/ui/Wordmark.tsx` | Placeholder tipográfico SVG | Reemplazar paths SVG con asset real |
-| OG image `/og-default.png` | No existe | Crear 1200×630 o usar `app/opengraph-image.tsx` |
-| `components/identidad/IdentidadGente.tsx` | 5 placeholders de foto | Reemplazar con fotos reales del equipo |
-| `content/miradas/` | 125 artículos migrados ✅ | — |
+| `HUBSPOT_PORTAL_ID` | All contexts | Público (aparece en HTML de cualquier embed) |
+| `HUBSPOT_FORM_ID_CONTACT` | All | — |
+| `HUBSPOT_FORM_ID_NEWSLETTER` | All | — |
+| `HUBSPOT_FORM_ID_TESTERS` | All | — |
+| `NEXT_PUBLIC_GA4_ID` | All | Mismo Measurement ID que el WP previo (continuidad histórica) |
+| `NEXT_PUBLIC_GSC_VERIFICATION` | Production | TXT verification |
+| `NEXT_PUBLIC_SITE_URL` | — | Definido en `netlify.toml` por context, no aquí |
+
+### Monitoring
+- **Netlify dashboard** → Functions logs (5xx en API routes).
+- **HubSpot** → Marketing → Forms → Submissions.
+- **GA4** → Realtime + Reports.
+- **Google Search Console** → Coverage + Core Web Vitals.
+
+---
+
+## Consent + Analytics
+
+- **GA4 con gating estricto**: `gtag.js` NO se descarga hasta que el usuario acepta la categoría `analytics` en el banner ([components/analytics/GA4Script.tsx](components/analytics/GA4Script.tsx)). Si rechaza o no decide, GA no existe en su sesión.
+- **Infra** completa en `lib/consent/` + `lib/store/consent.ts` + `components/consent/*`:
+  - Banner inferior con 3 acciones (Rechazar / Personalizar / Aceptar) — alineado AEPD.
+  - Panel granular con 4 categorías (necessary / preferences / analytics / marketing).
+  - Cookie first-party `interactius_consent_v1` (12 meses), versión `v1`.
+  - Hard-reload automático cuando se revoca una categoría (limpia globals de gtag).
+- **Política de cookies** menciona Google Analytics explícitamente y enlaza el panel de gestión desde el footer ("Gestionar preferencias").
 
 ---
 
 ## Decisiones arquitectónicas relevantes
 
-### i18n — URLs sin prefijo para ES
+### i18n
+- ES es default sin prefijo (`/contacto`). CA y EN con prefijo (`/ca/contacte`, `/en/contact`). Gestionado por `next-intl` con `localePrefix: 'as-needed'`.
+- UI strings en `messages/{locale}/{namespace}.json`. Server: `getTranslations()`. Client: `useTranslations()`.
+- 14 RouteId × 3 locales en `lib/i18n/routing.ts` (`pathnames`).
+- **Slugs Miradas (categoría) localizados**: la subcategoría (`[parentOrSub]`) se traduce — ej. `diseno-ux-ui` (ES) / `disseny-ux-ui` (CA) / `ux-ui-design` (EN). Ver `lib/miradas/i18n-routing.ts`.
+- **Slugs Miradas (artículo) invariantes**: el segmento `[slug]` se mantiene en ES en las 3 locales — eso es lo que permite que los 244 redirects 301 desde el WP funcionen sin duplicación.
 
-ES es default sin prefijo (`/contacto`). CA y EN con prefijo (`/ca/contacte`, `/en/contact`). Gestionado con middleware + `next-intl` `localePrefix: 'as-needed'`.
+### Redirects legacy WP → Next
+- **244 redirects 301** vivían originalmente en `next.config.mjs#redirects()`, pero se movieron a [middleware.ts](middleware.ts) porque Netlify (con `@netlify/plugin-nextjs`) ejecuta el rewrite de next-intl ANTES que los `redirects()` declarativos, dejando los 244 muertos.
+- Hoy: lookup O(1) en un Map al inicio del middleware, con normalización de trailing slash y `decodeURIComponent` para caracteres no-ASCII (ñ, etc.).
+- **Fallback wildcard** al final del middleware: si el path empieza con un prefijo legacy (`/research/*`, `/design/*`, `/ux/*`, `/ia/*`, `/estrategia/*`, `/workshops/*`, `/diseno-inclusivo/*`, `/user-experience-en/*`) y no hay match exacto en el Map, redirige al sub-listing más probable. Cubre cola larga sin necesidad de mantener slugs uno a uno.
+- **PDF antiguo** `/STMDL/Digital-transformation-tools.pdf` → redirect a `/miradas` en `netlify.toml` (el middleware no procesa paths con extensión).
 
-### Slugs de categorías Miradas — idénticos en los 3 idiomas
+### Active state del menú
+- [components/layout/MenuOverlay.tsx](components/layout/MenuOverlay.tsx) marca el item correspondiente a la página actual.
+- Primary items (servicios): `font-light` → `font-normal` cuando activos.
+- Secondary items: `font-medium` + sin `hover-wipe-underline` cuando activos.
+- Herencia de padre: sub-rutas iluminan la raíz. Ej. `/miradas/<sub>/<slug>` → ilumina "Miradas".
+- Helper `isItemActive(itemRoute, pathname)` con match exacto para `/` y `startsWith` para el resto.
 
-Decisión consciente para preservar los 108 redirects 301 ya preparados (`interactius_redirects_301_FINAL.xlsx`).
+### MDX
+- Artículos compilados server-side con `@mdx-js/mdx#evaluate` desde [components/miradas/MDXContent.tsx](components/miradas/MDXContent.tsx).
+- Frontmatter validado con zod en [lib/miradas/frontmatter.schema.ts](lib/miradas/frontmatter.schema.ts). Script `npm run validate:miradas`.
+- Imágenes en MDX usan `<img>` plano todavía (deuda: mapear a `next/image`).
 
-### LocaleSwitcher en rutas dinámicas
-
-En páginas de artículo (`/miradas/[cat]/[slug]`), next-intl necesita recibir `{ pathname: '/miradas/[cat]/[slug]', params: { cat, slug } }` — no el path concreto. El componente detecta si está en una ruta dinámica por la presencia de `cat` + `slug` en `useParams()`.
-
-### MDX rendering — server component
-
-Los artículos se compilan en el servidor con `@mdx-js/mdx` `evaluate`. No usa `next-mdx-remote` (no instalado). Los frontmatter se leen con `gray-matter` en `lib/content/miradas.ts`. Los componentes JSX disponibles dentro de los `.mdx` se registran en el map `components` de `MDXContent.tsx` — actualmente: `ImageWithCaption` (figura con `<figcaption>`) y `PullQuote` (cita con regla vertical). Cualquier nuevo componente usado desde un `.mdx` debe añadirse ahí.
-
-### Foto del autor en Miradas — `AuthorAvatar`
-
-`components/miradas/AuthorAvatar.tsx` resuelve el campo `author:` del frontmatter contra una tabla `AUTHOR_PHOTOS` derivada de `public/identidad/fotos-team/team.md`. Normaliza el nombre (lowercase + strip acentos vía `\p{Diacritic}`) y mapea a un `.webp` de esa carpeta. Sin match → fallback visual con la inicial del autor en `font-serif font-light` sobre `bg-muted`, mismas dimensiones para no romper el layout. Sustituye los 3 sitios donde antes se usaba la foto grupal `/identidad/team.jpg`: card del listado (`size="sm"` → 60×63), detail desktop (`size="lg"` → 120×126) y detail mobile (`size="sm"`). Para mapear un autor histórico (`Adria Altarriba`, `Elena` sin apellido, etc.), añadir su entrada a `AUTHOR_PHOTOS` — sin tocar más ficheros.
+### Chrome layout (mix-blend-mode)
+- Logo + hamburger en `<aside>` fijo con `mix-blend-mode: difference`. Pipeline: SVG dark → `filter: brightness(0) invert(1)` (pixels blancos) → `mix-blend-mode: difference` invierte → contraste correcto sobre cualquier fondo.
+- Detalle en [CLAUDE.md](CLAUDE.md).
 
 ### Reduced-motion
-
-Hook `useReducedMotion` + regla CSS global agresiva. Animaciones JS quedan gated. Animaciones CSS declarativas se neutralizan por `@media (prefers-reduced-motion)`.
+- `components/motion/useReducedMotion.ts` + regla CSS global. Animaciones GSAP/Framer gated, animaciones CSS neutralizadas por `@media`.
 
 ### Robots — producción vs. staging
+- `SITE_CONFIG.isProduction` (en `lib/seo/metadata.config.ts`) detecta el host canónico via `NEXT_PUBLIC_SITE_URL`. Cualquier valor distinto de `https://www.interactius.com` o `https://interactius.com` activa `robots: noindex, nofollow` automáticamente.
 
-`SITE_CONFIG.isProduction` detecta el host canónico (`www.interactius.com`). En cualquier otro host se activa `robots: noindex, nofollow` automáticamente.
+---
+
+## Sprint history (apéndice histórico)
+
+### Sprint 1 — Shell global ✅
+Sistema de tokens visual, RootLayout con i18n + fuentes + SEO + JSON-LD. Navegación: Sidebar, Header, MenuOverlay, Footer, PageTransition. UI primitives (Button*, FormField, Checkbox). Schema.org Organization/WebSite.
+
+### Sprint 2 — Homepage ✅
+HeroScroll scroll-driven 3 fases, HeroTagline line-mask, IntroScroll 4 fases, ServicesRows clip-path lateral, WorkGrid masonry, ClientsMarquee.
+
+### Sprint 3 — Formularios transaccionales ✅
+ContactHero reutilizable, ContactForm polymorphic (contacto/newsletter/testers), validación zod client+server, checkbox GDPR, estados accesibles.
+
+### Sprint 4 — Capacidades + Identidad ✅
+4 componentes compartidos de Capacity (Hero, Intro, Services, Others). 3 páginas de capacidad con contenido real. Página /identidad con 7 secciones.
+
+### Sprint 5 — Miradas (MDX) ✅
+125 artículos migrados a `content/miradas/`. Reader tipado con fs + gray-matter. MDXContent server component. Listing + detalle. `generateStaticParams` para prerender. LocaleSwitcher en rutas dinámicas.
+
+### Sprint 6 — Producción ✅
+- HubSpot Forms API integrado en los 3 endpoints.
+- 244 redirects 301 desde WP + fallback wildcard para cola larga.
+- Sitemap dinámico (435 URLs).
+- robots.txt prod-aware.
+- 4 docs legales (ES completo, CA/EN pendientes nativo).
+- GSC verificado + sitemap submitted. 237 URLs indexadas a 5 días, ascendiendo.
+- GA4 con consent gating estricto (Plausible descartado).
+- DNS Hostytec → Netlify DNS. SSL Let's Encrypt.
+- Performance: 94 desktop tras `prefetch={false}` en LocaleSwitcher + video hero 10.5 MB → 3.6 MB.
+- i18n exhaustivo: 30+ strings ES hardcoded migrados a `messages/*`.
+- A11y: alt text, focus-visible, aria-label, formatDate locale-aware.
+- Active state del menú con herencia padre.
 
 ---
 
 ## Problemas conocidos / deuda técnica
 
-1. **WorkCard masonry offsets** — interpretación sin Figma. Revisar contra diseño final.
-2. **IntroScroll composition** — validar con Figma node 377:2394.
-3. **Traducciones CA/EN** — primera pasada. Requiere revisión de hablante nativo.
-4. **Social URLs** (LinkedIn, Instagram, YouTube) — confirmar handles reales en `lib/seo/metadata.config.ts`.
-5. **GSC verification** — pendiente de pegar código al deploy.
-6. **Imágenes en MDX como `<img>` plano** — `MDXContent` aún no mapea `img` a `next/image`. Las imágenes históricas de Miradas (113 nuevas) se sirven directamente desde `public/miradas/<cat>/<slug>/`.
-7. **iPad Pro landscape** (1024×1366) — validar rendimiento del hero scroll-driven.
+| # | Item | Impacto |
+|---|---|---|
+| 1 | Traducción nativa de `legal.json` CA/EN (aviso legal, privacidad, cookies, términos) — texto técnico-legal | UI legal en español en las 3 locales hasta que llegue traductor profesional |
+| 2 | Imágenes MDX como `<img>` plano (no `next/image`) | LCP / bandwidth subóptimos en artículos pesados |
+| 3 | iPad Pro 12.9" landscape (1024×1366) — sin validación en device físico | Posibles edge cases de canvas/GSAP/mix-blend-mode |
+| 4 | iOS Safari real device — sin validación | Idem |
+| 5 | 3 vulnerabilidades moderate `npm audit` (next-intl + postcss) | No explotables en este código. Fix requiere bump major de next-intl, lo dejamos hasta sesión dedicada |
 
 ---
 
-## Contacto del proyecto
+## Documentación complementaria
 
-Documentación de sistema frontend: `SISTEMA_FRONTEND_INTERACTIUS.md`
-Documentación de SEO técnico: `SEO_TECNICO_INTERACTIUS.md`
-Direction base: `00__Direccio_n_del_proyecto.pdf`
-Arquitectura: `01__Arquitectura_del_sitio.pdf`
-Concepto: `Conceptocreativo_El_Entre_Interactius.pdf`
-Voz de marca: `Guia_Estilo_Marca_Interactius_v3.pdf`
+- **[CLAUDE.md](CLAUDE.md)** — guidance para Claude Code (convenciones, patrones canónicos).
+- **[MIGRATION_TAXONOMY_REPORT.md](MIGRATION_TAXONOMY_REPORT.md)** — informe de la migración de Miradas a taxonomía v2 (snapshot 2026-05-05).
+- **[docs/AUDIT_PLAN_2026-05.md](docs/AUDIT_PLAN_2026-05.md)** — plan de auditoría pre-go-live.

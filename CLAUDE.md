@@ -76,7 +76,7 @@ Canonical patterns (see `/Users/anico/.claude/projects/-Users-anico/memory/` for
 ### Forms
 `components/ui/ButtonPrimary.tsx` and `components/ui/FormField.tsx` are polymorphic (`as` prop). The `<Link>` used in chrome is `@/lib/i18n/routing`'s wrapped version, not the raw `next/link`.
 
-API routes under `app/api/` (contact, newsletter, testers) are **stubs** — client + server zod validation is wired, but the endpoints log only. Wire to Hubspot or the chosen provider in Sprint 6.
+API routes under `app/api/` (contact, newsletter, testers) POST to the **HubSpot Forms Submissions API** (`api.hsforms.com/submissions/v3/integration/submit/{portalId}/{formId}`). Form IDs come from env vars (`HUBSPOT_FORM_ID_*`). No Authorization header — public forms don't require it. HubSpot returns 200 even when fields are rejected silently, so monitor via Marketing → Forms → Submissions in the HubSpot dashboard.
 
 ## Conventions
 
@@ -84,10 +84,27 @@ API routes under `app/api/` (contact, newsletter, testers) are **stubs** — cli
 - Dark color is `text-fg` (`#1C1A17`), warm background is `bg-warm-light` (`#F5F2ED`), contrast dark bg is `bg-dark`. Never hardcode hex.
 - For 12-col grid positioning, `col-start-2` is the canonical text-content start on the identidad page (established as the reference for the rest of the site). Images go edge-to-edge; text starts at col 2.
 
+### Locale-aware utilities
+- `lib/i18n/formatDate.ts` — formats dates per locale (`es-ES` / `ca-ES` / `en-GB`). Single source of truth for any date rendered in the UI.
+- `components/layout/MenuOverlay.tsx` — active state with parent inheritance. `usePathname()` from next-intl + helper `isItemActive(itemRoute, pathname)`. Sub-routes highlight the root (e.g. `/miradas/<sub>/<slug>` highlights "Miradas"). Adds `aria-current="page"` to the active Link.
+
+### Legacy redirects
+- 244 redirects 301 from the WP migration live in `middleware.ts` (NOT in `next.config.mjs`). They're loaded from `config/miradas-redirects.mjs`. Why here: on Netlify, the next-intl rewrite runs before the plugin's `redirects()`, so they were broken in production. The middleware does O(1) Map lookup at the top, normalizing trailing slash and `decodeURIComponent` for non-ASCII (ñ, etc.) before matching.
+- Wildcard fallback at the end of the middleware: any path starting with a legacy prefix (`/research/*`, `/design/*`, `/ux/*`, `/ia/*`, `/estrategia/*`, `/workshops/*`, `/diseno-inclusivo/*`, `/user-experience-en/*`) and missing exact match goes to the most likely sub-listing. Covers WP long-tail without per-slug maintenance.
+- The PDF `/STMDL/Digital-transformation-tools.pdf` is redirected from `netlify.toml` (the middleware excludes paths with extensions via matcher).
+
+### Consent + Analytics
+- `lib/consent/*` + `lib/store/consent.ts` + `components/consent/*` — full AEPD-compliant cookie consent system (4 categories, bottom banner, granular panel, first-party cookie `interactius_consent_v1`).
+- `components/analytics/GA4Script.tsx` — strict gating. `gtag.js` is NOT downloaded until the user accepts the `analytics` category. Revoking triggers a hard-reload (cleaning gtag globals) via the consent store's `commit()`.
+
 ## Deploy
 
 Netlify (`netlify.toml`). Build config via `@netlify/plugin-nextjs`. `SITE_CONFIG.isProduction` in `lib/seo/metadata.config.ts` decides canonical host and whether robots is `noindex`.
 
+## Operations
+
+Site is **LIVE** at `https://www.interactius.com` since 2026-05-07. Netlify auto-deploys on push to `main`. DNS managed by Netlify DNS (Hostytec is only the registrar). SSL Let's Encrypt auto-renew. Form submissions go to HubSpot. Analytics: GA4 with strict consent gating. GSC verified, sitemap submitted (~435 URLs). See `README.md` § Operations for env vars and monitoring entry points.
+
 ## Notes on README
 
-`README.md` holds the sprint-by-sprint implementation history and the placeholder-asset checklist. Treat it as historical context — do not edit it to reflect day-to-day work. Active state and open questions belong in memory (`~/.claude/projects/-Users-anico/memory/`) or the conversation.
+`README.md` holds the current state of the project (stack, structure, operations, sprint history, decisions, known issues). Keep it in sync when arch changes; the sprint history section at the bottom is historical and shouldn't be rewritten retroactively.
