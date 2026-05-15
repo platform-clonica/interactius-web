@@ -1,7 +1,9 @@
 {
   "hero": {
     "tagline": "On la confusió esdevé possibilitat, la tensió direcció i el <strong>canvi</strong> forma.",
-    "closeVideoAriaLabel": "Tancar vídeo"
+    "closeVideoAriaLabel": "Tancar vídeo",
+    "playWithSound": "Activar so",
+    "muteSound": "Treure so"
   },
   "intro": {
     "ariaLabel": "Introducció",

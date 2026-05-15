@@ -1,12 +1,13 @@
 'use client'
 
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 import { useMenuStore } from '@/lib/store/menu'
+import { usePageCurtainStore } from '@/lib/store/curtain'
 
 // ─── Scroll budget (px) ───────────────────────────────────────────────────────
 const HERO_SCROLL = 1260
@@ -67,6 +68,15 @@ export function HeroScroll({
   const taglineRef = useRef<HTMLDivElement>(null)
   const stripRef   = useRef<HTMLDivElement>(null)
   const arrowRef   = useRef<HTMLDivElement>(null)
+  const playHintRef = useRef<HTMLDivElement>(null)
+  const playHintTextRef = useRef<HTMLSpanElement>(null)
+  // Labels del hint guardados en ref → la useEffect principal no necesita
+  // depender de `t`, evita el warning de HMR cuando el array de deps crece.
+  const hintLabelsRef = useRef({ play: '', mute: '' })
+  hintLabelsRef.current = {
+    play: t('hero.playWithSound'),
+    mute: t('hero.muteSound'),
+  }
 
   // Estado del lightbox: cuando true, el vídeo se renderiza encima de todo
   // con audio. Cierra al hacer click. El strip/fullscreen vídeo se pausa
@@ -74,6 +84,43 @@ export function HeroScroll({
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [isLightboxMuted, setIsLightboxMuted] = useState(false)
   const isLightboxOpenRef = useRef(false)
+
+  // [EXPERIMENT] Autoplay tras curtain + fullscreen desde el arranque.
+  // Intenta arrancar con audio; si el browser lo bloquea, fallback muted.
+  const playWithAudioFallback = useCallback(() => {
+    const v = videoRef.current
+    if (!v) return
+    if (!v.paused) return
+    v.muted = false
+    const p = v.play()
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => {
+        v.muted = true
+        v.play().catch(() => {})
+      })
+    }
+  }, [])
+
+  // [EXPERIMENT] Click sobre el strip → toggle de audio (muted ↔ unmuted).
+  // El gesto de usuario libera la autoplay policy del browser.
+  const handleStripClick = useCallback(() => {
+    const v = videoRef.current
+    if (!v) return
+    v.muted = !v.muted
+    if (v.paused) v.play().catch(() => {})
+  }, [])
+
+  // [EXPERIMENT] Suscripción al curtain store — cuando termina la uncover
+  // (isActive true → false), disparar el play con audio del strip video.
+  const isCurtainActive = usePageCurtainStore((s) => s.isActive)
+  const prevCurtainActiveRef = useRef(isCurtainActive)
+  useEffect(() => {
+    if (prevCurtainActiveRef.current && !isCurtainActive) {
+      playWithAudioFallback()
+    }
+    prevCurtainActiveRef.current = isCurtainActive
+  }, [isCurtainActive, playWithAudioFallback])
+
   useEffect(() => {
     isLightboxOpenRef.current = isLightboxOpen
     // Pausar/reanudar el strip video según estado del lightbox.
@@ -84,12 +131,12 @@ export function HeroScroll({
       } else {
         // Re-evalúa fase al cerrar el lightbox.
         const sy = window.scrollY
-        if (sy >= PHASE1_END && sy < PHASE3_END) {
-          stripVideo.play().catch(() => {})
+        if (sy < PHASE3_END) {
+          playWithAudioFallback()
         }
       }
     }
-  }, [isLightboxOpen])
+  }, [isLightboxOpen, playWithAudioFallback])
 
   // Sync muted del vídeo del lightbox con el estado React (toggle del botón)
   useEffect(() => {
@@ -173,12 +220,17 @@ export function HeroScroll({
       }
 
       // ── Load animation: h1 line-mask + bold effect + strip lateral reveal ──
+      // El wrapper del tagline nace con opacity:0 inline (en el JSX) para
+      // evitar el flash del h1 visible antes de que SplitType + gsap.set
+      // apliquen el estado inicial oculto. Se restaura aquí, una vez las
+      // líneas YA tienen su estado hidden y la animación está armada.
       const h1 = tagline.querySelector<HTMLHeadingElement>('h1')
       if (h1 && !reduced) {
         const split = new SplitType(h1, { types: 'lines' })
         const lines = split.lines ?? []
         wrapLinesInMask(lines)
         gsap.set(lines, { y: 80, opacity: 0 })
+        gsap.set(tagline, { opacity: 1 })
         gsap.to(lines, {
           y: 0, opacity: 1, duration: 1.2, ease: 'power4.out', stagger: 0.1, delay: 0.2,
         })
@@ -207,6 +259,7 @@ export function HeroScroll({
           })
         }
       } else if (h1 && reduced) {
+        gsap.set(tagline, { opacity: 1 })
         gsap.set(h1, { y: 0, opacity: 1 })
       }
 
@@ -269,30 +322,31 @@ export function HeroScroll({
         snapPhaseState(initialScrollY)
       }
 
-      // ── Reproducción del vídeo del strip según fase ──────────────────────
-      //  · Strip (scroll < PHASE1_END): PAUSADO en el primer frame (poster).
-      //  · Fullscreen (PHASE1_END < scroll < PHASE3_END): autoplay muted.
-      //  · Más allá: pausado (no se ve).
-      //  · Lightbox abierto: SIEMPRE pausado (la reproducción la lleva el
-      //    elemento del lightbox, con audio).
+      // ── [EXPERIMENT] Reproducción del vídeo del strip ────────────────────
+      //  · scroll < PHASE3_END: reproduce con audio (fallback muted) — incluye
+      //    el estado strip-corner inicial (antes Phase 1 lo mantenía pausado).
+      //  · scroll ≥ PHASE3_END: pausado (no se ve).
+      //  · Lightbox abierto: SIEMPRE pausado.
       const updateStripVideoPlayback = (scrollY: number) => {
         if (!videoEl) return
         if (isLightboxOpenRef.current) {
           if (!videoEl.paused) videoEl.pause()
           return
         }
-        const inFullscreen = scrollY >= PHASE1_END && scrollY < PHASE3_END
-        if (inFullscreen) {
-          if (videoEl.paused) videoEl.play().catch(() => {})
+        if (scrollY < PHASE3_END) {
+          playWithAudioFallback()
         } else {
           if (!videoEl.paused) videoEl.pause()
-          // En estado strip (scroll < PHASE1_END), aseguramos frame 0
-          if (scrollY < PHASE1_END) videoEl.currentTime = 0
         }
       }
       if (videoEl) {
         videoEl.style.opacity = '1'
-        updateStripVideoPlayback(initialScrollY)
+        // Si la curtain está activa (entrando por navegación) diferimos el
+        // arranque al efecto de transición — evita audio bajo la cortina.
+        // En cold-load, isActive es false y arrancamos ya.
+        if (!usePageCurtainStore.getState().isActive) {
+          updateStripVideoPlayback(initialScrollY)
+        }
       }
 
       if (!reduced) {
@@ -354,11 +408,40 @@ export function HeroScroll({
         applyStripState(1)
       }
 
+      // ── [EXPERIMENT] Hover hint siguiendo el cursor ──────────────────────
+      // Visible siempre durante el hover. El texto alterna según el estado
+      // muted del strip video ("Play with sound" ↔ "Quitar sonido").
+      const playHintEl = playHintRef.current
+      const playHintTextEl = playHintTextRef.current
+      if (playHintEl && playHintTextEl && !reduced) {
+        const refreshLabel = () => {
+          const next = videoEl?.muted ? hintLabelsRef.current.play : hintLabelsRef.current.mute
+          if (playHintTextEl.textContent !== next) playHintTextEl.textContent = next
+        }
+        const onStripEnter = () => {
+          refreshLabel()
+          gsap.to(playHintEl, { opacity: 1, duration: 0.2, ease: 'power2.out', overwrite: true })
+        }
+        const onStripLeave = () => {
+          gsap.to(playHintEl, { opacity: 0, duration: 0.15, ease: 'power2.out', overwrite: true })
+        }
+        const onStripMouseMove = (e: MouseEvent) => {
+          gsap.set(playHintEl, { x: e.clientX + 12, y: e.clientY + 12 })
+          refreshLabel()
+        }
+        strip.addEventListener('mouseenter', onStripEnter)
+        strip.addEventListener('mouseleave', onStripLeave)
+        strip.addEventListener('mousemove',  onStripMouseMove)
+        cleanups.push(() => strip.removeEventListener('mouseenter', onStripEnter))
+        cleanups.push(() => strip.removeEventListener('mouseleave', onStripLeave))
+        cleanups.push(() => strip.removeEventListener('mousemove',  onStripMouseMove))
+      }
+
       cleanupRef.current = () => cleanups.forEach((fn) => fn())
     })()
 
     return () => cleanupRef.current?.()
-  }, [])
+  }, [playWithAudioFallback])
 
   return (
     <>
@@ -373,6 +456,7 @@ export function HeroScroll({
         <div
           ref={taglineRef}
           className="pointer-events-none absolute inset-0 z-content flex items-start pt-[22vh] lg:pt-[28vh]"
+          style={{ opacity: 0 }}
         >
           <div className="section-inner pointer-events-none">
             {children}
@@ -385,8 +469,18 @@ export function HeroScroll({
            strip inicial (bottom-right) el chrome está visible fuera del strip. */}
       <div
         ref={stripRef}
-        className="fixed overflow-hidden pointer-events-auto"
+        className="fixed overflow-hidden pointer-events-auto cursor-pointer"
         style={{ clipPath: 'inset(0 100% 0 0)', zIndex: 400 }}
+        onClick={handleStripClick}
+        role="button"
+        tabIndex={0}
+        aria-label="Alternar sonido del vídeo"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleStripClick()
+          }
+        }}
       >
         <Image
           src={posterSrc}
@@ -474,6 +568,29 @@ export function HeroScroll({
           </div>
         </div>
       )}
+
+      {/* [EXPERIMENT] Hint que sigue al cursor con mix-blend difference (mismo
+          pipeline que logo/hamburger). Texto alterna entre "Play with sound"
+          y "Mute sound" según el estado muted del strip video. */}
+      <div
+        ref={playHintRef}
+        aria-hidden="true"
+        className="fixed pointer-events-none top-0 left-0 font-mono text-body-sm"
+        style={{
+          opacity: 0,
+          zIndex: 410,
+          mixBlendMode: 'difference',
+          color: 'var(--c-warm-light)',
+          willChange: 'transform, opacity',
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <svg width="8" height="10" viewBox="0 0 8 10" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M0 0 L8 5 L0 10 Z" />
+          </svg>
+          <span ref={playHintTextRef}>{t('hero.playWithSound')}</span>
+        </div>
+      </div>
 
       {/* Arrow indicator — fixed, z=400 como el strip, centrado abajo */}
       <div
