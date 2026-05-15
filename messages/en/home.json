@@ -1,7 +1,9 @@
 {
   "hero": {
     "tagline": "Where confusion becomes possibility, tension becomes direction, and <strong>change</strong> takes shape.",
-    "closeVideoAriaLabel": "Close video"
+    "closeVideoAriaLabel": "Close video",
+    "playWithSound": "Play sound",
+    "muteSound": "Mute sound"
   },
   "intro": {
     "ariaLabel": "Introduction",
