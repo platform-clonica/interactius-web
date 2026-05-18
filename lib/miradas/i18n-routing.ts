@@ -14,7 +14,7 @@
  * `lib/miradas/frontmatter.schema.ts` y son la fuente de verdad.
  */
 
-import type { Locale } from '@/lib/i18n/config'
+import { LOCALES, type Locale } from '@/lib/i18n/config'
 import {
   MIRADAS_PARENT_CATEGORIES,
   MIRADAS_SUBCATEGORIES,
@@ -144,6 +144,32 @@ export function parseParentOrSubSlug(
   if (sub) return { kind: 'sub', canonical: sub }
   const parent = delocalizeParentSlug(localized, locale)
   if (parent) return { kind: 'parent', canonical: parent }
+  return null
+}
+
+/**
+ * Igual que `parseParentOrSubSlug` pero busca en TODAS las locales, no
+ * solo la actual. Útil para auto-curar URLs cruzadas locale × slug
+ * (ej. `/ca/mirades/futuros/X` cuando el slug CA correcto es `futurs`):
+ * si el segmento existe en alguna locale distinta a la actual, devolvemos
+ * `foundInLocale` y el caller puede redirigir al canónico de la locale
+ * actual con un 308. Estas URLs vienen de cache antiguo de Google o
+ * sitemaps históricos mal generados.
+ */
+export type ParseResultCrossLocale =
+  | ({ kind: 'parent'; canonical: MiradasParentCategory } & { foundInLocale: Locale })
+  | ({ kind: 'sub'; canonical: MiradasSubcategory } & { foundInLocale: Locale })
+  | null
+
+export function parseParentOrSubSlugAnyLocale(
+  localized: string,
+): ParseResultCrossLocale {
+  for (const loc of LOCALES) {
+    const sub = delocalizeSubSlug(localized, loc)
+    if (sub) return { kind: 'sub', canonical: sub, foundInLocale: loc }
+    const parent = delocalizeParentSlug(localized, loc)
+    if (parent) return { kind: 'parent', canonical: parent, foundInLocale: loc }
+  }
   return null
 }
 

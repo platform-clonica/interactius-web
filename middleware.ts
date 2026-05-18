@@ -37,16 +37,50 @@ const REDIRECT_MAP = new Map<string, string>(
  * deben evaluarse antes que los más genéricos para evitar matches incorrectos.
  */
 const LEGACY_PREFIX_FALLBACK: Array<[string, string]> = [
+  // Prefijos cubiertos por el snapshot original (ronda 1).
   ['/en/user-experience-en/', '/en/thoughts'],
   ['/user-experience-en/', '/miradas'],
-  ['/user-experience/', '/miradas'],
+  ['/user-experience/', '/miradas/ux-research'],
+  ['/es/user-experience-es/', '/miradas/ux-research'],
   ['/design/', '/miradas/diseno-ux-ui'],
   ['/ux/', '/miradas/diseno-ux-ui'],
   ['/research/', '/miradas/ux-research'],
   ['/ia/', '/miradas/ia-aplicada'],
+  ['/inteligencia-artificial/', '/miradas/ia-aplicada'],
   ['/estrategia/', '/miradas/diseno-estrategico'],
   ['/workshops/', '/miradas/workshops'],
   ['/diseno-inclusivo/', '/miradas/diseno-ux-ui'],
+
+  // Prefijos detectados en GSC ronda 2 (URLs WP legacy huérfanas).
+  // Webs / disseny / diseño técnico → diseno-ux-ui.
+  ['/disseny-web/', '/miradas/diseno-ux-ui'],
+  ['/es/diseno-web/', '/miradas/diseno-ux-ui'],
+  ['/es/desarrollo-web/', '/miradas/diseno-ux-ui'],
+  ['/web/', '/miradas/diseno-ux-ui'],
+  ['/ui/', '/miradas/diseno-ux-ui'],
+  // "Innovacion" (sin /miradas/ prefix) — versión histórica del slug.
+  ['/innovacion/', '/miradas/innovacion'],
+  // Comunicación → cae al index general de miradas.
+  ['/comunicacio/', '/miradas'],
+  ['/es/comunicacio-es/', '/miradas'],
+  // "General" del blog antiguo → miradas index (no hay sub específica).
+  ['/general/', '/miradas'],
+  ['/es/general-es/', '/miradas'],
+  ['/en/general-en/', '/en/thoughts'],
+  // Tipografía + seguridad técnica → miradas.
+  ['/es/tipografias/', '/miradas/diseno-ux-ui'],
+  ['/es/seguridad-2/', '/miradas'],
+  // Servicios y páginas corporativas viejas.
+  ['/servicios/', '/pensamiento-estrategico'],
+  ['/servicios-ux/', '/pensamiento-estrategico'],
+  ['/casos-de-estudio/', '/identidad'],
+  ['/metodo/', '/identidad'],
+  ['/equipo/', '/identidad'],
+  ['/es/equipo/', '/identidad'],
+  ['/laboratorio-de-usabilidad/', '/miradas/ux-research'],
+  ['/outsourcing-ux/', '/pensamiento-estrategico'],
+  // Página antigua de inicio duplicada.
+  ['/home/', '/'],
 ]
 
 const intlMiddleware = createMiddleware(routing)
@@ -76,9 +110,12 @@ export default function middleware(req: NextRequest) {
   }
 
   // 2. Fallback wildcard: prefijos legacy sin match exacto van al listing
-  //    de la subcategoría más probable.
+  //    de la subcategoría más probable. Acepta tanto el prefijo exacto
+  //    sin slash final (ej. '/metodo') como cualquier path bajo él
+  //    (ej. '/metodo/foo/bar').
   for (const [prefix, dest] of LEGACY_PREFIX_FALLBACK) {
-    if (normalized.startsWith(prefix)) {
+    const prefixNoSlash = prefix.slice(0, -1)
+    if (normalized === prefixNoSlash || normalized.startsWith(prefix)) {
       const url = req.nextUrl.clone()
       url.pathname = dest
       return NextResponse.redirect(url, 308)

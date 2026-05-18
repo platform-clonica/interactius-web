@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
 import { buildPageMetadata, SITE_CONFIG } from '@/lib/seo/metadata.config'
@@ -8,6 +8,7 @@ import { type Locale, LOCALES } from '@/lib/i18n/config'
 import { getAllMiradas } from '@/lib/content/miradas'
 import {
   parseParentOrSubSlug,
+  parseParentOrSubSlugAnyLocale,
   PARENT_DISPLAY,
   SUB_DISPLAY,
   PARENT_SLUG_BY_LOCALE,
@@ -73,7 +74,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ParentOrSubPage({ params }: PageProps) {
   const { locale, parentOrSub } = await params
   const parsed = parseParentOrSubSlug(parentOrSub, locale)
-  if (!parsed) notFound()
+  if (!parsed) {
+    // Auto-cura URLs cruzadas locale × slug (cache antiguo de Google o
+    // sitemaps históricos mal generados): si el segmento es válido en
+    // OTRA locale, redirigimos al canónico de la locale actual con 308.
+    const crossLocale = parseParentOrSubSlugAnyLocale(parentOrSub)
+    if (crossLocale && crossLocale.foundInLocale !== locale) {
+      const canonical =
+        crossLocale.kind === 'parent'
+          ? localizeParentSlug(crossLocale.canonical, locale)
+          : localizeSubSlug(crossLocale.canonical, locale)
+      permanentRedirect(
+        localizedPath('/miradas/[parentOrSub]', locale, {
+          params: { parentOrSub: canonical },
+        }),
+      )
+    }
+    notFound()
+  }
 
   const all = getAllMiradas()
 

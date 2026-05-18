@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { notFound } from 'next/navigation'
+import { notFound, permanentRedirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
 import { buildPageMetadata, SITE_CONFIG } from '@/lib/seo/metadata.config'
@@ -23,6 +23,7 @@ import {
   delocalizeSubSlug,
   localizeSubSlug,
   localizeParentSlug,
+  parseParentOrSubSlugAnyLocale,
   SUB_DISPLAY,
   PARENT_DISPLAY,
 } from '@/lib/miradas/i18n-routing'
@@ -115,7 +116,25 @@ function getCover(slug: string, cover?: string): string {
 export default async function ArticlePage({ params }: PageProps) {
   const { locale, parentOrSub, slug } = await params
   const sub = delocalizeSubSlug(parentOrSub, locale)
-  if (!sub) notFound()
+  if (!sub) {
+    // Auto-cura URL cruzada locale × slug. Si el segmento es una sub
+    // válida en OTRA locale, redirigimos al canónico de la locale actual
+    // preservando el slug del artículo (que es invariante ES).
+    const crossLocale = parseParentOrSubSlugAnyLocale(parentOrSub)
+    if (
+      crossLocale &&
+      crossLocale.kind === 'sub' &&
+      crossLocale.foundInLocale !== locale
+    ) {
+      const canonicalSub = localizeSubSlug(crossLocale.canonical, locale)
+      permanentRedirect(
+        localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+          params: { parentOrSub: canonicalSub, slug },
+        }),
+      )
+    }
+    notFound()
+  }
 
   const article = getMiradaBySlug(sub, slug)
   if (!article) notFound()
