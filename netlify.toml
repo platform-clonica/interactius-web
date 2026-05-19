@@ -27,6 +27,14 @@
 [context.production.environment]
   NEXT_PUBLIC_SITE_URL = "https://www.interactius.com"
 
+# Staging (rama staging) — pre-producción en https://staging.interactius.com
+# Al no coincidir con el host canónico, SITE_CONFIG.isProduction queda false:
+# robots devuelve Disallow: / y GA4 no se carga. Las HUBSPOT_FORM_ID_* están
+# restringidas a scope "Production" en Netlify UI, así que en staging quedan
+# undefined y los handlers entran en stub mode (logs, sin POST a HubSpot).
+[context.staging.environment]
+  NEXT_PUBLIC_SITE_URL = "https://staging.interactius.com"
+
 # Deploy previews (Pull Requests)
 [context.deploy-preview.environment]
   NEXT_PUBLIC_SITE_URL = "https://deploy-preview-$REVIEW_ID--interactius.netlify.app"
