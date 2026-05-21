@@ -101,6 +101,14 @@ API routes under `app/api/` (contact, newsletter, testers) POST to the **HubSpot
 
 Netlify (`netlify.toml`). Build config via `@netlify/plugin-nextjs`. `SITE_CONFIG.isProduction` in `lib/seo/metadata.config.ts` decides canonical host and whether robots is `noindex`.
 
+Four deploy contexts in `netlify.toml`:
+- `production` (branch `main`) → `https://www.interactius.com`
+- `staging` (branch `staging`) → `https://staging.interactius.com` — pre-producción. `isProduction=false` por host, así que `noindex` y GA4 off automáticos. `HUBSPOT_FORM_ID_*` están a scope "Production" en Netlify UI → en staging quedan undefined → handlers de `app/api/*` entran en stub mode (logs, sin POST a HubSpot).
+- `deploy-preview` (PRs) → URL efímera `deploy-preview-N--interactius.netlify.app`.
+- `branch-deploy` (otros branches habilitados) → `branch-deploy--interactius.netlify.app`.
+
+Flujo de release: `feature/*` → PR a `staging` → merge → QA en `staging.interactius.com` → PR `staging` → `main` → autodeploy a producción. NO hacer hotfixes directos a `main` sin cherry-pickear a `staging`.
+
 ## Operations
 
 Site is **LIVE** at `https://www.interactius.com` since 2026-05-07. Netlify auto-deploys on push to `main`. DNS managed by Netlify DNS (Hostytec is only the registrar). SSL Let's Encrypt auto-renew. Form submissions go to HubSpot. Analytics: GA4 with strict consent gating. GSC verified, sitemap submitted (~435 URLs). See `README.md` § Operations for env vars and monitoring entry points.

@@ -189,9 +189,19 @@ interactius-web/
 
 ### Hosting & deploy
 - **Netlify** con `@netlify/plugin-nextjs` (configurado en `netlify.toml`, no en dashboard).
-- **Auto-deploy** en push a `main`. Build context aplica env vars por entorno:
-  - `production`: `NEXT_PUBLIC_SITE_URL=https://www.interactius.com`.
+- **Auto-deploy** en push a `main` (producción) y a `staging` (pre-producción). Build context aplica env vars por entorno:
+  - `production` (branch `main`): `NEXT_PUBLIC_SITE_URL=https://www.interactius.com`.
+  - `staging` (branch `staging`): `NEXT_PUBLIC_SITE_URL=https://staging.interactius.com`. `isProduction=false` automático → robots `noindex` + GA4 off + HubSpot stub mode.
   - `deploy-preview` y `branch-deploy`: URLs `*.netlify.app` (robots noindex automático).
+
+### Staging environment
+- **URL**: `https://staging.interactius.com`. NO añadir a Google Search Console (queda registrado aunque robots lo bloquee).
+- **Branch**: `staging` (autodeploy en Netlify).
+- **Flujo de release**: `feature/*` → PR a `staging` → merge → QA en `staging.interactius.com` → PR `staging` → `main` → autodeploy a producción.
+- **HubSpot**: stub mode. Las `HUBSPOT_FORM_ID_*` están restringidas a scope "Production" en Netlify UI, así que en staging quedan `undefined` y los endpoints de [app/api/](app/api/) loguean el payload y devuelven `ok: true` sin POST a HubSpot. Verificación: submit en `/contacto` no aparece en HubSpot Marketing → Forms → Submissions.
+- **GA4**: deshabilitado automáticamente (`SITE_CONFIG.isProduction === false`).
+- **robots**: `Disallow: /` global vía [app/robots.ts](app/robots.ts) + `noindex, nofollow` en `<meta>` vía [lib/seo/metadata.config.ts](lib/seo/metadata.config.ts).
+- **Política**: nunca `push --force` ni rebase destructivo sobre `staging`. Si un hotfix tiene que ir directo a `main`, cherry-pick inmediato a `staging` para evitar divergencia.
 
 ### DNS
 - **Registrar**: Hostytec.
@@ -204,11 +214,12 @@ interactius-web/
 ### Env vars en Netlify
 | Variable | Scope | Notas |
 |---|---|---|
-| `HUBSPOT_PORTAL_ID` | All contexts | Público (aparece en HTML de cualquier embed) |
-| `HUBSPOT_FORM_ID_CONTACT` | All | — |
-| `HUBSPOT_FORM_ID_NEWSLETTER` | All | — |
-| `HUBSPOT_FORM_ID_TESTERS` | All | — |
-| `NEXT_PUBLIC_GA4_ID` | All | Mismo Measurement ID que el WP previo (continuidad histórica) |
+| `HUBSPOT_PORTAL_ID` | Production | Público pero scopeado a prod para activar stub mode en staging |
+| `HUBSPOT_FORM_ID_CONTACT` | Production | — |
+| `HUBSPOT_FORM_ID_NEWSLETTER` | Production | — |
+| `HUBSPOT_FORM_ID_TESTERS` | Production | — |
+| `HUBSPOT_ACCESS_TOKEN` | Production | Opcional (forms públicos no lo necesitan) |
+| `NEXT_PUBLIC_GA4_ID` | All | Mismo Measurement ID que el WP previo (continuidad histórica). En staging se ignora por `isProduction=false` |
 | `NEXT_PUBLIC_GSC_VERIFICATION` | Production | TXT verification |
 | `NEXT_PUBLIC_SITE_URL` | — | Definido en `netlify.toml` por context, no aquí |
 
@@ -268,6 +279,7 @@ interactius-web/
 
 ### Robots — producción vs. staging
 - `SITE_CONFIG.isProduction` (en `lib/seo/metadata.config.ts`) detecta el host canónico via `NEXT_PUBLIC_SITE_URL`. Cualquier valor distinto de `https://www.interactius.com` o `https://interactius.com` activa `robots: noindex, nofollow` automáticamente.
+- En `staging.interactius.com` esto se traduce en `Disallow: /` global y `<meta name="robots" content="noindex, nofollow">` en todas las páginas, sin código condicional adicional.
 
 ---
 
