@@ -67,6 +67,28 @@ interface CapacityVortexProps {
    *  fija en H/2 (centro del canvas). Útil en mobile para evitar que la
    *  figura "siga el scroll" entrando/saliendo desde el viewport. */
   lockY?: boolean
+  /** Si se pasa, la animación NO se acopla a scroll. El padre escribe en
+   *  este objeto los tres valores 0-1 (típicamente vía GSAP tweens), y el
+   *  componente skipea sus tres `ScrollTrigger` y lee de aquí en el RAF.
+   *  Único path usado por la home (hover sobre cada fila de servicio). */
+  controller?: RefObject<VortexController>
+  /** Desactiva el drift Lissajous lateral (noise por punto). Útil para que
+   *  la figura, una vez formada, quede estática (estado canónico del hover
+   *  del home según especificación). */
+  disableDrift?: boolean
+}
+
+/**
+ * Estado mutable del vortex cuando se conduce manualmente. Tres valores
+ * 0-1 que el RAF interno lee cada frame:
+ *  · `mountIn`   — escala 0→1 con stagger outer→inner por anillo.
+ *  · `mountOut`  — escala 1→0 con stagger inner→outer por anillo.
+ *  · `progress`  — morph entre subservicios (0 = primera forma, 1 = última).
+ */
+export interface VortexController {
+  mountIn: number
+  mountOut: number
+  progress: number
 }
 
 const RINGS = 22
@@ -374,6 +396,8 @@ export function CapacityVortex({
   shapeKind = 'polygon',
   radiusFactor = RADIUS_FACTOR,
   lockY = false,
+  controller,
+  disableDrift = false,
 }: CapacityVortexProps) {
   const gradientStart = strokeColor ?? accentColor
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -668,6 +692,16 @@ export function CapacityVortex({
     // queda fija en H/2. La escala compone mount-in × (1 − mount-out).
     const tick = (timestamp: number) => {
       if (!mounted) return
+      // Modo manual (hover del home): el padre escribe en `controller.current`
+      // vía GSAP tweens. Aquí copiamos esos valores a los refs internos para
+      // que el resto del pipeline (lerp del progress, stagger por anillo,
+      // dy del trigger, draw) funcione idéntico al modo scroll.
+      if (controller?.current) {
+        targetProgressRef.current = controller.current.progress
+        mountInRef.current = controller.current.mountIn
+        mountOutRef.current = controller.current.mountOut
+      }
+
       progressRef.current +=
         (targetProgressRef.current - progressRef.current) * 0.12
       const p = Math.max(0, Math.min(1, progressRef.current))
@@ -699,7 +733,9 @@ export function CapacityVortex({
       }
 
       const { shape, morphScale } = getMorphInfo(p)
-      const noiseT = timestamp * NOISE_TIME_SPEED
+      // disableDrift desactiva el noise espacio-temporal (drift Lissajous);
+      // la figura queda totalmente estática una vez formada.
+      const noiseT = disableDrift ? 0 : timestamp * NOISE_TIME_SPEED
       drawFrame(shape, 0, dy, mountIn, mountOut, morphScale, noiseT)
       rafRef.current = requestAnimationFrame(tick)
     }
@@ -710,12 +746,14 @@ export function CapacityVortex({
     // al centro del viewport) + mount-out scrub (escala 1→0 mientras el
     // último texto va del centro al top). Bidireccional natural — los
     // scrubs siguen al scroll en ambos sentidos sin lógica adicional.
+    // Skipeado cuando hay `controller`: en ese modo el padre escribe los
+    // tres valores y este componente solo dibuja.
     type ScrollTriggerInstance = { kill: () => void }
     let st: ScrollTriggerInstance | null = null
     let mountInSt: ScrollTriggerInstance | null = null
     let mountOutSt: ScrollTriggerInstance | null = null
 
-    void (async () => {
+    if (!controller) void (async () => {
       const [{ default: gsap }, scrollTriggerMod] = await Promise.all([
         import('gsap'),
         import('gsap/ScrollTrigger'),
@@ -763,7 +801,7 @@ export function CapacityVortex({
       mountOutSt?.kill()
       window.removeEventListener('resize', onResize)
     }
-  }, [shapeCount, accentColor, gradientStart, triggerRef, centerXFrac, shapeKind, radiusFactor, lockY])
+  }, [shapeCount, accentColor, gradientStart, triggerRef, centerXFrac, shapeKind, radiusFactor, lockY, controller, disableDrift])
 
   return <canvas ref={canvasRef} className="block w-full h-full" aria-hidden="true" />
 }

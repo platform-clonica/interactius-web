@@ -36,15 +36,17 @@ export async function ServicesRows() {
       className="relative z-content w-full bg-warm-light"
     >
       {/* Super title — fuera de section-inner para sangrar a la izquierda.
-          Wrapper máscara canónico: paddingBottom 0.2em para acomodar
-          descenders + marginBottom -0.2em para no afectar layout exterior. */}
+          Sin paddingBottom 0.2em (excepción al canónico): "Servicios" /
+          "Services" / "Serveis" no tienen descenders en ninguno de los 3
+          idiomas, así que podemos acortar la máscara hasta la línea base
+          del título. Resultado: subtítulo pegado al título sin que la
+          animación del mask pase visualmente sobre el subtítulo. */}
       <div className="relative overflow-hidden pt-section">
         <h2
           id="services-heading"
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
           style={{
             marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
-            paddingBottom: '0.2em',
           }}
         >
           <SuperTitleReveal>{t('services.title')}</SuperTitleReveal>

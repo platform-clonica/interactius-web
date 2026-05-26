@@ -21,9 +21,9 @@ import { useMenuStore } from '@/lib/store/menu'
 export function HeaderCTA({ label }: { label: string }) {
   const begin = usePageCurtainStore((s) => s.beginPageCurtain)
   const router = useRouter()
-  // En mobile/tablet (<lg) el MenuOverlay es fullscreen y ya tiene "Contacto"
-  // entre los secondary links → ocultamos el CTA "Hablemos" cuando el menú
-  // está abierto para evitar duplicado encima del LocaleSwitcher.
+  // El MenuOverlay ya incluye "Contacto" entre los secondary links en todos
+  // los breakpoints → ocultamos el CTA "Hablemos" cuando el menú está abierto
+  // para evitar el duplicado.
   const isMenuOpen = useMenuStore((s) => s.isOpen)
 
   // Prefetch programático en montaje. El Link prefetcha en intersección con
@@ -46,8 +46,13 @@ export function HeaderCTA({ label }: { label: string }) {
     <Link
       href="/contacto"
       onClick={handleClick}
-      className={`hover-wipe-underline inline-block w-fit font-mono text-body-sm text-fg${isMenuOpen ? ' max-lg:hidden' : ''}`}
-      style={{ filter: 'brightness(0) invert(1)' }}
+      className={`hover-wipe-underline inline-block w-fit font-mono text-body-sm text-fg${isMenuOpen ? ' hidden' : ''}`}
+      // opacity:1 fuerza opacidad completa (la clase hover-wipe-underline aplica
+      // opacity:0.6 por defecto). Sin esto el mix-blend-mode:difference del
+      // <header> sólo mezcla al 60%, perdiendo la inversión total que sí tienen
+      // logo y hamburger en el Sidebar. opacity también crea un grupo de
+      // compositing que rompe el blend con el backdrop.
+      style={{ filter: 'brightness(0) invert(1)', opacity: 1 }}
     >
       {label}
     </Link>

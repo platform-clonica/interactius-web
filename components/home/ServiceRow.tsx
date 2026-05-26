@@ -6,6 +6,8 @@ import type { RouteId } from '@/lib/i18n/navigation'
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { PlusArrowFlipIcon } from '@/components/ui/PlusArrowFlipIcon'
+import { CAPACITY_ACCENTS, computeLabelBg } from '@/components/capacity/accents'
+import { CapacityVortex, type VortexController } from '@/components/capacity/CapacityVortex'
 
 interface PillarData {
   number: string
@@ -23,6 +25,13 @@ export function ServiceRow({ data }: ServiceRowProps) {
   const rowRef = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
+  // Controller del vortex: el parent escribe `mountIn` vía GSAP en hover/
+  // hover-out, CapacityVortex lee de aquí cada frame y dibuja.
+  const vortexCtrlRef = useRef<VortexController>({
+    mountIn: 0,
+    mountOut: 0,
+    progress: 0,
+  })
 
   // Reveal lateral del row entero (incluido el stroke full-viewport) al entrar
   useEffect(() => {
@@ -59,11 +68,97 @@ export function ServiceRow({ data }: ServiceRowProps) {
     return () => cleanupRef.current?.()
   }, [])
 
+  // Hover-driven mount-in / mount-out del vortex.
+  // Duración + easing alineados con la line-mask flip del titular y con el
+  // morph del PlusArrowFlipIcon — todo el conjunto entra/sale al mismo tempo.
+  // overwrite:'auto' permite interrumpir mid-animation si entras-sales-entras
+  // rápido; la nueva tween arranca desde el `mountIn` actual sin saltos.
+  useEffect(() => {
+    const rowEl = rowRef.current
+    if (!rowEl) return
+
+    let detach: (() => void) | undefined
+    void (async () => {
+      const { default: gsap } = await import('gsap')
+      const reduced = getReducedMotion()
+      if (reduced) return
+
+      const ease = 'cubic-bezier(.45,0,.15,1)'
+      const duration = 0.5
+
+      const handleEnter = () => {
+        gsap.to(vortexCtrlRef.current, {
+          mountIn: 1,
+          duration,
+          ease,
+          overwrite: 'auto',
+        })
+      }
+      const handleLeave = () => {
+        gsap.to(vortexCtrlRef.current, {
+          mountIn: 0,
+          duration,
+          ease,
+          overwrite: 'auto',
+        })
+      }
+
+      rowEl.addEventListener('mouseenter', handleEnter)
+      rowEl.addEventListener('mouseleave', handleLeave)
+      detach = () => {
+        rowEl.removeEventListener('mouseenter', handleEnter)
+        rowEl.removeEventListener('mouseleave', handleLeave)
+      }
+    })()
+
+    return () => detach?.()
+  }, [])
+
   const InnerWrapper = (data.href ? CurtainLink : 'div') as React.ElementType
   const wrapperProps = data.href ? { href: data.href } : {}
 
+  // Label bg tintado del accent del servicio. Mismo cálculo (computeLabelBg)
+  // que en CapacityServicesAnim para mantener el peso visual idéntico al
+  // bg-grey original. Sin href → fallback a bg-grey via className.
+  const accent =
+    data.href && data.href in CAPACITY_ACCENTS
+      ? CAPACITY_ACCENTS[data.href as keyof typeof CAPACITY_ACCENTS]
+      : undefined
+  const labelBg = accent ? computeLabelBg(accent.accentColor) : null
+
   return (
-    <div ref={rowRef} className="group relative w-full">
+    <div ref={rowRef} className="group relative w-full transition-colors duration-300 ease-expo hover:bg-pure-white">
+      {/* Vortex background — hover-driven, debajo de strokes y contenido.
+          Mismo render que el vortex sticky de las páginas de servicio, pero
+          en modo controller (sin ScrollTrigger) y disableDrift (estático
+          una vez formado). Solo se monta si hay accent (i.e. la fila apunta
+          a una capacidad conocida). shapeCount=1 → solo la primera forma,
+          progress fijo en 0 (no morph entre subservicios en el home).
+          Sangrado vertical: el wrapper se extiende 150% del rowH por encima
+          del row y termina al 30% del rowH (no llega al borde inferior).
+          Así la figura, centrada en el canvas extendido, queda en la mitad
+          superior del row con su parte alta sobresaliendo por arriba y la
+          inferior cómodamente dentro (sin enmascarar por abajo). */}
+      {accent && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-[calc(-150%+200px)] bottom-[calc(30%-200px)] pointer-events-none opacity-60 translate-x-[100px]"
+        >
+          <CapacityVortex
+            shapeCount={1}
+            accentColor={accent.accentColor}
+            strokeColor={'strokeColor' in accent ? accent.strokeColor : undefined}
+            shapeKind={accent.shapeKind}
+            triggerRef={rowRef}
+            centerXFrac={0.22}
+            radiusFactor={0.35 * ('homeSizeMultiplier' in accent ? accent.homeSizeMultiplier : 1)}
+            lockY
+            disableDrift
+            controller={vortexCtrlRef}
+          />
+        </div>
+      )}
+
       {/* Stroke base — top, full viewport (de borde a borde de la página) */}
       <span
         aria-hidden="true"
@@ -118,7 +213,10 @@ export function ServiceRow({ data }: ServiceRowProps) {
             <ul className="mt-5 flex flex-wrap gap-2">
               {data.services.map((svc) => (
                 <li key={svc}>
-                  <span className="inline-block bg-grey px-1.5 py-1 font-mono text-label text-fg leading-tight">
+                  <span
+                    className={`inline-block px-1.5 py-1 font-mono text-label text-fg leading-tight${labelBg ? '' : ' bg-grey'}`}
+                    style={labelBg ? { backgroundColor: labelBg } : undefined}
+                  >
                     {svc}
                   </span>
                 </li>

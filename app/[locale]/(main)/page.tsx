@@ -3,7 +3,11 @@ import { getTranslations } from 'next-intl/server'
 
 import { HeroScroll } from '@/components/home/HeroScroll'
 import { HomeIntroText } from '@/components/home/HomeIntroText'
-import { HomeIntroReveal } from '@/components/home/HomeIntroReveal'
+// HomeIntroReveal — sección "Diseñamos para la transición" comentada
+// temporalmente; sustituida por IdentidadLiminal mientras iteramos el
+// nuevo flujo de la home (no eliminar, posible vuelta atrás).
+// import { HomeIntroReveal } from '@/components/home/HomeIntroReveal'
+import { IdentidadLiminal } from '@/components/identidad/IdentidadLiminal'
 import { ServicesRows } from '@/components/home/ServicesRows'
 import { WorkGrid } from '@/components/home/WorkGrid'
 import { ClientsMarquee } from '@/components/home/ClientsMarquee'
@@ -70,7 +74,9 @@ export default async function HomePage({ params }: PageProps) {
 
       <HomeIntroText />
 
-      <HomeIntroReveal />
+      {/* <HomeIntroReveal /> — sustituida por IdentidadLiminal (movida desde
+          la página Identidad). Mantener comentada hasta cerrar la iteración. */}
+      <IdentidadLiminal />
 
       <ServicesRows />
 

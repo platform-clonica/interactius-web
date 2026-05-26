@@ -70,7 +70,7 @@ export function ArticleCardSimple({
             </div>
           </div>
           <div className="w-full bg-pure-white p-5 flex items-center min-h-[72px]">
-            <h2 className="font-serif font-light text-title-mono text-fg leading-tight">
+            <h2 className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-[1.15]">
               {article.title}
             </h2>
           </div>

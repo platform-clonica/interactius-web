@@ -6,6 +6,7 @@ import { getReducedMotion } from '@/components/motion/useReducedMotion'
 import { CapacityGraph } from './CapacityGraph'
 import { CapacityVortex } from './CapacityVortex'
 import type { CapacityService } from './CapacityGraph'
+import { computeLabelBg } from './accents'
 
 export type { CapacityService }
 
@@ -16,24 +17,6 @@ function renderRich(text: string): ReactNode[] {
   return text.split(/<strong>(.*?)<\/strong>/).map((part, i) =>
     i % 2 === 1 ? <strong key={i}>{part}</strong> : part
   )
-}
-
-/** Calcula el background de los pills/labels a partir del accentColor del
- *  servicio. Mantiene el peso visual del bg-grey original (#e8e6e3 sobre
- *  warm-light = ~13 unidades de diferencia por canal) pero teñido del
- *  accent. Alpha = 13 / |distancia_brillo_promedio|. Colores muy
- *  saturados (granate) reciben menos alpha; colores cercanos al bg
- *  (grey-green) reciben más, manteniendo todos un peso perceptual
- *  similar al grey original. */
-function computeLabelBg(accentHex: string): string {
-  const r = parseInt(accentHex.slice(1, 3), 16)
-  const g = parseInt(accentHex.slice(3, 5), 16)
-  const b = parseInt(accentHex.slice(5, 7), 16)
-  const accentAvg = (r + g + b) / 3
-  const warmAvg = 241 // bg warm-light #F5F2ED, promedio RGB
-  const distance = Math.max(1, Math.abs(warmAvg - accentAvg))
-  const alpha = Math.min(0.4, Math.max(0.05, 13 / distance))
-  return `rgba(${r}, ${g}, ${b}, ${alpha.toFixed(3)})`
 }
 
 /* ==========================================================================
@@ -230,7 +213,7 @@ export function CapacityServicesAnim({
       {accentColor ? (
         <>
           <div
-            className="absolute inset-0 z-10 pointer-events-none"
+            className="absolute inset-0 z-10 pointer-events-none opacity-60 lg:opacity-100"
             aria-hidden="true"
           >
             <div className="sticky top-0 h-screen pointer-events-none">

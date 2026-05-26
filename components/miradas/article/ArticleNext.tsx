@@ -47,7 +47,7 @@ export function ArticleNext({ article, locale }: ArticleNextProps) {
           llenar la fila → bottom flush con el top del footer. */}
       <div className="grid grid-cols-12">
         {/* Imagen — sangrado izquierdo total + cols 1-6, stretch vertical */}
-        <div className="col-span-12 lg:col-span-6 relative aspect-[4/3] lg:aspect-auto overflow-hidden">
+        <div className="col-span-12 lg:col-span-6 relative h-[clamp(140px,24vh,220px)] lg:h-auto overflow-hidden">
           <div
             className="relative h-full"
             style={{
