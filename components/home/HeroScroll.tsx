@@ -85,24 +85,28 @@ export function HeroScroll({
   const [isLightboxMuted, setIsLightboxMuted] = useState(false)
   const isLightboxOpenRef = useRef(false)
 
-  // [EXPERIMENT] Autoplay tras curtain + fullscreen desde el arranque.
-  // Intenta arrancar con audio; si el browser lo bloquea, fallback muted.
-  const playWithAudioFallback = useCallback(() => {
+  // Helper de play — respeta el estado de muted actual. NUNCA pone muted=false
+  // por su cuenta: el audio solo se activa por click manual del usuario
+  // (handleStripClick). Si Chrome bloquea por autoplay policy (puede pasar
+  // si muted=false sin gesture previo), fallback a muted como red de seguridad.
+  const playRespectingMutedState = useCallback(() => {
     const v = videoRef.current
     if (!v) return
     if (!v.paused) return
-    v.muted = false
     const p = v.play()
     if (p && typeof p.catch === 'function') {
       p.catch(() => {
-        v.muted = true
-        v.play().catch(() => {})
+        if (!v.muted) {
+          v.muted = true
+          v.play().catch(() => {})
+        }
       })
     }
   }, [])
 
-  // [EXPERIMENT] Click sobre el strip → toggle de audio (muted ↔ unmuted).
-  // El gesto de usuario libera la autoplay policy del browser.
+  // Click sobre el strip → toggle de audio (muted ↔ unmuted). Es el único
+  // sitio donde el audio puede activarse — el gesto del usuario libera la
+  // autoplay policy del browser.
   const handleStripClick = useCallback(() => {
     const v = videoRef.current
     if (!v) return
@@ -110,16 +114,17 @@ export function HeroScroll({
     if (v.paused) v.play().catch(() => {})
   }, [])
 
-  // [EXPERIMENT] Suscripción al curtain store — cuando termina la uncover
-  // (isActive true → false), disparar el play con audio del strip video.
+  // Tras la cortina de transición, asegurar que el video sigue playing
+  // (puede haberse pausado durante el unmount/mount). NO desmuteamos: si el
+  // usuario navegó a otra página y volvió, el video debe arrancar muted.
   const isCurtainActive = usePageCurtainStore((s) => s.isActive)
   const prevCurtainActiveRef = useRef(isCurtainActive)
   useEffect(() => {
     if (prevCurtainActiveRef.current && !isCurtainActive) {
-      playWithAudioFallback()
+      playRespectingMutedState()
     }
     prevCurtainActiveRef.current = isCurtainActive
-  }, [isCurtainActive, playWithAudioFallback])
+  }, [isCurtainActive, playRespectingMutedState])
 
   useEffect(() => {
     isLightboxOpenRef.current = isLightboxOpen
@@ -132,11 +137,11 @@ export function HeroScroll({
         // Re-evalúa fase al cerrar el lightbox.
         const sy = window.scrollY
         if (sy < PHASE3_END) {
-          playWithAudioFallback()
+          playRespectingMutedState()
         }
       }
     }
-  }, [isLightboxOpen, playWithAudioFallback])
+  }, [isLightboxOpen, playRespectingMutedState])
 
   // Sync muted del vídeo del lightbox con el estado React (toggle del botón)
   useEffect(() => {
@@ -168,13 +173,19 @@ export function HeroScroll({
 
   // Menu-aware z-index del strip: cuando el menu abre (z=150), el strip baja
   // a z=100 para quedar por debajo y no competir visualmente. Chrome, menu y
-  // header siempre encima del strip mientras menu esté abierto.
+  // header siempre encima del strip mientras menu esté abierto. Además, mute
+  // el video — el strip queda tapado, así que el audio debe desactivarse y
+  // requerir click del usuario para reactivarse al cerrar el menú.
   useEffect(() => {
     const s = stripRef.current
     const a = arrowRef.current
     const z = isMenuOpen ? '100' : '400'
     if (s) s.style.zIndex = z
     if (a) a.style.zIndex = z
+    if (isMenuOpen) {
+      const v = videoRef.current
+      if (v) v.muted = true
+    }
   }, [isMenuOpen])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
@@ -296,6 +307,14 @@ export function HeroScroll({
         })
       }
 
+      // Pointer-events autoritativo según fase. Strip clickable solo cuando
+      // está visible (Phase 1/2 o inicio de Phase 3). En Phase 3 ya colapsado
+      // o más allá del budget → no-interactivo, no atrapando al usuario.
+      const setStripInteractivity = (scrollY: number) => {
+        const visible = scrollY < PHASE3_END
+        strip.style.pointerEvents = visible ? 'auto' : 'none'
+      }
+
       // Snap inicial al phase state correcto basado en scrollY actual.
       // Sin esto, en refresh mid-page el strip flashea desde su geometría
       // inicial (bottom-strip) hasta su estado final cuando ScrollTrigger
@@ -317,15 +336,22 @@ export function HeroScroll({
           gsap.set(strip, { top: 0, left: 0 })
           gsap.set(strip, { clipPath: 'inset(0 0 100% 0)' })
         }
+        setStripInteractivity(scrollY)
       }
       if (!isFreshLoad) {
         snapPhaseState(initialScrollY)
+      } else {
+        // Fresh load: el reveal lateral del strip arranca con clipPath
+        // 100% (oculto). Aún así dejamos pointer-events alineado con la fase
+        // (auto en scrollY=0 — Phase 1 inicio).
+        setStripInteractivity(initialScrollY)
       }
 
-      // ── [EXPERIMENT] Reproducción del vídeo del strip ────────────────────
-      //  · scroll < PHASE3_END: reproduce con audio (fallback muted) — incluye
-      //    el estado strip-corner inicial (antes Phase 1 lo mantenía pausado).
-      //  · scroll ≥ PHASE3_END: pausado (no se ve).
+      // ── Reproducción del vídeo del strip ─────────────────────────────────
+      //  · scroll < PHASE3_END: playing con el muted state actual (toggled
+      //    solo por click del usuario sobre el strip).
+      //  · scroll ≥ PHASE3_END: pausado Y muted=true (el video desaparece,
+      //    el audio queda desactivado hasta el siguiente click del usuario).
       //  · Lightbox abierto: SIEMPRE pausado.
       const updateStripVideoPlayback = (scrollY: number) => {
         if (!videoEl) return
@@ -334,9 +360,10 @@ export function HeroScroll({
           return
         }
         if (scrollY < PHASE3_END) {
-          playWithAudioFallback()
+          playRespectingMutedState()
         } else {
           if (!videoEl.paused) videoEl.pause()
+          videoEl.muted = true
         }
       }
       if (videoEl) {
@@ -371,6 +398,7 @@ export function HeroScroll({
 
             // Strip video play/pause según fase
             updateStripVideoPlayback(scrollY)
+            setStripInteractivity(scrollY)
 
             if (scrollY <= PHASE1_END) {
               // Fase 1 — strip expande a fullscreen (top+left → 0).
@@ -408,6 +436,73 @@ export function HeroScroll({
         applyStripState(1)
       }
 
+      // ── Failsafe: scroll listener nativo redundante ──────────────────────
+      // Red de seguridad si ScrollTrigger se queda dormido (bfcache, GPU
+      // compositor stale tras hibernación, etc.). Aplica clipPath/pointer-
+      // events según scrollY actual, sin sustituir a ScrollTrigger. rAF
+      // throttle para no penalizar el scroll.
+      let rafScheduled = false
+      const onWindowScroll = () => {
+        if (rafScheduled) return
+        rafScheduled = true
+        requestAnimationFrame(() => {
+          rafScheduled = false
+          snapPhaseState(window.scrollY)
+        })
+      }
+      window.addEventListener('scroll', onWindowScroll, { passive: true })
+      cleanups.push(() => window.removeEventListener('scroll', onWindowScroll))
+
+      // ── Refresh en visibility/pageshow ───────────────────────────────────
+      // Tras hibernación/tab-switch ScrollTrigger pierde frames y queda con
+      // valores stale. Tras bfcache restore los useEffect no se re-disparan
+      // y el strip puede quedar atascado. En ambos casos re-aplicamos el
+      // estado correcto basado en scrollY actual y refrescamos ScrollTrigger.
+      const refreshAll = () => {
+        snapPhaseState(window.scrollY)
+        ScrollTrigger.refresh()
+      }
+      const onVisibility = () => {
+        if (document.hidden) return
+        refreshAll()
+      }
+      const onPageShow = (e: PageTransitionEvent) => {
+        if (!e.persisted) return
+        refreshAll()
+      }
+      document.addEventListener('visibilitychange', onVisibility)
+      window.addEventListener('pageshow', onPageShow)
+      cleanups.push(() => document.removeEventListener('visibilitychange', onVisibility))
+      cleanups.push(() => window.removeEventListener('pageshow', onPageShow))
+
+      // ── Escape hatch para usuario atrapado ────────────────────────────────
+      // Si por cualquier motivo el strip queda fullscreen sin que el scroll
+      // funcione, Esc o dblclick fuerzan el salto a más allá del budget.
+      // Pausa el video, libera el body lock si está heredado, y scrollea más
+      // allá de Phase 3 para que el strip se contraiga.
+      const escapeHero = () => {
+        if (window.scrollY >= PHASE3_END) return // ya fuera del budget
+        if (videoEl && !videoEl.paused) videoEl.pause()
+        const root = document.documentElement
+        const body = document.body
+        if (root.style.overflow === 'hidden') root.style.overflow = ''
+        if (body.style.overflow === 'hidden') body.style.overflow = ''
+        window.scrollTo({ top: HERO_SCROLL + 1, left: 0, behavior: 'instant' })
+        snapPhaseState(HERO_SCROLL + 1)
+      }
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key !== 'Escape') return
+        escapeHero()
+      }
+      const onStripDblClick = (e: MouseEvent) => {
+        e.preventDefault()
+        escapeHero()
+      }
+      window.addEventListener('keydown', onKeyDown)
+      strip.addEventListener('dblclick', onStripDblClick)
+      cleanups.push(() => window.removeEventListener('keydown', onKeyDown))
+      cleanups.push(() => strip.removeEventListener('dblclick', onStripDblClick))
+
       // ── [EXPERIMENT] Hover hint siguiendo el cursor ──────────────────────
       // Visible siempre durante el hover. El texto alterna según el estado
       // muted del strip video ("Play with sound" ↔ "Quitar sonido").
@@ -441,7 +536,7 @@ export function HeroScroll({
     })()
 
     return () => cleanupRef.current?.()
-  }, [playWithAudioFallback])
+  }, [playRespectingMutedState])
 
   return (
     <>
@@ -466,11 +561,15 @@ export function HeroScroll({
 
       {/* Strip — SEPARADO de la section, fixed, z=400 (encima del chrome: 160-200).
            Al crecer a fullscreen tapa físicamente el chrome sin snaps. En estado
-           strip inicial (bottom-right) el chrome está visible fuera del strip. */}
+           strip inicial (bottom-right) el chrome está visible fuera del strip.
+
+           Failsafe: arranca con pointer-events:none y se activa solo cuando GSAP
+           confirma que el strip es visible (Phase 1/2). Si GSAP nunca carga, el
+           strip permanece no-interactivo, no atrapando al usuario. */}
       <div
         ref={stripRef}
-        className="fixed overflow-hidden pointer-events-auto cursor-pointer"
-        style={{ clipPath: 'inset(0 100% 0 0)', zIndex: 400 }}
+        className="fixed overflow-hidden cursor-pointer"
+        style={{ clipPath: 'inset(0 100% 0 0)', zIndex: 400, pointerEvents: 'none' }}
         onClick={handleStripClick}
         role="button"
         tabIndex={0}
