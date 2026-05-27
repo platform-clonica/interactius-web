@@ -197,6 +197,26 @@ export function HeroScroll({
     const strip   = stripRef.current
     if (!section || !spacer || !tagline || !strip) return
 
+    // En reload — NO en navegación interna ni bfcache — si Next.js restaura
+    // un scrollY dentro del rango del hero (donde el strip/video sería
+    // visible a media animación), forzamos scrollY=0. La hero animation
+    // (corner → fullscreen → collapse) solo tiene sentido desde el top;
+    // aterrizar con el video fullscreen tras un refresh es confuso.
+    // Pasado HERO_SCROLL respetamos la posición restaurada (no penalizar
+    // al usuario que estaba leyendo Servicios/WorkGrid).
+    if (typeof performance !== 'undefined') {
+      const navEntry = performance.getEntriesByType('navigation')[0] as
+        | PerformanceNavigationTiming
+        | undefined
+      if (
+        navEntry?.type === 'reload' &&
+        window.scrollY > 0 &&
+        window.scrollY < HERO_SCROLL
+      ) {
+        window.scrollTo(0, 0)
+      }
+    }
+
     // Detección síncrona pre-imports: si la página se refresca con scroll
     // restaurado mid-page, NO queremos disparar la entry reveal del strip
     // (clipPath 100%→0%) ni autoplay del video — porque el strip ya debería
