@@ -6,7 +6,9 @@ import { type Locale } from '@/lib/i18n/config'
 import { IdentidadHero } from '@/components/identidad/IdentidadHero'
 import { IdentidadIntro } from '@/components/identidad/IdentidadIntro'
 import { IdentidadValores } from '@/components/identidad/IdentidadValores'
-import { IdentidadLiminal } from '@/components/identidad/IdentidadLiminal'
+// IdentidadLiminal movido a la home (sección "Diseñamos para la transición"
+// → sustituida por Actitud Liminal). Identidad: hero → intro → valores →
+// metodología → gente → joinUs (sin Liminal en medio).
 import { IdentidadMetodologia } from '@/components/identidad/IdentidadMetodologia'
 import { IdentidadGente } from '@/components/identidad/IdentidadGente'
 import { IdentidadJoinUs } from '@/components/identidad/IdentidadJoinUs'
@@ -33,7 +35,6 @@ export default async function Identidad({ params }: PageProps) {
       <IdentidadHero />
       <IdentidadIntro />
       <IdentidadValores />
-      <IdentidadLiminal />
       <IdentidadMetodologia />
       <IdentidadGente />
       <IdentidadJoinUs />

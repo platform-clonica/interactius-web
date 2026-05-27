@@ -94,7 +94,7 @@ function ArticleCard({
 
           {/* Title strip — full width en cards normales */}
           <div className="w-full bg-pure-white p-5 flex items-center min-h-[72px]">
-            <h2 className="font-serif font-light text-subtitle text-fg leading-tight">
+            <h2 className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-[1.15]">
               {article.title}
             </h2>
           </div>
@@ -151,7 +151,7 @@ function FeaturedCard({
 
           {/* Title strip — w-1/2 (= 5 cols del card que es col-span-10) en lg */}
           <div className="w-full lg:w-1/2 bg-pure-white p-5 min-h-[88px] flex items-center">
-            <h2 className="font-serif font-light text-subtitle text-fg leading-tight">
+            <h2 className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-[1.15]">
               {article.title}
             </h2>
           </div>
@@ -274,16 +274,15 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
     <section className="w-full" aria-label={t('grid.articlesLabel')}>
 
       {/* ── "Miradas" super title — sangrado izquierdo canónico + line-mask
-            reveal. Padding-top reducido (no canónico aquí: queremos el
-            título cerca del subtítulo del hero). Wrapper máscara con
-            paddingBottom 0.2em para acomodar descenders + marginBottom
-            -0.2em para no afectar el layout exterior. ── */}
+            reveal. Sin paddingBottom 0.2em (excepción al canónico): los 3
+            títulos en sus idiomas ("Miradas" / "Views" / "Mirades") no
+            tienen descenders, así que podemos acortar la máscara hasta la
+            línea base. ── */}
       <div className="relative overflow-hidden mt-0">
         <h2
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
           style={{
             marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
-            paddingBottom: '0.2em',
           }}
           aria-hidden="true"
         >

@@ -237,7 +237,6 @@
     margin-inline: auto;
     padding-inline: var(--grid-margin);
   }
-
   .grid-12 {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));

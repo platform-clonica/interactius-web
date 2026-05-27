@@ -35,15 +35,15 @@ export async function MiradasGlobalHome({ articles, locale }: MiradasGlobalHomeP
       <MiradasHero />
 
       {/* Super title "Miradas" — sangrado izquierdo canónico + line-mask reveal.
-          Wrapper máscara canónico: paddingBottom 0.2em para acomodar
-          descenders + marginBottom -0.2em para no afectar el layout exterior.
+          Sin paddingBottom 0.2em (excepción al canónico): los 3 títulos en
+          sus idiomas ("Miradas" / "Views" / "Mirades") no tienen descenders,
+          así que la máscara se ajusta hasta la línea base.
           El espacio "antes de los artículos" se aporta con el spacer siguiente. */}
       <div className="relative overflow-hidden pt-8 lg:pt-12">
         <h2
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
           style={{
             marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
-            paddingBottom: '0.2em',
           }}
           aria-hidden="true"
         >

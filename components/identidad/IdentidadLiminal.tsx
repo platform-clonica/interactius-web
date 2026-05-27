@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useEffect, type ReactNode } from 'react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
@@ -16,6 +17,7 @@ export function IdentidadLiminal() {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef   = useRef<HTMLHeadingElement>(null)
   const bodyRef    = useRef<HTMLDivElement>(null)
+  const imageWrapperRef = useRef<HTMLDivElement>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
 
@@ -75,6 +77,49 @@ export function IdentidadLiminal() {
         bodySplits.forEach((s) => s.revert())
       })
 
+      // --- Image clip — dos scrubs independientes con onUpdate directo:
+      //   · Entry : 'top 85%' → 'top top'         inset(0 100% 0 0) → 0 0% 0 0
+      //   · Exit  : 'bottom bottom' → 'bottom top' 0 0% 0 0          → 0 0 0 100%
+      //
+      // Por qué no `gsap.to + animation:` como IdentidadHero: en aquél el
+      // exit tween se crea dentro del onComplete del timeline de entrada
+      // (ya con el clip-path en `inset 0`), así GSAP captura el "from"
+      // correcto. Aquí ambos scrubs viven en paralelo y se crean a la vez
+      // cuando el clip-path está aún en `inset(0 100% 0 0)` → el exit
+      // capturaría "from" incorrecto y la imagen "saltaría". Con onUpdate
+      // escribo la inline-style yo mismo y el bug desaparece.
+      const imageWrapperEl = imageWrapperRef.current
+      if (imageWrapperEl) {
+        imageWrapperEl.style.clipPath = 'inset(0 100% 0 0)'
+
+        const stEntry = ScrollTrigger.create({
+          trigger: sectionEl,
+          start: 'top 85%',
+          end: 'top top',
+          scrub: true,
+          onUpdate: (self) => {
+            const right = (1 - self.progress) * 100
+            imageWrapperEl.style.clipPath = `inset(0 ${right}% 0 0)`
+          },
+        })
+
+        const stExit = ScrollTrigger.create({
+          trigger: sectionEl,
+          start: 'bottom bottom',
+          end: 'bottom top',
+          scrub: true,
+          onUpdate: (self) => {
+            const left = self.progress * 100
+            imageWrapperEl.style.clipPath = `inset(0 0% 0 ${left}%)`
+          },
+        })
+
+        cleanups.push(() => {
+          stEntry.kill()
+          stExit.kill()
+        })
+      }
+
       // --- Mask out all Valores images as Liminal scrolls in ---
       // Lateral right-to-left clip on the full stack so no lower image peeks through
       const valoresImgs = Array.from(
@@ -104,52 +149,85 @@ export function IdentidadLiminal() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative w-full bg-warm-light" aria-labelledby="liminal-title">
-      {/* Sticky text panel — holds pinned while the 200vh spacer scrolls */}
-      <div className="sticky top-0 min-h-screen section-inner flex items-center py-section">
-        <div className="grid grid-cols-12 gap-grid-gutter w-full">
-          {/* Mismo estilo que los titulares de las páginas legales y los heros
-              de Capacidades: text-[clamp(40px,7.5vw,120px)], leading 1.0,
-              tracking -0.03. Un escalón por debajo del text-super. */}
-          <div className="col-span-12 lg:col-start-2 lg:col-span-4">
-            <h2
-              ref={titleRef}
-              id="liminal-title"
-              className="font-serif font-normal text-fg select-none text-super leading-[1.0] tracking-[-0.03em]
-                         lg:text-[clamp(40px,7.5vw,120px)]"
-            >
-              {t('liminal.title').split(' ').map((word, i, arr) => (
-                <span key={i}>
-                  {word}
-                  {i < arr.length - 1 && (
-                    <>
-                      <br className="lg:hidden" />{' '}
-                    </>
-                  )}
-                </span>
-              ))}
-            </h2>
-          </div>
-          {/* mt aprox = 2 × line-height del título (= 2 × clamp(40px,7.5vw,120px)
-              = clamp(80px,15vw,240px)). Así el TOP del párrafo coincide con
-              el BOTTOM del título. La sección usa items-center → al ser el
-              bloque más alto, el título sube proporcionalmente. */}
-          <div className="col-span-12 mt-10 lg:col-start-6 lg:col-span-6 lg:mt-[clamp(120px,17vw,280px)]">
-            <div
-              ref={bodyRef}
-              className="flex flex-col gap-6 font-mono text-body-sm text-fg leading-[1.5]"
-            >
-              <p data-body-p="">{t.rich('liminal.body1', liminalComponents)}</p>
-              <p data-body-p="">{t.rich('liminal.body2', liminalComponents)}</p>
-              <p data-body-p="">{t.rich('liminal.body3', liminalComponents)}</p>
-              <p data-body-p="">{t.rich('liminal.body4', liminalComponents)}</p>
+    <section
+      ref={sectionRef}
+      className="relative w-full bg-warm-light"
+      aria-labelledby="liminal-title"
+    >
+      {/* Sticky panel — pinned 100vh, dentro vive la imagen absolute (desktop)
+          y el texto centrado vertical. Mismo patrón que IdentidadHero pero
+          en sticky en lugar de min-h-screen en flow, porque aquí queremos
+          que el spacer de abajo arrastre el clip-exit (scrub bottom-bottom →
+          bottom-top de la section). */}
+      <div className="sticky top-0 min-h-screen flex items-center py-section">
+        {/* Imagen desktop — absolute, ocupa todo el alto del sticky (100vh)
+            y llega al borde derecho del viewport. Left:58.2% replica la
+            proporción del hero de Identidad (~42% ancho viewport). will-change
+            para evitar repaint thrashing durante el scrub del clip-path. */}
+        <div
+          ref={imageWrapperRef}
+          className="absolute top-0 bottom-0 right-0 hidden lg:block will-change-[clip-path]"
+          style={{ left: '58.2%' }}
+        >
+          <Image
+            src="/home/liminal-image.webp"
+            alt=""
+            aria-hidden="true"
+            fill
+            sizes="42vw"
+            className="object-cover object-center"
+          />
+        </div>
+
+        {/* Texto — relative z-content sobre la imagen absolute. Mismo grid
+            que antes; columna izquierda (col-start-2 col-span-5) con
+            titular + body. */}
+        <div className="relative z-content section-inner w-full">
+          <div className="grid grid-cols-12 gap-grid-gutter w-full">
+            <div className="col-span-12 lg:col-start-2 lg:col-span-5">
+              <h2
+                ref={titleRef}
+                id="liminal-title"
+                className="font-serif font-light text-title text-fg tracking-[-0.02em] leading-[1.1]"
+              >
+                {t('liminal.title')}
+              </h2>
+              <div
+                ref={bodyRef}
+                className="mt-10 flex flex-col gap-6 font-mono text-body-sm text-fg leading-[1.6]"
+              >
+                <p data-body-p="">
+                  {t.rich('liminal.body1', liminalComponents)}{' '}
+                  {t.rich('liminal.body2', liminalComponents)}
+                </p>
+                <p data-body-p="">
+                  {t.rich('liminal.body3', liminalComponents)}{' '}
+                  {t.rich('liminal.body4', liminalComponents)}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 100vh spacer — pin corto, ritmo canónico para textos solitarios sticky */}
-      <div style={{ height: '100vh' }} aria-hidden="true" />
+      {/* Imagen mobile — en flow, debajo del sticky (al desengancharse) */}
+      <div className="lg:hidden relative w-full aspect-[16/9] overflow-hidden">
+        <Image
+          src="/home/liminal-image.webp"
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </div>
+
+      {/* Spacer — duplica el tiempo de pin sticky (200vh extra → sticky se
+          queda pinned ~200vh) para dar pausa al texto/imagen. Memoria
+          `feedback_sticky_text_pause`: 100vh sería texto solo, 200-300vh con
+          scrub de imagen encima (es nuestro caso). Los últimos 100vh
+          arrastran el clip-exit (`bottom bottom` → `bottom top`). */}
+      <div style={{ height: '200vh' }} aria-hidden="true" />
     </section>
   )
 }
