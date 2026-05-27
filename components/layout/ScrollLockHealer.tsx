@@ -42,6 +42,13 @@ function unlock(): void {
   body.style.overflow = ''
   root.style.overscrollBehavior = ''
   body.style.overscrollBehavior = ''
+  // Tras liberar el lock, ScrollTrigger queda con métricas calculadas mientras
+  // el body tenía overflow:hidden — el viewport efectivo era distinto y los
+  // triggers pueden quedar dormidos (síntoma: tagline del hero sticky).
+  // Un resize sintético dispara el onResize del HeroScroll → ScrollTrigger.refresh.
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('resize'))
+  }
 }
 
 function healIfStuck(reason: string): void {
