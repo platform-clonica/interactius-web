@@ -315,46 +315,17 @@ export function HeroScroll({
         strip.style.pointerEvents = visible ? 'auto' : 'none'
       }
 
-      // Snap inicial al phase state correcto basado en scrollY actual.
-      // Sin esto, en refresh mid-page el strip flashea desde su geometría
-      // inicial (bottom-strip) hasta su estado final cuando ScrollTrigger
-      // dispara onUpdate por primera vez.
-      const snapPhaseState = (scrollY: number) => {
-        if (scrollY <= PHASE1_END) {
-          const p = scrollY / PHASE1_END
-          gsap.set(strip, { top: stripTop * (1 - p), left: leftStart * (1 - p) })
-          gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
-        } else if (scrollY <= PHASE2_END) {
-          gsap.set(strip, { top: 0, left: 0 })
-          gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
-        } else if (scrollY <= PHASE3_END) {
-          const p = (scrollY - PHASE2_END) / (PHASE3_END - PHASE2_END)
-          gsap.set(strip, { top: 0, left: 0 })
-          gsap.set(strip, { clipPath: `inset(0 0 ${p * 100}% 0)` })
-        } else {
-          // Más allá de fase 3 — strip totalmente clipado (oculto).
-          gsap.set(strip, { top: 0, left: 0 })
-          gsap.set(strip, { clipPath: 'inset(0 0 100% 0)' })
-        }
-        setStripInteractivity(scrollY)
-      }
-      if (!isFreshLoad) {
-        snapPhaseState(initialScrollY)
-      } else {
-        // Fresh load: el reveal lateral del strip arranca con clipPath
-        // 100% (oculto). Aún así dejamos pointer-events alineado con la fase
-        // (auto en scrollY=0 — Phase 1 inicio).
-        setStripInteractivity(initialScrollY)
-      }
-
       // ── Reproducción del vídeo del strip ─────────────────────────────────
       //  · scroll < PHASE3_END: playing con el muted state actual (toggled
       //    solo por click del usuario sobre el strip).
       //  · scroll ≥ PHASE3_END: pausado Y muted=true (el video desaparece,
       //    el audio queda desactivado hasta el siguiente click del usuario).
       //  · Lightbox abierto: SIEMPRE pausado.
+      //  · Curtain activa: no-op — el efecto del curtain dispara el play tras
+      //    la uncover, así evitamos audio bajo la cortina.
       const updateStripVideoPlayback = (scrollY: number) => {
         if (!videoEl) return
+        if (usePageCurtainStore.getState().isActive) return
         if (isLightboxOpenRef.current) {
           if (!videoEl.paused) videoEl.pause()
           return
@@ -366,12 +337,56 @@ export function HeroScroll({
           videoEl.muted = true
         }
       }
-      if (videoEl) {
-        videoEl.style.opacity = '1'
-        // Si la curtain está activa (entrando por navegación) diferimos el
-        // arranque al efecto de transición — evita audio bajo la cortina.
-        // En cold-load, isActive es false y arrancamos ya.
-        if (!usePageCurtainStore.getState().isActive) {
+
+      // ── applyScrollState — fuente única de verdad por posición de scroll ─
+      // Llamada desde ScrollTrigger.onUpdate (camino feliz) Y desde el rAF
+      // scroll listener redundante (failsafe). Tagline + arrow + video se
+      // actualizan AQUÍ — antes vivían solo en onUpdate, y si ScrollTrigger
+      // se dormía (bfcache, scroll-lock atascado, resize en iOS) el tagline
+      // quedaba "sticky" al viewport mientras el strip sí se mantenía OK.
+      const applyScrollState = (scrollY: number) => {
+        // Tagline "se va con el scroll" (patrón rejouice): translateY 1:1.
+        gsap.set(taglineEl, { y: -scrollY })
+
+        if (scrollY <= PHASE1_END) {
+          // Fase 1 — strip expande a fullscreen (top+left → 0).
+          const p = scrollY / PHASE1_END
+          applyStripState(p)
+          gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
+          if (arrowEl) gsap.set(arrowEl, { opacity: 0 })
+        } else if (scrollY <= PHASE2_END) {
+          // Fase 2 — fullscreen. Arrow fade-in.
+          applyStripState(1)
+          gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
+          const vp = Math.min((scrollY - PHASE1_END) / 100, 1)
+          if (arrowEl) gsap.set(arrowEl, { opacity: vp })
+        } else if (scrollY <= PHASE3_END) {
+          // Fase 3 — strip colapsa (clip bottom-inset crece).
+          const p = (scrollY - PHASE2_END) / (PHASE3_END - PHASE2_END)
+          applyStripState(1)
+          gsap.set(strip, { clipPath: `inset(0 0 ${p * 100}% 0)` })
+          if (arrowEl) gsap.set(arrowEl, { opacity: 1 - p })
+        } else {
+          // Tras el budget — strip totalmente clipado, arrow oculto.
+          applyStripState(1)
+          gsap.set(strip, { clipPath: 'inset(0 0 100% 0)' })
+          if (arrowEl) gsap.set(arrowEl, { opacity: 0 })
+        }
+
+        setStripInteractivity(scrollY)
+        updateStripVideoPlayback(scrollY)
+      }
+
+      if (!isFreshLoad) {
+        applyScrollState(initialScrollY)
+      } else {
+        // Fresh load: el reveal lateral del strip arranca con clipPath
+        // 100% (oculto) y se anima vía gsap.to — NO llamamos a applyScrollState
+        // aquí porque sobreescribiría ese clipPath. Solo inicializamos
+        // pointer-events + video (curtain-aware).
+        setStripInteractivity(initialScrollY)
+        if (videoEl) {
+          videoEl.style.opacity = '1'
           updateStripVideoPlayback(initialScrollY)
         }
       }
@@ -381,6 +396,10 @@ export function HeroScroll({
           leftStart = getCol2StartPx()
           stripH = getStripHeightPx()
           stripTop = window.innerHeight - stripH
+          // Tras un resize las métricas internas de ScrollTrigger quedan stale
+          // (en iOS Safari el collapse de la URL bar dispara resize). Refresh
+          // las recalcula sin afectar al scroll position.
+          ScrollTrigger.refresh()
         }
         window.addEventListener('resize', onResize, { passive: true })
         cleanups.push(() => window.removeEventListener('resize', onResize))
@@ -390,44 +409,7 @@ export function HeroScroll({
           start: 'top top',
           end: `+=${HERO_SCROLL}`,
           onUpdate: (self) => {
-            const scrollY = self.progress * HERO_SCROLL
-
-            // Tagline "se va con el scroll" (patrón rejouice): translateY 1:1
-            // con la posición de scroll, simula que está en el flujo del doc.
-            gsap.set(taglineEl, { y: -scrollY })
-
-            // Strip video play/pause según fase
-            updateStripVideoPlayback(scrollY)
-            setStripInteractivity(scrollY)
-
-            if (scrollY <= PHASE1_END) {
-              // Fase 1 — strip expande a fullscreen (top+left → 0).
-              // Section transparente a z=400 hace que el strip tape chrome
-              // físicamente al crecer (sin fade, sin snap).
-              const p = scrollY / PHASE1_END
-              applyStripState(p)
-              gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
-              if (arrowEl) gsap.set(arrowEl, { opacity: 0 })
-
-            } else if (scrollY <= PHASE2_END) {
-              // Fase 2 — fullscreen. Arrow fade-in.
-              applyStripState(1)
-              gsap.set(strip, { clipPath: 'inset(0 0% 0 0)' })
-              const vp = Math.min((scrollY - PHASE1_END) / 100, 1)
-              if (arrowEl) gsap.set(arrowEl, { opacity: vp })
-
-            } else if (scrollY <= PHASE3_END) {
-              // Fase 3 — strip colapsa (clip bottom-inset crece). Al revelarse
-              // la transparencia de la section, se ve el IntroScroll detrás.
-              applyStripState(1)
-              const p = (scrollY - PHASE2_END) / (PHASE3_END - PHASE2_END)
-              gsap.set(strip, { clipPath: `inset(0 0 ${p * 100}% 0)` })
-              if (arrowEl) gsap.set(arrowEl, { opacity: 1 - p })
-
-            } else {
-              // Tras el budget — strip fuera
-              if (arrowEl) gsap.set(arrowEl, { opacity: 0 })
-            }
+            applyScrollState(self.progress * HERO_SCROLL)
           },
         })
         cleanups.push(() => st.kill())
@@ -438,16 +420,17 @@ export function HeroScroll({
 
       // ── Failsafe: scroll listener nativo redundante ──────────────────────
       // Red de seguridad si ScrollTrigger se queda dormido (bfcache, GPU
-      // compositor stale tras hibernación, etc.). Aplica clipPath/pointer-
-      // events según scrollY actual, sin sustituir a ScrollTrigger. rAF
-      // throttle para no penalizar el scroll.
+      // compositor stale tras hibernación, scroll-lock atascado, etc.).
+      // Aplica el ESTADO COMPLETO según scrollY actual — incluyendo tagline
+      // y arrow — sin sustituir a ScrollTrigger. rAF throttle para no
+      // penalizar el scroll.
       let rafScheduled = false
       const onWindowScroll = () => {
         if (rafScheduled) return
         rafScheduled = true
         requestAnimationFrame(() => {
           rafScheduled = false
-          snapPhaseState(window.scrollY)
+          applyScrollState(window.scrollY)
         })
       }
       window.addEventListener('scroll', onWindowScroll, { passive: true })
@@ -459,7 +442,7 @@ export function HeroScroll({
       // y el strip puede quedar atascado. En ambos casos re-aplicamos el
       // estado correcto basado en scrollY actual y refrescamos ScrollTrigger.
       const refreshAll = () => {
-        snapPhaseState(window.scrollY)
+        applyScrollState(window.scrollY)
         ScrollTrigger.refresh()
       }
       const onVisibility = () => {
@@ -488,7 +471,7 @@ export function HeroScroll({
         if (root.style.overflow === 'hidden') root.style.overflow = ''
         if (body.style.overflow === 'hidden') body.style.overflow = ''
         window.scrollTo({ top: HERO_SCROLL + 1, left: 0, behavior: 'instant' })
-        snapPhaseState(HERO_SCROLL + 1)
+        applyScrollState(HERO_SCROLL + 1)
       }
       const onKeyDown = (e: KeyboardEvent) => {
         if (e.key !== 'Escape') return
