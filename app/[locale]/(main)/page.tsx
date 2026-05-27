@@ -42,12 +42,12 @@ export async function generateMetadata({
    Page
    --------------------------------------------------------------------------
    Orden DOM (crítico por el stacking context del scroll):
-     1. HeroScroll      — fixed + spacer 1260px (desktop).
-     2. HomeIntroText   — sticky lead text con bold-effect.
-     3. HomeIntroReveal — strip image + crop overlay sobre cuadro blanco.
-     4. ServicesRows    — z-content.
-     5. WorkGrid        — z-content.
-     6. ClientsMarquee  — z-content.
+     1. HeroScroll         — fixed + spacer 1260px (desktop).
+     2. HomeIntroText      — sticky lead text con bold-effect.
+     3. ServicesRows       — z-content.
+     4. WorkGrid           — z-content.
+     5. ClientsMarquee     — z-content.
+     6. IdentidadLiminal   — actitud liminal, justo antes del footer.
    Footer viene del layout.tsx.
    ========================================================================== */
 
@@ -74,15 +74,13 @@ export default async function HomePage({ params }: PageProps) {
 
       <HomeIntroText />
 
-      {/* <HomeIntroReveal /> — sustituida por IdentidadLiminal (movida desde
-          la página Identidad). Mantener comentada hasta cerrar la iteración. */}
-      <IdentidadLiminal />
-
       <ServicesRows />
 
       <WorkGrid />
 
       <ClientsMarquee />
+
+      <IdentidadLiminal />
     </>
   )
 }
