@@ -85,24 +85,28 @@ export function HeroScroll({
   const [isLightboxMuted, setIsLightboxMuted] = useState(false)
   const isLightboxOpenRef = useRef(false)
 
-  // [EXPERIMENT] Autoplay tras curtain + fullscreen desde el arranque.
-  // Intenta arrancar con audio; si el browser lo bloquea, fallback muted.
-  const playWithAudioFallback = useCallback(() => {
+  // Helper de play — respeta el estado de muted actual. NUNCA pone muted=false
+  // por su cuenta: el audio solo se activa por click manual del usuario
+  // (handleStripClick). Si Chrome bloquea por autoplay policy (puede pasar
+  // si muted=false sin gesture previo), fallback a muted como red de seguridad.
+  const playRespectingMutedState = useCallback(() => {
     const v = videoRef.current
     if (!v) return
     if (!v.paused) return
-    v.muted = false
     const p = v.play()
     if (p && typeof p.catch === 'function') {
       p.catch(() => {
-        v.muted = true
-        v.play().catch(() => {})
+        if (!v.muted) {
+          v.muted = true
+          v.play().catch(() => {})
+        }
       })
     }
   }, [])
 
-  // [EXPERIMENT] Click sobre el strip → toggle de audio (muted ↔ unmuted).
-  // El gesto de usuario libera la autoplay policy del browser.
+  // Click sobre el strip → toggle de audio (muted ↔ unmuted). Es el único
+  // sitio donde el audio puede activarse — el gesto del usuario libera la
+  // autoplay policy del browser.
   const handleStripClick = useCallback(() => {
     const v = videoRef.current
     if (!v) return
@@ -110,16 +114,17 @@ export function HeroScroll({
     if (v.paused) v.play().catch(() => {})
   }, [])
 
-  // [EXPERIMENT] Suscripción al curtain store — cuando termina la uncover
-  // (isActive true → false), disparar el play con audio del strip video.
+  // Tras la cortina de transición, asegurar que el video sigue playing
+  // (puede haberse pausado durante el unmount/mount). NO desmuteamos: si el
+  // usuario navegó a otra página y volvió, el video debe arrancar muted.
   const isCurtainActive = usePageCurtainStore((s) => s.isActive)
   const prevCurtainActiveRef = useRef(isCurtainActive)
   useEffect(() => {
     if (prevCurtainActiveRef.current && !isCurtainActive) {
-      playWithAudioFallback()
+      playRespectingMutedState()
     }
     prevCurtainActiveRef.current = isCurtainActive
-  }, [isCurtainActive, playWithAudioFallback])
+  }, [isCurtainActive, playRespectingMutedState])
 
   useEffect(() => {
     isLightboxOpenRef.current = isLightboxOpen
@@ -132,11 +137,11 @@ export function HeroScroll({
         // Re-evalúa fase al cerrar el lightbox.
         const sy = window.scrollY
         if (sy < PHASE3_END) {
-          playWithAudioFallback()
+          playRespectingMutedState()
         }
       }
     }
-  }, [isLightboxOpen, playWithAudioFallback])
+  }, [isLightboxOpen, playRespectingMutedState])
 
   // Sync muted del vídeo del lightbox con el estado React (toggle del botón)
   useEffect(() => {
@@ -168,13 +173,19 @@ export function HeroScroll({
 
   // Menu-aware z-index del strip: cuando el menu abre (z=150), el strip baja
   // a z=100 para quedar por debajo y no competir visualmente. Chrome, menu y
-  // header siempre encima del strip mientras menu esté abierto.
+  // header siempre encima del strip mientras menu esté abierto. Además, mute
+  // el video — el strip queda tapado, así que el audio debe desactivarse y
+  // requerir click del usuario para reactivarse al cerrar el menú.
   useEffect(() => {
     const s = stripRef.current
     const a = arrowRef.current
     const z = isMenuOpen ? '100' : '400'
     if (s) s.style.zIndex = z
     if (a) a.style.zIndex = z
+    if (isMenuOpen) {
+      const v = videoRef.current
+      if (v) v.muted = true
+    }
   }, [isMenuOpen])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
@@ -336,10 +347,11 @@ export function HeroScroll({
         setStripInteractivity(initialScrollY)
       }
 
-      // ── [EXPERIMENT] Reproducción del vídeo del strip ────────────────────
-      //  · scroll < PHASE3_END: reproduce con audio (fallback muted) — incluye
-      //    el estado strip-corner inicial (antes Phase 1 lo mantenía pausado).
-      //  · scroll ≥ PHASE3_END: pausado (no se ve).
+      // ── Reproducción del vídeo del strip ─────────────────────────────────
+      //  · scroll < PHASE3_END: playing con el muted state actual (toggled
+      //    solo por click del usuario sobre el strip).
+      //  · scroll ≥ PHASE3_END: pausado Y muted=true (el video desaparece,
+      //    el audio queda desactivado hasta el siguiente click del usuario).
       //  · Lightbox abierto: SIEMPRE pausado.
       const updateStripVideoPlayback = (scrollY: number) => {
         if (!videoEl) return
@@ -348,9 +360,10 @@ export function HeroScroll({
           return
         }
         if (scrollY < PHASE3_END) {
-          playWithAudioFallback()
+          playRespectingMutedState()
         } else {
           if (!videoEl.paused) videoEl.pause()
+          videoEl.muted = true
         }
       }
       if (videoEl) {
@@ -523,7 +536,7 @@ export function HeroScroll({
     })()
 
     return () => cleanupRef.current?.()
-  }, [playWithAudioFallback])
+  }, [playRespectingMutedState])
 
   return (
     <>
