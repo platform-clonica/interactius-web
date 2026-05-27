@@ -4,6 +4,7 @@ import { MenuOverlay } from '@/components/layout/MenuOverlay'
 import { Footer } from '@/components/layout/Footer'
 import { FooterObserver } from '@/components/layout/FooterObserver'
 import { PageTransition } from '@/components/layout/PageTransition'
+import { ScrollLockHealer } from '@/components/layout/ScrollLockHealer'
 import { ConsentMount } from '@/components/consent/ConsentMount'
 
 /* ==========================================================================
@@ -24,6 +25,7 @@ export default function MainLayout({
       <Sidebar />
       <Header />
       <MenuOverlay />
+      <ScrollLockHealer />
 
       <PageTransition>
         <main id="main-content" tabIndex={-1}>
