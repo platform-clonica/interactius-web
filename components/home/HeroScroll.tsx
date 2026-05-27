@@ -296,6 +296,14 @@ export function HeroScroll({
         })
       }
 
+      // Pointer-events autoritativo según fase. Strip clickable solo cuando
+      // está visible (Phase 1/2 o inicio de Phase 3). En Phase 3 ya colapsado
+      // o más allá del budget → no-interactivo, no atrapando al usuario.
+      const setStripInteractivity = (scrollY: number) => {
+        const visible = scrollY < PHASE3_END
+        strip.style.pointerEvents = visible ? 'auto' : 'none'
+      }
+
       // Snap inicial al phase state correcto basado en scrollY actual.
       // Sin esto, en refresh mid-page el strip flashea desde su geometría
       // inicial (bottom-strip) hasta su estado final cuando ScrollTrigger
@@ -317,9 +325,15 @@ export function HeroScroll({
           gsap.set(strip, { top: 0, left: 0 })
           gsap.set(strip, { clipPath: 'inset(0 0 100% 0)' })
         }
+        setStripInteractivity(scrollY)
       }
       if (!isFreshLoad) {
         snapPhaseState(initialScrollY)
+      } else {
+        // Fresh load: el reveal lateral del strip arranca con clipPath
+        // 100% (oculto). Aún así dejamos pointer-events alineado con la fase
+        // (auto en scrollY=0 — Phase 1 inicio).
+        setStripInteractivity(initialScrollY)
       }
 
       // ── [EXPERIMENT] Reproducción del vídeo del strip ────────────────────
@@ -371,6 +385,7 @@ export function HeroScroll({
 
             // Strip video play/pause según fase
             updateStripVideoPlayback(scrollY)
+            setStripInteractivity(scrollY)
 
             if (scrollY <= PHASE1_END) {
               // Fase 1 — strip expande a fullscreen (top+left → 0).
@@ -407,6 +422,73 @@ export function HeroScroll({
         // Reduced motion — mostrar fullscreen directo
         applyStripState(1)
       }
+
+      // ── Failsafe: scroll listener nativo redundante ──────────────────────
+      // Red de seguridad si ScrollTrigger se queda dormido (bfcache, GPU
+      // compositor stale tras hibernación, etc.). Aplica clipPath/pointer-
+      // events según scrollY actual, sin sustituir a ScrollTrigger. rAF
+      // throttle para no penalizar el scroll.
+      let rafScheduled = false
+      const onWindowScroll = () => {
+        if (rafScheduled) return
+        rafScheduled = true
+        requestAnimationFrame(() => {
+          rafScheduled = false
+          snapPhaseState(window.scrollY)
+        })
+      }
+      window.addEventListener('scroll', onWindowScroll, { passive: true })
+      cleanups.push(() => window.removeEventListener('scroll', onWindowScroll))
+
+      // ── Refresh en visibility/pageshow ───────────────────────────────────
+      // Tras hibernación/tab-switch ScrollTrigger pierde frames y queda con
+      // valores stale. Tras bfcache restore los useEffect no se re-disparan
+      // y el strip puede quedar atascado. En ambos casos re-aplicamos el
+      // estado correcto basado en scrollY actual y refrescamos ScrollTrigger.
+      const refreshAll = () => {
+        snapPhaseState(window.scrollY)
+        ScrollTrigger.refresh()
+      }
+      const onVisibility = () => {
+        if (document.hidden) return
+        refreshAll()
+      }
+      const onPageShow = (e: PageTransitionEvent) => {
+        if (!e.persisted) return
+        refreshAll()
+      }
+      document.addEventListener('visibilitychange', onVisibility)
+      window.addEventListener('pageshow', onPageShow)
+      cleanups.push(() => document.removeEventListener('visibilitychange', onVisibility))
+      cleanups.push(() => window.removeEventListener('pageshow', onPageShow))
+
+      // ── Escape hatch para usuario atrapado ────────────────────────────────
+      // Si por cualquier motivo el strip queda fullscreen sin que el scroll
+      // funcione, Esc o dblclick fuerzan el salto a más allá del budget.
+      // Pausa el video, libera el body lock si está heredado, y scrollea más
+      // allá de Phase 3 para que el strip se contraiga.
+      const escapeHero = () => {
+        if (window.scrollY >= PHASE3_END) return // ya fuera del budget
+        if (videoEl && !videoEl.paused) videoEl.pause()
+        const root = document.documentElement
+        const body = document.body
+        if (root.style.overflow === 'hidden') root.style.overflow = ''
+        if (body.style.overflow === 'hidden') body.style.overflow = ''
+        window.scrollTo({ top: HERO_SCROLL + 1, left: 0, behavior: 'instant' })
+        snapPhaseState(HERO_SCROLL + 1)
+      }
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key !== 'Escape') return
+        escapeHero()
+      }
+      const onStripDblClick = (e: MouseEvent) => {
+        e.preventDefault()
+        escapeHero()
+      }
+      window.addEventListener('keydown', onKeyDown)
+      strip.addEventListener('dblclick', onStripDblClick)
+      cleanups.push(() => window.removeEventListener('keydown', onKeyDown))
+      cleanups.push(() => strip.removeEventListener('dblclick', onStripDblClick))
 
       // ── [EXPERIMENT] Hover hint siguiendo el cursor ──────────────────────
       // Visible siempre durante el hover. El texto alterna según el estado
@@ -466,11 +548,15 @@ export function HeroScroll({
 
       {/* Strip — SEPARADO de la section, fixed, z=400 (encima del chrome: 160-200).
            Al crecer a fullscreen tapa físicamente el chrome sin snaps. En estado
-           strip inicial (bottom-right) el chrome está visible fuera del strip. */}
+           strip inicial (bottom-right) el chrome está visible fuera del strip.
+
+           Failsafe: arranca con pointer-events:none y se activa solo cuando GSAP
+           confirma que el strip es visible (Phase 1/2). Si GSAP nunca carga, el
+           strip permanece no-interactivo, no atrapando al usuario. */}
       <div
         ref={stripRef}
-        className="fixed overflow-hidden pointer-events-auto cursor-pointer"
-        style={{ clipPath: 'inset(0 100% 0 0)', zIndex: 400 }}
+        className="fixed overflow-hidden cursor-pointer"
+        style={{ clipPath: 'inset(0 100% 0 0)', zIndex: 400, pointerEvents: 'none' }}
         onClick={handleStripClick}
         role="button"
         tabIndex={0}
