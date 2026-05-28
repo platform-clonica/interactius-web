@@ -19,6 +19,7 @@ import { MDXContent } from '@/components/miradas/MDXContent'
 import { ShareRow } from '@/components/miradas/article/ShareRow'
 import { ArticleNext } from '@/components/miradas/article/ArticleNext'
 import { AuthorAvatar } from '@/components/miradas/AuthorAvatar'
+import { AITranslationBanner } from '@/components/miradas/AITranslationBanner'
 import { Breadcrumb, absoluteUrl as toAbsoluteUrl } from '@/components/miradas/Breadcrumb'
 import {
   delocalizeSubSlug,
@@ -374,6 +375,19 @@ export default async function ArticlePage({ params }: PageProps) {
           </div>
         </div>
       </section>
+
+      {article.translatedBy === 'ai' && locale !== 'es' && (
+        <section
+          className="section-inner pt-10 lg:pt-12"
+          aria-label="AI translation notice"
+        >
+          <div className="grid grid-cols-12 gap-grid-gutter">
+            <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
+              <AITranslationBanner sub={sub} slug={slug} locale={locale} />
+            </div>
+          </div>
+        </section>
+      )}
 
       <article className="section-inner pt-16 lg:pt-20 pb-section" aria-label={article.title}>
         <div className="grid grid-cols-12 gap-grid-gutter">

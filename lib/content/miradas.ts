@@ -38,6 +38,9 @@ export interface MiradaFrontmatter {
   slug: string
   image?: string
   tags?: string[]
+  /** Solo en MDX traducidos por `scripts/translate-miradas.mjs`. */
+  translatedBy?: 'ai' | 'human'
+  translatedAt?: string
 }
 
 // Re-export para que el resto del codebase no tenga que importar dos veces
@@ -69,7 +72,12 @@ export function getAllMiradas(): MiradaMeta[] {
 
   for (const cat of cats) {
     const catDir = path.join(CONTENT_DIR, cat)
-    const files = fs.readdirSync(catDir).filter((f) => f.endsWith('.mdx'))
+    // Lista solo MDX en castellano (la "fuente"). Las traducciones viven
+    // como `{slug}.{locale}.mdx` junto al original y NO deben aparecer
+    // como artículos independientes en el listado.
+    const files = fs
+      .readdirSync(catDir)
+      .filter((f) => f.endsWith('.mdx') && !/\.(?:ca|en)\.mdx$/.test(f))
 
     for (const file of files) {
       const slug = file.replace(/\.mdx$/, '')
