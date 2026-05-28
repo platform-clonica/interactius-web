@@ -13,6 +13,7 @@ import {
   getAllMiradas,
   getNextArticle,
   calculateReadingTime,
+  hasTranslation,
 } from '@/lib/content/miradas'
 import { MDXContent } from '@/components/miradas/MDXContent'
 import { ShareRow } from '@/components/miradas/article/ShareRow'
@@ -59,31 +60,50 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale, parentOrSub, slug } = await params
   const sub = delocalizeSubSlug(parentOrSub, locale)
   if (!sub) return {}
-  const article = getMiradaBySlug(sub, slug)
+  // Sirve el MDX traducido si existe para la locale; si no, fallback a ES.
+  // hasTranslation marca si esta locale tiene una traducción real (para
+  // decidir si indexar) — el ES siempre cuenta como "traducido" (es la fuente).
+  const article = getMiradaBySlug(sub, slug, locale)
   if (!article) return {}
 
-  // Construir alternates manualmente porque el slug del segmento parentOrSub
-  // varía por locale.
-  const alternates: Record<string, string> = {}
+  const noIndex = !hasTranslation(sub, slug, locale)
+
+  // Hreflang: solo declarar locales con traducción real. ES siempre va.
+  // CA/EN solo si existe `{slug}.{locale}.mdx`.
+  const esPath = localizedPath('/miradas/[parentOrSub]/[slug]', 'es', {
+    params: { parentOrSub: localizeSubSlug(sub, 'es'), slug },
+  })
+  const alternates: Record<string, string> = {
+    es: `${SITE_CONFIG.baseUrl}${esPath}`,
+    'x-default': `${SITE_CONFIG.baseUrl}${esPath}`,
+  }
   for (const loc of LOCALES) {
-    const localized = localizeSubSlug(sub, loc)
+    if (loc === 'es') continue
+    if (!hasTranslation(sub, slug, loc)) continue
     alternates[loc] = `${SITE_CONFIG.baseUrl}${localizedPath(
       '/miradas/[parentOrSub]/[slug]',
       loc,
-      { params: { parentOrSub: localized, slug } },
+      { params: { parentOrSub: localizeSubSlug(sub, loc), slug } },
     )}`
   }
-  alternates['x-default'] = alternates.es
+
+  // Canonical: si la URL actual NO está traducida (noIndex), apunta a ES
+  // para consolidar la señal en la versión canónica. Si sí está traducida,
+  // apunta a sí misma.
+  const pathnameForCanonical = noIndex
+    ? esPath
+    : localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+        params: { parentOrSub, slug },
+      })
 
   return buildPageMetadata({
     locale,
     routeId: '/miradas/[parentOrSub]/[slug]',
     title: article.title,
     description: article.description,
-    pathname: localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
-      params: { parentOrSub, slug },
-    }),
+    pathname: pathnameForCanonical,
     alternates,
+    noIndex,
     ogImage: {
       url: getCover(article.slug, article.image),
       width: 1200,
@@ -136,7 +156,11 @@ export default async function ArticlePage({ params }: PageProps) {
     notFound()
   }
 
-  const article = getMiradaBySlug(sub, slug)
+  // Carga el MDX traducido si existe para la locale; si no, fallback a ES.
+  // Las URLs CA/EN sin traducción real ya se marcan noindex+canonical-ES en
+  // generateMetadata, así que sirviendo el ES no creamos duplicate content
+  // de cara a Google.
+  const article = getMiradaBySlug(sub, slug, locale)
   if (!article) notFound()
 
   const parent = SUB_TO_PARENT[sub]

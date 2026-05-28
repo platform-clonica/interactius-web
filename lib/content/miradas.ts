@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
+import type { Locale } from '@/lib/i18n/config'
 import type {
   MiradaFrontmatter as MiradaFrontmatterStrict,
   MiradasParentCategory,
@@ -9,6 +10,14 @@ import type {
 } from '@/lib/miradas/frontmatter.schema'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content/miradas')
+
+/**
+ * Locales no-default tienen archivos MDX traducidos como `{slug}.{locale}.mdx`.
+ * Si no existe traducción, se sirve el ES (el path sigue resolviendo) pero la
+ * página se marca noindex + canonical a la versión ES. Sin traducción = sin
+ * indexación CA/EN.
+ */
+const DEFAULT_LOCALE: Locale = 'es'
 
 /**
  * Frontmatter type used at runtime (loose) — gray-matter returns whatever is
@@ -74,11 +83,46 @@ export function getAllMiradas(): MiradaMeta[] {
   )
 }
 
-export function getMiradaBySlug(cat: string, slug: string): Mirada | null {
+/**
+ * Devuelve el artículo para la locale dada. Si `locale !== 'es'` y existe un
+ * archivo `{slug}.{locale}.mdx`, se devuelve esa traducción. Sino, fallback al
+ * MDX en castellano (la página debe marcarse noindex en ese caso — ver
+ * `hasTranslation`).
+ */
+export function getMiradaBySlug(
+  cat: string,
+  slug: string,
+  locale: Locale = DEFAULT_LOCALE,
+): Mirada | null {
+  if (locale !== DEFAULT_LOCALE) {
+    const localePath = path.join(CONTENT_DIR, cat, `${slug}.${locale}.mdx`)
+    if (fs.existsSync(localePath)) {
+      const { frontmatter, content } = readMDXFile(localePath)
+      return { ...frontmatter, slug, cat, content }
+    }
+  }
   const filePath = path.join(CONTENT_DIR, cat, `${slug}.mdx`)
   if (!fs.existsSync(filePath)) return null
   const { frontmatter, content } = readMDXFile(filePath)
   return { ...frontmatter, slug, cat, content }
+}
+
+/**
+ * `true` si existe un MDX para esa locale específica. La locale ES siempre
+ * cuenta como traducida (es la fuente). El resto solo si existe el archivo
+ * `{slug}.{locale}.mdx`.
+ *
+ * Caller usa esto para decidir si emitir noindex en CA/EN y si incluir la
+ * URL en el sitemap de esa locale.
+ */
+export function hasTranslation(
+  cat: string,
+  slug: string,
+  locale: Locale,
+): boolean {
+  if (locale === DEFAULT_LOCALE) return true
+  const localePath = path.join(CONTENT_DIR, cat, `${slug}.${locale}.mdx`)
+  return fs.existsSync(localePath)
 }
 
 export function getMiradasByCategory(cat: string): MiradaMeta[] {

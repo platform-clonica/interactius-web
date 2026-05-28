@@ -486,6 +486,13 @@ interface BuildPageMetadataArgs {
   pathname: string
   /** Mapa de URLs alternativas por locale para hreflang. */
   alternates: Record<string, string>
+  /**
+   * Marca la página como noindex (sigue permitiendo follow). Pensado para
+   * variantes CA/EN de Miradas sin traducción real, donde el canonical apunta
+   * a la versión ES y queremos que Google ignore la variante. El robots
+   * default del root sigue aplicando para el resto del site.
+   */
+  noIndex?: boolean
 }
 
 export function buildPageMetadata({
@@ -498,6 +505,7 @@ export function buildPageMetadata({
   article,
   pathname,
   alternates,
+  noIndex = false,
 }: BuildPageMetadataArgs): Metadata {
   const baseCopy =
     routeId in PAGE_COPY
@@ -549,6 +557,9 @@ export function buildPageMetadata({
       description,
       images: [image.url],
     },
+    ...(noIndex
+      ? { robots: { index: false, follow: true, googleBot: { index: false, follow: true } } }
+      : {}),
   }
 
   return metadata
