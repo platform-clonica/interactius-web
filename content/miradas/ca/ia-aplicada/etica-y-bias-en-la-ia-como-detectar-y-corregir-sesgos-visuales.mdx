@@ -1,0 +1,174 @@
+---
+title: 'Ètica i bias en la IA: com detectar i corregir els biaixos visuals'
+description: >-
+  Com els biaixos en la generació d'imatges amb IA afecten la diversitat visual.
+  Estratègies pràctiques per detectar-los i corregir-los, creant representació.
+publishedAt: '2025-09-17'
+modifiedAt: '2025-09-17'
+author: Berta Abad
+category: ia-aplicada
+parentCategory: transformacion-cultural
+slug: etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales
+image: >-
+  /miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/PORTADA-scaled.webp
+tags:
+  - design
+  - ia
+  - tendencias
+translatedBy: ai
+translatedAt: '2026-05-28'
+localizedSlug: etica-i-bias-en-la-ia-com-detectar-i-corregir-els-biaixos-visuals
+---
+## **Més enllà del prompt: responsabilitat visual**
+
+Generar imatges amb IA no consisteix només a triar les paraules correctes, com vaig explicar en el meu [post anterior](https://interactius.com/inteligencia-artificial/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/). Darrere de cada prompt hi ha un imaginari cultural que influeix en els resultats. Si no en som conscients, el **_bias_ a Midjourney** pot colar-se en les nostres creacions i donar lloc a representacions poc diverses o poc realistes.
+
+## **Què és el bias en la generació d'imatges?**
+
+Quan parlem de _bias_ (o biaix) en eines com Midjourney, ens referim a una tendència repetida en els resultats generats. En altres paraules, la IA no crea des de zero: interpreta els patrons que va aprendre de milions d'imatges. Això significa que, si en les dades predominaven certes representacions, aquestes es repeteixen, tot i que no siguin l'opció més justa o equilibrada. Per exemple, en demanar: "a doctor in a lab coat" és habitual que Midjourney mostri un home d'edat mitjana com a metge.
+
+Això es deu al fet que durant el seu entrenament, el model va trobar una major quantitat de fotografies de metges homes que de metgesses dones, i aquesta desproporció es reflecteix en les imatges que genera.
+
+El _bias_ en la generació d'imatges no només influeix en les professions, sinó també en aspectes com:
+
+-   **Rols de gènere**: associar el lideratge als homes i les cures a les dones.  
+    
+-   **Ètnia i cultura**: sobrerepresentar persones blanques davant d'altres ètnies.  
+    
+-   **Edat**: mostrar majoritàriament persones joves en contextos professionals.  
+    
+-   **Estil de vida**: reforçar estereotips sobre el que significa "èxit" o "bellesa".  
+    
+
+Detectar aquest fenomen és fonamental perquè condiciona la narrativa visual que estem construint. Si no hi intervenim, podem estar reforçant estereotips sense voler-ho.
+
+## **D'on vénen aquests biaixos?**
+
+Els biaixos no apareixen per casualitat. Tenen el seu origen en com s'entrenen i s'ajusten els models d'IA. En el cas de Midjourney, els principals factors són:
+
+-   **Dades d'entrenament**  
+    Midjourney s'alimenta de milions d'imatges disponibles a Internet. Si en aquestes dades hi ha una representació desigual (per exemple, més fotos de metges homes que de dones), el sistema tendirà a replicar aquesta mateixa proporció.  
+    
+-   **Optimització del model**  
+    Els algoritmes aprenen a generar allò que apareix amb més freqüència en les seves dades d'origen. Això significa que, fins i tot sense intenció, reforcen certs patrons i deixen en segon pla representacions menys comunes.  
+    
+-   **Llenguatge dels prompts**  
+    Les paraules importen. Termes com _"businessman"_ reforcen la imatge tradicional d'un home amb vestit, mentre que opcions més neutres com _"business professional"_ obren la porta a resultats més diversos.
+
+## **Com detectar el bias pas a pas**
+
+1.  **Mira amb atenció**: Genera diverses imatges a partir del mateix prompt. Analitza no només l'estètica, sinó _qui apareix_ (gènere, edat, ètnia, rol).  
+      
+    
+2.  **Compta els resultats**: Si de 20 imatges d'un enginyer només 2 són dones, hi ha un desequilibri.  
+      
+    
+3.  **Recolza't en eines**: Existeixen APIs i programaris d'anàlisi que poden identificar característiques com el gènere, l'edat o l'ètnia en imatges, retornant-te percentatges.
+
+## **Estratègies per mitigar els biaixos**
+
+Detectar el problema és només el primer pas; el que importa és aplicar solucions concretes. Midjourney ofereix diverses formes d'ajustar els prompts i reduir els biaixos en les imatges que generem. Aquí tens algunes estratègies efectives:
+
+-   **Usa llenguatge inclusiu**: Les paraules importen. Canviar "businessman" per "business professional" evita reforçar estereotips i obre la porta a representacions més variades.
+-   **Demana diversitat**: Si necessites un grup de persones, indica-ho al prompt: gènere, edat, ètnies o fins i tot estil de vestimenta. Midjourney tendeix a seguir aquestes instruccions amb força fidelitat.
+-   **Exclou estereotips**: Usa --no si la teva versió de Midjourney ho permet. Si detectes que el teu prompt sempre genera un mateix patró (per exemple, "young white male"), pots excloure'l.
+-   **Canvia la llavor**: Prova amb --seed 42 o --seed 99 per veure diferents variants i escollir la més equilibrada.
+-   **Combina descriptors positius**: Afegir termes com "diverse", "inclusive", "multiethnic" o "balanced" sol donar lloc a imatges més variades sense necessitat d'allargar massa el prompt.
+
+## **Bones pràctiques per a un procés transparent**
+
+Mitigar biaixos no és un esforç aïllat: ha de convertir-se en part del teu flux de treball creatiu. Documentar i revisar el que fas ajuda a millorar la qualitat i la coherència dels resultats. Aquí tens algunes recomanacions:
+
+-   **Registra cada prompt:**  
+    Guarda sempre el text exacte que vas usar, incloent-hi paràmetres com _**\--seed**, **\--ar**_ o _**\--v 7**_. Això permet repetir o ajustar resultats sense haver d'improvisar de nou.  
+    
+-   **Anota les decisions clau:**  
+    Si vas decidir usar un _**\--no**_ per excloure un estereotip o vas afegir un descriptor com "diverse" o "inclusive", apunta-ho. Així tindràs claredat sobre per què vas arribar a una determinada imatge.  
+    
+-   **Crea un historial de versions:**  
+    Genera diverses iteracions d'un mateix prompt i guarda-les amb la seva llavor associada. Això facilita comparar i seleccionar les opcions més equilibrades.  
+    
+-   **Involucra perfils diversos:**  
+    La percepció dels biaixos no sempre és evident per a tothom. Demanar a col·legues o col·laboradors de contextos diferents que revisin les teves imatges pot aportar una mirada més àmplia.  
+    
+-   **Sigues transparent en projectes professionals:**  
+    Si treballes per a clients, documentar com has ajustat els prompts i quines mesures has pres per evitar biaixos demostra un compromís amb l'ètica visual. Això suma valor al teu procés creatiu.
+
+## **Cas d'estudi breu**
+
+```
+Abans:
+/imagine "a CEO portrait" --v 7
+```
+
+⭢ 80 % homes caucàsics.
+
+```
+Després:
+/imagine "a CEO portrait of a 45-year-old Black woman, business suit, confident pose" --v 7 --ar 2:3
+```
+
+⭢ retrat professional de dona negra, equilibrat i representatiu.
+
+## **Exemples visuals comparatius**
+
+Per il·lustrar l'impacte d'ajustar prompts i paràmetres, aquí hi ha una taula on pots inserir captures reals:
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_doctor_in_a_lab_coat_-chaos_20_-ar_34_-raw_-p_77bdfaa7-7cba-4621-99a6-1004912e28db_2-scaled.png"
+  alt="a doctor in a lab coat"
+  caption="a doctor in a lab coat"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_healthcare_professional_-chaos_20_-ar_34_-raw__1e773f58-8661-42b6-b754-d6c2c1f10f7b_0-scaled.png"
+  alt=""
+  caption="a healthcare professional"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_an_engineer_at_work_-chaos_20_-ar_34_-raw_-prof_750bd562-ec32-48bf-a366-e5656c9debce_3-scaled.png"
+  alt=""
+  caption="an engineer at work"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_team_of_four_engineers_2_women_-chaos_20_-ar_34_1c98bc53-7264-4435-9684-1d492132c544_2-scaled.png"
+  alt=""
+  caption="a team of four engineers (3 women, 1 men)"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_CEO_portrait_-chaos_20_-ar_34_-raw_-profile_2_c18cecfb-7b78-4b72-8048-75e3c520c14a_0-scaled.png"
+  alt=""
+  caption="a CEO portrait"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_CEO_portrait_of_a_45-year-old_Black_woman_busines_f66b4488-ad4d-4e20-842a-c38e6d0295bb_0-scaled.png"
+  alt=""
+  caption="a CEO portrait of a 45-year-old Black woman, business suit, confident pose"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_couple_walking_in_the_park_-chaos_20_-ar_34_-r_2ff4b130-3149-4342-9533-2fff558747e4_2-scaled.png"
+  alt=""
+  caption="a couple walking in the park"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_diverse_couple_walking_hand_in_hand_in_a_sunny_pa_d25bae62-2803-48b6-85a7-53d0771d0363_3-scaled.png"
+  alt=""
+  caption="a diverse couple walking hand in hand in a sunny park, aged 30-40, smiling"
+/>
+
+## **Conclusió**
+
+Ser conscients dels biaixos a Midjourney és part del procés creatiu. No es tracta només de generar imatges boniques, sinó de crear representacions més àmplies, reals i respectuoses. Amb petits ajustos en els prompts podem fer una gran diferència i construir una narrativa visual més diversa i inclusiva. Com més cuidem el que demanem, més valor tenen les imatges que obtenim.
+
+**Una última recomanació:** per generar imatges amb responsabilitat visual, val la pena inspirar-se en la [campanya **"Keep Beauty Real"** de Dove](https://www.dove.com/es/stories/campaigns/keep-beauty-real.html). Allà trobaràs un enfocament pràctic sobre com representar la diversitat i la bellesa real, que pot servir de guia per crear prompts que generin imatges més autèntiques i equilibrades.  
+  
+També podràs descarregar un manual amb diverses paraules clau per generar millors prompts.   
+¡L'ètica també millora la teva creativitat!
+
+I tu? Has provat a revisar els teus prompts amb aquesta mirada més crítica?

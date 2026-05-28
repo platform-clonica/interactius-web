@@ -1,0 +1,160 @@
+---
+title: 'Domina Midjourney V7: claus, paràmetres i exemples aplicats'
+description: >-
+  Porta els teus prompts de Midjourney V7 al següent nivell amb direcció d'art,
+  realisme fotogràfic i paràmetres creatius
+publishedAt: '2025-06-13'
+modifiedAt: '2025-06-13'
+author: Berta Abad
+category: ia-aplicada
+parentCategory: transformacion-cultural
+slug: domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados
+image: >-
+  /miradas-assets/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/IA-portada-_1_-scaled.webp
+tags:
+  - design
+  - innovacion
+  - tendencias
+translatedBy: ai
+translatedAt: '2026-05-28'
+localizedSlug: domina-midjourney-v7-claus-parametres-i-exemples-aplicats
+---
+
+Amb l'arribada de Midjourney V7, generar imatges amb un realisme gairebé fotogràfic és més accessible que mai. Aquesta versió ha fet un salt notable en tres aspectes clau: millor interpretació dels prompts, textures més creïbles i detalls molt més coherents (sí, fins i tot les mans). Però per treure-li tot el profit, no n'hi ha prou amb escriure qualsevol cosa: cal saber construir bons prompts… i fer-ho amb intenció.
+
+I perquè vegis la diferència en cada pas, treballarem amb un mateix exemple base, des del més simple fins a la seva versió més refinada.
+
+## El punt de partida
+
+Volem generar una imatge tipus retrat. Comencem amb alguna cosa bàsica:
+
+```
+"a woman portrait, neutral background, soft light"
+```
+
+Aquest serà el nostre punt de partida. Anirem aplicant ajustos per veure com millora visualment en cada iteració.
+
+---
+
+## ChatGPT com a copilot creatiu
+
+No sempre sabem descriure el que imaginem. Aquí és on ChatGPT es converteix en una eina creativa increïble. Pots demanar-li que enriqueixi el teu prompt, que el faci més visual, o que explori estils concrets.
+
+Prompt bàsic:
+
+```
+a woman portrait, neutral background, soft light
+```
+
+Reformulació amb ChatGPT (més visual i detallat):
+
+```
+editorial portrait of a young woman wearing a linen blouse, neutral grey backdrop, soft diffused light, 50mm lens, natural skin texture, cinematic tones
+```
+
+```
+editorial portrait of a young woman with Mediterranean features, wearing a linen blouse, neutral grey backdrop, soft diffused light, 50mm lens, natural skin texture, cinematic tones, subtle melancholic expression --ar 2:3 --style raw --s 100 --v 7
+```
+
+Aquí el llenguatge ja no només descriu: dirigeix.
+
+---
+
+## Tècniques intermèdies per optimitzar el teu prompt
+
+Ara comencem a afinar:
+
+-   **Aspect ratio** (--ar)  
+    1:1 / 4:3 / 2:3 / 16:9 / 9:16   
+    Per a retrats verticals clàssics:  
+    \--ar 2:3  
+    
+-   **Estilització** (--s)  
+    Indica quanta llibertat té Midjourney per interpretar el prompt:  
+    Valor baix = més fidelitat al text  
+    Valor alt = més creativitat visual  
+    → Per a realisme: --s 100  
+    → Juntament amb --style raw aconseguiràs un look més natural, sense filtres artístics afegits  
+    
+-   **Qualitat** (--q)  
+    Augmenta la resolució visual:  
+    \--q 2  
+    
+-   **Pes visual** (::) (només funciona en versions inferiors a la V7)  
+    Si vols emfatitzar més el rostre que el fons: a woman::2 portrait, neutral backdrop::1
+
+---
+
+## Novetats de Midjourney V7
+
+#### **\--ow** **(Omni-Reference Weight)**
+
+El paràmetre ajusta el pes d'una imatge de referència en el resultat final, especialment útil per mantenir consistència d'estil, personatge, objecte o ambientació en diferents generacions. És part del sistema **Omni-Reference**.
+
+Aplica una imatge de referència (Omni Ref) i permet controlar quanta influència té sobre el resultat. S'utilitza principalment per a projectes que requereixen consistència visual o d'identitat (per exemple, personatges continus, campanyes editorials, marques).  
+
+### Com utilitzar-lo:
+
+Afegeix la imatge de referència amb la comanda **--oref** i la seva URL.
+
+Ajusta la força de la referència amb **--ow** (per defecte 100; pots pujar fins a 1000 per a màxima fidelitat visual).
+
+### **Exemple bàsic:**
+
+<ImageWithCaption
+  src="/miradas-assets/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/AD_4nXflLojgMG1cWVXScBurdd7y1o5shUO3Eh3Hjrj_DtzKYAuTOCQbZzhTQRc6BZHGOniciAHgm-Pbf2JDrm4eGZHzW49lcuUmcsNO4jRYOAGPibm1VsdmRogEfKkKSD23GUYRrKSEkeyuSPckoJHVufeY3piu5_oJtuV.png"
+  alt=""
+  caption=""
+/>
+
+#### **\--exp** **(Exploració estètica experimental)**
+
+El paràmetre --exp activa un motor estètic alternatiu que permet explorar renders més dinàmics i detallats. És especialment útil si busques imatges amb una narrativa visual més marcada o composicions amb més riquesa visual i estil artístic. Es pot combinar amb --stylize per controlar el grau d'estilització.
+
+Pots provar amb valors com --exp 5, 10, 25, 50, o 100.
+
+De --exp 5 a --exp 50, el salt és molt perceptible i de --exp 50 a --exp 100, la diferència és més subtil, però afegeix un extra de complexitat estètica i decisions visuals menys literals.
+
+**Exemple bàsic:**
+
+<ImageWithCaption
+  src="/miradas-assets/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/AD_4nXef-snqLFCRI32Zzj7JQT8Nxw79w0wcWcX1YY9ZiyffON1GSpgEaTkO2OCBqzp3Zm8nWtwqw4Oxbf2Dt2SOu6wIHr9aGCU7j0bOW8_0DKZmTnok-S1Aum0_ZnvlXXLOCEnqt1gLLgkeyuSPckoJHVufeY3piu5_oJtuV.png"
+  alt=""
+  caption=""
+/>
+
+---
+
+## Com aconseguir realisme autèntic a Midjourney
+
+Si busques imatges que semblin capturades per càmera, tingues en compte aquests punts:
+
+-   **Referències tècniques:**_shot on Canon EOS R5_, _realistic lens flare_, _Fujifilm XT3_, _50mm_, _color graded in Capture One_…  
+    
+-   **Defectes reals:**Afegir imperfeccions humanitza:  
+    _fine facial hair_, _visible pores_, _slight skin blemishes_, _creased fabric_, _messy hair_...  
+    
+-   **Evita el genèric:**No posis _"beautiful woman"_, millor:  
+    _"30-year-old woman with olive-toned skin and strong cheekbones"_
+-   **Emocions subtils:**_melancholic_, _serene_, _joyful_, _tense_…  
+    
+-   **Demana realisme explícitament:**_photo-realistic_, _magazine-quality_
+
+Prompt enriquit amb microdetalls:  
+photo-realistic editorial portrait of a young woman with linen blouse, neutral grey backdrop, soft diffused light, Canon EOS R5, 50mm lens, slight blemishes, detailed skin pores, shallow depth of field, creased fabric --ar 2:3 --q 2 --s 100
+
+---
+
+## Conclusió: pensa com un director d'art
+
+No es tracta només d'"escriure bonic". Es tracta de pensar com un director d'art. Midjourney té el talent tècnic; tu aportes la visió. I ChatGPT pot ajudar-te a traduir aquesta visió en llenguatge visual eficaç.
+
+Utilitza sempre exemples concrets, prova variants, i affina cada paràmetre amb intenció. Perquè al final, una imatge potent no s'improvisa: es dissenya des del text. Afegir petites càrregues emocionals en el llenguatge pot marcar la diferència entre una imatge correcta i una que connecti.
+
+<ImageWithCaption
+  src="/miradas-assets/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/AD_4nXdUHsXXa4z7R-57kFlkXHRP0JAMt-c1IKXFIFXul5thTXae5PERKQxLDQsTqLONv-4SIfUKDnyEiXUle701Fp5zH2B_tJom-KFZ70FdPgAnAlRa60Md__v2vLnb3qrhgFEGV_GIVgkeyuSPckoJHVufeY3piu5_oJtuV.png"
+  alt=""
+  caption=""
+/>
+
+Una última recomanació: si estàs començant a generar prompts o vols una base sòlida per fer els teus primers passos, [Midjourneyesref](https://midjourneysref.com/es/midjourney-prompt-helper) és una eina gratuïta en espanyol que et facilita el procés de manera visual i intuïtiva.
