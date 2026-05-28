@@ -71,5 +71,12 @@
       "grandvalira": "Optimitzant la conversió. Auditoria de l’assistent de compres",
       "ecoembes": "Entenent la realitat de la llar per impulsar canvis en el reciclatge"
     }
+  },
+  "liminal": {
+    "title": "Actitud Liminal",
+    "body1": "<strong>Al centre no passa res de nou.</strong> És previsible, còmode i, avui, la manera més ràpida de tornar-se irrellevant.",
+    "body2": "Per això decidim operar als <strong>marges</strong>, entre <strong>fronteres</strong>, entre <strong>límits</strong>. Allà hi ha les veritats humanes, i allà decidim quedar-nos.",
+    "body3": "Treballem des d'aquest <strong>espai liminal</strong>, entre el que és i el que està per venir. Ho fem qüestionant l'evident i desplaçant el focus, amb criteri i perspectiva humana.",
+    "quote": "Habitem al marge per viure en el canvi."
   }
 }

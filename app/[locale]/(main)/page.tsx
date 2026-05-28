@@ -4,10 +4,10 @@ import { getTranslations } from 'next-intl/server'
 import { HeroScroll } from '@/components/home/HeroScroll'
 import { HomeIntroText } from '@/components/home/HomeIntroText'
 // HomeIntroReveal — sección "Diseñamos para la transición" comentada
-// temporalmente; sustituida por IdentidadLiminal mientras iteramos el
+// temporalmente; sustituida por HomeLiminal mientras iteramos el
 // nuevo flujo de la home (no eliminar, posible vuelta atrás).
 // import { HomeIntroReveal } from '@/components/home/HomeIntroReveal'
-import { IdentidadLiminal } from '@/components/identidad/IdentidadLiminal'
+import { HomeLiminal } from '@/components/home/HomeLiminal'
 import { ServicesRows } from '@/components/home/ServicesRows'
 import { WorkGrid } from '@/components/home/WorkGrid'
 import { ClientsMarquee } from '@/components/home/ClientsMarquee'
@@ -47,7 +47,7 @@ export async function generateMetadata({
      3. ServicesRows       — z-content.
      4. WorkGrid           — z-content.
      5. ClientsMarquee     — z-content.
-     6. IdentidadLiminal   — actitud liminal, justo antes del footer.
+     6. HomeLiminal        — actitud liminal, justo antes del footer.
    Footer viene del layout.tsx.
    ========================================================================== */
 
@@ -80,7 +80,7 @@ export default async function HomePage({ params }: PageProps) {
 
       <ClientsMarquee />
 
-      <IdentidadLiminal />
+      <HomeLiminal />
     </>
   )
 }

@@ -113,7 +113,7 @@ export function HomeIntroText() {
       </div>
 
       {/* 100vh spacer — pin corto, mantiene el reveal + bold/slashes
-          sin alargar el scroll. Mismo valor en IdentidadIntro/IdentidadLiminal. */}
+          sin alargar el scroll. Mismo valor en IdentidadIntro/HomeLiminal. */}
       <div style={{ height: '100vh' }} aria-hidden="true" />
     </section>
   )
