@@ -11,8 +11,8 @@ const liminalComponents = {
   strong: (chunks: ReactNode) => <strong>{chunks}</strong>,
 }
 
-export function IdentidadLiminal() {
-  const t = useTranslations('identidad')
+export function HomeLiminal() {
+  const t = useTranslations('home')
 
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef   = useRef<HTMLHeadingElement>(null)
@@ -197,12 +197,13 @@ export function IdentidadLiminal() {
                 className="mt-10 flex flex-col gap-6 font-mono text-body-sm text-fg leading-[1.6]"
               >
                 <p data-body-p="">
-                  {t.rich('liminal.body1', liminalComponents)}{' '}
+                  {t.rich('liminal.body1', liminalComponents)}
+                </p>
+                <p data-body-p="">
                   {t.rich('liminal.body2', liminalComponents)}
                 </p>
                 <p data-body-p="">
-                  {t.rich('liminal.body3', liminalComponents)}{' '}
-                  {t.rich('liminal.body4', liminalComponents)}
+                  {t.rich('liminal.body3', liminalComponents)}
                 </p>
               </div>
             </div>
