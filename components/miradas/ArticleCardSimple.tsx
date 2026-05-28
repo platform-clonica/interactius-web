@@ -48,7 +48,7 @@ export function ArticleCardSimple({
 }: ArticleCardSimpleProps) {
   return (
     <CurtainLink
-      href={articleHref(article.category, article.slug, locale)}
+      href={articleHref(article.category, article.slugByLocale[locale], locale)}
       className="group relative block overflow-hidden"
     >
       <div className="relative w-full aspect-square overflow-hidden">

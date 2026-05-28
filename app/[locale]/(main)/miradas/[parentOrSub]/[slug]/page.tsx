@@ -10,11 +10,14 @@ import { CurtainLink } from '@/components/layout/CurtainLink'
 import { type Locale, LOCALES } from '@/lib/i18n/config'
 import {
   getMiradaBySlug,
+  getMiradaByLocalizedSlug,
+  getMiradaByLocalizedSlugAnyLocale,
   getAllMiradas,
   getNextArticle,
   calculateReadingTime,
   hasTranslation,
 } from '@/lib/content/miradas'
+import type { Mirada } from '@/lib/content/miradas'
 import { MDXContent } from '@/components/miradas/MDXContent'
 import { ShareRow } from '@/components/miradas/article/ShareRow'
 import { ArticleNext } from '@/components/miradas/article/ArticleNext'
@@ -39,6 +42,8 @@ interface PageProps {
 
 export async function generateStaticParams() {
   // Para cada artículo, generamos las 3 versiones (parentOrSub × locale).
+  // Para CA/EN el slug del artículo es el `localizedSlug` del MDX traducido
+  // si existe; sino el slug-ES (el routing emite noindex+canonical→ES).
   // Next.js intersecta con [locale]; cada locale recibe sus combinaciones
   // válidas. Las inválidas las maneja notFound() en runtime.
   const articles = getAllMiradas()
@@ -47,7 +52,7 @@ export async function generateStaticParams() {
     for (const locale of LOCALES) {
       params.push({
         parentOrSub: localizeSubSlug(article.category as MiradasSubcategory, locale),
-        slug: article.slug,
+        slug: article.slugByLocale[locale],
       })
     }
   }
@@ -57,22 +62,61 @@ export async function generateStaticParams() {
   return [...map.values()]
 }
 
+/**
+ * Resuelve el artículo a partir del slug que viene en la URL.
+ *  - ES: el slug es el slug-ES canónico. Carga directo.
+ *  - CA/EN: primero intenta resolver por `localizedSlug` (URL nueva).
+ *    Si no, intenta interpretar el slug como slug-ES (URL vieja con slug
+ *    invariante ES de antes de la Fase 2). Marca `isLegacyEsSlug` para que
+ *    el caller decida si emitir 308 a la URL con slug-locale.
+ */
+function resolveArticleForLocale(
+  sub: MiradasSubcategory,
+  slugFromUrl: string,
+  locale: Locale,
+): { article: Mirada; slugEs: string; isLegacyEsSlug: boolean } | null {
+  if (locale === 'es') {
+    const m = getMiradaBySlug(sub, slugFromUrl, locale)
+    return m ? { article: m, slugEs: slugFromUrl, isLegacyEsSlug: false } : null
+  }
+  // CA/EN: probar primero por localizedSlug (URL canónica nueva).
+  const byLocalized = getMiradaByLocalizedSlug(sub, slugFromUrl, locale)
+  if (byLocalized) {
+    return {
+      article: byLocalized.mirada,
+      slugEs: byLocalized.slugEs,
+      isLegacyEsSlug: false,
+    }
+  }
+  // Fallback: interpretar como slug-ES (URLs viejas indexadas por Google).
+  const byEs = getMiradaBySlug(sub, slugFromUrl, locale)
+  if (byEs) {
+    return { article: byEs, slugEs: slugFromUrl, isLegacyEsSlug: true }
+  }
+  return null
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, parentOrSub, slug } = await params
   const sub = delocalizeSubSlug(parentOrSub, locale)
   if (!sub) return {}
-  // Sirve el MDX traducido si existe para la locale; si no, fallback a ES.
-  // hasTranslation marca si esta locale tiene una traducción real (para
-  // decidir si indexar) — el ES siempre cuenta como "traducido" (es la fuente).
-  const article = getMiradaBySlug(sub, slug, locale)
-  if (!article) return {}
 
-  const noIndex = !hasTranslation(sub, slug, locale)
+  const resolved = resolveArticleForLocale(sub, slug, locale)
+  if (!resolved) return {}
+  const { article, slugEs, isLegacyEsSlug } = resolved
 
-  // Hreflang: solo declarar locales con traducción real. ES siempre va.
-  // CA/EN solo si existe `{slug}.{locale}.mdx`.
+  // ¿Esta URL es la canónica para su locale?
+  // - ES: siempre sí (no hay traducción de slug en ES).
+  // - CA/EN: solo si hay traducción Y el slug en URL es el localizedSlug.
+  //   Si llega slug-ES legacy (isLegacyEsSlug), esta URL NO es la canónica:
+  //   se va a redirect 308 al slug-locale (ver ArticlePage). Marcamos noindex
+  //   por si el bot llegara a renderizar antes del redirect.
+  const hasLocaleTranslation = hasTranslation(sub, slugEs, locale)
+  const noIndex = !hasLocaleTranslation || isLegacyEsSlug
+
+  // Hreflang: solo declarar locales con traducción real.
   const esPath = localizedPath('/miradas/[parentOrSub]/[slug]', 'es', {
-    params: { parentOrSub: localizeSubSlug(sub, 'es'), slug },
+    params: { parentOrSub: localizeSubSlug(sub, 'es'), slug: slugEs },
   })
   const alternates: Record<string, string> = {
     es: `${SITE_CONFIG.baseUrl}${esPath}`,
@@ -80,22 +124,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
   for (const loc of LOCALES) {
     if (loc === 'es') continue
-    if (!hasTranslation(sub, slug, loc)) continue
+    if (!hasTranslation(sub, slugEs, loc)) continue
     alternates[loc] = `${SITE_CONFIG.baseUrl}${localizedPath(
       '/miradas/[parentOrSub]/[slug]',
       loc,
-      { params: { parentOrSub: localizeSubSlug(sub, loc), slug } },
+      { params: { parentOrSub: localizeSubSlug(sub, loc), slug: article.slugByLocale[loc] } },
     )}`
   }
 
-  // Canonical: si la URL actual NO está traducida (noIndex), apunta a ES
-  // para consolidar la señal en la versión canónica. Si sí está traducida,
-  // apunta a sí misma.
-  const pathnameForCanonical = noIndex
-    ? esPath
-    : localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
-        params: { parentOrSub, slug },
-      })
+  // Canonical:
+  // - ES: la URL actual.
+  // - CA/EN sin traducción: la URL ES (Fase 1).
+  // - CA/EN con traducción y URL nueva (localizedSlug): la URL actual.
+  // - CA/EN con traducción pero URL vieja (slug-ES legacy): la URL nueva
+  //   (slug-locale en esta locale). El redirect 308 hará el resto.
+  let pathnameForCanonical: string
+  if (locale === 'es' || !hasLocaleTranslation) {
+    pathnameForCanonical = locale === 'es'
+      ? localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+          params: { parentOrSub, slug: slugEs },
+        })
+      : esPath
+  } else {
+    pathnameForCanonical = localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+      params: {
+        parentOrSub: localizeSubSlug(sub, locale),
+        slug: article.slugByLocale[locale],
+      },
+    })
+  }
 
   return buildPageMetadata({
     locale,
@@ -106,7 +163,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates,
     noIndex,
     ogImage: {
-      url: getCover(article.slug, article.image),
+      url: getCover(slugEs, article.image),
       width: 1200,
       height: 630,
       alt: article.title,
@@ -157,17 +214,50 @@ export default async function ArticlePage({ params }: PageProps) {
     notFound()
   }
 
-  // Carga el MDX traducido si existe para la locale; si no, fallback a ES.
-  // Las URLs CA/EN sin traducción real ya se marcan noindex+canonical-ES en
-  // generateMetadata, así que sirviendo el ES no creamos duplicate content
-  // de cara a Google.
-  const article = getMiradaBySlug(sub, slug, locale)
-  if (!article) notFound()
+  // Resuelve el artículo soportando 3 casos:
+  //  1. ES: slug en URL es el slug-ES canónico.
+  //  2. CA/EN con traducción y slug-locale en URL → sirve traducción.
+  //  3. CA/EN con slug-ES legacy en URL (la URL vieja con slug invariante
+  //     ES de antes de Fase 2) → si hay traducción con slug-locale distinto,
+  //     redirect 308 a la URL nueva. Si no hay traducción, sirve ES con
+  //     noindex+canonical→ES (Fase 1).
+  const resolved = resolveArticleForLocale(sub, slug, locale)
+  if (!resolved) {
+    // Caso final auto-cura: el slug es localizedSlug de OTRA locale. Pasa
+    // cuando el LocaleSwitcher click salta entre CA↔EN preservando el slug
+    // de la locale origen. Redirigimos al slug-locale correcto de la actual.
+    if (locale !== 'es') {
+      const cross = getMiradaByLocalizedSlugAnyLocale(sub, slug)
+      if (cross) {
+        permanentRedirect(
+          localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+            params: { parentOrSub, slug: cross.slugByLocale[locale] },
+          }),
+        )
+      }
+    }
+    notFound()
+  }
+  const article = resolved.article
+  const slugEs = resolved.slugEs
+
+  if (resolved.isLegacyEsSlug && locale !== 'es') {
+    const targetSlug = article.slugByLocale[locale]
+    if (targetSlug !== slugEs) {
+      permanentRedirect(
+        localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+          params: { parentOrSub, slug: targetSlug },
+        }),
+      )
+    }
+  }
 
   const parent = SUB_TO_PARENT[sub]
   const t = await getTranslations({ locale, namespace: 'miradas' })
   const readingTime = calculateReadingTime(article.content)
-  const next = getNextArticle(sub, slug)
+  // `getNextArticle` opera siempre con slug-ES canónico (sus comparaciones
+  // van contra el `slug` del frontmatter ES).
+  const next = getNextArticle(sub, slugEs)
   const absoluteUrl = `${SITE_CONFIG.baseUrl}${localizedPath(
     '/miradas/[parentOrSub]/[slug]',
     locale,
@@ -383,7 +473,7 @@ export default async function ArticlePage({ params }: PageProps) {
         >
           <div className="grid grid-cols-12 gap-grid-gutter">
             <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
-              <AITranslationBanner sub={sub} slug={slug} locale={locale} />
+              <AITranslationBanner sub={sub} slug={slugEs} locale={locale} />
             </div>
           </div>
         </section>

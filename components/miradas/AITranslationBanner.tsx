@@ -15,7 +15,7 @@ interface AITranslationBannerProps {
 const COPY = {
   ca: {
     before:
-      'Aquest article es va escriure originalment en castellà i traduir amb l’ajuda d’IA. Aquí tens l’',
+      'Aquest article es va escriure originalment en castellà i ha estat traduit amb l’ajuda d’IA. Aquí tens l’',
     link: 'article original',
     after: '.',
   },

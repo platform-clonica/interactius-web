@@ -115,6 +115,14 @@ export const MiradaFrontmatterSchema = z.object({
     .string()
     .regex(dateRe, 'translatedAt must be YYYY-MM-DD')
     .optional(),
+  // Slug localizado para la URL en este locale. Más estricto que `slug`
+  // porque va en URL pública: solo [a-z0-9-]. El archivo MDX sigue
+  // nombrado con el slug ES (`{slug-es}.{locale}.mdx`) — el localizedSlug
+  // se usa solo para el segmento [slug] de la URL final en CA/EN.
+  localizedSlug: z
+    .string()
+    .regex(/^[a-z0-9-]+$/, 'localizedSlug must be lowercase [a-z0-9-]')
+    .optional(),
 })
 
 export type MiradaFrontmatter = z.infer<typeof MiradaFrontmatterSchema>

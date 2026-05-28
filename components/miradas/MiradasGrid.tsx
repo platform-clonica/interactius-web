@@ -68,7 +68,7 @@ function ArticleCard({
 }) {
   return (
     <CurtainLink
-      href={articleHref(article.category, article.slug, locale)}
+      href={articleHref(article.category, article.slugByLocale[locale], locale)}
       className="group relative block overflow-hidden"
     >
       {/* Image area — único bloque del card. Author + title se apilan desde
@@ -117,7 +117,7 @@ function FeaturedCard({
 }) {
   return (
     <CurtainLink
-      href={articleHref(article.category, article.slug, locale)}
+      href={articleHref(article.category, article.slugByLocale[locale], locale)}
       className="group relative col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 block overflow-hidden"
     >
       {/* Image area — único bloque del card. Layout canónico bottom-up via

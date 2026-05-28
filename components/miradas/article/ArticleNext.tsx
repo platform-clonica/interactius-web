@@ -37,7 +37,7 @@ export function ArticleNext({ article, locale }: ArticleNextProps) {
   const t = useTranslations('miradas')
   return (
     <CurtainLink
-      href={articleHref(article.category, article.slug, locale)}
+      href={articleHref(article.category, article.slugByLocale[locale], locale)}
       className="group block w-full"
       aria-label={t('article.nextAriaLabel', { title: article.title })}
     >

@@ -139,8 +139,13 @@ const TRANSLATION_TOOL = {
         description:
           'Translated MDX body. PRESERVE all markdown/MDX syntax EXACTLY: headings, lists, code blocks, links, images, blockquotes, emphasis, JSX components, frontmatter is NOT included here.',
       },
+      slug: {
+        type: 'string',
+        description:
+          'URL slug derived from the translated title. Rules: lowercase only, ASCII (strip accents/diacritics), words separated by single hyphens, no punctuation, no stopwords trimming UNLESS needed to stay under 80 chars, target 40-80 chars. Examples: title="El Disseny UX i de producte ha entrat en una nova era: conversa amb Antonio Díaz Cueto" → "el-disseny-ux-i-de-producte-ha-entrat-en-una-nova-era-conversa-antonio-diaz-cueto". Must match regex /^[a-z0-9-]+$/.',
+      },
     },
-    required: ['title', 'description', 'content'],
+    required: ['title', 'description', 'content', 'slug'],
   },
 }
 
@@ -155,17 +160,19 @@ CRITICAL RULES:
 5. Maintain a professional, expert tone aimed at design/UX practitioners. The author of the original article is a domain expert.
 6. Do NOT add disclaimers, prefaces, translator's notes, or comments about the translation itself.
 7. Translate the title naturally — it can deviate from a literal translation if a more idiomatic version is clearly better in the target language.
-8. Output ONLY via the submit_translation tool. Do not return any prose.`
+8. Generate a URL slug from your translated title following the rules in the slug field description (lowercase ASCII, hyphens, 40-80 chars target). Personal/brand names stay readable (drop diacritics: "Díaz" → "diaz", "Müller" → "muller").
+9. Output ONLY via the submit_translation tool. Do not return any prose.`
 }
 
 // ─── Translate one article ────────────────────────────────────────────
 
-async function translateArticle({ frontmatter, content }, targetLocale) {
+async function translateArticle({ frontmatter, content, slug: slugEs }, targetLocale) {
   if (args.dryRun) {
     return {
       title: `[DRY-RUN ${targetLocale}] ${frontmatter.title}`,
       description: frontmatter.description,
       content,
+      slug: slugEs,
     }
   }
 
@@ -178,7 +185,7 @@ async function translateArticle({ frontmatter, content }, targetLocale) {
     messages: [
       {
         role: 'user',
-        content: `Translate this article:\n\nTitle: ${frontmatter.title}\n\nDescription: ${frontmatter.description}\n\nMDX body:\n\n${content}`,
+        content: `Translate this article to ${targetLocale}.\n\nSource slug (for reference, derive the localized slug from your translated title): ${slugEs}\n\nTitle: ${frontmatter.title}\n\nDescription: ${frontmatter.description}\n\nMDX body:\n\n${content}`,
       },
     ],
   })
@@ -189,11 +196,21 @@ async function translateArticle({ frontmatter, content }, targetLocale) {
       `Model did not call submit_translation. Stop reason: ${response.stop_reason}`,
     )
   }
-  const { title, description, content: translatedContent } = toolUse.input
-  if (!title || !description || !translatedContent) {
+  const {
+    title,
+    description,
+    content: translatedContent,
+    slug: translatedSlug,
+  } = toolUse.input
+  if (!title || !description || !translatedContent || !translatedSlug) {
     throw new Error('Tool input missing required fields.')
   }
-  return { title, description, content: translatedContent }
+  if (!/^[a-z0-9-]+$/.test(translatedSlug)) {
+    throw new Error(
+      `Translated slug "${translatedSlug}" does not match /^[a-z0-9-]+$/.`,
+    )
+  }
+  return { title, description, content: translatedContent, slug: translatedSlug }
 }
 
 // ─── Write translated MDX ─────────────────────────────────────────────
@@ -204,12 +221,16 @@ function todayIso() {
 
 async function writeTranslation({ cat, slug, frontmatter }, locale, translated) {
   const outPath = path.join(CONTENT_DIR, cat, `${slug}.${locale}.mdx`)
+  // El archivo MDX se llama `{slug-es}.{locale}.mdx` y mantiene el `slug`
+  // del frontmatter en castellano (es el slug canónico, valida con el
+  // filename). El slug-locale para la URL pública va en `localizedSlug`.
   const newFrontmatter = {
     ...frontmatter,
     title: translated.title,
     description: translated.description,
     translatedBy: 'ai',
     translatedAt: todayIso(),
+    localizedSlug: translated.slug,
   }
   const md = matter.stringify(translated.content, newFrontmatter)
   await fs.writeFile(outPath, md, 'utf-8')

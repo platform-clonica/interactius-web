@@ -90,8 +90,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Artículos Miradas — solo se incluye la URL de una locale si existe MDX
   // real para esa locale. Sin traducción, la URL sigue resolviendo (sirve ES)
   // pero se marca noindex + canonical a ES; mantenerla en el sitemap solo
-  // contaminaría las señales (Google la rastrearía esperando ver una versión
-  // y encontraría noindex).
+  // contaminaría las señales.
+  //
+  // Para CA/EN traducidos, el slug en la URL es el `localizedSlug` del
+  // .{locale}.mdx (slug traducido). Para ES siempre el slug-ES canónico.
+  // El loader pre-computa `article.slugByLocale[locale]` con la resolución.
   const articles = getAllMiradas()
   for (const article of articles) {
     for (const locale of LOCALES) {
@@ -100,7 +103,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: localizedUrl('/miradas/[parentOrSub]/[slug]', locale, {
           params: {
             parentOrSub: localizeSubSlug(article.category as MiradasSubcategory, locale),
-            slug: article.slug,
+            slug: article.slugByLocale[locale],
           },
         }),
         lastModified: article.modifiedAt
