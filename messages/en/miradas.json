@@ -36,6 +36,7 @@
     "next": "Next article",
     "nextAriaLabel": "Next article: {title}",
     "backToListing": "Back to Thoughts",
-    "continueReading": "Continue reading"
+    "continueReading": "Continue reading",
+    "aiTranslationBanner": "This article was originally written in Spanish and translated with the help of AI. Here is the <link>original article</link>."
   }
 }

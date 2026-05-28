@@ -71,6 +71,10 @@ const FrontmatterSchema = z.object({
   slug: z.string().regex(slugRe),
   image: z.string().regex(imagePathRe).optional(),
   tags: z.array(z.string()).optional(),
+  // Translation metadata (solo en MDX bajo content/miradas/{ca,en}/).
+  translatedBy: z.enum(['ai', 'human']).optional(),
+  translatedAt: z.string().regex(dateRe).optional(),
+  localizedSlug: z.string().regex(/^[a-z0-9-]+$/).optional(),
 })
 
 // ─── Walk + validate ──────────────────────────────────────────────────
@@ -86,10 +90,18 @@ async function findMdxFiles(dir) {
 }
 
 function pathChecks(fm, filePath) {
+  // Estructura esperada: content/miradas/{locale}/{category}/{slug}.mdx
   const errors = []
   const parts = filePath.replace(/\\/g, '/').split('/')
   const folder = parts[parts.length - 2]
+  const localeSegment = parts[parts.length - 3]
   const baseName = parts[parts.length - 1].replace(/\.mdx$/, '')
+  const VALID_LOCALES = new Set(['es', 'ca', 'en'])
+  if (!VALID_LOCALES.has(localeSegment)) {
+    errors.push(
+      `locale segment "${localeSegment}" ≠ es/ca/en — path must be content/miradas/{locale}/{cat}/{slug}.mdx`,
+    )
+  }
   if (folder !== fm.category) {
     errors.push(`folder "${folder}" ≠ category "${fm.category}"`)
   }

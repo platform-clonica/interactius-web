@@ -31,7 +31,8 @@ import matter from 'gray-matter'
 import Anthropic from '@anthropic-ai/sdk'
 
 const ROOT = process.cwd()
-const CONTENT_DIR = path.join(ROOT, 'content', 'miradas')
+const CONTENT_ROOT = path.join(ROOT, 'content', 'miradas')
+const SOURCE_LOCALE = 'es'
 const TARGET_LOCALES = ['ca', 'en']
 const DEFAULT_LIMIT = 30
 const DEFAULT_MODEL = 'claude-sonnet-4-6'
@@ -88,18 +89,22 @@ if (!args.dryRun) {
 
 // ─── Discover articles ────────────────────────────────────────────────
 
-/** Lee solo los MDX en castellano (excluye `.ca.mdx` / `.en.mdx`). */
+/**
+ * Lee los MDX fuente desde `content/miradas/es/{cat}/{slug}.mdx`. Las
+ * traducciones viven bajo `content/miradas/{ca,en}/{cat}/{slug}.mdx` y NO
+ * se descubren aquí.
+ */
 async function readSourceArticles() {
   const articles = []
-  const cats = await fs.readdir(CONTENT_DIR)
+  const sourceRoot = path.join(CONTENT_ROOT, SOURCE_LOCALE)
+  const cats = await fs.readdir(sourceRoot)
   for (const cat of cats) {
-    const catDir = path.join(CONTENT_DIR, cat)
+    const catDir = path.join(sourceRoot, cat)
     const stat = await fs.stat(catDir)
     if (!stat.isDirectory()) continue
     const files = await fs.readdir(catDir)
     for (const file of files) {
       if (!file.endsWith('.mdx')) continue
-      if (/\.(?:ca|en)\.mdx$/.test(file)) continue
       const slug = file.replace(/\.mdx$/, '')
       const raw = await fs.readFile(path.join(catDir, file), 'utf-8')
       const { data: frontmatter, content } = matter(raw)
@@ -220,10 +225,13 @@ function todayIso() {
 }
 
 async function writeTranslation({ cat, slug, frontmatter }, locale, translated) {
-  const outPath = path.join(CONTENT_DIR, cat, `${slug}.${locale}.mdx`)
-  // El archivo MDX se llama `{slug-es}.{locale}.mdx` y mantiene el `slug`
-  // del frontmatter en castellano (es el slug canónico, valida con el
-  // filename). El slug-locale para la URL pública va en `localizedSlug`.
+  // El archivo MDX traducido vive en `content/miradas/{locale}/{cat}/{slug}.mdx`.
+  // El nombre del archivo es el slug-ES canónico (invariante a través de
+  // locales — facilita mapping y validación). El slug-locale para la URL
+  // pública va en `localizedSlug` del frontmatter.
+  const outDir = path.join(CONTENT_ROOT, locale, cat)
+  await fs.mkdir(outDir, { recursive: true })
+  const outPath = path.join(outDir, `${slug}.mdx`)
   const newFrontmatter = {
     ...frontmatter,
     title: translated.title,
@@ -269,9 +277,10 @@ async function main() {
   for (const article of candidates) {
     for (const locale of localesToProcess) {
       const outPath = path.join(
-        CONTENT_DIR,
+        CONTENT_ROOT,
+        locale,
         article.cat,
-        `${article.slug}.${locale}.mdx`,
+        `${article.slug}.mdx`,
       )
       const exists = existsSync(outPath)
       if (exists && !args.force) {

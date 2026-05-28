@@ -36,6 +36,7 @@
     "next": "Siguiente artículo",
     "nextAriaLabel": "Siguiente artículo: {title}",
     "backToListing": "Volver a Miradas",
-    "continueReading": "Continúa leyendo"
+    "continueReading": "Continúa leyendo",
+    "aiTranslationBanner": "Este artículo fue escrito originalmente en castellano y traducido con ayuda de IA. Aquí tienes el <link>artículo original</link>."
   }
 }

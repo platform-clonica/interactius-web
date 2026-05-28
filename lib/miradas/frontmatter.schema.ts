@@ -140,12 +140,13 @@ export type ValidationResult = ValidationSuccess | ValidationFailure
 
 /**
  * Valida que el frontmatter sea coherente con la ruta del archivo:
+ *   - Estructura esperada: `content/miradas/{locale}/{category}/{slug}.mdx`.
  *   - La carpeta padre del .mdx debe coincidir con `category`.
+ *   - El segmento anterior debe ser una locale válida (`es`/`ca`/`en`).
  *   - `parentCategory` debe ser SUB_TO_PARENT[category].
- *   - El nombre del archivo (sin .mdx) debe coincidir con `slug`.
- *     · ES default: `{slug}.mdx`
- *     · Traducción: `{slug}.{locale}.mdx` (la parte locale se valida aparte
- *       como segmento de 2 letras que matchea Locale).
+ *   - El nombre del archivo (sin .mdx) debe coincidir con `slug`. El nombre
+ *     es invariante en las 3 locales — el slug-locale traducido vive en el
+ *     campo `localizedSlug` del frontmatter, no en el filename.
  *   - Si hay `image`, su slug embebido debe coincidir con `slug`.
  */
 export function validateFrontmatterAgainstPath(
@@ -154,17 +155,16 @@ export function validateFrontmatterAgainstPath(
 ): ValidationResult {
   const errors: string[] = []
   const parts = filePath.replace(/\\/g, '/').split('/')
-  const folder = parts[parts.length - 2]
   const fileName = parts[parts.length - 1]
-  // Soporta tanto `{slug}.mdx` como `{slug}.{locale}.mdx`. Para una
-  // traducción esperamos sufijo `.ca` o `.en` antes del `.mdx`.
-  const TRANSLATED_LOCALES = ['ca', 'en'] as const
-  let baseName = fileName.replace(/\.mdx$/, '')
-  for (const loc of TRANSLATED_LOCALES) {
-    if (baseName.endsWith(`.${loc}`)) {
-      baseName = baseName.slice(0, -(loc.length + 1))
-      break
-    }
+  const folder = parts[parts.length - 2]
+  const localeSegment = parts[parts.length - 3]
+  const baseName = fileName.replace(/\.mdx$/, '')
+
+  const validLocales = new Set(['es', 'ca', 'en'])
+  if (!validLocales.has(localeSegment)) {
+    errors.push(
+      `locale segment "${localeSegment}" is not one of ${[...validLocales].join('/')} — path must be content/miradas/{locale}/{category}/{slug}.mdx`,
+    )
   }
 
   if (folder !== fm.category) {
