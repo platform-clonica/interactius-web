@@ -15,13 +15,13 @@ interface AITranslationBannerProps {
 const COPY = {
   ca: {
     before:
-      'Aquest article es va escriure originalment en castellà i traduir amb l’ajuda d’IA. La versió ha estat revisada editorialment. Aquí tens l’',
+      'Aquest article es va escriure originalment en castellà i traduir amb l’ajuda d’IA. Aquí tens l’',
     link: 'article original',
     after: '.',
   },
   en: {
     before:
-      'This article was originally written in Spanish and translated with the help of AI. The version has been editorially reviewed. Here is the ',
+      'This article was originally written in Spanish and translated with the help of AI. Here is the ',
     link: 'original article',
     after: '.',
   },
