@@ -76,7 +76,7 @@ function ArticleCard({
       <div className="relative w-full aspect-square overflow-hidden">
         <Image
           src={cover}
-          alt={article.title}
+          alt={article.titleByLocale[locale]}
           fill
           priority={priority}
           sizes="(min-width: 1024px) 35vw, 100vw"
@@ -95,7 +95,7 @@ function ArticleCard({
           {/* Title strip — full width en cards normales */}
           <div className="w-full bg-pure-white p-5 flex items-center min-h-[72px]">
             <h2 className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-[1.15]">
-              {article.title}
+              {article.titleByLocale[locale]}
             </h2>
           </div>
         </div>
@@ -129,7 +129,7 @@ function FeaturedCard({
       <div className="relative w-full aspect-[16/9] lg:aspect-[1382/780] overflow-hidden">
         <Image
           src={cover}
-          alt={article.title}
+          alt={article.titleByLocale[locale]}
           fill
           priority
           sizes="(min-width: 1024px) 86vw, 100vw"
@@ -144,7 +144,7 @@ function FeaturedCard({
             <AuthorBlock author={article.author} publishedAt={article.publishedAt} locale={locale} />
             <div className="hidden lg:flex w-1/2 bg-pure-white p-5 items-center">
               <p className="font-mono text-body-sm text-fg leading-[1.5] line-clamp-3">
-                {article.description}
+                {article.descriptionByLocale[locale]}
               </p>
             </div>
           </div>
@@ -152,7 +152,7 @@ function FeaturedCard({
           {/* Title strip — w-1/2 (= 5 cols del card que es col-span-10) en lg */}
           <div className="w-full lg:w-1/2 bg-pure-white p-5 min-h-[88px] flex items-center">
             <h2 className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-[1.15]">
-              {article.title}
+              {article.titleByLocale[locale]}
             </h2>
           </div>
         </div>

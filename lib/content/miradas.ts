@@ -58,6 +58,14 @@ export interface MiradaMeta extends MiradaFrontmatter {
    * Llamadores en listings/grids hacen `articleHref(cat, m.slugByLocale[locale], locale)`.
    */
   slugByLocale: Record<Locale, string>
+  /**
+   * Title del artículo en cada locale. ES siempre es el del MDX original.
+   * CA/EN: el `title` del `.{locale}.mdx` si existe; sino fallback al ES.
+   * Listings y cards hacen `m.titleByLocale[locale]`.
+   */
+  titleByLocale: Record<Locale, string>
+  /** Idem para description. */
+  descriptionByLocale: Record<Locale, string>
 }
 
 export interface Mirada extends MiradaMeta {
@@ -71,24 +79,59 @@ function readMDXFile(filePath: string): { frontmatter: MiradaFrontmatter; conten
 }
 
 /**
- * Lee el `localizedSlug` del frontmatter de `{slug}.{locale}.mdx` si existe.
- * Devuelve el slug-ES como fallback (cuando no hay traducción, la URL CA/EN
- * usa el slug-ES y el routing emite noindex+canonical→ES — ver Fase 1).
+ * Lee el frontmatter del `{slug}.{locale}.mdx` (si existe) y devuelve los 3
+ * mappings que `MiradaMeta` expone: slug, title y description por locale.
+ *
+ * Un único filesystem read por (cat, slug, locale) — más eficiente que tener
+ * helpers separados que abrirían el mismo archivo tres veces.
  */
-function readSlugForLocale(cat: string, slugEs: string, locale: Locale): string {
-  if (locale === DEFAULT_LOCALE) return slugEs
-  const localePath = path.join(CONTENT_DIR, cat, `${slugEs}.${locale}.mdx`)
-  if (!fs.existsSync(localePath)) return slugEs
-  const { frontmatter } = readMDXFile(localePath)
-  return frontmatter.localizedSlug?.trim() || slugEs
+function buildLocalizedMeta(
+  cat: string,
+  slugEs: string,
+  esFrontmatter: MiradaFrontmatter,
+): {
+  slugByLocale: Record<Locale, string>
+  titleByLocale: Record<Locale, string>
+  descriptionByLocale: Record<Locale, string>
+} {
+  const slugByLocale = {} as Record<Locale, string>
+  const titleByLocale = {} as Record<Locale, string>
+  const descriptionByLocale = {} as Record<Locale, string>
+  for (const loc of LOCALES) {
+    if (loc === DEFAULT_LOCALE) {
+      slugByLocale[loc] = slugEs
+      titleByLocale[loc] = esFrontmatter.title
+      descriptionByLocale[loc] = esFrontmatter.description
+      continue
+    }
+    const localePath = path.join(CONTENT_DIR, cat, `${slugEs}.${loc}.mdx`)
+    if (!fs.existsSync(localePath)) {
+      slugByLocale[loc] = slugEs
+      titleByLocale[loc] = esFrontmatter.title
+      descriptionByLocale[loc] = esFrontmatter.description
+      continue
+    }
+    const { frontmatter } = readMDXFile(localePath)
+    slugByLocale[loc] = frontmatter.localizedSlug?.trim() || slugEs
+    titleByLocale[loc] = frontmatter.title || esFrontmatter.title
+    descriptionByLocale[loc] = frontmatter.description || esFrontmatter.description
+  }
+  return { slugByLocale, titleByLocale, descriptionByLocale }
 }
 
+/** Devuelve solo el slugByLocale (compatibilidad con helpers individuales). */
 function buildSlugByLocale(cat: string, slugEs: string): Record<Locale, string> {
-  const out = {} as Record<Locale, string>
-  for (const loc of LOCALES) {
-    out[loc] = readSlugForLocale(cat, slugEs, loc)
+  // Para getMiradaBySlug y getMiradaByLocalizedSlug que solo necesitan el
+  // slug-locale, leemos el frontmatter del archivo ES vía gray-matter mínimo.
+  // Si el archivo ES no existe (caller inválido), devolvemos slug-ES.
+  const esPath = path.join(CONTENT_DIR, cat, `${slugEs}.mdx`)
+  if (!fs.existsSync(esPath)) {
+    const out = {} as Record<Locale, string>
+    for (const loc of LOCALES) out[loc] = slugEs
+    return out
   }
-  return out
+  const { frontmatter } = readMDXFile(esPath)
+  return buildLocalizedMeta(cat, slugEs, frontmatter).slugByLocale
 }
 
 export function getAllMiradas(): MiradaMeta[] {
@@ -112,11 +155,12 @@ export function getAllMiradas(): MiradaMeta[] {
     for (const file of files) {
       const slug = file.replace(/\.mdx$/, '')
       const { frontmatter } = readMDXFile(path.join(catDir, file))
+      const localized = buildLocalizedMeta(cat, slug, frontmatter)
       results.push({
         ...frontmatter,
         slug,
         cat,
-        slugByLocale: buildSlugByLocale(cat, slug),
+        ...localized,
       })
     }
   }
@@ -140,18 +184,19 @@ export function getMiradaBySlug(
   slug: string,
   locale: Locale = DEFAULT_LOCALE,
 ): Mirada | null {
-  const slugByLocale = buildSlugByLocale(cat, slug)
+  const esPath = path.join(CONTENT_DIR, cat, `${slug}.mdx`)
+  if (!fs.existsSync(esPath)) return null
+  const { frontmatter: esFrontmatter } = readMDXFile(esPath)
+  const localized = buildLocalizedMeta(cat, slug, esFrontmatter)
   if (locale !== DEFAULT_LOCALE) {
     const localePath = path.join(CONTENT_DIR, cat, `${slug}.${locale}.mdx`)
     if (fs.existsSync(localePath)) {
       const { frontmatter, content } = readMDXFile(localePath)
-      return { ...frontmatter, slug, cat, content, slugByLocale }
+      return { ...frontmatter, slug, cat, content, ...localized }
     }
   }
-  const filePath = path.join(CONTENT_DIR, cat, `${slug}.mdx`)
-  if (!fs.existsSync(filePath)) return null
-  const { frontmatter, content } = readMDXFile(filePath)
-  return { ...frontmatter, slug, cat, content, slugByLocale }
+  const { frontmatter, content } = readMDXFile(esPath)
+  return { ...frontmatter, slug, cat, content, ...localized }
 }
 
 /**
@@ -182,9 +227,11 @@ export function getMiradaByLocalizedSlug(
     const { frontmatter, content } = readMDXFile(localePath)
     if (frontmatter.localizedSlug === localizedSlug) {
       const slugEs = file.replace(new RegExp(`\\.${locale}\\.mdx$`), '')
-      const slugByLocale = buildSlugByLocale(cat, slugEs)
+      const esPath = path.join(catDir, `${slugEs}.mdx`)
+      const { frontmatter: esFrontmatter } = readMDXFile(esPath)
+      const localized = buildLocalizedMeta(cat, slugEs, esFrontmatter)
       return {
-        mirada: { ...frontmatter, slug: slugEs, cat, content, slugByLocale },
+        mirada: { ...frontmatter, slug: slugEs, cat, content, ...localized },
         slugEs,
       }
     }
@@ -216,7 +263,8 @@ export function getMiradaByLocalizedSlugAnyLocale(
       const { frontmatter } = readMDXFile(path.join(catDir, file))
       if (frontmatter.localizedSlug === localizedSlug) {
         const slugEs = file.replace(new RegExp(`\\.${loc}\\.mdx$`), '')
-        return { slugEs, slugByLocale: buildSlugByLocale(cat, slugEs) }
+        const slugByLocale = buildSlugByLocale(cat, slugEs)
+        return { slugEs, slugByLocale }
       }
     }
   }
