@@ -300,7 +300,7 @@ export default async function ArticlePage({ params }: PageProps) {
       {
         '@type': 'ListItem',
         position: 1,
-        name: 'Miradas',
+        name: t('grid.superTitle'),
         item: `${SITE_CONFIG.baseUrl}${localizedPath('/miradas', locale)}`,
       },
       {
@@ -410,7 +410,7 @@ export default async function ArticlePage({ params }: PageProps) {
               withJsonLd={false}
               items={[
                 {
-                  label: 'Miradas',
+                  label: t('grid.superTitle'),
                   href: '/miradas',
                   absoluteUrl: toAbsoluteUrl(localizedPath('/miradas', locale)),
                 },
