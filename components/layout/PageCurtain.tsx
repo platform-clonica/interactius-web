@@ -113,45 +113,71 @@ export function PageCurtain() {
 
       const initialPath = window.location.pathname
 
-      // Glyph "loading": cada letra (i, u, s) hace REVEAL LATERAL (clip-path
-      // izquierda→derecha) en SECUENCIA — primero i, luego u, luego s. La
-      // siguiente letra empieza solo cuando la anterior ha terminado.
-      // Mismo easing canónico (cubic-bezier(.16,1,.3,1)).
-      const letters = panel.querySelectorAll<SVGGElement>('[data-curtain-letter]')
+      // Glyph "loading": isotipo Interactius dibujado por trazo (stroke
+      // dashoffset) y rematado con dos fades de relleno. Las posiciones y
+      // duraciones del timeline replican el HTML referencia
+      // interactius_loading:
+      //   0.3s  frame (1.2s)
+      //   1.7s  divider (0.55s)
+      //   2.45s r-bottom (0.3s)  →  2.73s r-left (0.5s)
+      //   3.21s r-top (0.3s)     →  3.49s r-right (0.5s)
+      //   4.05s inner-bot fade (0.35s)
+      //   4.6s  top-full + top-hole fade simultáneo (0.35s)
+      // El conjunto se reproduce con timeScale(GLYPH_SPEED) para encajar
+      // dentro del hold de la cortina (MIN 1.3s, MAX 2.5s): a 3x el
+      // ciclo dura ~1.65s y el isotipo se llega a ver completo en
+      // navegaciones con MAX hold. La timeline NO loopea: el isotipo se
+      // dibuja una vez y la marca completa queda visible hasta el uncover.
       const glyphSvg = panel.querySelector<SVGElement>('[data-curtain-glyph]')
-      const lateralEase = 'cubic-bezier(.16,1,.3,1)'
+      const allStrokes = panel.querySelectorAll<SVGPathElement>('[data-stroke]')
+      const stroke = (id: string) =>
+        panel.querySelector<SVGPathElement>(`[data-stroke="${id}"]`)
+      const fill = (id: string) =>
+        panel.querySelector<SVGRectElement>(`[data-fill="${id}"]`)
+      const dashLengths: Record<string, number> = {
+        frame: 216,
+        divider: 54,
+        'r-bottom': 12.4,
+        'r-left': 24.8,
+        'r-top': 12.4,
+        'r-right': 24.8,
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let loopTl: any = null
       const startGlyphLoop = () => {
-        if (!letters.length) return
+        if (!glyphSvg || !allStrokes.length) return
         // El SVG nace con opacity:0 inline para que NO sea visible durante
-        // el cover del panel. Lo mostramos justo antes del primer reveal.
-        if (glyphSvg) gsap.set(glyphSvg, { opacity: 1 })
-        gsap.set(letters, { clipPath: 'inset(0 100% 0 0)' })
-        loopTl = gsap.timeline({ repeat: -1, repeatDelay: 0.25 })
-        // Reveal con OVERLAP: stagger 0.3 < duration 0.6 → la siguiente letra
-        // arranca cuando la anterior está al ~50%. Encadenado fluido: i→u→s.
-        loopTl.to(letters, {
-          clipPath: 'inset(0 0% 0 0)',
-          duration: 0.6,
-          stagger: 0.3,
-          ease: lateralEase,
+        // el cover del panel. Lo mostramos justo antes de empezar a dibujar.
+        gsap.set(glyphSvg, { opacity: 1 })
+        // Reset: trazos en su offset máximo (invisibles) y rellenos a 0.
+        allStrokes.forEach((el) => {
+          const id = el.getAttribute('data-stroke') ?? ''
+          gsap.set(el, { strokeDashoffset: dashLengths[id] ?? 0 })
         })
-        // Hold breve y reset (re-clipar desde la derecha para que el próximo
-        // ciclo vuelva a entrar limpio desde la izquierda). Reset también
-        // secuencial pero más rápido — solo es la "limpieza" entre ciclos.
-        loopTl.to(letters, {
-          clipPath: 'inset(0 0 0 100%)',
-          duration: 0.3,
-          stagger: 0.3,
-          ease: lateralEase,
-        }, '+=0.4')
-        loopTl.set(letters, { clipPath: 'inset(0 100% 0 0)' })
+        gsap.set(panel.querySelectorAll('[data-fill]'), { opacity: 0 })
+
+        const GLYPH_SPEED = 3
+        // Sin repeat: el isotipo se dibuja una sola vez y queda completo
+        // (rellenos al final) hasta que stopGlyphLoop() lo apague en el
+        // uncover. Si el hold es más corto que el ciclo, el glifo se ve
+        // parcialmente dibujado; si es más largo, queda la marca sólida.
+        loopTl = gsap.timeline()
+        loopTl.timeScale(GLYPH_SPEED)
+        const drawEase = 'power2.inOut'
+        const fadeEase = 'power2.out'
+
+        loopTl.to(stroke('frame'),    { strokeDashoffset: 0, duration: 1.2,  ease: drawEase }, 0.3)
+        loopTl.to(stroke('divider'),  { strokeDashoffset: 0, duration: 0.55, ease: drawEase }, 1.7)
+        loopTl.to(stroke('r-bottom'), { strokeDashoffset: 0, duration: 0.3,  ease: drawEase }, 2.45)
+        loopTl.to(stroke('r-left'),   { strokeDashoffset: 0, duration: 0.5,  ease: drawEase }, 2.73)
+        loopTl.to(stroke('r-top'),    { strokeDashoffset: 0, duration: 0.3,  ease: drawEase }, 3.21)
+        loopTl.to(stroke('r-right'),  { strokeDashoffset: 0, duration: 0.5,  ease: drawEase }, 3.49)
+        loopTl.to(fill('inner-bot'),  { opacity: 1, duration: 0.35, ease: fadeEase }, 4.05)
+        loopTl.to([fill('top-full'), fill('top-hole')], { opacity: 1, duration: 0.35, ease: fadeEase }, 4.6)
       }
       const stopGlyphLoop = () => {
         loopTl?.kill()
         loopTl = null
-        if (letters.length) gsap.set(letters, { clipPath: 'inset(0 0% 0 0)' })
         // Volver a ocultar el SVG para la próxima cortina (durante el uncover
         // y el siguiente cover, no debe verse).
         if (glyphSvg) gsap.set(glyphSvg, { opacity: 0 })
@@ -248,10 +274,10 @@ export function PageCurtain() {
       className="fixed inset-0 z-page-transition pointer-events-none bg-warm-light"
       style={{ clipPath: 'inset(0 100% 0 0)' }}
     >
-      {/* Imago intencionado: las tres últimas letras del wordmark se
-          revelan letra a letra durante el hold de la cortina. Centradas
-          absolutamente en el panel. Heredan el clip-path del padre →
-          aparecen junto con el panel y se recortan en el uncover sin
+      {/* Isotipo Interactius: se dibuja por trazo (dashoffset) y se remata
+          con fades de relleno durante el hold de la cortina. Centrado
+          absolutamente en el panel. Hereda el clip-path del padre →
+          aparece junto con el panel y se recorta en el uncover sin
           tween extra. */}
       <div className="absolute inset-0 grid place-items-center">
         <CurtainGlyph />
