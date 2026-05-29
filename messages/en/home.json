@@ -59,7 +59,7 @@
   },
   "work": {
     "ariaLabel": "Work and clients",
-    "heading": "Our clients",
+    "heading": "Our work",
     "description": "We work with organisations that operate in complex contexts and understand that moving forward is not about doing more, but about <strong>deciding better</strong>.",
     "cards": {
       "imagin": "Redesigning digital banking from strategy to experience",
@@ -71,5 +71,12 @@
       "grandvalira": "Optimising conversion. Audit of the purchase assistant",
       "ecoembes": "Understanding the reality of homes to drive change in recycling"
     }
+  },
+  "liminal": {
+    "title": "Liminal Attitude",
+    "body1": "<strong>Nothing new happens at the center.</strong> It is predictable, comfortable, and today, the fastest way to become irrelevant.",
+    "body2": "That's why we chose to operate from the <strong>margins,</strong> between <strong>borders,</strong> at the <strong>limits</strong>. That's where human truths live, and that's where we decided to stay.",
+    "body3": "We work from that <strong>liminal space</strong>, between what is and what's yet to come. We do it by questioning the obvious and shifting focus, with judgment and human perspective.",
+    "quote": "We inhabit the margin to live within change."
   }
 }

@@ -113,17 +113,17 @@ type RouteCopyMap = Record<Locale, RouteCopy>
 export const PAGE_COPY: Record<string, RouteCopyMap> = {
   '/': {
     es: {
-      title: 'Interactius / Actitud Liminal', // bypass del template via absolute en buildPageMetadata
+      title: 'Interactius. Actitud Liminal', // bypass del template via absolute en buildPageMetadata
       description:
         'Diseño estratégico, criterio humano y tecnología para ayudar a las organizaciones a tomar mejores decisiones.',
     },
     ca: {
-      title: 'Interactius / Actitud Liminal',
+      title: 'Interactius. Actitud Liminal',
       description:
         'Disseny estratègic, criteri humà i tecnologia per ajudar les organitzacions a prendre millors decisions.',
     },
     en: {
-      title: 'Interactius / Liminal Attitude',
+      title: 'Interactius. Liminal Attitude',
       description:
         'Strategic design, human judgement and technology helping organisations make better decisions.',
     },
@@ -358,7 +358,7 @@ export function buildRootMetadata(locale: Locale): Metadata {
 
     title: {
       default: copy.title,
-      template: `%s / ${SITE_CONFIG.name}`,
+      template: `%s | ${SITE_CONFIG.name}`,
     },
     description: copy.description,
     applicationName: SITE_CONFIG.name,
@@ -486,6 +486,13 @@ interface BuildPageMetadataArgs {
   pathname: string
   /** Mapa de URLs alternativas por locale para hreflang. */
   alternates: Record<string, string>
+  /**
+   * Marca la página como noindex (sigue permitiendo follow). Pensado para
+   * variantes CA/EN de Miradas sin traducción real, donde el canonical apunta
+   * a la versión ES y queremos que Google ignore la variante. El robots
+   * default del root sigue aplicando para el resto del site.
+   */
+  noIndex?: boolean
 }
 
 export function buildPageMetadata({
@@ -498,6 +505,7 @@ export function buildPageMetadata({
   article,
   pathname,
   alternates,
+  noIndex = false,
 }: BuildPageMetadataArgs): Metadata {
   const baseCopy =
     routeId in PAGE_COPY
@@ -549,6 +557,9 @@ export function buildPageMetadata({
       description,
       images: [image.url],
     },
+    ...(noIndex
+      ? { robots: { index: false, follow: true, googleBot: { index: false, follow: true } } }
+      : {}),
   }
 
   return metadata

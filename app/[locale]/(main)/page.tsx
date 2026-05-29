@@ -3,7 +3,11 @@ import { getTranslations } from 'next-intl/server'
 
 import { HeroScroll } from '@/components/home/HeroScroll'
 import { HomeIntroText } from '@/components/home/HomeIntroText'
-import { HomeIntroReveal } from '@/components/home/HomeIntroReveal'
+// HomeIntroReveal — sección "Diseñamos para la transición" comentada
+// temporalmente; sustituida por HomeLiminal mientras iteramos el
+// nuevo flujo de la home (no eliminar, posible vuelta atrás).
+// import { HomeIntroReveal } from '@/components/home/HomeIntroReveal'
+import { HomeLiminal } from '@/components/home/HomeLiminal'
 import { ServicesRows } from '@/components/home/ServicesRows'
 import { WorkGrid } from '@/components/home/WorkGrid'
 import { ClientsMarquee } from '@/components/home/ClientsMarquee'
@@ -38,12 +42,12 @@ export async function generateMetadata({
    Page
    --------------------------------------------------------------------------
    Orden DOM (crítico por el stacking context del scroll):
-     1. HeroScroll      — fixed + spacer 1260px (desktop).
-     2. HomeIntroText   — sticky lead text con bold-effect.
-     3. HomeIntroReveal — strip image + crop overlay sobre cuadro blanco.
-     4. ServicesRows    — z-content.
-     5. WorkGrid        — z-content.
-     6. ClientsMarquee  — z-content.
+     1. HeroScroll         — fixed + spacer 1260px (desktop).
+     2. HomeIntroText      — sticky lead text con bold-effect.
+     3. ServicesRows       — z-content.
+     4. WorkGrid           — z-content.
+     5. ClientsMarquee     — z-content.
+     6. HomeLiminal        — actitud liminal, justo antes del footer.
    Footer viene del layout.tsx.
    ========================================================================== */
 
@@ -70,13 +74,13 @@ export default async function HomePage({ params }: PageProps) {
 
       <HomeIntroText />
 
-      <HomeIntroReveal />
-
       <ServicesRows />
 
       <WorkGrid />
 
       <ClientsMarquee />
+
+      <HomeLiminal />
     </>
   )
 }

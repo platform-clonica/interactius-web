@@ -1,0 +1,174 @@
+---
+title: 'Ethics and bias in AI: how to detect and correct visual biases'
+description: >-
+  How biases in AI image generation affect visual diversity. Practical
+  strategies to detect and correct them, creating more inclusive representation.
+publishedAt: '2025-09-17'
+modifiedAt: '2025-09-17'
+author: Berta Abad
+category: ia-aplicada
+parentCategory: transformacion-cultural
+slug: etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales
+image: >-
+  /miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/PORTADA-scaled.webp
+tags:
+  - design
+  - ia
+  - tendencias
+translatedBy: ai
+translatedAt: '2026-05-28'
+localizedSlug: ethics-and-bias-in-ai-how-to-detect-and-correct-visual-biases
+---
+## **Beyond the prompt: visual responsibility**
+
+Generating images with AI is not just about choosing the right words, as I explained in my [previous post](https://interactius.com/inteligencia-artificial/domina-midjourney-v7-claves-parametros-y-ejemplos-aplicados/). Behind every prompt lies a cultural imaginary that influences the results. If we are not aware of this, **_bias_ in Midjourney** can creep into our creations and produce representations that are neither diverse nor realistic.
+
+## **What is bias in image generation?**
+
+When we talk about _bias_ (or prejudice) in tools like Midjourney, we are referring to a repeated tendency in the generated results. In other words, the AI does not create from scratch: it interprets the patterns it learned from millions of images. This means that if certain representations predominated in the training data, they are replicated — even if they are not the most fair or balanced option. For example, when asking: "a doctor in a lab coat", Midjourney will commonly depict a middle-aged man as the doctor.
+
+This happens because during its training, the model encountered a greater number of photographs of male doctors than female doctors, and that disproportion is reflected in the images it generates.
+
+_Bias_ in image generation does not only influence professions; it also affects aspects such as:
+
+-   **Gender roles**: associating leadership with men and caregiving with women.  
+    
+-   **Ethnicity and culture**: over-representing white people compared to other ethnicities.  
+    
+-   **Age**: predominantly showing young people in professional contexts.  
+    
+-   **Lifestyle**: reinforcing stereotypes about what "success" or "beauty" looks like.  
+    
+
+Detecting this phenomenon is essential because it shapes the visual narrative we are constructing. If we do not intervene, we may be reinforcing stereotypes without intending to.
+
+## **Where do these biases come from?**
+
+Biases do not appear by chance. They originate in how AI models are trained and fine-tuned. In the case of Midjourney, the main factors are:
+
+-   **Training data**  
+    Midjourney is fed millions of images available on the internet. If those data contain an unequal representation (for example, more photos of male doctors than female doctors), the system will tend to replicate that same proportion.  
+    
+-   **Model optimisation**  
+    Algorithms learn to generate what appears most frequently in their source data. This means that, even without intent, they reinforce certain patterns and push less common representations into the background.  
+    
+-   **Prompt language**  
+    Words matter. Terms like _"businessman"_ reinforce the traditional image of a man in a suit, while more neutral options such as _"business professional"_ open the door to more diverse results.
+
+## **How to detect bias step by step**
+
+1.  **Look carefully**: Generate several images from the same prompt. Analyse not just the aesthetics, but _who appears_ (gender, age, ethnicity, role).  
+      
+    
+2.  **Count the results**: If out of 20 images of an engineer only 2 are women, there is an imbalance.  
+      
+    
+3.  **Use tools**: There are APIs and analysis software that can identify characteristics such as gender, age or ethnicity in images, returning percentage breakdowns.
+
+## **Strategies to mitigate bias**
+
+Detecting the problem is only the first step; what matters is applying concrete solutions. Midjourney offers several ways to adjust prompts and reduce bias in the images we generate. Here are some effective strategies:
+
+-   **Use inclusive language**: Words matter. Replacing "businessman" with "business professional" avoids reinforcing stereotypes and opens the door to more varied representations.
+-   **Ask for diversity**: If you need a group of people, state it in the prompt: gender, age, ethnicities, or even style of dress. Midjourney tends to follow these instructions with considerable fidelity.
+-   **Exclude stereotypes**: Use --no if your version of Midjourney supports it. If you notice that your prompt consistently generates the same pattern (for example, "young white male"), you can exclude it.
+-   **Change the seed**: Try --seed 42 or --seed 99 to see different variations and choose the most balanced one.
+-   **Combine positive descriptors**: Adding terms such as "diverse", "inclusive", "multiethnic" or "balanced" tends to produce more varied images without needing to make the prompt excessively long.
+
+## **Best practices for a transparent process**
+
+Mitigating bias is not an isolated effort: it must become part of your creative workflow. Documenting and reviewing what you do helps to improve the quality and consistency of results. Here are some recommendations:
+
+-   **Record every prompt:**  
+    Always save the exact text you used, including parameters such as _**\--seed**, **\--ar**_ or _**\--v 7**_. This allows you to reproduce or adjust results without having to start from scratch each time.  
+    
+-   **Note key decisions:**  
+    If you decided to use _**\--no**_ to exclude a stereotype or added a descriptor such as "diverse" or "inclusive", write it down. This way you will have a clear record of why you arrived at a particular image.  
+    
+-   **Create a version history:**  
+    Generate several iterations of the same prompt and save them with their associated seed. This makes it easier to compare and select the most balanced options.  
+    
+-   **Involve different profiles:**  
+    The perception of bias is not always obvious to everyone. Asking colleagues or collaborators from different backgrounds to review your images can provide a broader perspective.  
+    
+-   **Be transparent in professional projects:**  
+    If you work with clients, documenting how you adjusted prompts and what measures you took to avoid bias demonstrates a commitment to visual ethics. This adds value to your creative process.
+
+## **Brief case study**
+
+```
+Before:
+/imagine "a CEO portrait" --v 7
+```
+
+⭢ 80% caucasian men.
+
+```
+After:
+/imagine "a CEO portrait of a 45-year-old Black woman, business suit, confident pose" --v 7 --ar 2:3
+```
+
+⭢ professional portrait of a Black woman, balanced and representative.
+
+## **Comparative visual examples**
+
+To illustrate the impact of adjusting prompts and parameters, here is a table where you can insert real screenshots:
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_doctor_in_a_lab_coat_-chaos_20_-ar_34_-raw_-p_77bdfaa7-7cba-4621-99a6-1004912e28db_2-scaled.png"
+  alt="a doctor in a lab coat"
+  caption="a doctor in a lab coat"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_healthcare_professional_-chaos_20_-ar_34_-raw__1e773f58-8661-42b6-b754-d6c2c1f10f7b_0-scaled.png"
+  alt=""
+  caption="a healthcare professional"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_an_engineer_at_work_-chaos_20_-ar_34_-raw_-prof_750bd562-ec32-48bf-a366-e5656c9debce_3-scaled.png"
+  alt=""
+  caption="an engineer at work"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_team_of_four_engineers_2_women_-chaos_20_-ar_34_1c98bc53-7264-4435-9684-1d492132c544_2-scaled.png"
+  alt=""
+  caption="a team of four engineers (3 women, 1 men)"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_CEO_portrait_-chaos_20_-ar_34_-raw_-profile_2_c18cecfb-7b78-4b72-8048-75e3c520c14a_0-scaled.png"
+  alt=""
+  caption="a CEO portrait"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_CEO_portrait_of_a_45-year-old_Black_woman_busines_f66b4488-ad4d-4e20-842a-c38e6d0295bb_0-scaled.png"
+  alt=""
+  caption="a CEO portrait of a 45-year-old Black woman, business suit, confident pose"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_couple_walking_in_the_park_-chaos_20_-ar_34_-r_2ff4b130-3149-4342-9533-2fff558747e4_2-scaled.png"
+  alt=""
+  caption="a couple walking in the park"
+/>
+
+<ImageWithCaption
+  src="/miradas-assets/etica-y-bias-en-la-ia-como-detectar-y-corregir-sesgos-visuales/berta5251_a_diverse_couple_walking_hand_in_hand_in_a_sunny_pa_d25bae62-2803-48b6-85a7-53d0771d0363_3-scaled.png"
+  alt=""
+  caption="a diverse couple walking hand in hand in a sunny park, aged 30-40, smiling"
+/>
+
+## **Conclusion**
+
+Being aware of biases in Midjourney is part of the creative process. It is not just about generating beautiful images, but about creating broader, more authentic and more respectful representations. With small adjustments to our prompts we can make a significant difference and build a more diverse and inclusive visual narrative. The more care we put into what we ask for, the more value the images we receive will have.
+
+**One final recommendation:** to generate images with visual responsibility, it is well worth drawing inspiration from [Dove's **"Keep Beauty Real"** campaign](https://www.dove.com/es/stories/campaigns/keep-beauty-real.html). There you will find a practical approach to representing diversity and real beauty, which can serve as a guide for crafting prompts that generate more authentic and balanced images.  
+  
+You will also be able to download a manual with different key words to help you generate better prompts.   
+Ethics improves your creativity too!
+
+What about you? Have you tried reviewing your prompts with this more critical perspective?

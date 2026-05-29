@@ -36,6 +36,7 @@
     "next": "Article següent",
     "nextAriaLabel": "Article següent: {title}",
     "backToListing": "Tornar a Mirades",
-    "continueReading": "Continua llegint"
+    "continueReading": "Continua llegint",
+    "aiTranslationBanner": "Aquest article es va escriure originalment en castellà i ha estat traduït amb l''ajuda d''IA. Aquí tens l''<link>article original</link>."
   }
 }

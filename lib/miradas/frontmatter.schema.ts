@@ -107,6 +107,22 @@ export const MiradaFrontmatterSchema = z.object({
     .regex(imagePathRe, 'image must match /miradas-assets/<slug>/<file>.<ext>')
     .optional(),
   tags: z.array(z.string()).optional(),
+  // Translation metadata — presente solo en archivos `{slug}.{locale}.mdx`
+  // generados por scripts/translate-miradas.mjs. La página del artículo
+  // muestra `<AITranslationBanner>` cuando `translatedBy === 'ai'`.
+  translatedBy: z.enum(['ai', 'human']).optional(),
+  translatedAt: z
+    .string()
+    .regex(dateRe, 'translatedAt must be YYYY-MM-DD')
+    .optional(),
+  // Slug localizado para la URL en este locale. Más estricto que `slug`
+  // porque va en URL pública: solo [a-z0-9-]. El archivo MDX sigue
+  // nombrado con el slug ES (`{slug-es}.{locale}.mdx`) — el localizedSlug
+  // se usa solo para el segmento [slug] de la URL final en CA/EN.
+  localizedSlug: z
+    .string()
+    .regex(/^[a-z0-9-]+$/, 'localizedSlug must be lowercase [a-z0-9-]')
+    .optional(),
 })
 
 export type MiradaFrontmatter = z.infer<typeof MiradaFrontmatterSchema>
@@ -124,9 +140,13 @@ export type ValidationResult = ValidationSuccess | ValidationFailure
 
 /**
  * Valida que el frontmatter sea coherente con la ruta del archivo:
+ *   - Estructura esperada: `content/miradas/{locale}/{category}/{slug}.mdx`.
  *   - La carpeta padre del .mdx debe coincidir con `category`.
+ *   - El segmento anterior debe ser una locale válida (`es`/`ca`/`en`).
  *   - `parentCategory` debe ser SUB_TO_PARENT[category].
- *   - El nombre del archivo (sin .mdx) debe coincidir con `slug`.
+ *   - El nombre del archivo (sin .mdx) debe coincidir con `slug`. El nombre
+ *     es invariante en las 3 locales — el slug-locale traducido vive en el
+ *     campo `localizedSlug` del frontmatter, no en el filename.
  *   - Si hay `image`, su slug embebido debe coincidir con `slug`.
  */
 export function validateFrontmatterAgainstPath(
@@ -135,9 +155,17 @@ export function validateFrontmatterAgainstPath(
 ): ValidationResult {
   const errors: string[] = []
   const parts = filePath.replace(/\\/g, '/').split('/')
-  const folder = parts[parts.length - 2]
   const fileName = parts[parts.length - 1]
+  const folder = parts[parts.length - 2]
+  const localeSegment = parts[parts.length - 3]
   const baseName = fileName.replace(/\.mdx$/, '')
+
+  const validLocales = new Set(['es', 'ca', 'en'])
+  if (!validLocales.has(localeSegment)) {
+    errors.push(
+      `locale segment "${localeSegment}" is not one of ${[...validLocales].join('/')} — path must be content/miradas/{locale}/{category}/{slug}.mdx`,
+    )
+  }
 
   if (folder !== fm.category) {
     errors.push(

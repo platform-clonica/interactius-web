@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { Link, useRouter, usePathname, type RouteId } from '@/lib/i18n/navigation'
-import { useMenuStore, resetSavedScroll } from '@/lib/store/menu'
+import { useMenuStore } from '@/lib/store/menu'
 import { usePageCurtainStore } from '@/lib/store/curtain'
 import { useFocusTrap } from '@/components/motion/useFocusTrap'
 import { getReducedMotion } from '@/components/motion/useReducedMotion'
@@ -88,93 +88,76 @@ export function MenuOverlay() {
   const curtainInProgressRef = useRef(false)
 
   /* ----------------------------------------------------------------------
-   * Cortina de cierre (con o sin navegación)
+   * Cierre del menú — animación inversa a la apertura.
    *
-   *   fade content 0.15s → cover 0.5s → [navegar] → uncover 0.9s → endCurtain
+   *   fade contenido + fade backdrop  ─┐
+   *   fold panel (inset right → 100%) ─┴─→ endCurtain
    *
-   * Todo close/link click pasa por aquí. endCurtain() libera el scroll-lock
-   * y pone isOpen=false (lo que dispara el morph X→hamburger en MenuTrigger).
+   * El panel se pliega hacia la izquierda hasta colapsar contra el borde
+   * (mismo `inset(0 100% 0 0)` que el estado inicial del open). NO usamos
+   * la cortina full-screen aquí porque este flujo nunca acompaña una
+   * navegación: los links del menú pasan por PageCurtain global
+   * (handleLinkClick → beginPageCurtain), no por aquí. Comunica
+   * "te quedas donde estabas, no cargo página nueva".
+   *
+   * Callers: backdrop click, MenuTrigger X (vía curtainCloseSignal), ESC
+   * (vía useFocusTrap), popstate.
    * ---------------------------------------------------------------------- */
-  const beginCurtain = useCallback(
-    (navigate?: () => void) => {
-      if (curtainInProgressRef.current) return
-      curtainInProgressRef.current = true
-      beginCurtainStore()
+  const beginCurtain = useCallback(() => {
+    if (curtainInProgressRef.current) return
+    curtainInProgressRef.current = true
+    beginCurtainStore()
 
-      const container = containerRef.current
-      const panel = panelRef.current
-      if (!container || !panel) {
-        navigate?.()
+    const container = containerRef.current
+    const panel = panelRef.current
+    if (!container || !panel) {
+      endCurtainStore()
+      curtainInProgressRef.current = false
+      return
+    }
+
+    void import('gsap').then(({ default: gsap }) => {
+      tlRef.current?.kill()
+      const reduced = getReducedMotion()
+
+      const content = container.querySelectorAll<HTMLElement>(
+        '[data-primary-block], [data-secondary-link], [data-social-link], [data-locale-switcher]',
+      )
+      const backdrop = backdropRef.current
+
+      if (reduced) {
         endCurtainStore()
         curtainInProgressRef.current = false
         return
       }
 
-      void import('gsap').then(({ default: gsap }) => {
-        tlRef.current?.kill()
-        const reduced = getReducedMotion()
-        // Curtain ease: power4.inOut (simétrico, cinemático) — se aparta del
-        // ease-expo canónico del proyecto porque la cortina full-screen es un
-        // wipe/transición, no un reveal. Ambos extremos importan.
-        const ease = 'power4.inOut'
-
-        const content = container.querySelectorAll<HTMLElement>(
-          '[data-primary-block], [data-secondary-link], [data-social-link], [data-locale-switcher]',
-        )
-        const backdrop = backdropRef.current
-
-        if (reduced) {
-          navigate?.()
+      const tl = gsap.timeline({
+        onComplete: () => {
           endCurtainStore()
           curtainInProgressRef.current = false
-          return
-        }
-
-        const tl = gsap.timeline({
-          onComplete: () => {
-            endCurtainStore()
-            curtainInProgressRef.current = false
-          },
-        })
-        tlRef.current = tl
-
-        // Fase 1 — fade content (el backdrop se mantiene hasta que el panel
-        // cubra todo; de otro modo se vería la página nítida por la derecha
-        // antes de estar tapada)
-        tl.to(content, { opacity: 0, duration: 0.15, ease: 'power2.out', overwrite: true }, 0)
-
-        // Fase 2 — cover (clip → 0%) desde el half-clip actual hasta full
-        tl.to(panel, { clipPath: 'inset(0 0% 0 0)', duration: 0.7, ease, overwrite: true }, 0.15)
-
-        // Fase 2.5 — panel cubriendo full-width (t=0.85). Instantes coordinados:
-        //   · backdrop opacity → 0 (se descarta tras el panel opaco; invisible)
-        //   · navigate(): DISPARO AQUÍ, no antes. Si se llama antes, el swap de
-        //     DOM de Next.js se ve a través del backdrop blur (glitch visual).
-        //     El panel full-cover lo oculta por completo.
-        if (backdrop) {
-          tl.set(backdrop, { opacity: 0 }, 0.85)
-        }
-        if (navigate) {
-          tl.call(() => {
-            navigate()
-            // Tras navegar, resetear el savedScrollY para que el unlock
-            // del scroll-lock no restaure la posición de la página anterior.
-            // Sin esto, la nueva página empieza al scroll-y donde estaba la previa.
-            resetSavedScroll()
-          }, [], 0.85)
-        }
-
-        // Fase 2.75 — hold 0.15s en full-cover. Da a Next.js tiempo de render
-        // antes de destapar. Con prefetch (hover Link) es casi instantáneo;
-        // sin prefetch este buffer evita que el uncover revele contenido a medio
-        // hidratar.
-        // Fase 3 — uncover: panel se pliega hacia la derecha (left-inset crece
-        // 0 → 100%). Equivale a transformOrigin:right + scaleX 1→0 del referente.
-        tl.to(panel, { clipPath: 'inset(0 0% 0 100%)', duration: 1.25, ease }, 1.0)
+        },
       })
-    },
-    [beginCurtainStore, endCurtainStore],
-  )
+      tlRef.current = tl
+
+      // Fade del contenido del menú
+      tl.to(content, { opacity: 0, duration: 0.3, ease: 'power2.out', overwrite: true }, 0)
+
+      // Fade del backdrop (blur sobre la página) en paralelo al fold. Inline
+      // opacity de GSAP se limpia en el useEffect de apertura para que Tailwind
+      // pueda volver a controlar el fade-in en la siguiente apertura.
+      if (backdrop) {
+        tl.to(backdrop, { opacity: 0, duration: 0.7, ease: 'power2.out' }, 0)
+      }
+
+      // Fold del panel: del estado actual (inset right 50% en lg, 0% en mobile)
+      // a 100% (colapsado contra el borde izquierdo, mismo punto inicial del open).
+      tl.to(
+        panel,
+        { clipPath: 'inset(0 100% 0 0)', duration: 0.9, ease: 'power4.inOut', overwrite: true },
+        0.1,
+      )
+    })
+  }, [beginCurtainStore, endCurtainStore])
 
   // Handler para ESC: cerrar con cortina (no close directo).
   const handleEscape = useCallback(() => beginCurtain(), [beginCurtain])
@@ -207,6 +190,12 @@ export function MenuOverlay() {
       const tl = gsap.timeline()
       tlRef.current = tl
       const halfClipRight = getHalfClipRight()
+
+      // Limpia el inline opacity que GSAP dejó en el backdrop al cerrar la
+      // sesión anterior. Sin esto, el inline `opacity: 0` ganaría sobre las
+      // clases Tailwind `opacity-100`/`opacity-0` y el backdrop no aparecería.
+      const backdropEl = backdropRef.current
+      if (backdropEl) gsap.set(backdropEl, { clearProps: 'opacity' })
 
       // Panel warm-light — reveal lateral canónico (clip-path de imagen)
       if (panel) {
@@ -353,23 +342,6 @@ export function MenuOverlay() {
                    lg:right-auto lg:block lg:p-0 lg:gap-0"
         style={{ left: 'calc(var(--sidebar-w) + var(--grid-margin))' }}
       >
-        {/* Locale switcher — mobile/tablet: bottom-right del panel con
-            margen igual al de la derecha (grid-margin). Desktop (lg): vuelve
-            a top-right como antes. Home se movió a la columna secondary nav
-            (primer item, ver SECONDARY_ITEMS). */}
-        <div
-          data-locale-switcher=""
-          className="absolute bottom-[var(--grid-margin)] right-[var(--grid-margin)]
-                     lg:bottom-auto lg:right-auto lg:top-[26px]
-                     lg:w-[calc(50vw-var(--sidebar-w)-var(--grid-margin))]
-                     lg:pr-[30px]
-                     lg:pointer-events-none"
-        >
-          <div className="flex justify-end">
-            <LocaleSwitcher className="pointer-events-auto" />
-          </div>
-        </div>
-
         {/* Primary nav — mobile flex-1 vertical center; lg absolute top:27.7vh */}
         <nav
           aria-label={t('common.menu.primaryNav')}
@@ -378,6 +350,51 @@ export function MenuOverlay() {
         >
           {PRIMARY_ITEMS.map(({ route, labelKey, num }) => {
             const active = isItemActive(route, pathname)
+            // Inner content shared entre estado activo (span no clicable) e
+            // inactivo (Link). El hover-text-flip-target sólo se aplica en
+            // inactivo; sin él, el mask flip no se dispara. La flecha
+            // (hover-arrow-slide-target) tiene `translateY(100%+1px)` por
+            // defecto: queda oculta bajo el clip-path mientras no haya un
+            // ancestro `.hover-text-flip:hover` que dispare la animación.
+            const inner = (
+              <span className="flex w-full items-center justify-between gap-3 pr-[30px]">
+                <span className="st-mask">
+                  <span className={`inline-block${active ? '' : ' hover-text-flip-target'}`}>
+                    {t(labelKey)}
+                  </span>
+                </span>
+                {/* Mask custom para flecha — sin padding/margin de st-mask
+                    (que añadía clearance para descenders y dejaba 1px de
+                    peek). Caja 32x32 (no cambia layout); el clipping se
+                    hace con clip-path polygon que se extiende 10px arriba
+                    para permitir el bounce overshoot del keyframe sin que
+                    la flecha se corte. translateY de la base lleva 1px
+                    extra para garantizar 0 peek por abajo. */}
+                <span
+                  aria-hidden="true"
+                  className="inline-block leading-none align-middle"
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    transform: 'translateY(5px)',
+                    clipPath: 'polygon(0 -10px, 100% -10px, 100% 100%, 0 100%)',
+                  }}
+                >
+                  <span className="hover-arrow-slide-target block">
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 40 40"
+                      fill="none"
+                      className="shrink-0"
+                    >
+                      <line x1="10" y1="27" x2="33" y2="3" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+                      <polyline points="7,3 33,3 33,30" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+                    </svg>
+                  </span>
+                </span>
+              </span>
+            )
             return (
             <div
               key={route}
@@ -388,54 +405,28 @@ export function MenuOverlay() {
                 <span className="block pt-[9px] font-mono text-card-sm text-fg/40 leading-none">
                   {num}
                 </span>
-                <Link
-                  href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
-                  onClick={(e) => handleLinkClick(e, route)}
-                  aria-current={active ? 'page' : undefined}
-                  className={`hover-text-flip block mt-[14px] pb-[9px]
-                             font-serif text-title-sm text-fg
-                             focus-visible:opacity-90
-                             ${active ? 'font-normal' : 'font-light'}`}
-                >
-                  <span className="flex w-full items-center justify-between gap-3 pr-[30px]">
-                    <span className="st-mask">
-                      <span className="hover-text-flip-target inline-block">
-                        {t(labelKey)}
-                      </span>
-                    </span>
-                    {/* Mask custom para flecha — sin padding/margin de st-mask
-                        (que añadía clearance para descenders y dejaba 1px de
-                        peek). Caja 32x32 (no cambia layout); el clipping se
-                        hace con clip-path polygon que se extiende 10px arriba
-                        para permitir el bounce overshoot del keyframe sin que
-                        la flecha se corte. translateY de la base lleva 1px
-                        extra para garantizar 0 peek por abajo. Padre con
-                        pr-[30px] alinea right edge con LocaleSwitcher. */}
-                    <span
-                      aria-hidden="true"
-                      className="inline-block leading-none align-middle"
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        transform: 'translateY(5px)',
-                        clipPath: 'polygon(0 -10px, 100% -10px, 100% 100%, 0 100%)',
-                      }}
-                    >
-                      <span className="hover-arrow-slide-target block">
-                        <svg
-                          width="32"
-                          height="32"
-                          viewBox="0 0 40 40"
-                          fill="none"
-                          className="shrink-0"
-                        >
-                          <line x1="10" y1="27" x2="33" y2="3" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-                          <polyline points="7,3 33,3 33,30" fill="none" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-                        </svg>
-                      </span>
-                    </span>
+                {active ? (
+                  // Página actual: span no clicable, sin animaciones de hover.
+                  // La flecha sigue en el DOM por simetría de layout, pero
+                  // queda oculta automáticamente (ver comentario en `inner`).
+                  <span
+                    aria-current="page"
+                    className="block mt-[14px] pb-[9px]
+                               font-serif text-title-sm text-fg font-normal"
+                  >
+                    {inner}
                   </span>
-                </Link>
+                ) : (
+                  <Link
+                    href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
+                    onClick={(e) => handleLinkClick(e, route)}
+                    className="hover-text-flip block mt-[14px] pb-[9px]
+                               font-serif text-title-sm text-fg font-light
+                               focus-visible:opacity-90"
+                  >
+                    {inner}
+                  </Link>
+                )}
               </div>
             </div>
             )
@@ -457,19 +448,40 @@ export function MenuOverlay() {
             const active = isItemActive(route, pathname)
             return (
               <div key={route} data-secondary-link="" className="pointer-events-auto">
-                <Link
-                  href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
-                  onClick={(e) => handleLinkClick(e, route)}
-                  aria-current={active ? 'page' : undefined}
-                  className={`w-fit font-mono text-body-sm text-fg
-                             ${active ? 'font-medium' : 'hover-wipe-underline'}`}
-                >
-                  {t(labelKey)}
-                </Link>
+                {active ? (
+                  // Página actual: span no clicable, sin hover-wipe-underline.
+                  <span
+                    aria-current="page"
+                    className="w-fit font-mono text-body-sm text-fg font-medium"
+                  >
+                    {t(labelKey)}
+                  </span>
+                ) : (
+                  <Link
+                    href={route as Exclude<RouteId, '/miradas/[parentOrSub]' | '/miradas/[parentOrSub]/[slug]'>}
+                    onClick={(e) => handleLinkClick(e, route)}
+                    className="hover-wipe-underline w-fit font-mono text-body-sm text-fg"
+                  >
+                    {t(labelKey)}
+                  </Link>
+                )}
               </div>
             )
           })}
         </div>
+      </div>
+
+      {/* Locale switcher — bottom-right del panel desplegable.
+          Padding bottom = padding right en cada breakpoint (simétrico).
+          Mobile/tablet: panel = viewport completo → grid-margin en bottom y right.
+          Desktop (lg): panel cubre la mitad izquierda (clip 50%) → 30px de offset
+          desde el borde del panel (50vw) y 30px desde el bottom. */}
+      <div
+        data-locale-switcher=""
+        className="absolute bottom-[var(--grid-margin)] right-[var(--grid-margin)] z-10
+                   lg:bottom-[30px] lg:right-[calc(50vw+30px)]"
+      >
+        <LocaleSwitcher className="pointer-events-auto" />
       </div>
 
       {/* Logo home — mobile/tablet only. Top-right del panel a la altura de la

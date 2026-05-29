@@ -59,7 +59,7 @@
   },
   "work": {
     "ariaLabel": "Trabajos y clientes",
-    "heading": "Nuestros clientes",
+    "heading": "Nuestros trabajos",
     "description": "Trabajamos con organizaciones que operan en contextos complejos y entienden que avanzar no es cuestión de hacer más, sino de <strong>decidir mejor</strong>.",
     "cards": {
       "imagin": "Rediseñando la banca digital desde la estrategia hasta la experiencia",
@@ -71,5 +71,12 @@
       "grandvalira": "Optimizando la conversión. Auditoría del asistente de compras",
       "ecoembes": "Entendiendo la realidad del hogar para impulsar cambios en el reciclaje"
     }
+  },
+  "liminal": {
+    "title": "Actitud Liminal",
+    "body1": "<strong>En el centro no pasa nada nuevo.</strong> Es previsible, cómodo y, hoy, la forma más rápida de volverse irrelevante.",
+    "body2": "Por eso decidimos operar desde los <strong>márgenes,</strong> entre <strong>fronteras,</strong> en los <strong>límites</strong>. Ahí están las verdades humanas, y ahí decidimos quedarnos.",
+    "body3": "Trabajamos desde ese <strong>espacio liminal</strong>, entre lo que es y lo que está por venir. Lo hacemos cuestionando lo evidente y desplazando el foco, con criterio y perspectiva humana.",
+    "quote": "Habitamos en el margen para vivir en el cambio."
   }
 }

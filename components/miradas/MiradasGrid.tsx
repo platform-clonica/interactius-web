@@ -68,7 +68,7 @@ function ArticleCard({
 }) {
   return (
     <CurtainLink
-      href={articleHref(article.category, article.slug, locale)}
+      href={articleHref(article.category, article.slugByLocale[locale], locale)}
       className="group relative block overflow-hidden"
     >
       {/* Image area — único bloque del card. Author + title se apilan desde
@@ -76,7 +76,7 @@ function ArticleCard({
       <div className="relative w-full aspect-square overflow-hidden">
         <Image
           src={cover}
-          alt={article.title}
+          alt={article.titleByLocale[locale]}
           fill
           priority={priority}
           sizes="(min-width: 1024px) 35vw, 100vw"
@@ -94,8 +94,8 @@ function ArticleCard({
 
           {/* Title strip — full width en cards normales */}
           <div className="w-full bg-pure-white p-5 flex items-center min-h-[72px]">
-            <h2 className="font-serif font-light text-subtitle text-fg leading-tight">
-              {article.title}
+            <h2 className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-[1.15]">
+              {article.titleByLocale[locale]}
             </h2>
           </div>
         </div>
@@ -117,7 +117,7 @@ function FeaturedCard({
 }) {
   return (
     <CurtainLink
-      href={articleHref(article.category, article.slug, locale)}
+      href={articleHref(article.category, article.slugByLocale[locale], locale)}
       className="group relative col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 block overflow-hidden"
     >
       {/* Image area — único bloque del card. Layout canónico bottom-up via
@@ -129,7 +129,7 @@ function FeaturedCard({
       <div className="relative w-full aspect-[16/9] lg:aspect-[1382/780] overflow-hidden">
         <Image
           src={cover}
-          alt={article.title}
+          alt={article.titleByLocale[locale]}
           fill
           priority
           sizes="(min-width: 1024px) 86vw, 100vw"
@@ -144,15 +144,15 @@ function FeaturedCard({
             <AuthorBlock author={article.author} publishedAt={article.publishedAt} locale={locale} />
             <div className="hidden lg:flex w-1/2 bg-pure-white p-5 items-center">
               <p className="font-mono text-body-sm text-fg leading-[1.5] line-clamp-3">
-                {article.description}
+                {article.descriptionByLocale[locale]}
               </p>
             </div>
           </div>
 
           {/* Title strip — w-1/2 (= 5 cols del card que es col-span-10) en lg */}
           <div className="w-full lg:w-1/2 bg-pure-white p-5 min-h-[88px] flex items-center">
-            <h2 className="font-serif font-light text-subtitle text-fg leading-tight">
-              {article.title}
+            <h2 className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-[1.15]">
+              {article.titleByLocale[locale]}
             </h2>
           </div>
         </div>
@@ -274,16 +274,15 @@ export function MiradasGrid({ articles }: { articles: MiradaMeta[] }) {
     <section className="w-full" aria-label={t('grid.articlesLabel')}>
 
       {/* ── "Miradas" super title — sangrado izquierdo canónico + line-mask
-            reveal. Padding-top reducido (no canónico aquí: queremos el
-            título cerca del subtítulo del hero). Wrapper máscara con
-            paddingBottom 0.2em para acomodar descenders + marginBottom
-            -0.2em para no afectar el layout exterior. ── */}
+            reveal. Sin paddingBottom 0.2em (excepción al canónico): los 3
+            títulos en sus idiomas ("Miradas" / "Views" / "Mirades") no
+            tienen descenders, así que podemos acortar la máscara hasta la
+            línea base. ── */}
       <div className="relative overflow-hidden mt-0">
         <h2
           className="font-serif font-normal text-fg text-super whitespace-nowrap select-none"
           style={{
             marginLeft: 'calc(-1 * clamp(6px, 0.8vw, 18px))',
-            paddingBottom: '0.2em',
           }}
           aria-hidden="true"
         >

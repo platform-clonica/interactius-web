@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 import { buildPageMetadata, SITE_CONFIG } from '@/lib/seo/metadata.config'
 import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
@@ -23,11 +24,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function MiradasPage({ params }: PageProps) {
   const { locale } = await params
   const articles = getAllMiradas()
+  const t = await getTranslations({ locale, namespace: 'miradas.grid' })
 
   const collectionSchema = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Miradas',
+    name: t('superTitle'),
     url: `${SITE_CONFIG.baseUrl}${localizedPath('/miradas', locale)}`,
   }
 

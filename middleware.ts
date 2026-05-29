@@ -122,6 +122,16 @@ export default function middleware(req: NextRequest) {
     }
   }
 
+  // 3. Trailing slash → no slash (excepto root '/'): 301 a la versión canónica.
+  //    El sitemap declara todas las URLs sin slash final; con esto evitamos
+  //    el "Duplicate sin canonical seleccionado" que GSC reportaba por servir
+  //    el mismo contenido en /miradas/ y /miradas con 200 ambos.
+  if (decoded.length > 1 && decoded.endsWith('/')) {
+    const url = req.nextUrl.clone()
+    url.pathname = decoded.slice(0, -1)
+    return NextResponse.redirect(url, 301)
+  }
+
   return intlMiddleware(req)
 }
 

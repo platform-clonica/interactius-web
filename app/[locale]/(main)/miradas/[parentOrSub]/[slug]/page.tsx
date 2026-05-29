@@ -10,14 +10,19 @@ import { CurtainLink } from '@/components/layout/CurtainLink'
 import { type Locale, LOCALES } from '@/lib/i18n/config'
 import {
   getMiradaBySlug,
+  getMiradaByLocalizedSlug,
+  getMiradaByLocalizedSlugAnyLocale,
   getAllMiradas,
   getNextArticle,
   calculateReadingTime,
+  hasTranslation,
 } from '@/lib/content/miradas'
+import type { Mirada } from '@/lib/content/miradas'
 import { MDXContent } from '@/components/miradas/MDXContent'
 import { ShareRow } from '@/components/miradas/article/ShareRow'
 import { ArticleNext } from '@/components/miradas/article/ArticleNext'
 import { AuthorAvatar } from '@/components/miradas/AuthorAvatar'
+import { AITranslationBanner } from '@/components/miradas/AITranslationBanner'
 import { Breadcrumb, absoluteUrl as toAbsoluteUrl } from '@/components/miradas/Breadcrumb'
 import {
   delocalizeSubSlug,
@@ -37,6 +42,8 @@ interface PageProps {
 
 export async function generateStaticParams() {
   // Para cada artículo, generamos las 3 versiones (parentOrSub × locale).
+  // Para CA/EN el slug del artículo es el `localizedSlug` del MDX traducido
+  // si existe; sino el slug-ES (el routing emite noindex+canonical→ES).
   // Next.js intersecta con [locale]; cada locale recibe sus combinaciones
   // válidas. Las inválidas las maneja notFound() en runtime.
   const articles = getAllMiradas()
@@ -45,7 +52,7 @@ export async function generateStaticParams() {
     for (const locale of LOCALES) {
       params.push({
         parentOrSub: localizeSubSlug(article.category as MiradasSubcategory, locale),
-        slug: article.slug,
+        slug: article.slugByLocale[locale],
       })
     }
   }
@@ -55,37 +62,108 @@ export async function generateStaticParams() {
   return [...map.values()]
 }
 
+/**
+ * Resuelve el artículo a partir del slug que viene en la URL.
+ *  - ES: el slug es el slug-ES canónico. Carga directo.
+ *  - CA/EN: primero intenta resolver por `localizedSlug` (URL nueva).
+ *    Si no, intenta interpretar el slug como slug-ES (URL vieja con slug
+ *    invariante ES de antes de la Fase 2). Marca `isLegacyEsSlug` para que
+ *    el caller decida si emitir 308 a la URL con slug-locale.
+ */
+function resolveArticleForLocale(
+  sub: MiradasSubcategory,
+  slugFromUrl: string,
+  locale: Locale,
+): { article: Mirada; slugEs: string; isLegacyEsSlug: boolean } | null {
+  if (locale === 'es') {
+    const m = getMiradaBySlug(sub, slugFromUrl, locale)
+    return m ? { article: m, slugEs: slugFromUrl, isLegacyEsSlug: false } : null
+  }
+  // CA/EN: probar primero por localizedSlug (URL canónica nueva).
+  const byLocalized = getMiradaByLocalizedSlug(sub, slugFromUrl, locale)
+  if (byLocalized) {
+    return {
+      article: byLocalized.mirada,
+      slugEs: byLocalized.slugEs,
+      isLegacyEsSlug: false,
+    }
+  }
+  // Fallback: interpretar como slug-ES (URLs viejas indexadas por Google).
+  const byEs = getMiradaBySlug(sub, slugFromUrl, locale)
+  if (byEs) {
+    return { article: byEs, slugEs: slugFromUrl, isLegacyEsSlug: true }
+  }
+  return null
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale, parentOrSub, slug } = await params
   const sub = delocalizeSubSlug(parentOrSub, locale)
   if (!sub) return {}
-  const article = getMiradaBySlug(sub, slug)
-  if (!article) return {}
 
-  // Construir alternates manualmente porque el slug del segmento parentOrSub
-  // varía por locale.
-  const alternates: Record<string, string> = {}
+  const resolved = resolveArticleForLocale(sub, slug, locale)
+  if (!resolved) return {}
+  const { article, slugEs, isLegacyEsSlug } = resolved
+
+  // ¿Esta URL es la canónica para su locale?
+  // - ES: siempre sí (no hay traducción de slug en ES).
+  // - CA/EN: solo si hay traducción Y el slug en URL es el localizedSlug.
+  //   Si llega slug-ES legacy (isLegacyEsSlug), esta URL NO es la canónica:
+  //   se va a redirect 308 al slug-locale (ver ArticlePage). Marcamos noindex
+  //   por si el bot llegara a renderizar antes del redirect.
+  const hasLocaleTranslation = hasTranslation(sub, slugEs, locale)
+  const noIndex = !hasLocaleTranslation || isLegacyEsSlug
+
+  // Hreflang: solo declarar locales con traducción real.
+  const esPath = localizedPath('/miradas/[parentOrSub]/[slug]', 'es', {
+    params: { parentOrSub: localizeSubSlug(sub, 'es'), slug: slugEs },
+  })
+  const alternates: Record<string, string> = {
+    es: `${SITE_CONFIG.baseUrl}${esPath}`,
+    'x-default': `${SITE_CONFIG.baseUrl}${esPath}`,
+  }
   for (const loc of LOCALES) {
-    const localized = localizeSubSlug(sub, loc)
+    if (loc === 'es') continue
+    if (!hasTranslation(sub, slugEs, loc)) continue
     alternates[loc] = `${SITE_CONFIG.baseUrl}${localizedPath(
       '/miradas/[parentOrSub]/[slug]',
       loc,
-      { params: { parentOrSub: localized, slug } },
+      { params: { parentOrSub: localizeSubSlug(sub, loc), slug: article.slugByLocale[loc] } },
     )}`
   }
-  alternates['x-default'] = alternates.es
+
+  // Canonical:
+  // - ES: la URL actual.
+  // - CA/EN sin traducción: la URL ES (Fase 1).
+  // - CA/EN con traducción y URL nueva (localizedSlug): la URL actual.
+  // - CA/EN con traducción pero URL vieja (slug-ES legacy): la URL nueva
+  //   (slug-locale en esta locale). El redirect 308 hará el resto.
+  let pathnameForCanonical: string
+  if (locale === 'es' || !hasLocaleTranslation) {
+    pathnameForCanonical = locale === 'es'
+      ? localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+          params: { parentOrSub, slug: slugEs },
+        })
+      : esPath
+  } else {
+    pathnameForCanonical = localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+      params: {
+        parentOrSub: localizeSubSlug(sub, locale),
+        slug: article.slugByLocale[locale],
+      },
+    })
+  }
 
   return buildPageMetadata({
     locale,
     routeId: '/miradas/[parentOrSub]/[slug]',
     title: article.title,
     description: article.description,
-    pathname: localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
-      params: { parentOrSub, slug },
-    }),
+    pathname: pathnameForCanonical,
     alternates,
+    noIndex,
     ogImage: {
-      url: getCover(article.slug, article.image),
+      url: getCover(slugEs, article.image),
       width: 1200,
       height: 630,
       alt: article.title,
@@ -136,13 +214,50 @@ export default async function ArticlePage({ params }: PageProps) {
     notFound()
   }
 
-  const article = getMiradaBySlug(sub, slug)
-  if (!article) notFound()
+  // Resuelve el artículo soportando 3 casos:
+  //  1. ES: slug en URL es el slug-ES canónico.
+  //  2. CA/EN con traducción y slug-locale en URL → sirve traducción.
+  //  3. CA/EN con slug-ES legacy en URL (la URL vieja con slug invariante
+  //     ES de antes de Fase 2) → si hay traducción con slug-locale distinto,
+  //     redirect 308 a la URL nueva. Si no hay traducción, sirve ES con
+  //     noindex+canonical→ES (Fase 1).
+  const resolved = resolveArticleForLocale(sub, slug, locale)
+  if (!resolved) {
+    // Caso final auto-cura: el slug es localizedSlug de OTRA locale. Pasa
+    // cuando el LocaleSwitcher click salta entre CA↔EN preservando el slug
+    // de la locale origen. Redirigimos al slug-locale correcto de la actual.
+    if (locale !== 'es') {
+      const cross = getMiradaByLocalizedSlugAnyLocale(sub, slug)
+      if (cross) {
+        permanentRedirect(
+          localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+            params: { parentOrSub, slug: cross.slugByLocale[locale] },
+          }),
+        )
+      }
+    }
+    notFound()
+  }
+  const article = resolved.article
+  const slugEs = resolved.slugEs
+
+  if (resolved.isLegacyEsSlug && locale !== 'es') {
+    const targetSlug = article.slugByLocale[locale]
+    if (targetSlug !== slugEs) {
+      permanentRedirect(
+        localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+          params: { parentOrSub, slug: targetSlug },
+        }),
+      )
+    }
+  }
 
   const parent = SUB_TO_PARENT[sub]
   const t = await getTranslations({ locale, namespace: 'miradas' })
   const readingTime = calculateReadingTime(article.content)
-  const next = getNextArticle(sub, slug)
+  // `getNextArticle` opera siempre con slug-ES canónico (sus comparaciones
+  // van contra el `slug` del frontmatter ES).
+  const next = getNextArticle(sub, slugEs)
   const absoluteUrl = `${SITE_CONFIG.baseUrl}${localizedPath(
     '/miradas/[parentOrSub]/[slug]',
     locale,
@@ -185,7 +300,7 @@ export default async function ArticlePage({ params }: PageProps) {
       {
         '@type': 'ListItem',
         position: 1,
-        name: 'Miradas',
+        name: t('grid.superTitle'),
         item: `${SITE_CONFIG.baseUrl}${localizedPath('/miradas', locale)}`,
       },
       {
@@ -222,13 +337,18 @@ export default async function ArticlePage({ params }: PageProps) {
       {/* Hero — cover + título + breadcrumb 4 niveles */}
       <section className="section-inner" aria-label="Cabecera del artículo">
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-11 lg:row-start-1 relative">
+          {/* Hero image — full-width edge-to-edge en mobile/iPad portrait,
+              col-start-2 col-span-11 con bleed-right (grid-margin) en lg+.
+              Altura reducida bajo lg para no comer espacio antes del
+              contenido del artículo. */}
+          <div className="col-span-12 lg:col-start-2 lg:col-span-11 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center lg:row-start-1 relative">
             <div
-              className="relative overflow-hidden"
-              style={{
-                width: 'calc(100% + var(--grid-margin))',
-                height: 'clamp(320px, 56vh, 640px)',
-              }}
+              className="relative overflow-hidden
+                         -mx-[var(--grid-margin)] lg:mx-0
+                         lg:w-[calc(100%+var(--grid-margin))]
+                         min-[1920px]:w-full
+                         h-[clamp(180px,32vh,300px)]
+                         lg:h-[clamp(320px,56vh,640px)]"
             >
               <Image
                 src={getCover(article.slug, article.image)}
@@ -238,41 +358,59 @@ export default async function ArticlePage({ params }: PageProps) {
                 sizes="(min-width: 1024px) 86vw, 100vw"
                 className="object-cover"
               />
-              <div className="absolute bottom-0 left-0 w-full lg:w-1/2 bg-pure-white p-5 lg:p-6 flex items-center min-h-[88px]">
-                <h1 className="font-serif font-light text-subtitle text-fg leading-tight">
-                  {article.title}
-                </h1>
+              {/* Overlay inferior — flex column en bottom-0 del wrapper:
+                  · Grupo autor (avatar arriba, label justo debajo) left-aligned.
+                  · Strip blanco con el título debajo del grupo.
+                  El grupo autor "reposa" sobre el strip blanco (mb-3 = 12px
+                  de aire) y el strip queda anclado al borde inferior real
+                  de la imagen. En lg+ el grupo autor mobile queda oculto y
+                  el bloque desktop (en su columna propia) controla autor +
+                  label. */}
+              <div className="absolute inset-x-0 bottom-0 flex flex-col">
+                <div className="lg:hidden ml-[var(--grid-margin)] w-fit flex flex-col items-start">
+                  <AuthorAvatar author={article.author} size="sm" />
+                  <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
+                    {article.author}, {formatDate(article.publishedAt, locale)}
+                  </span>
+                </div>
+                <div className="w-full lg:w-1/2 bg-pure-white p-5 lg:p-6 flex items-center min-h-[88px]">
+                  <h1 className="font-serif font-light text-subtitle text-fg leading-tight">
+                    {article.title}
+                  </h1>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Author desktop */}
-          <div className="hidden lg:block lg:col-start-10 lg:col-span-3 lg:row-start-1 relative pointer-events-none">
-            <div className="absolute left-0 bottom-0 pointer-events-auto">
+          {/* Author desktop — al pasar a min-[1920px]+, el bloque adopta la
+              misma geometría que la imagen hero (col-span-12 + w-full +
+              max-w-1280 + justify-self-center) y los hijos absolutes se
+              flippean de `left:0` a `right:0` para que avatar y label se
+              alineen con el borde derecho del width capeado de la imagen.
+              Por debajo de 1920 mantiene el comportamiento original
+              (col-start-10 col-span-3, left-0). */}
+          <div className="hidden lg:block lg:col-start-10 lg:col-span-3 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center lg:row-start-1 relative pointer-events-none">
+            <div className="absolute left-0 bottom-0 min-[1920px]:left-auto min-[1920px]:right-0 pointer-events-auto">
               <AuthorAvatar author={article.author} size="lg" />
             </div>
-            <div className="absolute left-0 top-full pointer-events-auto">
+            <div className="absolute left-0 top-full min-[1920px]:left-auto min-[1920px]:right-0 pointer-events-auto">
               <span className="block bg-pure-white px-1.5 py-1 font-mono text-card-sm text-fg whitespace-nowrap leading-none">
                 {article.author}, {formatDate(article.publishedAt, locale)}
               </span>
             </div>
           </div>
 
-          {/* Author mobile */}
-          <div className="col-span-12 lg:hidden mt-6 flex items-center gap-3">
-            <AuthorAvatar author={article.author} size="sm" />
-            <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
-              {article.author}, {formatDate(article.publishedAt, locale)}
-            </span>
-          </div>
+          {/* Author mobile — movido como overlay dentro del hero image
+              (encima del strip blanco). Eliminado de su antigua posición
+              debajo de la imagen para no duplicar. */}
 
           {/* Breadcrumb 4 niveles — usa componente compartido */}
-          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 mt-6">
+          <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center mt-6">
             <Breadcrumb
               withJsonLd={false}
               items={[
                 {
-                  label: 'Miradas',
+                  label: t('grid.superTitle'),
                   href: '/miradas',
                   absoluteUrl: toAbsoluteUrl(localizedPath('/miradas', locale)),
                 },
@@ -294,45 +432,62 @@ export default async function ArticlePage({ params }: PageProps) {
                     }),
                   ),
                 },
-                { label: article.title },
+                // Título del artículo eliminado del breadcrumb visual: ya
+                // está como h1 del hero, repetirlo (sobre todo largo) infla
+                // el espacio antes del contenido. El JSON-LD breadcrumb
+                // (schema.org) sí incluye el título por SEO.
               ]}
             />
           </div>
         </div>
 
+        {/* Fila superior — replica la estructura de ShareRow (border-y,
+            minutos de lectura a la izquierda) pero con los tags a la
+            derecha en lugar de los social links. La share social vive
+            ahora solo al final del artículo (segunda ShareRow tras MDX). */}
         <div className="mt-10 lg:mt-12 grid grid-cols-12 gap-grid-gutter">
-          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
-            <ShareRow
-              title={article.title}
-              url={absoluteUrl}
-              readingTimeMinutes={readingTime}
-            />
+          <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
+            <div className="border-y border-fg/20 py-6 flex flex-wrap items-center justify-between gap-x-10 gap-y-3 font-mono text-body-sm text-fg">
+              <span>{readingTime} {t('article.minRead')}</span>
+              <div className="flex flex-wrap items-center gap-x-[10px] gap-y-[10px]">
+                {tags.map((tag, i) => (
+                  <span
+                    key={tag}
+                    className={`inline-flex items-center px-1.5 py-0.5 font-mono text-label text-fg ${
+                      i === 0 ? 'bg-warm-dark' : 'bg-pure-white'
+                    }`}
+                  >
+                    {labelForTag(tag)}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
+      {article.translatedBy === 'ai' && locale !== 'es' && (
+        <section
+          className="section-inner pt-10 lg:pt-12"
+          aria-label="AI translation notice"
+        >
+          <div className="grid grid-cols-12 gap-grid-gutter">
+            <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
+              <AITranslationBanner sub={sub} slug={slugEs} locale={locale} />
+            </div>
+          </div>
+        </section>
+      )}
+
       <article className="section-inner pt-16 lg:pt-20 pb-section" aria-label={article.title}>
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 min-h-[26px] flex flex-wrap gap-x-2.5 gap-y-2.5">
-            {tags.map((tag, i) => (
-              <span
-                key={tag}
-                className={`inline-flex items-center px-1.5 py-0.5 font-mono text-label text-fg ${
-                  i === 0 ? 'bg-warm-dark' : 'bg-pure-white'
-                }`}
-              >
-                {labelForTag(tag)}
-              </span>
-            ))}
-          </div>
-
-          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 mt-8 lg:mt-12">
+          <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
             <p className="font-serif font-normal text-fg text-title-sm leading-tight tracking-[-0.01em]">
               {article.description}
             </p>
           </div>
 
-          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10 mt-12 lg:mt-16">
+          <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center mt-12 lg:mt-16">
             <MDXContent source={article.content} />
           </div>
         </div>
@@ -340,7 +495,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
       <section className="section-inner pb-section" aria-label={t('article.continueReading')}>
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-start-2 col-span-11 lg:col-start-2 lg:col-span-10">
+          <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
             <ShareRow
               title={article.title}
               url={absoluteUrl}
