@@ -113,17 +113,17 @@ type RouteCopyMap = Record<Locale, RouteCopy>
 export const PAGE_COPY: Record<string, RouteCopyMap> = {
   '/': {
     es: {
-      title: 'Interactius / Actitud Liminal', // bypass del template via absolute en buildPageMetadata
+      title: 'Interactius. Actitud Liminal', // bypass del template via absolute en buildPageMetadata
       description:
         'Diseño estratégico, criterio humano y tecnología para ayudar a las organizaciones a tomar mejores decisiones.',
     },
     ca: {
-      title: 'Interactius / Actitud Liminal',
+      title: 'Interactius. Actitud Liminal',
       description:
         'Disseny estratègic, criteri humà i tecnologia per ajudar les organitzacions a prendre millors decisions.',
     },
     en: {
-      title: 'Interactius / Liminal Attitude',
+      title: 'Interactius. Liminal Attitude',
       description:
         'Strategic design, human judgement and technology helping organisations make better decisions.',
     },
@@ -358,7 +358,7 @@ export function buildRootMetadata(locale: Locale): Metadata {
 
     title: {
       default: copy.title,
-      template: `%s / ${SITE_CONFIG.name}`,
+      template: `%s | ${SITE_CONFIG.name}`,
     },
     description: copy.description,
     applicationName: SITE_CONFIG.name,
