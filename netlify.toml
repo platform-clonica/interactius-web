@@ -47,71 +47,21 @@
 # Redirects para paths que NO pasan por el middleware de Next-intl porque
 # tienen extensión de archivo (matcher excluye `.*\..*`). Ej: PDFs antiguos
 # linkeados desde la web WP. La mayoría de redirects 301 legacy se aplican
-# en `middleware.ts`; aquí los casos que el middleware no puede ver, más
-# los 410 Gone para WP-legacy puro (acelera descarte en Google ~2-4 sem
-# vs ~6-12 meses como 404).
+# en `middleware.ts`; aquí solo los casos que el middleware no puede ver.
+#
+# Nota: el PR #20 añadió 11 reglas `status = 410` para WP-legacy puro
+# (`/wp-admin/*`, `/wp-content/*`, `/author/*`, etc.) con `force = true`,
+# pero NUNCA llegaron a aplicarse en producción ni staging — Netlify devolvía
+# 404 normales. La causa: `@netlify/plugin-nextjs` enruta todas las requests
+# al handler SSR de Next antes de evaluar los redirects custom del toml.
+# Los retiramos para no tener código muerto. Google descartará las URLs WP
+# vía 404 estándar (más lento que 410, pero la diferencia práctica es marginal
+# para nuestro volumen). Si quisiéramos forzar 410 habría que emitirlo desde
+# `middleware.ts` y/o ampliar el matcher para incluir paths con extensión.
 [[redirects]]
   from = "/STMDL/Digital-transformation-tools.pdf"
   to = "/miradas"
   status = 301
-  force = true
-
-# 410 Gone — patterns WP-legacy sin equivalente en el sitio nuevo.
-# El order importa: redirect 301 específico de arriba prevalece sobre wildcard.
-[[redirects]]
-  from = "/wp-admin/*"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/wp-content/*"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/wp-includes/*"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/wp-json/*"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/wp-login.php"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/wp-cron.php"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/author/*"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/tag/*"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/neuxletterdesigntapas/*"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/STMDL/*"
-  to = "/"
-  status = 410
-  force = true
-[[redirects]]
-  from = "/equipo-ux/*"
-  to = "/"
-  status = 410
   force = true
 
 # ─── Headers ─────────────────────────────────────────────────────────────────
