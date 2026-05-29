@@ -37,9 +37,9 @@ export function ArticleNext({ article, locale }: ArticleNextProps) {
   const t = useTranslations('miradas')
   return (
     <CurtainLink
-      href={articleHref(article.category, article.slug, locale)}
+      href={articleHref(article.category, article.slugByLocale[locale], locale)}
       className="group block w-full"
-      aria-label={t('article.nextAriaLabel', { title: article.title })}
+      aria-label={t('article.nextAriaLabel', { title: article.titleByLocale[locale] })}
     >
       {/* Grid sin altura fija: el bloque blanco define el alto via py-12/16
           (mismo rhythm vertical que los enlaces "otras capacidades" del
@@ -76,7 +76,7 @@ export function ArticleNext({ article, locale }: ArticleNextProps) {
             <PlusArrowFlipIcon />
           </span>
           <h2 className="mt-2 font-serif font-light text-subtitle text-fg leading-tight">
-            {article.title}
+            {article.titleByLocale[locale]}
           </h2>
           <p className="mt-1 font-mono text-card-sm text-fg/60">
             {article.author}, {formatDate(article.publishedAt, locale)}

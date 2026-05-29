@@ -14,7 +14,7 @@ import {
 } from '@/lib/miradas/frontmatter.schema'
 import { PARENT_DISPLAY } from '@/lib/miradas/i18n-routing'
 
-const RECENT_PER_PARENT = 4
+const RECENT_PER_PARENT = 5
 
 interface MiradasGlobalHomeProps {
   articles: MiradaMeta[]

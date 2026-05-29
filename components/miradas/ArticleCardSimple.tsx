@@ -48,13 +48,13 @@ export function ArticleCardSimple({
 }: ArticleCardSimpleProps) {
   return (
     <CurtainLink
-      href={articleHref(article.category, article.slug, locale)}
+      href={articleHref(article.category, article.slugByLocale[locale], locale)}
       className="group relative block overflow-hidden"
     >
       <div className="relative w-full aspect-square overflow-hidden">
         <Image
           src={getCover(article.slug, article.image)}
-          alt={article.title}
+          alt={article.titleByLocale[locale]}
           fill
           priority={priority}
           sizes="(min-width: 1024px) 35vw, 100vw"
@@ -71,7 +71,7 @@ export function ArticleCardSimple({
           </div>
           <div className="w-full bg-pure-white p-5 flex items-center min-h-[72px]">
             <h2 className="font-serif font-light text-[clamp(16px,1.5vw,22px)] text-fg leading-[1.15]">
-              {article.title}
+              {article.titleByLocale[locale]}
             </h2>
           </div>
         </div>
