@@ -60,7 +60,12 @@ export default async function TransformacionCultural({ params }: PageProps) {
         shapeKind="wave"
       />
 
-      <ClientsMarquee clients={t('transformacion.intro.clients')} />
+      <ClientsMarquee
+        clients={t('transformacion.intro.clients')}
+        logoSrc="/logos-customers/logos-serv3.png"
+        logoWidth={1700}
+        logoHeight={100}
+      />
 
       {/* Manifiesto IA — sección exclusiva de Transformación cultural. NO replicar en otros servicios. */}
       <CapacityManifiesto

@@ -67,6 +67,11 @@ export function HeroScroll({
   const progressBarRef = useRef<HTMLDivElement>(null)
   const taglineRef = useRef<HTMLDivElement>(null)
   const stripRef   = useRef<HTMLDivElement>(null)
+  const horizLogoRef = useRef<HTMLDivElement>(null)
+  const horizInnerRef = useRef<HTMLSpanElement>(null)
+  // Función (set en el effect) que recalcula el modo de logo según scroll+menú.
+  // La usa el effect del menú para disparar el swap horizontal↔vertical.
+  const logoModeFnRef = useRef<(() => void) | null>(null)
   const arrowRef   = useRef<HTMLDivElement>(null)
   const playHintRef = useRef<HTMLDivElement>(null)
   const playHintTextRef = useRef<HTMLSpanElement>(null)
@@ -186,6 +191,10 @@ export function HeroScroll({
       const v = videoRef.current
       if (v) v.muted = true
     }
+    // Swap de logo en home-arriba: al abrir el menú el horizontal no cuadra con
+    // el overlay → unreveal del horizontal + reveal del vertical (y al cerrar,
+    // simétrico). En cualquier otro caso ya sale el vertical.
+    logoModeFnRef.current?.()
   }, [isMenuOpen])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanupRef = useRef<(() => void) | null>(null)
@@ -225,6 +234,15 @@ export function HeroScroll({
     const initialScrollY = window.scrollY
     const isFreshLoad = initialScrollY < 1
 
+    // Logo de la home: arriba del todo (antes del fullscreen del vídeo) se
+    // muestra el wordmark HORIZONTAL alineado a col-2/altura hamburguesa y se
+    // oculta el logo vertical del Sidebar. Al alcanzar el fullscreen (PHASE1_END)
+    // se hace el swap al vertical canónico — invisible porque el vídeo lo tapa.
+    // Set síncrono inicial (pre-import async) para minimizar el flash del
+    // logo vertical en el primer frame. El estado fino lo lleva applyScrollState.
+    document.documentElement.dataset.heroLogo =
+      initialScrollY < PHASE1_END ? 'horizontal' : 'vertical'
+
     void (async () => {
       const [{ default: gsap }, { ScrollTrigger }, { default: SplitType }] = await Promise.all([
         import('gsap'),
@@ -242,6 +260,52 @@ export function HeroScroll({
       let leftStart = getCol2StartPx()
       let stripH = getStripHeightPx()
       let stripTop = window.innerHeight - stripH
+
+      // El logo horizontal de la home se ancla al MISMO left que el strip
+      // (col-2 start) para alinearse con el borde del vídeo y el tagline.
+      const positionHorizLogo = () => {
+        const el = horizLogoRef.current
+        if (el) el.style.left = `${leftStart}px`
+      }
+      positionHorizLogo()
+
+      // ── Modo de logo (horizontal ↔ vertical) ─────────────────────────────
+      // Horizontal SOLO si: home + scroll arriba (pre-fullscreen) + menú
+      // cerrado. En cualquier otro caso, vertical. El logo horizontal entra y
+      // sale con un line-mask reveal (mismo lenguaje que el h1 de debajo):
+      // yPercent dentro de una máscara overflow-hidden + opacity. El vertical
+      // (Sidebar) se revela/oculta por CSS según data-hero-logo.
+      const horizInner = horizInnerRef.current
+      const LOGO_REVEAL = { yPercent: 0, opacity: 1 }
+      const LOGO_HIDDEN = { yPercent: 110, opacity: 0 }
+      if (horizInner) gsap.set(horizInner, LOGO_HIDDEN) // entrada lo revela
+
+      let lastLogoMode = '' // '' fuerza que la primera transición sea la entrada
+      const applyLogoMode = (scrollY: number) => {
+        const menuOpen = useMenuStore.getState().isOpen
+        const horizontal = scrollY < PHASE1_END && !menuOpen
+        const mode = horizontal ? 'horizontal' : 'vertical'
+        if (mode === lastLogoMode) return
+        const isEntrance = lastLogoMode === '' && horizontal
+        lastLogoMode = mode
+        document.documentElement.dataset.heroLogo = mode
+        if (!horizInner) return
+        if (reduced) {
+          gsap.set(horizInner, horizontal ? LOGO_REVEAL : LOGO_HIDDEN)
+          return
+        }
+        gsap.to(horizInner, {
+          ...(horizontal ? LOGO_REVEAL : LOGO_HIDDEN),
+          // entrada: 1.2s/delay 0.2 (sync con el reveal del h1). Swaps del
+          // menú: más ágiles (reveal 0.6 / unreveal 0.5).
+          duration: isEntrance ? 1.2 : horizontal ? 0.6 : 0.5,
+          delay: isEntrance ? 0.2 : 0,
+          ease: 'power4.out',
+          overwrite: true,
+        })
+      }
+      // Expuesta para el effect del menú (recalcula con el scroll actual).
+      logoModeFnRef.current = () => applyLogoMode(window.scrollY)
 
       const applyStripState = (progress: number) => {
         // progress 0 = strip state (col-2 start, bottom), 1 = fullscreen (top:0, left:0)
@@ -393,6 +457,11 @@ export function HeroScroll({
           if (arrowEl) gsap.set(arrowEl, { opacity: 0 })
         }
 
+        // ── Logo horizontal ↔ vertical (single source of truth) ────────────
+        // El logo horizontal está a z<strip → el vídeo lo tapa al crecer.
+        // applyLogoMode decide horizontal/vertical según scroll + menú.
+        applyLogoMode(scrollY)
+
         setStripInteractivity(scrollY)
         updateStripVideoPlayback(scrollY)
       }
@@ -409,13 +478,24 @@ export function HeroScroll({
           videoEl.style.opacity = '1'
           updateStripVideoPlayback(initialScrollY)
         }
+        // El strip no llama a applyScrollState en fresh load, pero el logo SÍ
+        // debe disparar su entrada (reveal del horizontal).
+        applyLogoMode(initialScrollY)
       }
+
+      // Habilitar la transición CSS del reveal del logo VERTICAL solo tras el
+      // primer frame → el ocultado inicial (home-arriba) es instantáneo, sin
+      // flash, y los swaps posteriores del menú sí animan.
+      requestAnimationFrame(() => {
+        document.documentElement.dataset.logoAnimate = ''
+      })
 
       if (!reduced) {
         const onResize = () => {
           leftStart = getCol2StartPx()
           stripH = getStripHeightPx()
           stripTop = window.innerHeight - stripH
+          positionHorizLogo()
           // Tras un resize las métricas internas de ScrollTrigger quedan stale
           // (en iOS Safari el collapse de la URL bar dispara resize). Refresh
           // las recalcula sin afectar al scroll position.
@@ -535,6 +615,13 @@ export function HeroScroll({
         cleanups.push(() => strip.removeEventListener('mousemove',  onStripMouseMove))
       }
 
+      // Al desmontar (navegación fuera de home) volver al logo vertical
+      // canónico — quitar el attribute hace que el CSS deje de ocultarlo.
+      cleanups.push(() => {
+        delete document.documentElement.dataset.heroLogo
+        delete document.documentElement.dataset.logoAnimate
+      })
+
       cleanupRef.current = () => cleanups.forEach((fn) => fn())
     })()
 
@@ -605,6 +692,48 @@ export function HeroScroll({
           />
         )}
 
+      </div>
+
+      {/* ── Logo horizontal de la home (solo top, pre-fullscreen) ───────────
+           Wordmark horizontal alineado a col-2 (mismo left que el strip) y a la
+           altura de la hamburguesa (top:26px, caja h-10 para centrar verticalmente
+           con el icono size-10). z=160 (nivel chrome, BAJO el strip z=400) → el
+           vídeo lo tapa al crecer, igual que el logo vertical del Sidebar.
+           Mismo pipeline de render: dark baked → filter brightness(0) invert(1)
+           → blanco, y mix-blend-mode: difference en el wrapper fixed (que forma
+           su propio stacking context) para contraste correcto sobre cualquier
+           fondo. Solo lg (≥901px), igual que el Sidebar. */}
+      <div
+        ref={horizLogoRef}
+        aria-hidden="true"
+        className="fixed top-[26px] z-sidebar hidden h-10 items-center pointer-events-none lg:flex"
+        style={{ left: 0, mixBlendMode: 'difference' }}
+      >
+        {/* Máscara line-reveal (overflow hidden) — el inner traslada dentro */}
+        <span style={{ display: 'block', overflow: 'hidden' }}>
+          {/* Inner: GSAP anima yPercent + opacity (entrada y swap del menú).
+              opacity:0 inline evita el flash antes de que corra GSAP. NO poner
+              transform inline: GSAP lo leería como `y` en px (110% → ~27px) y,
+              al animar solo `yPercent`, ese offset nunca se limpiaría. El estado
+              oculto (yPercent 110) lo aplica gsap.set(LOGO_HIDDEN). */}
+          <span
+            ref={horizInnerRef}
+            style={{
+              display: 'block',
+              filter: 'brightness(0) invert(1)',
+              opacity: 0,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo/interactius.svg"
+              alt=""
+              aria-hidden="true"
+              className="block w-auto"
+              style={{ height: '24.78px' }}
+            />
+          </span>
+        </span>
       </div>
 
       {/* ── Lightbox — vídeo encima de TODO (z=2000) en formato modal:

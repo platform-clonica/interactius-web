@@ -104,7 +104,12 @@ export function PageCurtain() {
       return
     }
 
-    void import('gsap').then(({ default: gsap }) => {
+    void Promise.all([import('gsap'), import('gsap/CustomEase')]).then(
+      ([{ default: gsap }, { CustomEase }]) => {
+      gsap.registerPlugin(CustomEase)
+      // Ease lateral canónico del proyecto: cubic-bezier(.16,1,.3,1) (≡ --ease).
+      // Usado para el wipe del glyph (eje X) y la apertura de los cuadritos.
+      CustomEase.create('liminalCurtain', 'M0,0 C0.16,1 0.3,1 1,1')
       tlRef.current?.kill()
       if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current)
       const ease = 'power4.inOut'
@@ -113,74 +118,72 @@ export function PageCurtain() {
 
       const initialPath = window.location.pathname
 
-      // Glyph "loading": isotipo Interactius dibujado por trazo (stroke
-      // dashoffset) y rematado con dos fades de relleno. Las posiciones y
-      // duraciones del timeline replican el HTML referencia
-      // interactius_loading:
-      //   0.3s  frame (1.2s)
-      //   1.7s  divider (0.55s)
-      //   2.45s r-bottom (0.3s)  →  2.73s r-left (0.5s)
-      //   3.21s r-top (0.3s)     →  3.49s r-right (0.5s)
-      //   4.05s inner-bot fade (0.35s)
-      //   4.6s  top-full + top-hole fade simultáneo (0.35s)
-      // El conjunto se reproduce con timeScale(GLYPH_SPEED) para encajar
-      // dentro del hold de la cortina (MIN 1.3s, MAX 2.5s): a 3x el
-      // ciclo dura ~1.65s y el isotipo se llega a ver completo en
-      // navegaciones con MAX hold. La timeline NO loopea: el isotipo se
-      // dibuja una vez y la marca completa queda visible hasta el uncover.
-      const glyphSvg = panel.querySelector<SVGElement>('[data-curtain-glyph]')
-      const allStrokes = panel.querySelectorAll<SVGPathElement>('[data-stroke]')
-      const stroke = (id: string) =>
-        panel.querySelector<SVGPathElement>(`[data-stroke="${id}"]`)
-      const fill = (id: string) =>
-        panel.querySelector<SVGRectElement>(`[data-fill="${id}"]`)
-      const dashLengths: Record<string, number> = {
-        frame: 216,
-        divider: 54,
-        'r-bottom': 12.4,
-        'r-left': 24.8,
-        'r-top': 12.4,
-        'r-right': 24.8,
-      }
+      // Glyph en COLOR PLANO (sin dibujado por trazo). Secuencia:
+      //   1. Reveal lateral DIVERGENTE del shell (sin cuadritos): mitad
+      //      superior IZQ→DCHA + mitad inferior DCHA→IZQ, simultáneas, vía
+      //      clip-path inset sobre cada <g>.
+      //   2. La muesca blanca se abre de la divisoria → ARRIBA (scaleY,
+      //      origin bottom). Antes de que termine, el bloque negro se abre
+      //      de la divisoria → ABAJO (scaleY, origin top). Divergen desde
+      //      el centro (motivo liminal).
+      // Se reproduce con timeScale(GLYPH_SPEED) para encajar en el hold de la
+      // cortina (MIN 1.3s, MAX 2.5s). NO loopea: queda la marca completa
+      // visible hasta el uncover.
+      //
+      // Ease lateral: cubic-bezier(.16,1,.3,1) (≡ --ease del proyecto) vía
+      // CustomEase — convención del repo para movimiento en eje X / reveals.
+      const glyphSvg  = panel.querySelector<SVGElement>('[data-curtain-glyph]')
+      const shellTop  = panel.querySelector<SVGGElement>('[data-shell="top"]')
+      const shellBot  = panel.querySelector<SVGGElement>('[data-shell="bottom"]')
+      const topHole   = panel.querySelector<SVGRectElement>('[data-square="top-hole"]')
+      const innerBot  = panel.querySelector<SVGRectElement>('[data-square="inner-bot"]')
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let loopTl: any = null
+      let glyphTl: any = null
       const startGlyphLoop = () => {
-        if (!glyphSvg || !allStrokes.length) return
-        // El SVG nace con opacity:0 inline para que NO sea visible durante
-        // el cover del panel. Lo mostramos justo antes de empezar a dibujar.
+        if (!glyphSvg) return
+        // El SVG nace con opacity:0 inline para no verse durante el cover.
         gsap.set(glyphSvg, { opacity: 1 })
-        // Reset: trazos en su offset máximo (invisibles) y rellenos a 0.
-        allStrokes.forEach((el) => {
-          const id = el.getAttribute('data-stroke') ?? ''
-          gsap.set(el, { strokeDashoffset: dashLengths[id] ?? 0 })
-        })
-        gsap.set(panel.querySelectorAll('[data-fill]'), { opacity: 0 })
+        // Shell oculto en direcciones opuestas. IMPORTANTE: todas las unidades
+        // del inset() en `%` (init y target) — GSAP solo interpola un valor si
+        // la unidad coincide; mezclar 100% → 0 (sin unidad) hace que salte.
+        //   · top → clip desde la derecha (revela IZQ→DCHA)
+        //   · bottom → clip desde la izquierda (revela DCHA→IZQ)
+        if (shellTop) gsap.set(shellTop, { clipPath: 'inset(0% 100% 0% 0%)' })
+        if (shellBot) gsap.set(shellBot, { clipPath: 'inset(0% 0% 0% 100%)' })
+        // Cuadritos colapsados (scaleY 0) y anclados a la divisoria:
+        //   · muesca → origin bottom (crece hacia arriba)
+        //   · bloque → origin top    (crece hacia abajo)
+        if (topHole)  gsap.set(topHole,  { transformOrigin: '50% 100%', scaleY: 0 })
+        if (innerBot) gsap.set(innerBot, { transformOrigin: '50% 0%',   scaleY: 0 })
 
-        const GLYPH_SPEED = 3
-        // Sin repeat: el isotipo se dibuja una sola vez y queda completo
-        // (rellenos al final) hasta que stopGlyphLoop() lo apague en el
-        // uncover. Si el hold es más corto que el ciclo, el glifo se ve
-        // parcialmente dibujado; si es más largo, queda la marca sólida.
-        loopTl = gsap.timeline()
-        loopTl.timeScale(GLYPH_SPEED)
-        const drawEase = 'power2.inOut'
-        const fadeEase = 'power2.out'
+        // Duración total = la del glyph original (timeline 4.95s @ timeScale 3
+        // = 1.65s). Repartida entre las 4 sub-animaciones:
+        //   shell-top   0.00 → 0.55
+        //   shell-bot   0.15 → 0.70   (delay 0.15 respecto a top)
+        //   muesca ↑    0.70 → 1.25
+        //   bloque ↓    1.10 → 1.65   (solapa el final de la muesca)
+        const GLYPH_SPEED = 1
+        const ease = 'liminalCurtain'
 
-        loopTl.to(stroke('frame'),    { strokeDashoffset: 0, duration: 1.2,  ease: drawEase }, 0.3)
-        loopTl.to(stroke('divider'),  { strokeDashoffset: 0, duration: 0.55, ease: drawEase }, 1.7)
-        loopTl.to(stroke('r-bottom'), { strokeDashoffset: 0, duration: 0.3,  ease: drawEase }, 2.45)
-        loopTl.to(stroke('r-left'),   { strokeDashoffset: 0, duration: 0.5,  ease: drawEase }, 2.73)
-        loopTl.to(stroke('r-top'),    { strokeDashoffset: 0, duration: 0.3,  ease: drawEase }, 3.21)
-        loopTl.to(stroke('r-right'),  { strokeDashoffset: 0, duration: 0.5,  ease: drawEase }, 3.49)
-        loopTl.to(fill('inner-bot'),  { opacity: 1, duration: 0.35, ease: fadeEase }, 4.05)
-        loopTl.to([fill('top-full'), fill('top-hole')], { opacity: 1, duration: 0.35, ease: fadeEase }, 4.6)
+        glyphTl = gsap.timeline()
+        glyphTl.timeScale(GLYPH_SPEED)
+        // 1) Reveal divergente del shell — top IZQ→DCHA, bottom DCHA→IZQ con delay
+        //    (target con % consistente, ver nota arriba)
+        if (shellTop) glyphTl.to(shellTop, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.55, ease }, 0)
+        if (shellBot) glyphTl.to(shellBot, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.55, ease }, 0.15)
+        // 2) Muesca: divisoria → arriba
+        if (topHole)  glyphTl.to(topHole,  { scaleY: 1, duration: 0.55, ease }, 0.70)
+        // 3) Bloque: divisoria → abajo (arranca antes de que acabe la muesca)
+        if (innerBot) glyphTl.to(innerBot, { scaleY: 1, duration: 0.55, ease }, 1.10)
       }
       const stopGlyphLoop = () => {
-        loopTl?.kill()
-        loopTl = null
-        // Volver a ocultar el SVG para la próxima cortina (durante el uncover
-        // y el siguiente cover, no debe verse).
+        glyphTl?.kill()
+        glyphTl = null
+        // Reset para la próxima cortina (no debe verse en uncover/cover).
         if (glyphSvg) gsap.set(glyphSvg, { opacity: 0 })
+        if (shellTop) gsap.set(shellTop, { clipPath: 'inset(0% 100% 0% 0%)' })
+        if (shellBot) gsap.set(shellBot, { clipPath: 'inset(0% 0% 0% 100%)' })
       }
 
       const startUncover = () => {

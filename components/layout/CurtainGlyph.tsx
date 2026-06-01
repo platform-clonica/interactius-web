@@ -1,25 +1,28 @@
 /**
- * CurtainGlyph — isotipo Interactius (56×56) que se anima durante el hold
- * de la PageCurtain.
+ * CurtainGlyph — isotipo Interactius (56×56) en COLOR PLANO que se anima
+ * durante el hold de la PageCurtain.
  *
- * Estructura:
- *   · 6 trazos (`data-stroke="…"`) con `stroke-dasharray` igual a la longitud
- *     del path y `stroke-dashoffset` arrancando a esa misma longitud → el
- *     PageCurtain los anima a 0 en secuencia (frame → divider → r-bottom →
- *     r-left → r-top → r-right) para dibujar el isotipo trazo a trazo.
- *   · 3 rellenos (`data-fill="…"`) con `opacity:0` que fadean al final
- *     para componer la marca sólida: bloque inferior, franja superior,
- *     y "hueco" warm-light que perfora la franja superior sobre el
- *     rectángulo interior.
+ * Anatomía (3 piezas + 1 negativo), separadas por la divisoria horizontal:
+ *   · `top-full`  — banda negra superior (mitad de arriba).
+ *   · `top-hole`  — negativo warm-light tallado en la banda: la "muesca".
+ *   · `inner-bot` — bloque negro centrado en la mitad inferior.
+ *   · marco + divisoria — líneas finas que dan estructura a la marca.
  *
- * Visible por defecto (color dark sobre bg warm-light de la cortina). La
- * raíz nace con `opacity: 0` inline para que no se vea durante el cover;
- * PageCurtain la activa al iniciar el loop y la apaga en `stopGlyphLoop`.
- * Si por alguna razón GSAP no corre, el glyph queda invisible — el panel
- * de la cortina mantiene su función de transición sin glyph.
+ * Animación (orquestada por PageCurtain, NO dibujado por trazo):
+ *   1. Reveal lateral DIVERGENTE del "shell" (sin cuadritos): la mitad
+ *      superior (`shell="top"`: banda + marco superior + divisoria) se revela
+ *      de IZQ→DCHA y la mitad inferior (`shell="bottom"`: marco inferior) de
+ *      DCHA→IZQ, simultáneas, vía clip-path inset sobre cada <g>.
+ *   2. La muesca (`top-hole`) se abre de la divisoria hacia ARRIBA (scaleY,
+ *      origin bottom). Antes de que termine, el bloque (`inner-bot`) se abre
+ *      de la divisoria hacia ABAJO (scaleY, origin top). Divergen desde el
+ *      centro — motivo liminal.
+ *
+ * Nace con `opacity: 0` inline para no verse durante el cover del panel;
+ * PageCurtain lo enciende al iniciar la secuencia y lo apaga en el uncover.
  */
 export function CurtainGlyph() {
-  // Mismo footprint visual que el glifo anterior. Square 1:1.
+  // Mismo footprint visual que antes. Square 1:1.
   const size = 'clamp(32px, 3.4vw, 52px)'
 
   return (
@@ -31,96 +34,27 @@ export function CurtainGlyph() {
       aria-hidden="true"
       style={{ height: size, width: size, display: 'block', opacity: 0 }}
     >
-      {/* 1. Marco exterior */}
-      <path
-        data-stroke="frame"
-        d="M1 55 V1 H55 V55 Z"
-        stroke="#1C1A17"
-        strokeWidth="1.2"
-        fill="none"
-        strokeDasharray="216"
-        strokeDashoffset="216"
-      />
+      {/* ── Shell superior — reveal IZQ→DCHA (paso 1) ── */}
+      <g data-shell="top">
+        {/* Banda negra superior — sólida (la muesca se talla encima en el paso 2) */}
+        <rect data-fill="top-full" x="1.6" y="1.6" width="52.8" height="25.8" fill="#1C1A17" />
+        {/* Marco superior (∩): lateral-izq + arriba + lateral-dcha hasta la divisoria */}
+        <path d="M1 28 V1 H55 V28" stroke="#1C1A17" strokeWidth="1.2" fill="none" />
+        {/* Divisoria horizontal */}
+        <path d="M1 28 H55" stroke="#1C1A17" strokeWidth="1.2" fill="none" />
+      </g>
 
-      {/* 2. Línea divisoria horizontal */}
-      <path
-        data-stroke="divider"
-        d="M1 28 H55"
-        stroke="#1C1A17"
-        strokeWidth="1.2"
-        fill="none"
-        strokeDasharray="54"
-        strokeDashoffset="54"
-      />
+      {/* ── Shell inferior — reveal DCHA→IZQ (paso 1) ── */}
+      <g data-shell="bottom">
+        {/* Marco inferior (U): lateral-izq + abajo + lateral-dcha desde la divisoria */}
+        <path d="M1 28 V55 H55 V28" stroke="#1C1A17" strokeWidth="1.2" fill="none" />
+      </g>
 
-      {/* 3. Rectángulo interior — 4 segmentos secuenciales */}
-      <path
-        data-stroke="r-bottom"
-        d="M21.6611 40.5273 H34.0391"
-        stroke="#1C1A17"
-        strokeWidth="1.2"
-        fill="none"
-        strokeDasharray="12.4"
-        strokeDashoffset="12.4"
-      />
-      <path
-        data-stroke="r-left"
-        d="M21.6611 40.5273 V15.7715"
-        stroke="#1C1A17"
-        strokeWidth="1.2"
-        fill="none"
-        strokeDasharray="24.8"
-        strokeDashoffset="24.8"
-      />
-      <path
-        data-stroke="r-top"
-        d="M21.6611 15.7715 H34.0391"
-        stroke="#1C1A17"
-        strokeWidth="1.2"
-        fill="none"
-        strokeDasharray="12.4"
-        strokeDashoffset="12.4"
-      />
-      <path
-        data-stroke="r-right"
-        d="M34.0391 15.7715 V40.5273"
-        stroke="#1C1A17"
-        strokeWidth="1.2"
-        fill="none"
-        strokeDasharray="24.8"
-        strokeDashoffset="24.8"
-      />
-
-      {/* 4. Bloque inferior del rectángulo interior (fade) */}
-      <rect
-        data-fill="inner-bot"
-        x="22.2"
-        y="28.6"
-        width="11.2"
-        height="11.4"
-        fill="#1C1A17"
-        opacity="0"
-      />
-
-      {/* 5. Franja superior completa (fade) + hueco warm-light simultáneo */}
-      <rect
-        data-fill="top-full"
-        x="1.6"
-        y="1.6"
-        width="52.8"
-        height="25.8"
-        fill="#1C1A17"
-        opacity="0"
-      />
-      <rect
-        data-fill="top-hole"
-        x="22.2"
-        y="16.3"
-        width="11.2"
-        height="11.1"
-        fill="#F5F2ED"
-        opacity="0"
-      />
+      {/* ── Cuadritos del centro (animados aparte en el paso 2) ── */}
+      {/* Muesca blanca (negativo) — se abre de la divisoria hacia arriba */}
+      <rect data-square="top-hole" x="22.2" y="16.3" width="11.2" height="11.1" fill="#F5F2ED" />
+      {/* Bloque negro inferior — se abre de la divisoria hacia abajo */}
+      <rect data-square="inner-bot" x="22.2" y="28.6" width="11.2" height="11.4" fill="#1C1A17" />
     </svg>
   )
 }

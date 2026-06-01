@@ -59,7 +59,13 @@ export default async function DisenoDeExperiencias({ params }: PageProps) {
         shapeKind="ellipse"
       />
 
-      <ClientsMarquee clients={t('experiencias.intro.clients')} bottomSpacing="large" />
+      <ClientsMarquee
+        clients={t('experiencias.intro.clients')}
+        logoSrc="/logos-customers/logos-serv2.png"
+        logoWidth={1700}
+        logoHeight={100}
+        bottomSpacing="large"
+      />
 
       <CapacityOthers
         tabs={tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityTabItem, CapacityTabItem, CapacityTabItem]}

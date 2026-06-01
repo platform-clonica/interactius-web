@@ -50,7 +50,15 @@ export function SidebarLogoLink({
       style={{ left: 'calc(50% - 3px)', filter: 'brightness(0) invert(1)' }}
       aria-label={ariaLabel}
     >
-      {children}
+      {/* Máscara line-reveal (overflow hidden). El reveal/unreveal del logo
+          vertical en el swap del menú (home-arriba) lo conduce el CSS vía
+          data-hero-logo: el inner traslada en Y dentro de esta máscara. En el
+          resto de páginas el inner queda en su sitio (revelado). */}
+      <span data-sidebar-logo-mask style={{ display: 'block', overflow: 'hidden' }}>
+        <span data-sidebar-logo-inner style={{ display: 'block' }}>
+          {children}
+        </span>
+      </span>
     </Link>
   )
 }

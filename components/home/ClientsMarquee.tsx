@@ -1,3 +1,39 @@
+import Image from 'next/image'
+
+/* ==========================================================================
+   ClientsMarquee (home) — logos de clientes.
+   --------------------------------------------------------------------------
+   Sustituye la versión en TEXTO (con highlight rotatorio) por la imagen
+   logos-customers/logos-home.png. La versión anterior queda COMENTADA al
+   final del archivo por si hubiera que recuperarla.
+   ========================================================================== */
+
+export function ClientsMarquee() {
+  return (
+    <section
+      aria-hidden="true"
+      className="relative z-content w-full bg-bg pt-4 pb-16 lg:py-16"
+    >
+      <div className="section-inner">
+        {/* eslint-disable-next-line jsx-a11y/alt-text */}
+        <Image
+          src="/logos-customers/logos-home.png"
+          alt=""
+          width={1760}
+          height={544}
+          sizes="(min-width: 1440px) 1440px, 100vw"
+          className="mx-auto h-auto w-full"
+        />
+      </div>
+    </section>
+  )
+}
+
+/* ==========================================================================
+   VERSIÓN ANTERIOR (texto con highlight rotatorio) — comentada por si hay que
+   volver a ella. Sustituida por la imagen de logos arriba.
+   --------------------------------------------------------------------------
+
 'use client'
 
 import { Fragment, useEffect, useState } from 'react'
@@ -59,3 +95,5 @@ export function ClientsMarquee() {
     </section>
   )
 }
+
+   ========================================================================== */

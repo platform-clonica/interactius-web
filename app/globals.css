@@ -282,6 +282,31 @@
     pointer-events: none;
   }
 
+  /* Home top — antes del fullscreen del vídeo (y con el menú cerrado) se
+     muestra el wordmark HORIZONTAL (en HeroScroll, alineado a col-2) y se
+     oculta el logo vertical del Sidebar. HeroScroll fija data-hero-logo en
+     <html> según scroll + estado del menú.
+
+     El logo vertical hace un line-mask reveal (slide en Y dentro de su máscara)
+     coherente con el text-reveal del resto. Sin transición por defecto → el
+     ocultado inicial en carga (home-arriba) es instantáneo, sin flash; la
+     transición se habilita con data-logo-animate (puesto tras el 1er frame)
+     para que SOLO los swaps del menú animen. */
+  [data-sidebar-logo-inner] {
+    transition: none;
+  }
+  html[data-logo-animate] [data-sidebar-logo-inner] {
+    transition: transform 0.55s var(--ease), opacity 0.55s var(--ease);
+  }
+  html[data-hero-logo='horizontal'] [data-sidebar-logo-inner] {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+  /* No clicable mientras está oculto (modo horizontal) */
+  html[data-hero-logo='horizontal'] [data-sidebar-logo] {
+    pointer-events: none;
+  }
+
   /* ────────────────────────────────────────────────────────────────────────
      Link hover underline — opacidad 60→100 + wipe-in del subrayado.
      --------------------------------------------------------------------

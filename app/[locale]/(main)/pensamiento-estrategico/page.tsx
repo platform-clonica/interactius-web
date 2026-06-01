@@ -61,7 +61,13 @@ export default async function PensamientoEstrategico({ params }: PageProps) {
         strokeColor="#7A7F7A"
       />
 
-      <ClientsMarquee clients={t('pensamiento.intro.clients')} bottomSpacing="large" />
+      <ClientsMarquee
+        clients={t('pensamiento.intro.clients')}
+        logoSrc="/logos-customers/logos-serv1.png"
+        logoWidth={1700}
+        logoHeight={73}
+        bottomSpacing="large"
+      />
 
       <CapacityOthers
         tabs={tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityTabItem, CapacityTabItem, CapacityTabItem]}
