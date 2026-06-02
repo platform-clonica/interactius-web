@@ -46,4 +46,5 @@ export const TEAM: readonly TeamMember[] = [
   { src: '/identidad/fotos-team/Riccardo.webp', name: 'Riccardo Fresco',    role: 'UX Designer' },
   { src: '/identidad/fotos-team/Sara.webp',     name: 'Sara Suárez',        role: 'UX Researcher' },
   { src: '/identidad/fotos-team/Tom.webp',      name: 'Tomás Modroño',      role: 'UX/UI Specialist' },
+  { src: '/identidad/fotos-team/Yolanda.webp',  name: 'Yolanda Delgado',    role: 'Product Designer' },
 ]
