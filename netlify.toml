@@ -58,8 +58,32 @@
 # vía 404 estándar (más lento que 410, pero la diferencia práctica es marginal
 # para nuestro volumen). Si quisiéramos forzar 410 habría que emitirlo desde
 # `middleware.ts` y/o ampliar el matcher para incluir paths con extensión.
+# Solo funcionan reglas para paths CON extensión (los excluye el matcher de
+# Next, así que el plugin no los reclama para SSR). Verificado en prod, mayo
+# 2026: `*.pdf` 301 ✅, paths sin extensión → 404 (los reclama el SSR).
 [[redirects]]
-  from = "/STMDL/Digital-transformation-tools.pdf"
+  from = "/STMDL/*"
+  to = "/miradas"
+  status = 301
+  force = true
+
+# Newsletters estáticas WP (`.html`) → newsletter actual.
+[[redirects]]
+  from = "/neuxletterdesigntapas/*"
+  to = "/newsletter"
+  status = 301
+  force = true
+
+# PDFs sueltos de la home WP (`/wp-content/uploads/*.pdf`). Netlify no soporta
+# wildcard por sufijo, así que se listan los dos que GSC reportaba con valor.
+[[redirects]]
+  from = "/wp-content/uploads/ProductDiscovery.pdf"
+  to = "/miradas"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/wp-content/uploads/ResearchOps.pdf"
   to = "/miradas"
   status = 301
   force = true
