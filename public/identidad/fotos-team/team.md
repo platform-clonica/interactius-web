@@ -26,3 +26,4 @@ Tomás Modroño - UX/UI Specialist - Tom.webp
 Alexandra Tresaco - UX/UI Designer - Alexandra.webp
 Oscar Soler - UX/UI Designer - Oscar.webp
 Aleix Martí - Front-end Developer - Aleix.webp
+Yolanda Delgado - Product Designer - Yolanda.webp
