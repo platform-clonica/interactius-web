@@ -241,6 +241,18 @@ export default async function ArticlePage({ params }: PageProps) {
   const article = resolved.article
   const slugEs = resolved.slugEs
 
+  // CA/EN sin traducción real → 301 a la versión ES canónica. Evita servir
+  // contenido ES bajo una URL CA/EN con noindex+canonical (señales
+  // contradictorias que GSC reportaba como "duplicada sin canónica"). Con el
+  // 301 la URL desaparece del índice y el equity se consolida en ES.
+  if (locale !== 'es' && !hasTranslation(sub, slugEs, locale)) {
+    permanentRedirect(
+      localizedPath('/miradas/[parentOrSub]/[slug]', 'es', {
+        params: { parentOrSub: localizeSubSlug(sub, 'es'), slug: slugEs },
+      }),
+    )
+  }
+
   if (resolved.isLegacyEsSlug && locale !== 'es') {
     const targetSlug = article.slugByLocale[locale]
     if (targetSlug !== slugEs) {
