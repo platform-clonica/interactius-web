@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 
 import { miradasRedirects } from './config/miradas-redirects.mjs'
+import { rootSlugRedirects } from './config/root-slug-redirects.mjs'
 import { routing } from './lib/i18n/routing'
 
 /**
@@ -24,6 +25,17 @@ import { routing } from './lib/i18n/routing'
  */
 const REDIRECT_MAP = new Map<string, string>(
   miradasRedirects.map((r) => [r.source, r.destination]),
+)
+
+/**
+ * Mapa de slugs WP servidos a nivel raíz (`/<slug>`) → `/miradas/<cat>/<slug>`.
+ * WP exponía cada post sin segmento de categoría (y también con permalink de
+ * fecha `/YYYY/MM/DD/<slug>/`). Esas URLs no las recogía ni REDIRECT_MAP ni el
+ * fallback de prefijos → 404. Generado por
+ * `scripts/generate-root-slug-redirects.mjs` desde el contenido ES.
+ */
+const ROOT_SLUG_MAP = new Map<string, string>(
+  rootSlugRedirects.map((r) => [r.source, r.destination]),
 )
 
 /**
@@ -81,6 +93,26 @@ const LEGACY_PREFIX_FALLBACK: Array<[string, string]> = [
   ['/outsourcing-ux/', '/pensamiento-estrategico'],
   // Página antigua de inicio duplicada.
   ['/home/', '/'],
+
+  // Prefijos detectados en GSC ronda 3 (404 confirmados, mayo 2026).
+  // Corporativas / landings viejas sin slug en el snapshot.
+  ['/equipo-ux/', '/identidad'],
+  ['/designtapas/', '/newsletter'],
+  // '/stmdl-2/' antes que '/stmdl/' (más específico primero).
+  ['/stmdl-2/', '/miradas'],
+  ['/stmdl/', '/miradas'],
+  ['/design-maturity/', '/pensamiento-estrategico'],
+  ['/diseno-de-producto-digital/', '/diseno-de-experiencias'],
+  ['/barcelona-design-week/', '/miradas'],
+  ['/cursos-de-formacion', '/pensamiento-estrategico'],
+  ['/workshots-ideacion-ia/', '/miradas/workshops'],
+  ['/lsp/', '/miradas/workshops'],
+  // Archivos WP (tags y autores) → listing general / identidad.
+  ['/tag/', '/miradas'],
+  ['/author/', '/identidad'],
+  // Slug WP renombrado en la migración (no lo recoge ROOT_SLUG_MAP porque el
+  // slug-ES actual es '-2'). Override exacto al artículo correcto.
+  ['/situated-play-design/', '/miradas/diseno-estrategico/situated-play-design-2'],
 ]
 
 const intlMiddleware = createMiddleware(routing)
@@ -122,7 +154,21 @@ export default function middleware(req: NextRequest) {
     }
   }
 
-  // 3. Trailing slash → no slash (excepto root '/'): 301 a la versión canónica.
+  // 3. Slugs WP a nivel raíz (`/<slug>` y permalink de fecha
+  //    `/YYYY/MM/DD/<slug>`) → URL canónica `/miradas/<cat>/<slug>`. Primero
+  //    pelamos un posible prefijo de fecha y luego consultamos el mapa.
+  const dateStripped = normalized.replace(
+    /^\/\d{4}\/\d{2}\/\d{2}(\/.+)$/,
+    '$1',
+  )
+  const rootTarget = ROOT_SLUG_MAP.get(dateStripped)
+  if (rootTarget) {
+    const url = req.nextUrl.clone()
+    url.pathname = rootTarget
+    return NextResponse.redirect(url, 308)
+  }
+
+  // 4. Trailing slash → no slash (excepto root '/'): 301 a la versión canónica.
   //    El sitemap declara todas las URLs sin slash final; con esto evitamos
   //    el "Duplicate sin canonical seleccionado" que GSC reportaba por servir
   //    el mismo contenido en /miradas/ y /miradas con 200 ambos.
