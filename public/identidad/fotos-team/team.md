@@ -1,28 +1,29 @@
-Adrián Yanes - UX/UI Designer - Adrian.webp
+Adrián Yanes - Product Designer - Adrian.webp
 Alejandro Madeira - Project Manager - Ale.webp
-Alex Cuadrado - UX Designer - Alex.webp
+Alex Cuadrado - Product Designer - Alex.webp
 Berta Abad - Graphic Designer - Berta.webp
-Carlos Ruiz - CEO - Carlos.webp
+Carlos Ruiz - CEO / Cofounder - Carlos.webp
 Diana Yuste - UI Designer - Diana.webp
-Diego Richtenberg - UX/UI Designer - Diego.webp
+Diego Richtenberg - Product Designer - Diego.webp
 Edmond Pérez - PMO - Edmond.webp
-Elena Santos - UX Researcher - ElenaS.webp
-Elena Campo - UX Researcher - EleneC.webp
+Elena Santos - Design Strategist - ElenaS.webp
+Elena Campo - Design Strategist - EleneC.webp
 Elisabeth López - Admin Manager - Eli.webp
-Francesc Tuset - UX Designer - Francesc.webp
-Isaac Jordana - UX/UI Designer - Isaac.webp
-Joha Orellana - UX Research & Designer - Joha.webp
-Josep Blanco - Head of Finance - Josep.webp
+Francesc Tuset - Product Designer - Francesc.webp
+Isaac Jordana - Product Designer - Isaac.webp
+Joha Orellana - Design Strategist - Joha.webp
+Josep Blanco - CFO / Cofounder - Josep.webp
 Lucho Dominguez - Human-centered AI Specialist - Lucho.webp
-Marcela Arreaga - UX Researcher - Marcela.webp
+Marcela Arreaga - Design Strategist - Marcela.webp
 Maria Najarro - Head of Design Strategy - Maria.webp
 Martina Gentile - Head of Marketing - Martina.webp
-Pamela Campbell - UX Researcher - PamC.webp
-Pamela Bolaños - UX/UI Designer - Pamela B.webp
+Pamela Campbell - Design Strategist - PamC.webp
+Pamela Bolaños - Design Strategist - Pamela B.webp
 Pol Pascual - Growth Manager - Pol.webp
-Riccardo Fresco - UX Designer - Riccardo.webp
-Sara Suárez - UX Researcher - Sara.webp
-Tomás Modroño - UX/UI Specialist - Tom.webp
-Alexandra Tresaco - UX/UI Designer - Alexandra.webp
-Oscar Soler - UX/UI Designer - Oscar.webp
+Riccardo Fresco - Product Designer - Riccardo.webp
+Sara Suárez - Design Strategist - Sara.webp
+Tomás Modroño - Product Specialist - Tom.webp
+Alexandra Tresaco - Product Designer - Alexandra.webp
+Oscar Soler - Product Designer - Oscar.webp
 Aleix Martí - Front-end Developer - Aleix.webp
+Yolanda Delgado - Product Designer - Yolanda.webp

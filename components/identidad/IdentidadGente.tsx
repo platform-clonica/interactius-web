@@ -27,7 +27,7 @@ function shuffle<T>(arr: readonly T[]): T[] {
    ========================================================================== */
 
 // 3 vertical bands, distribuidas en orden 1→2→3 con leve variación de y por
-// banda para mantener el feel scattered. 28 slots = 28 miembros; cada uno
+// banda para mantener el feel scattered. 29 slots = 29 miembros; cada uno
 // renderiza con la foto correspondiente del array `team` (barajado en mount).
 const SLOTS: { y: number; x: number }[] = [
   { y: 12, x: 0 },     { y: 45, x: 280 },   { y: 64, x: 560 },
@@ -39,10 +39,10 @@ const SLOTS: { y: number; x: number }[] = [
   { y: 15, x: 5040 },  { y: 43, x: 5320 },  { y: 65, x: 5600 },
   { y: 11, x: 5880 },  { y: 47, x: 6160 },  { y: 64, x: 6440 },
   { y: 13, x: 6720 },  { y: 44, x: 7000 },  { y: 66, x: 7280 },
-  { y: 17, x: 7560 },
+  { y: 17, x: 7560 },  { y: 48, x: 7840 },
 ]
 
-const REEL_WIDTH = 7840 // 280px × 28 slots
+const REEL_WIDTH = 8120 // 280px × 29 slots
 const DRIFT_SPEED = 130 // px per second — same velocity for entry and drift
 const PHOTO_W = 200     // px — reference for wrap calculation
 
