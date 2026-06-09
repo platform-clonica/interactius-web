@@ -100,10 +100,10 @@ tags:                           # opcional. minúsculas-con-guiones, sin tildes 
 - Componentes MDX disponibles (definidos en `components/miradas/MDXContent.tsx`):
   - `<ImageWithCaption src="/miradas-assets/<slug>/<file>" alt="..." caption="..." />`
   - `<PullQuote>Cita destacada.</PullQuote>` — úsalo para las citas entrecomilladas del doc.
-  - `<Video src="/ruta/video.mp4" poster="/ruta/poster.webp" caption="..." />` — vídeo que
-    autoreproduce en silencio y en bucle (`autoPlay muted loop playsInline`), estilo banner.
-    `poster` y `caption` son opcionales. El único vídeo en `public/` hoy es el hero de la home:
-    `src="/home/hero-poster.mp4"`, `poster="/home/hero-poster.webp"`.
+  - `<Video src="/ruta/video.mp4" poster="/ruta/poster.webp" caption="..." />` — reproductor con
+    **controles** (play, barra de tiempo, volumen/audio). `poster` y `caption` son opcionales;
+    un `poster` vacío o en blanco se ignora. El archivo `.mp4` debe existir en `public/` (no se
+    descarga solo). Comprime los vídeos antes de subirlos: un `.mp4` de decenas de MB carga lento.
 - Enlaces externos: markdown normal `[texto](https://...)` (se abren en pestaña nueva solos).
 - **Vídeo del cuerpo:** usa `<Video>`. Si el doc trae un marcador `[video -> archivo.mp4]`,
   el archivo debe existir en `public/` (no se descarga solo); si no está, pídelo o consensúa.
