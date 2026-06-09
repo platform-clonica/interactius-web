@@ -33,6 +33,37 @@ function PullQuote({ children }: { children?: ReactNode }) {
   )
 }
 
+function Video({
+  src,
+  poster,
+  caption,
+}: {
+  src?: string
+  poster?: string
+  caption?: string
+}) {
+  if (!src) return null
+  return (
+    <figure className="my-10">
+      <video
+        src={src}
+        poster={poster}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        className="w-full h-auto"
+      />
+      {caption ? (
+        <figcaption className="mt-3 font-mono text-body-sm text-fg/60 leading-[1.5]">
+          {caption}
+        </figcaption>
+      ) : null}
+    </figure>
+  )
+}
+
 /* ==========================================================================
    MDXContent — render canónico de los artículos de Miradas
    --------------------------------------------------------------------------
@@ -117,6 +148,7 @@ const components: MDXComponents = {
   ),
   ImageWithCaption,
   PullQuote,
+  Video,
 }
 
 interface MDXContentProps {
