@@ -14,10 +14,10 @@ function ImageWithCaption({
 }) {
   if (!src) return null
   return (
-    <figure className="my-10">
-      <img src={src} alt={alt ?? ''} loading="lazy" className="w-full h-auto" />
+    <figure className="my-12">
+      <img src={src} alt={alt ?? ''} loading="lazy" className="w-full h-auto border border-fg/20" />
       {caption ? (
-        <figcaption className="mt-3 font-mono text-body-sm text-fg/60 leading-[1.5]">
+        <figcaption className="mt-3 font-mono text-center text-body-sm text-fg/60 leading-[1.5]">
           {caption}
         </figcaption>
       ) : null}
@@ -30,6 +30,36 @@ function PullQuote({ children }: { children?: ReactNode }) {
     <blockquote className="my-12 border-l-2 border-fg/30 pl-6 lg:pl-8 font-serif font-light italic text-section text-fg leading-tight">
       {children}
     </blockquote>
+  )
+}
+
+function Video({
+  src,
+  poster,
+  caption,
+}: {
+  src?: string
+  poster?: string
+  caption?: string
+}) {
+  if (!src) return null
+  const posterSrc = poster?.trim() ? poster : undefined
+  return (
+    <figure className="my-10">
+      <video
+        src={src}
+        poster={posterSrc}
+        controls
+        playsInline
+        preload="metadata"
+        className="w-full h-auto"
+      />
+      {caption ? (
+        <figcaption className="mt-3 text-center font-mono text-body-sm text-fg/60 leading-[1.5]">
+          {caption}
+        </figcaption>
+      ) : null}
+    </figure>
   )
 }
 
@@ -57,7 +87,7 @@ const components: MDXComponents = {
     </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="font-mono font-semibold text-fg text-body-sm leading-[1.5] mt-12 mb-4">
+    <h3 className="font-mono font-semibold text-fg title-mono leading-[1.5] mt-12 mb-8">
       {children}
     </h3>
   ),
@@ -76,7 +106,7 @@ const components: MDXComponents = {
   ),
   li: ({ children }) => <li className="leading-[1.6]">{children}</li>,
   blockquote: ({ children }) => (
-    <blockquote className="my-10 bg-grey p-8 lg:p-10 font-serif font-light italic text-section text-fg leading-tight">
+    <blockquote className="my-32 bg-grey p-8 lg:p-8 font-serif font-light italic text-section text-fg leading-tight">
       {children}
     </blockquote>
   ),
@@ -117,6 +147,7 @@ const components: MDXComponents = {
   ),
   ImageWithCaption,
   PullQuote,
+  Video,
 }
 
 interface MDXContentProps {
@@ -129,7 +160,7 @@ export async function MDXContent({ source }: MDXContentProps) {
   })
 
   return (
-    <div className="mdx-content">
+    <div className="mdx-content grid grid-cols-12 gap-x-grid-gutter [&>*]:col-span-12 lg:[&>*]:col-start-2 lg:[&>*]:col-span-10 2xl:[&>blockquote]:col-start-2 2xl:[&>blockquote]:col-span-8">
       <Content components={components} />
     </div>
   )

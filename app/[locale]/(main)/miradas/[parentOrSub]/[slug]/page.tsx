@@ -499,7 +499,7 @@ export default async function ArticlePage({ params }: PageProps) {
             </p>
           </div>
 
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center mt-12 lg:mt-16">
+          <div className="col-span-12 min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center mt-12 lg:mt-16">
             <MDXContent source={article.content} />
           </div>
         </div>
