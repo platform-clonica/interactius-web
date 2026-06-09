@@ -47,6 +47,26 @@ Fuente única de verdad: `lib/miradas/frontmatter.schema.ts` (`SUB_TO_PARENT`).
   usa un `localizedSlug` aparte (lo genera el script de traducción), pero el archivo se llama
   siempre `<slug-es>.mdx`.
 
+### Tags — análisis de contenido (paso obligatorio)
+
+Los tags **no son libres**: son un filtro UI client-side que agrupa artículos por igualdad
+**exacta** de string (sensible a mayúsculas/espacios/tildes) y son **invariantes** (se leen solo
+del frontmatter ES; CA/EN los heredan). Por eso, antes de inventar tags nuevos hay que
+**analizar el contenido del artículo y contrastarlo con los tags ya existentes**:
+
+1. **Lee el artículo** e identifica 3-5 temas/conceptos centrales.
+2. **Saca el inventario de tags existentes** y su frecuencia:
+   ```bash
+   for f in content/miradas/es/*/*.mdx; do
+     awk '/^tags:/{t=1;next} t&&/^[a-zA-Z]/{t=0} t&&/^[[:space:]]*-/{sub(/^[[:space:]]*-[[:space:]]*/,"");print}' "$f"
+   done | sed 's/^"//;s/"$//' | sort | uniq -c | sort -rn
+   ```
+3. **Reutiliza un tag existente siempre que exprese el mismo concepto** (así el artículo agrupa
+   en el filtro). Solo crea un tag nuevo si ningún existente encaja.
+4. **Formato:** minúsculas, con guiones, sin tildes ni espacios (`product-design`,
+   `diseno-estrategico`, `branding`). La UI muestra el tag reemplazando `-` por espacio.
+5. Propón la lista final al autor/a antes de fijarla.
+
 ---
 
 ## 2. Crear el archivo MDX (ES)
@@ -66,9 +86,9 @@ category: diseno-estrategico    # una de las 10 subcategorías
 parentCategory: pensamiento-estrategico   # debe casar con SUB_TO_PARENT[category]
 slug: mi-slug-del-articulo      # = nombre del archivo
 image: /miradas-assets/mi-slug-del-articulo/header.webp   # opcional (cover + og:image)
-tags:                           # opcional, minúsculas simples
-  - estrategia
-  - marca
+tags:                           # opcional. minúsculas-con-guiones, sin tildes ni espacios.
+  - estrategias-de-marca        # reutiliza tags existentes (ver § Tags) para que agrupen
+  - diseno-estrategico
 ---
 ```
 
@@ -80,9 +100,13 @@ tags:                           # opcional, minúsculas simples
 - Componentes MDX disponibles (definidos en `components/miradas/MDXContent.tsx`):
   - `<ImageWithCaption src="/miradas-assets/<slug>/<file>" alt="..." caption="..." />`
   - `<PullQuote>Cita destacada.</PullQuote>` — úsalo para las citas entrecomilladas del doc.
+  - `<Video src="/ruta/video.mp4" poster="/ruta/poster.webp" caption="..." />` — reproductor con
+    **controles** (play, barra de tiempo, volumen/audio). `poster` y `caption` son opcionales;
+    un `poster` vacío o en blanco se ignora. El archivo `.mp4` debe existir en `public/` (no se
+    descarga solo). Comprime los vídeos antes de subirlos: un `.mp4` de decenas de MB carga lento.
 - Enlaces externos: markdown normal `[texto](https://...)` (se abren en pestaña nueva solos).
-- **Vídeo:** no hay componente de vídeo. Si el doc trae marcadores `[video -> ...]`, se omiten
-  (o se consensúa una alternativa con quien mantenga el render).
+- **Vídeo del cuerpo:** usa `<Video>`. Si el doc trae un marcador `[video -> archivo.mp4]`,
+  el archivo debe existir en `public/` (no se descarga solo); si no está, pídelo o consensúa.
 
 ---
 
