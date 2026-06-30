@@ -160,7 +160,7 @@ function FormShell({
     return (
       <div role="status" className="bg-warm-light p-8 font-mono text-body-sm text-fg">
         <p className="font-medium">{successTitle}</p>
-        <p className="mt-3 text-fg/70">{successBody}</p>
+        <p className="mt-3 whitespace-pre-line text-fg/70">{successBody}</p>
       </div>
     )
   }
@@ -431,8 +431,8 @@ function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormPr
     <FormShell
       status={status}
       errorMessage={errorMessage}
-      successTitle={t('success.title')}
-      successBody={t('success.body')}
+      successTitle={t('bdwForm.successTitle')}
+      successBody={t('bdwForm.successBody')}
       submitLabel={t('submit')}
       submittingLabel={t('submitting')}
       onSubmit={handleSubmit(onSubmit)}

@@ -71,6 +71,8 @@
     "role": "Tu rol",
     "motivation": "¿Qué te motiva a participar?",
     "subscribe": "Quiero recibir cada mes las Design Tapas de Interactius.",
+    "successTitle": "¡Preinscripción confirmada!",
+    "successBody": "Muchas gracias por tu interés en participar.\n\nComo las plazas están limitadas a solo 16 personas, revisaremos los registros por orden de llegada. Pronto te enviaremos un correo para confirmarte si has conseguido tu lugar y darte todos los detalles del workshop.\n\n¡Esperamos verte pronto!",
     "consentText": "De vez en cuando nos gustaría escribirte sobre nuestros productos, servicios y contenidos que puedan interesarte. Puedes darte de baja en cualquier momento. Consulta nuestra <link>Política de privacidad</link>.",
     "sectorOptions": {
       "alimentacion": "Alimentación",

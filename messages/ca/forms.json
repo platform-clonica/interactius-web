@@ -71,6 +71,8 @@
     "role": "El teu rol",
     "motivation": "Què et motiva a participar?",
     "subscribe": "Vull rebre cada mes les Design Tapas d'Interactius.",
+    "successTitle": "Preinscripció confirmada!",
+    "successBody": "Moltes gràcies pel teu interès a participar.\n\nCom que les places estan limitades a només 16 persones, revisarem els registres per ordre d'arribada. Aviat t'enviarem un correu per confirmar-te si has aconseguit la teva plaça i donar-te tots els detalls del workshop.\n\nEsperem veure't aviat!",
     "consentText": "De tant en tant ens agradaria escriure't sobre els nostres productes, serveis i continguts que et puguin interessar. Pots donar-te de baixa en qualsevol moment. Consulta la nostra <link>Política de privacitat</link>.",
     "sectorOptions": {
       "alimentacion": "Alimentació",
