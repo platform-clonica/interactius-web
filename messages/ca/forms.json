@@ -11,6 +11,7 @@
     "country": "Introdueix el teu país",
     "householdSituation": "Indica la teva situació de la llar",
     "birthdate": "Introdueix la teva data de naixement",
+    "motivation": "Explica'ns breument què et motiva",
     "privacy": "Has d'acceptar la política per continuar"
   },
   "labels": {
@@ -60,5 +61,30 @@
     "prefix": "Accepto rebre missatges d'Interactius i la seva",
     "link": "Política de privacitat",
     "suffix": ". Permeto que Interactius pugui emmagatzemar i processar les meves dades personals."
+  },
+  "bdwForm": {
+    "firstName": "Nom",
+    "lastName": "Cognoms",
+    "email": "Correu",
+    "company": "Nom de l'empresa",
+    "sector": "Sector",
+    "role": "El teu rol",
+    "motivation": "Què et motiva a participar?",
+    "subscribe": "Vull rebre cada mes les Design Tapas d'Interactius.",
+    "consentText": "De tant en tant ens agradaria escriure't sobre els nostres productes, serveis i continguts que et puguin interessar. Pots donar-te de baixa en qualsevol moment. Consulta la nostra <link>Política de privacitat</link>.",
+    "sectorOptions": {
+      "alimentacion": "Alimentació",
+      "bancaFinanzas": "Banca / Finances",
+      "energia": "Energia",
+      "granConsumo": "Gran consum",
+      "industrial": "Industrial",
+      "retailModa": "Retail / Moda",
+      "saludFarma": "Salut / Farma",
+      "sectorPublico": "Sector Públic",
+      "seguros": "Assegurances",
+      "servicios": "Serveis",
+      "ventaMenor": "Venda al detall",
+      "otro": "Altre"
+    }
   }
 }

@@ -72,12 +72,15 @@ export const bdwSchema = z.object({
   firstName: z.string().min(2),
   lastName: z.string().min(2),
   email: z.string().email(),
-  birthdate: z.string().min(1),
-  gender: z.string().optional(),
-  householdSituation: z.string().min(2),
-  profession: z.string().min(2),
-  city: z.string().min(2),
-  privacy: z.literal(true),
+  company: z.string().optional(),
+  /** Sector — propiedad del objeto empresa (objectTypeId 0-2). */
+  sector: z.string().optional(),
+  /** Cargo / rol (jobtitle). */
+  role: z.string().optional(),
+  /** ¿Qué te motiva a participar? (que_te_motiva_a_participar_) — obligatorio. */
+  motivation: z.string().min(2),
+  /** Opt-in marketing — suscripción Design Tapas (subscription 9792607). */
+  subscribe: z.boolean().optional(),
 })
 
 export type BdwInput = z.infer<typeof bdwSchema>

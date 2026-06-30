@@ -21,6 +21,29 @@ export interface HubspotField {
   /** Nombre del campo interno en Hubspot (snake_case). */
   name: string
   value: string
+  /**
+   * objectTypeId para propiedades que NO son del contacto. Ej. '0-2' para
+   * propiedades del objeto empresa (company). Si se omite, Hubspot asume
+   * contacto ('0-1').
+   */
+  objectTypeId?: string
+}
+
+/**
+ * Opciones de consentimiento legal (RGPD) del Forms API v3. Se envía en el
+ * cuerpo junto a `fields` y `context`, no como un campo más.
+ * https://legacydocs.hubspot.com/docs/methods/forms/submit_form_v3_authentication
+ */
+export interface HubspotLegalConsentOptions {
+  consent: {
+    consentToProcess: boolean
+    text: string
+    communications?: Array<{
+      value: boolean
+      subscriptionTypeId: number
+      text: string
+    }>
+  }
 }
 
 interface HubspotSubmitOptions {
@@ -29,6 +52,8 @@ interface HubspotSubmitOptions {
   fields: HubspotField[]
   /** URL de la página desde donde se envía (para el contexto de conversión). */
   pageUri?: string
+  /** Consentimiento RGPD (opt-in de marketing + consentToProcess). */
+  legalConsentOptions?: HubspotLegalConsentOptions
 }
 
 type HubspotResult =
@@ -70,6 +95,9 @@ export async function submitToHubspot(
         context: {
           pageUri: options.pageUri ?? '',
         },
+        ...(options.legalConsentOptions
+          ? { legalConsentOptions: options.legalConsentOptions }
+          : {}),
       }),
     })
   } catch (err) {
