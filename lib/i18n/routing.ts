@@ -80,6 +80,12 @@ const PATHNAMES = {
     ca: '/testers',
     en: '/testers',
   },
+  // Landing de campaña — mismo slug en los 3 idiomas (nombre de evento).
+  '/barcelona-design-week-2026': {
+    es: '/barcelona-design-week-2026',
+    ca: '/barcelona-design-week-2026',
+    en: '/barcelona-design-week-2026',
+  },
 
   // Miradas
   '/miradas': {

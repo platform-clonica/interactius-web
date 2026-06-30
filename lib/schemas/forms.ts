@@ -63,3 +63,21 @@ export const testersSchema = z.object({
 })
 
 export type TestersInput = z.infer<typeof testersSchema>
+
+/* ==========================================================================
+   Barcelona Design Week 2026 — /api/bdw
+   ========================================================================== */
+
+export const bdwSchema = z.object({
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  email: z.string().email(),
+  birthdate: z.string().min(1),
+  gender: z.string().optional(),
+  householdSituation: z.string().min(2),
+  profession: z.string().min(2),
+  city: z.string().min(2),
+  privacy: z.literal(true),
+})
+
+export type BdwInput = z.infer<typeof bdwSchema>

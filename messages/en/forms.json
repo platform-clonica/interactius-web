@@ -53,7 +53,8 @@
   "errors": {
     "contacto": "We couldn't send your message. Please try again or email us at hola@interactius.com.",
     "newsletter": "We couldn't subscribe your email. Please try again in a few minutes.",
-    "testers": "We couldn't register your details. Please try again in a few minutes."
+    "testers": "We couldn't register your details. Please try again in a few minutes.",
+    "bdw": "We couldn't register your sign-up. Please try again in a few minutes."
   },
   "privacy": {
     "prefix": "I agree to receive messages from Interactius and its",

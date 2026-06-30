@@ -46,6 +46,18 @@ type TestersData = {
   privacy: true
 }
 
+type BdwData = {
+  firstName: string
+  lastName: string
+  email: string
+  birthdate: string
+  gender?: string
+  householdSituation: string
+  profession: string
+  city: string
+  privacy: true
+}
+
 /* ==========================================================================
    Config por variant
    ========================================================================== */
@@ -54,6 +66,7 @@ const VARIANT_CONFIG = {
   contacto: { endpoint: '/api/contact' },
   newsletter: { endpoint: '/api/newsletter' },
   testers: { endpoint: '/api/testers' },
+  bdw: { endpoint: '/api/bdw' },
 } as const
 
 type Variant = keyof typeof VARIANT_CONFIG
@@ -89,6 +102,16 @@ export function ContactForm({ variant }: ContactFormProps) {
   if (variant === 'newsletter') {
     return (
       <NewsletterForm
+        status={status}
+        setStatus={setStatus}
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+    )
+  }
+  if (variant === 'bdw') {
+    return (
+      <BdwForm
         status={status}
         setStatus={setStatus}
         errorMessage={errorMessage}
@@ -181,16 +204,19 @@ function FormShell({
 function PrivacyCheckbox({
   register,
   error,
+  href = '/aviso-legal',
 }: {
   register: ReturnType<ReturnType<typeof useForm>['register']> | object
   error?: string
+  /** Destino del enlace de la política. Por defecto el aviso legal. */
+  href?: '/aviso-legal' | '/politica-privacidad'
 }) {
   const t = useTranslations('forms')
   return (
     <div data-contact-checkbox>
       <Checkbox {...(register as object)} error={error} required labelClassName="font-mono text-micro text-fg/40 leading-snug">
         {t('privacy.prefix')}{' '}
-        <Link href="/aviso-legal" className="underline underline-offset-4 hover:opacity-70">
+        <Link href={href} className="underline underline-offset-4 hover:opacity-70">
           {t('privacy.link')}
         </Link>
         {t('privacy.suffix')}
@@ -322,6 +348,174 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
       </div>
       <p data-contact-field className="font-mono text-micro text-fg/40">{t('requiredHint')}</p>
       <PrivacyCheckbox register={register('privacy')} error={errors.privacy?.message} />
+    </FormShell>
+  )
+}
+
+function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormProps) {
+  const t = useTranslations('forms')
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        firstName: z.string().min(2, t('validation.name')),
+        lastName: z.string().min(2, t('validation.lastName')),
+        email: z.string().email(t('validation.email')),
+        birthdate: z.string().min(1, t('validation.birthdate')),
+        gender: z.string().optional(),
+        householdSituation: z.string().min(2, t('validation.householdSituation')),
+        profession: z.string().min(2, t('validation.profession')),
+        city: z.string().min(2, t('validation.city')),
+        privacy: z.literal(true, {
+          errorMap: () => ({ message: t('validation.privacy') }),
+        }),
+      }),
+    [t],
+  )
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<BdwData>({ resolver: zodResolver(schema), mode: 'onBlur' })
+
+  const privacyAccepted = watch('privacy') === true
+
+  const onSubmit: SubmitHandler<BdwData> = async (data) => {
+    setStatus('submitting')
+    setErrorMessage(null)
+    try {
+      const res = await fetch(VARIANT_CONFIG.bdw.endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) throw new Error('submit_failed')
+      setStatus('success')
+    } catch {
+      setStatus('error')
+      setErrorMessage(t('errors.bdw'))
+    }
+  }
+
+  return (
+    <FormShell
+      status={status}
+      errorMessage={errorMessage}
+      successTitle={t('success.title')}
+      successBody={t('success.body')}
+      submitLabel={t('submit')}
+      submittingLabel={t('submitting')}
+      submitDisabled={!privacyAccepted}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <div data-contact-field>
+        <FormField
+          {...register('firstName')}
+          label={t('labels.name')}
+          name="firstName"
+          type="text"
+          autoComplete="given-name"
+          error={errors.firstName?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('lastName')}
+          label={t('labels.lastName')}
+          name="lastName"
+          type="text"
+          autoComplete="family-name"
+          error={errors.lastName?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('email')}
+          label={t('labels.email')}
+          name="email"
+          type="email"
+          autoComplete="email"
+          error={errors.email?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('birthdate')}
+          label={t('labels.birthdate')}
+          name="birthdate"
+          type="date"
+          autoComplete="bday"
+          error={errors.birthdate?.message}
+          required
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div data-contact-field>
+          <FormField
+            {...register('gender')}
+            as="select"
+            label={t('labels.gender')}
+            name="gender"
+            error={errors.gender?.message}
+          >
+            <option value=""></option>
+            <option value="female">{t('genderOptions.female')}</option>
+            <option value="male">{t('genderOptions.male')}</option>
+            <option value="non-binary">{t('genderOptions.nonBinary')}</option>
+            <option value="other">{t('genderOptions.other')}</option>
+            <option value="prefer-not-to-say">{t('genderOptions.preferNotToSay')}</option>
+          </FormField>
+        </div>
+        <div data-contact-field>
+          <FormField
+            {...register('householdSituation')}
+            as="select"
+            label={t('labels.householdSituation')}
+            name="householdSituation"
+            error={errors.householdSituation?.message}
+            required
+          >
+            <option value=""></option>
+            <option value="Solo">{t('householdOptions.solo')}</option>
+            <option value="Pareja">{t('householdOptions.pareja')}</option>
+            <option value="Solo con hij@/s">{t('householdOptions.soloConHijos')}</option>
+            <option value="Pareja con hij@/s">{t('householdOptions.parejaConHijos')}</option>
+            <option value="Piso compartido">{t('householdOptions.pisoCompartido')}</option>
+          </FormField>
+        </div>
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('profession')}
+          label={t('labels.profession')}
+          name="profession"
+          type="text"
+          error={errors.profession?.message}
+          required
+        />
+      </div>
+      <div data-contact-field>
+        <FormField
+          {...register('city')}
+          label={t('labels.city')}
+          name="city"
+          type="text"
+          autoComplete="address-level2"
+          error={errors.city?.message}
+          required
+        />
+      </div>
+      <p data-contact-field className="font-mono text-micro text-fg/40">{t('requiredHint')}</p>
+      <PrivacyCheckbox
+        register={register('privacy')}
+        error={errors.privacy?.message}
+        href="/politica-privacidad"
+      />
     </FormShell>
   )
 }
