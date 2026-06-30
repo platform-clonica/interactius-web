@@ -99,7 +99,14 @@ export async function ContactHero({
           <p>
             {t.rich('bdw.eventLocation', {
               u: (chunks) => (
-                <span className="underline underline-offset-4">{chunks}</span>
+                <a
+                  href="https://maps.app.goo.gl/GcB7eeStXc43bUpt8"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-4 hover:opacity-70"
+                >
+                  {chunks}
+                </a>
               ),
             })}
           </p>
