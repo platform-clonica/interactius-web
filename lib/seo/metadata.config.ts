@@ -272,6 +272,24 @@ export const PAGE_COPY: Record<string, RouteCopyMap> = {
     },
   },
 
+  '/barcelona-design-week-2026': {
+    es: {
+      title: 'Barcelona Design Week 2026 — Taller OFF BDW',
+      description:
+        'Prototipar, empatizar y testear en horas: el nuevo flujo de validación con IA. Taller práctico en el OFF de la Barcelona Design Week 2026. Solo 16 plazas.',
+    },
+    ca: {
+      title: 'Barcelona Design Week 2026 — Taller OFF BDW',
+      description:
+        'Prototipar, empatitzar i testejar en hores: el nou flux de validació amb IA. Taller pràctic a l’OFF de la Barcelona Design Week 2026. Només 16 places.',
+    },
+    en: {
+      title: 'Barcelona Design Week 2026 — OFF BDW Workshop',
+      description:
+        'Prototype, empathise and test in hours: the new AI validation flow. A hands-on workshop at the OFF of Barcelona Design Week 2026. Only 16 seats.',
+    },
+  },
+
   '/aviso-legal': {
     es: {
       title: 'Aviso legal',

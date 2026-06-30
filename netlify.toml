@@ -12,7 +12,7 @@
   # de cualquier form embebido de Hubspot). Excluimos del secrets scanning
   # para evitar falsos positivos cuando el ID coincide con números presentes
   # en otros artefactos del repo (p.ej. el XML de migración de WordPress).
-  SECRETS_SCAN_OMIT_KEYS = "HUBSPOT_PORTAL_ID,HUBSPOT_FORM_ID_NEWSLETTER,HUBSPOT_FORM_ID_CONTACT,HUBSPOT_FORM_ID_TESTERS"
+  SECRETS_SCAN_OMIT_KEYS = "HUBSPOT_PORTAL_ID,HUBSPOT_FORM_ID_NEWSLETTER,HUBSPOT_FORM_ID_CONTACT,HUBSPOT_FORM_ID_TESTERS,HUBSPOT_FORM_ID_BDW"
 
 # ─── Next.js plugin ──────────────────────────────────────────────────────────
 # Activa SSR, ISR, Image Optimization y Edge Functions de Next.js en Netlify.

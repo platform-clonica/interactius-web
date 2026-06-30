@@ -13,7 +13,7 @@ import { ContactHeroAnim } from './ContactHeroAnim'
    La spec de animación del Figma es idéntica para las tres.
    ========================================================================== */
 
-type Variant = 'contacto' | 'newsletter' | 'testers'
+type Variant = 'contacto' | 'newsletter' | 'testers' | 'bdw'
 
 interface ContactHeroProps {
   variant: Variant
@@ -36,6 +36,7 @@ export async function ContactHero({
     contacto:   t('contacto.title'),
     newsletter: t('newsletter.title'),
     testers:    t('testers.title'),
+    bdw:        t('bdw.title'),
   }
 
   const bodyMap: Record<Variant, ReactNode> = {
@@ -79,12 +80,40 @@ export async function ContactHero({
         </div>
       </>
     ),
+    bdw: (
+      <>
+        <p>{t('bdw.copy1')}</p>
+        <p>
+          {t.rich('bdw.copy2', {
+            strong: (chunks) => <strong>{chunks}</strong>,
+          })}
+        </p>
+        <p>
+          {t.rich('bdw.copy3', {
+            strong: (chunks) => <strong>{chunks}</strong>,
+          })}
+        </p>
+        {/* Detalles del evento — fecha y ubicación, agrupados con gap menor. */}
+        <div className="flex flex-col gap-1">
+          <p>{t('bdw.eventDate')}</p>
+          <p>
+            {t.rich('bdw.eventLocation', {
+              u: (chunks) => (
+                <span className="underline underline-offset-4">{chunks}</span>
+              ),
+            })}
+          </p>
+        </div>
+      </>
+    ),
   }
 
   // Email alternativo en bottom-left de la columna izquierda — común a las 3
   // variantes; el copy "O bien, escríbenos un email a" + "info@interactius.com"
   // mantiene la coherencia visual entre Contacto, Newsletter y Testers.
-  const altEmailMap: Record<Variant, string> = {
+  // bdw no muestra el bloque de email alternativo (el pie izquierdo son los
+  // detalles del evento, ya incluidos en el body).
+  const altEmailMap: Record<Exclude<Variant, 'bdw'>, string> = {
     contacto:   t('contacto.altEmail'),
     newsletter: t('contacto.altEmail'),
     testers:    t('contacto.altEmail'),
@@ -95,16 +124,29 @@ export async function ContactHero({
     contacto:   '/contacto/contact-bg.jpg',
     newsletter: '/contacto/news-contact-bg.jpg',
     testers:    '/contacto/testers-contact-bg.jpg',
+    bdw:        '/contacto/news-contact-bg.jpg',
   }
+
+  const isBdw = variant === 'bdw'
 
   return (
     <ContactHeroAnim
       imageSrc={imageSrc ?? bgMap[variant]}
       imageAlt={imageAlt}
+      eyebrow={
+        isBdw
+          ? t.rich('bdw.eyebrow', {
+              u: (chunks) => (
+                <span className="underline underline-offset-4">{chunks}</span>
+              ),
+            })
+          : undefined
+      }
       title={titleMap[variant]}
       body={bodyMap[variant]}
-      altEmailLabel={t('altEmailText')}
-      altEmail={altEmailMap[variant]}
+      showLogo={!isBdw}
+      altEmailLabel={isBdw ? undefined : t('altEmailText')}
+      altEmail={isBdw ? undefined : altEmailMap[variant]}
     >
       {children}
     </ContactHeroAnim>
