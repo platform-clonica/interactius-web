@@ -50,12 +50,11 @@ type BdwData = {
   firstName: string
   lastName: string
   email: string
-  birthdate: string
-  gender?: string
-  householdSituation: string
-  profession: string
-  city: string
-  privacy: true
+  company?: string
+  sector?: string
+  role?: string
+  motivation: string
+  subscribe?: boolean
 }
 
 /* ==========================================================================
@@ -161,7 +160,7 @@ function FormShell({
     return (
       <div role="status" className="bg-warm-light p-8 font-mono text-body-sm text-fg">
         <p className="font-medium">{successTitle}</p>
-        <p className="mt-3 text-fg/70">{successBody}</p>
+        <p className="mt-3 whitespace-pre-line text-fg/70">{successBody}</p>
       </div>
     )
   }
@@ -221,6 +220,41 @@ function PrivacyCheckbox({
         </Link>
         {t('privacy.suffix')}
       </Checkbox>
+    </div>
+  )
+}
+
+/* ==========================================================================
+   Consentimiento BDW — opt-in marketing opcional + texto de procesamiento
+   (réplica del bloque de consentimiento del formulario de HubSpot).
+   ========================================================================== */
+
+function BdwConsent({
+  register,
+}: {
+  register: ReturnType<ReturnType<typeof useForm>['register']> | object
+}) {
+  const t = useTranslations('forms')
+  return (
+    <div data-contact-checkbox className="flex flex-col gap-3">
+      <Checkbox
+        {...(register as object)}
+        labelClassName="font-mono text-micro text-fg/40 leading-snug"
+      >
+        {t('bdwForm.subscribe')}
+      </Checkbox>
+      <p className="font-mono text-micro text-fg/40 leading-snug">
+        {t.rich('bdwForm.consentText', {
+          link: (chunks) => (
+            <Link
+              href="/politica-privacidad"
+              className="underline underline-offset-4 hover:opacity-70"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
+      </p>
     </div>
   )
 }
@@ -361,14 +395,11 @@ function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormPr
         firstName: z.string().min(2, t('validation.name')),
         lastName: z.string().min(2, t('validation.lastName')),
         email: z.string().email(t('validation.email')),
-        birthdate: z.string().min(1, t('validation.birthdate')),
-        gender: z.string().optional(),
-        householdSituation: z.string().min(2, t('validation.householdSituation')),
-        profession: z.string().min(2, t('validation.profession')),
-        city: z.string().min(2, t('validation.city')),
-        privacy: z.literal(true, {
-          errorMap: () => ({ message: t('validation.privacy') }),
-        }),
+        company: z.string().optional(),
+        sector: z.string().optional(),
+        role: z.string().optional(),
+        motivation: z.string().min(2, t('validation.motivation')),
+        subscribe: z.boolean().optional(),
       }),
     [t],
   )
@@ -376,11 +407,8 @@ function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormPr
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<BdwData>({ resolver: zodResolver(schema), mode: 'onBlur' })
-
-  const privacyAccepted = watch('privacy') === true
 
   const onSubmit: SubmitHandler<BdwData> = async (data) => {
     setStatus('submitting')
@@ -403,39 +431,40 @@ function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormPr
     <FormShell
       status={status}
       errorMessage={errorMessage}
-      successTitle={t('success.title')}
-      successBody={t('success.body')}
+      successTitle={t('bdwForm.successTitle')}
+      successBody={t('bdwForm.successBody')}
       submitLabel={t('submit')}
       submittingLabel={t('submitting')}
-      submitDisabled={!privacyAccepted}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div data-contact-field>
-        <FormField
-          {...register('firstName')}
-          label={t('labels.name')}
-          name="firstName"
-          type="text"
-          autoComplete="given-name"
-          error={errors.firstName?.message}
-          required
-        />
-      </div>
-      <div data-contact-field>
-        <FormField
-          {...register('lastName')}
-          label={t('labels.lastName')}
-          name="lastName"
-          type="text"
-          autoComplete="family-name"
-          error={errors.lastName?.message}
-          required
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div data-contact-field>
+          <FormField
+            {...register('firstName')}
+            label={t('bdwForm.firstName')}
+            name="firstName"
+            type="text"
+            autoComplete="given-name"
+            error={errors.firstName?.message}
+            required
+          />
+        </div>
+        <div data-contact-field>
+          <FormField
+            {...register('lastName')}
+            label={t('bdwForm.lastName')}
+            name="lastName"
+            type="text"
+            autoComplete="family-name"
+            error={errors.lastName?.message}
+            required
+          />
+        </div>
       </div>
       <div data-contact-field>
         <FormField
           {...register('email')}
-          label={t('labels.email')}
+          label={t('bdwForm.email')}
           name="email"
           type="email"
           autoComplete="email"
@@ -445,77 +474,62 @@ function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormPr
       </div>
       <div data-contact-field>
         <FormField
-          {...register('birthdate')}
-          label={t('labels.birthdate')}
-          name="birthdate"
-          type="date"
-          autoComplete="bday"
-          error={errors.birthdate?.message}
-          required
+          {...register('company')}
+          label={t('bdwForm.company')}
+          name="company"
+          type="text"
+          autoComplete="organization"
+          error={errors.company?.message}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div data-contact-field>
           <FormField
-            {...register('gender')}
+            {...register('sector')}
             as="select"
-            label={t('labels.gender')}
-            name="gender"
-            error={errors.gender?.message}
+            label={t('bdwForm.sector')}
+            name="sector"
+            error={errors.sector?.message}
           >
             <option value=""></option>
-            <option value="female">{t('genderOptions.female')}</option>
-            <option value="male">{t('genderOptions.male')}</option>
-            <option value="non-binary">{t('genderOptions.nonBinary')}</option>
-            <option value="other">{t('genderOptions.other')}</option>
-            <option value="prefer-not-to-say">{t('genderOptions.preferNotToSay')}</option>
+            <option value="Alimentación">{t('bdwForm.sectorOptions.alimentacion')}</option>
+            <option value="Banca / Finanzas">{t('bdwForm.sectorOptions.bancaFinanzas')}</option>
+            <option value="Energía">{t('bdwForm.sectorOptions.energia')}</option>
+            <option value="Gran consumo">{t('bdwForm.sectorOptions.granConsumo')}</option>
+            <option value="Industrial">{t('bdwForm.sectorOptions.industrial')}</option>
+            <option value="Retail / Moda">{t('bdwForm.sectorOptions.retailModa')}</option>
+            <option value="Salud / Farma">{t('bdwForm.sectorOptions.saludFarma')}</option>
+            <option value="Sector Público">{t('bdwForm.sectorOptions.sectorPublico')}</option>
+            <option value="Seguros">{t('bdwForm.sectorOptions.seguros')}</option>
+            <option value="Servicios">{t('bdwForm.sectorOptions.servicios')}</option>
+            <option value="Venta al por menor">{t('bdwForm.sectorOptions.ventaMenor')}</option>
+            <option value="Otro">{t('bdwForm.sectorOptions.otro')}</option>
           </FormField>
         </div>
         <div data-contact-field>
           <FormField
-            {...register('householdSituation')}
-            as="select"
-            label={t('labels.householdSituation')}
-            name="householdSituation"
-            error={errors.householdSituation?.message}
-            required
-          >
-            <option value=""></option>
-            <option value="Solo">{t('householdOptions.solo')}</option>
-            <option value="Pareja">{t('householdOptions.pareja')}</option>
-            <option value="Solo con hij@/s">{t('householdOptions.soloConHijos')}</option>
-            <option value="Pareja con hij@/s">{t('householdOptions.parejaConHijos')}</option>
-            <option value="Piso compartido">{t('householdOptions.pisoCompartido')}</option>
-          </FormField>
+            {...register('role')}
+            label={t('bdwForm.role')}
+            name="role"
+            type="text"
+            autoComplete="organization-title"
+            error={errors.role?.message}
+          />
         </div>
       </div>
       <div data-contact-field>
         <FormField
-          {...register('profession')}
-          label={t('labels.profession')}
-          name="profession"
-          type="text"
-          error={errors.profession?.message}
-          required
-        />
-      </div>
-      <div data-contact-field>
-        <FormField
-          {...register('city')}
-          label={t('labels.city')}
-          name="city"
-          type="text"
-          autoComplete="address-level2"
-          error={errors.city?.message}
+          {...register('motivation')}
+          as="textarea"
+          label={t('bdwForm.motivation')}
+          name="motivation"
+          error={errors.motivation?.message}
+          autoResize
           required
         />
       </div>
       <p data-contact-field className="font-mono text-micro text-fg/40">{t('requiredHint')}</p>
-      <PrivacyCheckbox
-        register={register('privacy')}
-        error={errors.privacy?.message}
-        href="/politica-privacidad"
-      />
+      <BdwConsent register={register('subscribe')} />
     </FormShell>
   )
 }

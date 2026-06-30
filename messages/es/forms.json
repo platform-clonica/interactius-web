@@ -11,6 +11,7 @@
     "country": "Introduce tu país",
     "householdSituation": "Indica tu situación del hogar",
     "birthdate": "Introduce tu fecha de nacimiento",
+    "motivation": "Cuéntanos brevemente qué te motiva",
     "privacy": "Debes aceptar la política para continuar"
   },
   "labels": {
@@ -60,5 +61,32 @@
     "prefix": "Acepto recibir mensajes de Interactius y su",
     "link": "Política de privacidad",
     "suffix": ". Permito que Interactius pueda almacenar y procesar mis datos personales."
+  },
+  "bdwForm": {
+    "firstName": "Nombre",
+    "lastName": "Apellidos",
+    "email": "Correo",
+    "company": "Nombre de la empresa",
+    "sector": "Sector",
+    "role": "Tu rol",
+    "motivation": "¿Qué te motiva a participar?",
+    "subscribe": "Quiero recibir cada mes las Design Tapas de Interactius.",
+    "successTitle": "¡Preinscripción confirmada!",
+    "successBody": "Muchas gracias por tu interés en participar.\n\nComo las plazas están limitadas a solo 16 personas, revisaremos los registros por orden de llegada. Pronto te enviaremos un correo para confirmarte si has conseguido tu lugar y darte todos los detalles del workshop.\n\n¡Esperamos verte pronto!",
+    "consentText": "De vez en cuando nos gustaría escribirte sobre nuestros productos, servicios y contenidos que puedan interesarte. Puedes darte de baja en cualquier momento. Consulta nuestra <link>Política de privacidad</link>.",
+    "sectorOptions": {
+      "alimentacion": "Alimentación",
+      "bancaFinanzas": "Banca / Finanzas",
+      "energia": "Energía",
+      "granConsumo": "Gran consumo",
+      "industrial": "Industrial",
+      "retailModa": "Retail / Moda",
+      "saludFarma": "Salud / Farma",
+      "sectorPublico": "Sector Público",
+      "seguros": "Seguros",
+      "servicios": "Servicios",
+      "ventaMenor": "Venta al por menor",
+      "otro": "Otro"
+    }
   }
 }

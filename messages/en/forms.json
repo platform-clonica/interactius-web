@@ -11,6 +11,7 @@
     "country": "Please enter your country",
     "householdSituation": "Please tell us about your household situation",
     "birthdate": "Please enter your date of birth",
+    "motivation": "Tell us briefly what motivates you",
     "privacy": "You must accept the policy to continue"
   },
   "labels": {
@@ -60,5 +61,32 @@
     "prefix": "I agree to receive messages from Interactius and its",
     "link": "Privacy Policy",
     "suffix": ". I allow Interactius to store and process my personal data."
+  },
+  "bdwForm": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "company": "Company name",
+    "sector": "Sector",
+    "role": "Your role",
+    "motivation": "What motivates you to take part?",
+    "subscribe": "I want to receive the Interactius Design Tapas every month.",
+    "successTitle": "Pre-registration confirmed!",
+    "successBody": "Thank you so much for your interest in taking part.\n\nAs places are limited to just 16 people, we'll review registrations on a first-come, first-served basis. We'll email you soon to confirm whether you've got a spot and share all the workshop details.\n\nHope to see you soon!",
+    "consentText": "From time to time we'd like to reach out about our products, services and content that may interest you. You can unsubscribe at any time. See our <link>Privacy Policy</link>.",
+    "sectorOptions": {
+      "alimentacion": "Food & Beverage",
+      "bancaFinanzas": "Banking / Finance",
+      "energia": "Energy",
+      "granConsumo": "Consumer goods",
+      "industrial": "Industrial",
+      "retailModa": "Retail / Fashion",
+      "saludFarma": "Health / Pharma",
+      "sectorPublico": "Public sector",
+      "seguros": "Insurance",
+      "servicios": "Services",
+      "ventaMenor": "Retail",
+      "otro": "Other"
+    }
   }
 }
