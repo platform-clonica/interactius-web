@@ -47,8 +47,10 @@ export async function POST(request: Request) {
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
-        profession: data.profession,
-        city: data.city,
+        company: data.company,
+        sector: data.sector,
+        role: data.role,
+        subscribe: data.subscribe === true,
       })
     }
     return NextResponse.json({ ok: true }, { status: 200 })
@@ -60,12 +62,27 @@ export async function POST(request: Request) {
       { name: 'firstname', value: data.firstName },
       { name: 'lastname', value: data.lastName },
       { name: 'email', value: data.email },
-      { name: 'fecha_de_nacimiento___', value: data.birthdate },
-      { name: 'gender', value: data.gender ?? '' },
-      { name: 'situacion_del_hogar', value: data.householdSituation },
-      { name: 'job_function', value: data.profession },
-      { name: 'city', value: data.city },
+      { name: 'company', value: data.company ?? '' },
+      // Sector es propiedad del objeto empresa (objectTypeId 0-2).
+      { objectTypeId: '0-2', name: 'sector_empresa', value: data.sector ?? '' },
+      { name: 'jobtitle', value: data.role ?? '' },
+      { name: 'que_te_motiva_a_participar_', value: data.motivation },
     ],
+    // Opt-in de marketing (Design Tapas, subscription 9792607). El procesamiento
+    // de datos se consiente implícitamente al enviar (interés legítimo del form).
+    legalConsentOptions: {
+      consent: {
+        consentToProcess: true,
+        text: 'Acepto que Interactius almacene y procese mis datos personales para gestionar mi inscripción.',
+        communications: [
+          {
+            value: data.subscribe === true,
+            subscriptionTypeId: 9792607,
+            text: 'Quiero recibir cada mes las Design Tapas de Interactius.',
+          },
+        ],
+      },
+    },
     pageUri: request.headers.get('referer') ?? undefined,
   })
 
