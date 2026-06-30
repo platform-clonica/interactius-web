@@ -19,6 +19,15 @@
     "step2": "<strong>Participa des d'on vulguis.</strong> La majoria de sessions són online, per videotrucada. Pots connectar-te des del mòbil o l'ordinador.",
     "step3": "<strong>T'ho agraïm com es mereix!</strong> El teu temps val diners. Per això rebràs una recompensa per cada participació."
   },
+  "bdw": {
+    "eyebrow": "<u>OFF BDW</u> – Barcelona Design Week 2026",
+    "title": "Prototipar, empatitzar i testejar en hores: el nou flux de validació amb IA",
+    "copy1": "La IA crea solucions en hores, però el 80% dels productes no sobreviu al mercat.",
+    "copy2": "En aquest <strong>taller pràctic</strong> per a Product, Innovation i Design Leads, dominaràs el cicle complet: prototipar amb IA i validar a l'instant amb Clonica, usuaris sintètics que encarnen emocions reals (amb un 93% de similitud). Construir ràpid sense validar és velocitat en la direcció equivocada.",
+    "copy3": "Apunta-t'hi, només <strong>16 places disponibles</strong>.",
+    "eventDate": "→ 16 d'octubre de 11:30 a 13:30",
+    "eventLocation": "→ Oficines <u>Interactius</u> (Barcelona)"
+  },
   "avisoLegal": {
     "title": "Avís legal",
     "stub": "Pàgina en construcció."

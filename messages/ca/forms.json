@@ -53,7 +53,8 @@
   "errors": {
     "contacto": "No hem pogut enviar el missatge. Torna-ho a intentar o escriu-nos a hola@interactius.com.",
     "newsletter": "No hem pogut subscriure el teu email. Torna-ho a intentar en uns minuts.",
-    "testers": "No hem pogut registrar les teves dades. Torna-ho a intentar en uns minuts."
+    "testers": "No hem pogut registrar les teves dades. Torna-ho a intentar en uns minuts.",
+    "bdw": "No hem pogut registrar la teva inscripció. Torna-ho a intentar en uns minuts."
   },
   "privacy": {
     "prefix": "Accepto rebre missatges d'Interactius i la seva",

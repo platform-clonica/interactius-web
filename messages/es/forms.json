@@ -53,7 +53,8 @@
   "errors": {
     "contacto": "No hemos podido enviar el mensaje. Inténtalo de nuevo o escríbenos a hola@interactius.com.",
     "newsletter": "No hemos podido suscribir tu email. Inténtalo de nuevo en unos minutos.",
-    "testers": "No hemos podido registrar tus datos. Inténtalo de nuevo en unos minutos."
+    "testers": "No hemos podido registrar tus datos. Inténtalo de nuevo en unos minutos.",
+    "bdw": "No hemos podido registrar tu inscripción. Inténtalo de nuevo en unos minutos."
   },
   "privacy": {
     "prefix": "Acepto recibir mensajes de Interactius y su",

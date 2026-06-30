@@ -26,23 +26,30 @@ import { wrapLinesInMask } from '@/components/motion/wrapLinesInMask'
 interface ContactHeroAnimProps {
   imageSrc?: string
   imageAlt?: string
+  /** Kicker opcional sobre el título (ej. variante bdw). */
+  eyebrow?: ReactNode
   title: string
   body: ReactNode
   altEmailLabel?: string
   altEmail?: string
+  /** Muestra el wordmark arriba a la derecha. Default true. */
+  showLogo?: boolean
   children: ReactNode
 }
 
 export function ContactHeroAnim({
   imageSrc = '/contacto/bg.jpg',
   imageAlt = '',
+  eyebrow,
   title,
   body,
   altEmailLabel,
   altEmail,
+  showLogo = true,
   children,
 }: ContactHeroAnimProps) {
   const sectionRef    = useRef<HTMLElement>(null)
+  const eyebrowRef    = useRef<HTMLParagraphElement>(null)
   const headingRef    = useRef<HTMLHeadingElement>(null)
   const bodyRef       = useRef<HTMLDivElement>(null)
   const emailRef      = useRef<HTMLParagraphElement>(null)
@@ -55,7 +62,7 @@ export function ContactHeroAnim({
     const heading   = headingRef.current
     const bodyEl    = bodyRef.current
     const logoEl    = logoRef.current
-    if (!section || !heading || !bodyEl || !logoEl) return
+    if (!section || !heading || !bodyEl) return
 
     void (async () => {
       const [{ default: gsap }, { default: SplitType }] = await Promise.all([
@@ -65,10 +72,12 @@ export function ContactHeroAnim({
 
       const reduced = getReducedMotion()
       const emailEl = emailRef.current
+      const eyebrowEl = eyebrowRef.current
 
       if (reduced) {
         // Mostrar todo inmediatamente sin transición
-        gsap.set([logoEl], { clearProps: 'all' })
+        if (logoEl) gsap.set([logoEl], { clearProps: 'all' })
+        if (eyebrowEl) gsap.set(eyebrowEl, { clearProps: 'all' })
         if (emailEl) gsap.set(emailEl, { clearProps: 'all' })
         const fields   = section.querySelectorAll('[data-contact-field]')
         const checkbox = section.querySelector('[data-contact-checkbox]')
@@ -90,8 +99,9 @@ export function ContactHeroAnim({
       // Box visible al instante (la PageCurtain global ya hace el reveal).
       gsap.set(h1Split.lines ?? [], { y: 60, opacity: 0 })
       gsap.set(bodyLines,            { y: 40, opacity: 0 })
+      if (eyebrowEl) gsap.set(eyebrowEl, { opacity: 0, y: -8 })
       if (emailEl) gsap.set(emailEl, { opacity: 0 })
-      gsap.set(logoEl,               { opacity: 0, y: -12 })
+      if (logoEl) gsap.set(logoEl,   { opacity: 0, y: -12 })
 
       // Números de pasos (variant testers) — fuera del set de <p>, requieren
       // animación propia sincronizada con la entrada del body.
@@ -110,6 +120,16 @@ export function ContactHeroAnim({
       // pequeño buffer para que coincida con el final del uncover de la
       // PageCurtain (≈ 0.15s después del navigate dentro del timeline global).
       const D = 0.2
+
+      // Eyebrow/kicker — entra justo antes del heading.
+      if (eyebrowEl) {
+        gsap.to(eyebrowEl, {
+          opacity: 1, y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          delay: D + 0.5,
+        })
+      }
 
       // t=560ms rel. box: Heading (SplitType line-mask)
       gsap.to(h1Split.lines ?? [], {
@@ -147,13 +167,15 @@ export function ContactHeroAnim({
       }
 
       // t=760ms rel. box: Logo
-      gsap.to(logoEl, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: 'power2.out',
-        delay: D + 0.76,
-      })
+      if (logoEl) {
+        gsap.to(logoEl, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          delay: D + 0.76,
+        })
+      }
 
       // t=920ms+ rel. box: Campos del formulario (stagger 80ms)
       gsap.to(fields, {
@@ -222,18 +244,29 @@ export function ContactHeroAnim({
             <div className="grid grid-cols-12 gap-grid-gutter">
 
               {/* Logo — mobile: order-first (arriba del todo), justify-start (alineado al texto).
-                  Desktop: en col 7-12 row 1 (justify-end), izq spans 2 rows. */}
-              <div ref={logoRef} className="col-span-12 lg:col-start-7 lg:col-span-6 flex justify-start lg:justify-end order-first lg:order-none mb-6 lg:mb-0">
-                <Logo
-                  variant="wordmark"
-                  className="h-[32px] lg:h-[clamp(32px,2.4vw,44px)] w-auto text-fg"
-                  aria-label="Interactius"
-                />
-              </div>
+                  Desktop: en col 7-12 row 1 (justify-end), izq spans 2 rows.
+                  Algunas variantes (bdw) lo ocultan: el formulario sube a la fila 1. */}
+              {showLogo && (
+                <div ref={logoRef} className="col-span-12 lg:col-start-7 lg:col-span-6 flex justify-start lg:justify-end order-first lg:order-none mb-6 lg:mb-0">
+                  <Logo
+                    variant="wordmark"
+                    className="h-[32px] lg:h-[clamp(32px,2.4vw,44px)] w-auto text-fg"
+                    aria-label="Interactius"
+                  />
+                </div>
+              )}
 
               {/* ── COLUMNA IZQUIERDA ─────────────────────────────────────── */}
               <div className="col-span-12 lg:col-span-5 lg:row-span-2 flex flex-col justify-between gap-10 lg:gap-0">
                 <div>
+                  {eyebrow && (
+                    <p
+                      ref={eyebrowRef}
+                      className="mb-6 font-mono text-body-sm text-fg/60"
+                    >
+                      {eyebrow}
+                    </p>
+                  )}
                   <h1
                     ref={headingRef}
                     id="contact-hero-title"
