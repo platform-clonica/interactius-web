@@ -160,7 +160,7 @@ export async function MDXContent({ source }: MDXContentProps) {
   })
 
   return (
-    <div className="mdx-content grid grid-cols-12 gap-x-grid-gutter [&>*]:col-span-12 lg:[&>*]:col-start-2 lg:[&>*]:col-span-10 2xl:[&>blockquote]:col-start-2 2xl:[&>blockquote]:col-span-8">
+    <div className="mdx-content grid grid-cols-12 gap-x-grid-gutter [&>*]:col-span-12 lg:[&>*]:col-start-2 lg:[&>*]:col-span-8">
       <Content components={components} />
     </div>
   )
