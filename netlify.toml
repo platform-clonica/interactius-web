@@ -12,7 +12,14 @@
   # de cualquier form embebido de Hubspot). Excluimos del secrets scanning
   # para evitar falsos positivos cuando el ID coincide con números presentes
   # en otros artefactos del repo (p.ej. el XML de migración de WordPress).
-  SECRETS_SCAN_OMIT_KEYS = "HUBSPOT_PORTAL_ID,HUBSPOT_FORM_ID_NEWSLETTER,HUBSPOT_FORM_ID_CONTACT,HUBSPOT_FORM_ID_TESTERS,HUBSPOT_FORM_ID_BDW"
+  #
+  # BASIC_AUTH_USER / BASIC_AUTH_PASSWORD: el gate HTTP Basic de la landing de
+  # cliente (/proyectos/bershka/future-thinking). El valor de BASIC_AUTH_USER
+  # ("bershka") es parte de la propia URL de la ruta, así que aparece por todo
+  # el build output → falso positivo inevitable del scanner. El password se lee
+  # solo en runtime (Edge middleware), nunca se hornea en el bundle. Ambos van
+  # solo en Netlify env vars; no se commitean valores reales al repo.
+  SECRETS_SCAN_OMIT_KEYS = "HUBSPOT_PORTAL_ID,HUBSPOT_FORM_ID_NEWSLETTER,HUBSPOT_FORM_ID_CONTACT,HUBSPOT_FORM_ID_TESTERS,HUBSPOT_FORM_ID_BDW,BASIC_AUTH_USER,BASIC_AUTH_PASSWORD"
 
 # ─── Next.js plugin ──────────────────────────────────────────────────────────
 # Activa SSR, ISR, Image Optimization y Edge Functions de Next.js en Netlify.
