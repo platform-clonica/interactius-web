@@ -493,7 +493,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
       <article className="section-inner pt-16 lg:pt-20 pb-section" aria-label={article.title}>
         <div className="grid grid-cols-12 gap-grid-gutter">
-          <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
+          <div className="col-span-12 lg:col-start-2 lg:col-span-8 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
             <p className="font-serif font-normal text-fg text-title-sm leading-tight tracking-[-0.01em]">
               {article.description}
             </p>
