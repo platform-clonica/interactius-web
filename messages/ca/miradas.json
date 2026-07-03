@@ -29,6 +29,7 @@
   },
   "article": {
     "minRead": "min. lectura",
+    "updatedOn": "Actualitzat el",
     "share": "Compartir",
     "copyLink": "Copiar enllaç",
     "linkCopied": "Enllaç copiat",
