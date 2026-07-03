@@ -29,6 +29,7 @@
   },
   "article": {
     "minRead": "min. lectura",
+    "updatedOn": "Actualizado el",
     "share": "Compartir",
     "copyLink": "Copiar enlace",
     "linkCopied": "Enlace copiado",
