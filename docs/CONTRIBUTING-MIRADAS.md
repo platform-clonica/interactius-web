@@ -4,9 +4,18 @@ Proceso paso a paso para publicar un artículo nuevo en la sección **Miradas**.
 Pensado para repetirse en cada alta. La fuente canónica es siempre el **español (ES)**;
 catalán (CA) e inglés (EN) son traducciones opcionales que se generan aparte.
 
+> **Con Claude Code:** la skill `publicar-mirada` (`.claude/skills/publicar-mirada.md`) ejecuta
+> este proceso de principio a fin. Este doc es la referencia humana / de detalle.
+
 > Referencia de arquitectura: ver `CLAUDE.md` § _Content (Miradas)_ y los archivos
 > `lib/miradas/frontmatter.schema.ts`, `lib/miradas/i18n-routing.ts`,
 > `lib/content/miradas.ts`.
+
+> **SEO (automático, no tocar):** cada página de artículo emite canonical + hreflang (`x-default`→ES),
+> `noindex` para CA/EN sin traducción real, JSON-LD `Article` (con `image` absoluta, `keywords` de los
+> tags, `inLanguage`, `publisher`) + `BreadcrumbList`, Open Graph/Twitter y entra en el sitemap solo en
+> locales con traducción. Tu responsabilidad SEO se reduce a: `description` ≤160, `image` presente y
+> optimizada, y `tags` reutilizados. Ver `lib/seo/schema.ts` y el `generateMetadata` de la página.
 
 ---
 
@@ -158,12 +167,16 @@ sharp(f).resize({ width: 1920, withoutEnlargement: true }).webp({ quality: 82 })
 ## 4. Validar
 
 ```bash
-npm run validate:miradas
+npm run validate:miradas -- --slug=<slug>    # acota los avisos a tu artículo
 ```
 
-Comprueba el frontmatter contra el schema Zod **y** la coherencia con la ruta:
-carpeta = `category`, `parentCategory` correcta, nombre de archivo = `slug`, y que el `<slug>`
-embebido en `image:` coincide. Debe salir `✓ N/N válidos`.
+**Errores** (rompen, exit 1): schema Zod, coherencia con la ruta (carpeta = `category`,
+`parentCategory` correcta, nombre de archivo = `slug`, `<slug>` de `image:` coincide) **y que el
+archivo de imagen exista realmente en `public/`**. Debe salir `✓ N/N válidos`.
+
+**Avisos** (no rompen; con `--slug` solo se muestran los de tu artículo): `description` > 160
+caracteres (se trunca en el SERP), `author` que no está en `components/miradas/AuthorAvatar.tsx`
+(el avatar cae a inicial), y `slug` repetido en varias categorías. Resuélvelos antes de publicar.
 
 ---
 

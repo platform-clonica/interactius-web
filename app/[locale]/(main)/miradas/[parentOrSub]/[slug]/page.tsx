@@ -32,6 +32,7 @@ import {
   SUB_DISPLAY,
   PARENT_DISPLAY,
 } from '@/lib/miradas/i18n-routing'
+import { buildArticleSchema } from '@/lib/seo/schema'
 import { SUB_TO_PARENT } from '@/lib/miradas/frontmatter.schema'
 import type { MiradasSubcategory } from '@/lib/miradas/frontmatter.schema'
 import { parentListingHref, subListingHref } from '@/lib/i18n/article-href'
@@ -286,16 +287,23 @@ export default async function ArticlePage({ params }: PageProps) {
   const parentLabel = PARENT_DISPLAY[locale][parent]
   const subLabel = SUB_DISPLAY[locale][sub]
 
-  // JSON-LD Article schema con articleSection y breadcrumb 4 niveles.
+  // JSON-LD Article schema (helper canónico: incluye image absoluta, keywords,
+  // inLanguage y publisher) + isPartOf apuntando al listado de la subcategoría.
   const articleSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: article.title,
-    description: article.description,
-    datePublished: article.publishedAt,
-    dateModified: article.modifiedAt ?? article.publishedAt,
-    author: { '@type': 'Person', name: article.author },
-    articleSection: subLabel,
+    ...buildArticleSchema(
+      {
+        headline: article.title,
+        description: article.description,
+        image: getCover(slugEs, article.image),
+        datePublished: article.publishedAt,
+        dateModified: article.modifiedAt,
+        author: article.author,
+        section: subLabel,
+        keywords: article.tags,
+        url: absoluteUrl,
+      },
+      locale,
+    ),
     isPartOf: {
       '@type': 'CollectionPage',
       name: subLabel,
@@ -303,7 +311,6 @@ export default async function ArticlePage({ params }: PageProps) {
         params: { parentOrSub: localizeSubSlug(sub, locale) },
       })}`,
     },
-    mainEntityOfPage: { '@type': 'WebPage', '@id': absoluteUrl },
   }
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -460,7 +467,14 @@ export default async function ArticlePage({ params }: PageProps) {
         <div className="mt-10 lg:mt-12 grid grid-cols-12 gap-grid-gutter">
           <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
             <div className="border-y border-fg/20 py-6 flex flex-wrap items-center justify-between gap-x-10 gap-y-3 font-mono text-body-sm text-fg">
-              <span>{readingTime} {t('article.minRead')}</span>
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                <span>{readingTime} {t('article.minRead')}</span>
+                {article.modifiedAt && article.modifiedAt > article.publishedAt ? (
+                  <span className="text-fg/60">
+                    {t('article.updatedOn')} {formatDate(article.modifiedAt, locale)}
+                  </span>
+                ) : null}
+              </div>
               <div className="flex flex-wrap items-center gap-x-[10px] gap-y-[10px]">
                 {tags.map((tag, i) => (
                   <span

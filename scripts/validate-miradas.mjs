@@ -2,11 +2,17 @@
  * scripts/validate-miradas.mjs
  * ─────────────────────────────────────────────────────────────────────────
  * Valida los frontmatters de los artículos Miradas contra el schema Zod.
- * Comprueba:
+ * Comprueba (errores → exit 1):
  *   - Frontmatter: campos requeridos, tipos, formato.
  *   - Coherencia path-frontmatter: carpeta = category, parentCategory =
  *     SUB_TO_PARENT[category], filename = slug.
- *   - Image path: si existe, debe seguir el formato /miradas-assets/<slug>/<file>.
+ *   - Image path: si existe, debe seguir el formato /miradas-assets/<slug>/<file>
+ *     Y el archivo debe existir realmente en public/.
+ *
+ * Avisos (no bloquean, exit 0):
+ *   - description > 160 car. (se trunca en el SERP).
+ *   - author no presente en AuthorAvatar (avatar cae a inicial).
+ *   - slug repetido en varias categorías.
  *
  * Uso:
  *   npm run validate:miradas
@@ -15,12 +21,51 @@
  */
 
 import fs from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
 import { z } from 'zod'
 
 const ROOT = process.cwd()
 const CONTENT_DIR = path.join(ROOT, 'content', 'miradas')
+const PUBLIC_DIR = path.join(ROOT, 'public')
+
+// Longitud recomendada de meta description (SEO): Google trunca ~160 en desktop.
+const DESCRIPTION_MAX = 160
+
+// Autores válidos, leídos de components/miradas/AuthorAvatar.tsx (fuente única).
+// Un autor fuera de este set degrada a inicial en el avatar (no rompe, warning).
+async function loadKnownAuthors() {
+  try {
+    const src = await fs.readFile(
+      path.join(ROOT, 'components', 'miradas', 'AuthorAvatar.tsx'),
+      'utf-8',
+    )
+    const block = src.slice(
+      src.indexOf('AUTHOR_PHOTOS'),
+      src.indexOf('}', src.indexOf('AUTHOR_PHOTOS')),
+    )
+    const keys = [...block.matchAll(/['"]?([a-zA-ZÀ-ſ ]+)['"]?\s*:/g)].map((m) =>
+      m[1].trim().toLowerCase(),
+    )
+    const set = new Set()
+    for (const k of keys) {
+      set.add(k)
+      set.add(k.split(' ')[0]) // también el nombre de pila suelto
+    }
+    return set
+  } catch {
+    return null // si no se puede leer, se omite el check de autor
+  }
+}
+
+function normalizeAuthor(value) {
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .trim()
+}
 
 // ─── Constants (espejo de lib/miradas/frontmatter.schema.ts) ──────────
 const MIRADAS_PARENT_CATEGORIES = [
@@ -128,9 +173,20 @@ async function main() {
   const files = await findMdxFiles(CONTENT_DIR)
   console.log(`✓ ${files.length} archivos .mdx encontrados\n`)
 
+  const knownAuthors = await loadKnownAuthors()
+
+  // --slug=<slug>: acota los AVISOS a ese artículo (los errores se comprueban
+  // siempre en todo el contenido). Útil para el alta de un artículo nuevo.
+  const slugArg = process.argv
+    .slice(2)
+    .find((a) => a.startsWith('--slug='))
+    ?.slice('--slug='.length)
+
   let okCount = 0
   let failCount = 0
   const failures = []
+  const warnings = [] // { slug, msg }
+  const slugToCats = {} // slug (solo ES) → Set(category), para detectar duplicados
   const distBySub = {}
   for (const sub of MIRADAS_SUBCATEGORIES) distBySub[sub] = 0
   const distByParent = {}
@@ -138,6 +194,7 @@ async function main() {
 
   for (const file of files) {
     const rel = path.relative(ROOT, file)
+    const localeSegment = rel.replace(/\\/g, '/').split('/')[2]
     const raw = await fs.readFile(file, 'utf-8')
     const { data } = matter(raw)
     const errors = []
@@ -148,8 +205,31 @@ async function main() {
         errors.push(`schema: ${issue.path.join('.')} — ${issue.message}`)
       }
     } else {
-      const pErrs = pathChecks(parsed.data, file)
-      errors.push(...pErrs)
+      const fm = parsed.data
+      errors.push(...pathChecks(fm, file))
+
+      // La imagen referenciada debe existir en public/ (cover roto = 404).
+      if (fm.image && !existsSync(path.join(PUBLIC_DIR, fm.image))) {
+        errors.push(`image file no existe en public${fm.image}`)
+      }
+
+      // Warnings (no rompen el build):
+      if (fm.description && fm.description.length > DESCRIPTION_MAX) {
+        warnings.push({
+          slug: fm.slug,
+          msg: `${rel}: description de ${fm.description.length} car. (>${DESCRIPTION_MAX}); se truncará en el SERP`,
+        })
+      }
+      if (knownAuthors && !knownAuthors.has(normalizeAuthor(fm.author))) {
+        warnings.push({
+          slug: fm.slug,
+          msg: `${rel}: author "${fm.author}" no está en AuthorAvatar (avatar caerá a inicial)`,
+        })
+      }
+      // Duplicados de slug entre categorías (solo fuente ES).
+      if (localeSegment === 'es') {
+        ;(slugToCats[fm.slug] ??= new Set()).add(fm.category)
+      }
     }
 
     if (errors.length) {
@@ -160,6 +240,27 @@ async function main() {
       distBySub[parsed.data.category]++
       distByParent[parsed.data.parentCategory]++
     }
+  }
+
+  for (const [slug, cats] of Object.entries(slugToCats)) {
+    if (cats.size > 1) {
+      warnings.push({
+        slug,
+        msg: `slug "${slug}" aparece en varias categorías: ${[...cats].join(', ')}`,
+      })
+    }
+  }
+
+  const shownWarnings = slugArg
+    ? warnings.filter((w) => w.slug === slugArg)
+    : warnings
+  if (shownWarnings.length) {
+    const scope = slugArg ? ` para "${slugArg}"` : ''
+    console.log(`⚠ ${shownWarnings.length} avisos${scope} (no bloquean):`)
+    for (const w of shownWarnings) console.log(`  - ${w.msg}`)
+    console.log('')
+  } else if (slugArg && warnings.length) {
+    console.log(`✓ sin avisos para "${slugArg}" (${warnings.length} en total en el repo)\n`)
   }
 
   if (failCount === 0) {
