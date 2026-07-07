@@ -118,63 +118,31 @@ const LEGACY_PREFIX_FALLBACK: Array<[string, string]> = [
 const intlMiddleware = createMiddleware(routing)
 
 /* ==========================================================================
-   HTTP Basic Auth — landing de cliente protegida
+   Landing de cliente — bypass de i18n (ruta pública)
    --------------------------------------------------------------------------
-   Protege SOLO `/proyectos/bershka/future-thinking` y sus subrutas. El resto
-   del sitio no se ve afectado: la comprobación está condicionada al prefijo y
-   se ejecuta ANTES que los redirects y el i18n. Si las credenciales son
-   correctas devolvemos `NextResponse.next()` para servir la ruta directamente
-   (bypass del rewrite de next-intl, que la mandaría a `/es/...` → 404, porque
-   esta página vive fuera de `app/[locale]/`).
+   `/proyectos/bershka/future-thinking` y sus subrutas viven FUERA de
+   `app/[locale]/`, así que hay que servirlas con `NextResponse.next()` para
+   saltarnos el rewrite de next-intl (que las mandaría a `/es/...` → 404). Esta
+   página era privada (HTTP Basic Auth); se hizo pública a petición, así que solo
+   queda el bypass de i18n, sin comprobación de credenciales.
 
-   Edge-compatible: sin `node:crypto`. La comparación se hace sobre el header
-   completo `Basic <base64>` reconstruido con `btoa`. Fail-closed: si faltan las
-   env vars, se responde 401.
-
-   Ojo: los archivos estáticos (informe.pdf, podcast.mp3, hero.jpg) viven en
-   `public/` y NO pasan por el middleware (el matcher excluye rutas con
-   extensión), así que quedan accesibles por URL directa. La protección real de
-   esos assets (route handler con auth) queda pendiente — ver README de la
-   carpeta public correspondiente.
+   Las env vars `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD` ya no se usan aquí; se
+   pueden borrar del dashboard de Netlify. Se mantienen en `SECRETS_SCAN_OMIT_KEYS`
+   (netlify.toml) de forma inofensiva por si el valor aún estuviera configurado.
    ========================================================================== */
-const BASIC_AUTH_PREFIX = '/proyectos/bershka/future-thinking'
+const APPROOT_BYPASS_PREFIX = '/proyectos/bershka/future-thinking'
 
-function requiresBasicAuth(pathname: string): boolean {
+function isAppRootBypass(pathname: string): boolean {
   return (
-    pathname === BASIC_AUTH_PREFIX ||
-    pathname.startsWith(`${BASIC_AUTH_PREFIX}/`)
+    pathname === APPROOT_BYPASS_PREFIX ||
+    pathname.startsWith(`${APPROOT_BYPASS_PREFIX}/`)
   )
 }
 
-function unauthorized(): NextResponse {
-  return new NextResponse('Authentication required.', {
-    status: 401,
-    headers: {
-      'WWW-Authenticate': 'Basic realm="Interactius Clients", charset="UTF-8"',
-    },
-  })
-}
-
-function isAuthorized(req: NextRequest): boolean {
-  const user = process.env.BASIC_AUTH_USER
-  const password = process.env.BASIC_AUTH_PASSWORD
-  // Fail-closed: sin credenciales configuradas, nadie entra.
-  if (!user || !password) return false
-
-  const header = req.headers.get('authorization')
-  if (!header) return false
-
-  // Reconstruimos el header esperado con btoa (Edge-safe) y comparamos.
-  const expected = `Basic ${btoa(`${user}:${password}`)}`
-  return header === expected
-}
-
 export default function middleware(req: NextRequest) {
-  // 0. Basic Auth de la landing de cliente. Se evalúa lo primero y solo para
-  //    el prefijo protegido; el resto del middleware queda intacto.
-  if (requiresBasicAuth(req.nextUrl.pathname)) {
-    if (!isAuthorized(req)) return unauthorized()
-    // Autorizado → servir la ruta app-root directamente, sin pasar por i18n.
+  // 0. Ruta app-root fuera de i18n → servir directamente, sin rewrite de
+  //    next-intl. El resto del middleware queda intacto.
+  if (isAppRootBypass(req.nextUrl.pathname)) {
     return NextResponse.next()
   }
 
