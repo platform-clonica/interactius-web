@@ -33,6 +33,24 @@ function PullQuote({ children }: { children?: ReactNode }) {
   )
 }
 
+/* Extrae el id de un vídeo de YouTube de las formas en que se comparte:
+   youtu.be/<id>, /watch?v=<id>, /embed/<id> y /shorts/<id>. Devuelve null
+   para cualquier otra cosa — un mp4 propio entra por la rama <video>. */
+function youtubeId(src: string): string | null {
+  let url: URL
+  try {
+    url = new URL(src)
+  } catch {
+    return null
+  }
+  const host = url.hostname.replace(/^www\./, '')
+  if (host === 'youtu.be') return url.pathname.slice(1).split('/')[0] || null
+  if (host !== 'youtube.com' && host !== 'm.youtube.com') return null
+  if (url.pathname === '/watch') return url.searchParams.get('v')
+  const m = url.pathname.match(/^\/(?:embed|shorts)\/([^/]+)/)
+  return m ? m[1] : null
+}
+
 function Video({
   src,
   poster,
@@ -44,16 +62,32 @@ function Video({
 }) {
   if (!src) return null
   const posterSrc = poster?.trim() ? poster : undefined
+  const ytId = youtubeId(src)
   return (
     <figure className="my-10">
-      <video
-        src={src}
-        poster={posterSrc}
-        controls
-        playsInline
-        preload="metadata"
-        className="w-full h-auto"
-      />
+      {ytId ? (
+        /* nocookie: no deja rastro en el usuario hasta que le da al play, así que
+           el iframe no depende del consentimiento de la categoría `analytics`. */
+        <div className="relative w-full" style={{ aspectRatio: '16 / 9' }}>
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${ytId}`}
+            title={caption || 'Vídeo'}
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            loading="lazy"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        </div>
+      ) : (
+        <video
+          src={src}
+          poster={posterSrc}
+          controls
+          playsInline
+          preload="metadata"
+          className="w-full h-auto"
+        />
+      )}
       {caption ? (
         <figcaption className="mt-3 text-center font-mono text-body-sm text-fg/60 leading-[1.5]">
           {caption}
