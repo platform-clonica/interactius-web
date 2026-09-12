@@ -12,13 +12,28 @@
     "articlesLabel": "Articles",
     "loadingMore": "Carregant més articles",
     "categories": {
-      "ux-design": "UX Design",
+      "ux": "UX",
+      "design": "Disseny",
       "innovacion": "Innovació",
       "research": "Recerca",
-      "estrategia": "Estratègia",
-      "ui-design": "UI Design",
+      "strategy": "Estratègia",
+      "metodologia": "Metodologia",
+      "ui": "UI",
       "tendencias": "Tendències",
-      "product-design": "Product Design"
+      "product-design": "Product Design",
+      "ux-research": "UX Research",
+      "ia": "IA",
+      "diseno-estrategico": "Disseny estratègic",
+      "marketing": "Màrqueting",
+      "accesibilidad": "Accessibilitat",
+      "sostenibilidad": "Sostenibilitat",
+      "inteligencia-artificial": "Intel·ligència artificial",
+      "service-design": "Service Design",
+      "creatividad": "Creativitat",
+      "workshops": "Workshops",
+      "liderazgo": "Lideratge",
+      "branding": "Branding",
+      "ecommerce-agentico": "E-commerce agèntic"
     }
   },
   "listing": {
