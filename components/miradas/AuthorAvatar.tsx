@@ -17,6 +17,7 @@ const AUTHOR_PHOTOS: Record<string, string> = {
   riccardo: 'Riccardo',
   sara: 'Sara',
   tomas: 'Tom',
+  yolanda: 'Yolanda',
 }
 
 function normalize(value: string): string {
