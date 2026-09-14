@@ -138,6 +138,49 @@ const intlMiddleware = createMiddleware(routing)
    ========================================================================== */
 const APPROOT_BYPASS_PREFIX = '/proyectos/bershka'
 
+/* ==========================================================================
+   HTTP Basic Auth — landings de cliente
+   --------------------------------------------------------------------------
+   Protege todo lo que cuelga de `/proyectos/bershka` (Q1, Q2 y los trimestres
+   que vengan). El resto del sitio no se ve afectado: la comprobación está
+   condicionada al prefijo y se ejecuta antes que los redirects y el i18n.
+
+   Edge-compatible: sin `node:crypto`. Se reconstruye el header completo
+   `Basic <base64>` con `btoa` y se compara. **Fail-closed**: si faltan las env
+   vars, nadie entra. Las credenciales viven en `BASIC_AUTH_USER` y
+   `BASIC_AUTH_PASSWORD` (Netlify → Site configuration → Environment variables);
+   si se borran de allí, la landing devuelve 401 a todo el mundo.
+
+   OJO — los archivos estáticos (PDF, audio, hero) viven en `public/` y NO pasan
+   por el middleware: el matcher excluye las rutas con extensión. Siguen siendo
+   accesibles por URL directa aunque la página pida contraseña. Cerrar eso exige
+   servirlos desde un route handler con auth, leyendo de una carpeta fuera de
+   `public/` — ver el README de la carpeta de assets.
+   ========================================================================== */
+
+function unauthorized(): NextResponse {
+  return new NextResponse('Authentication required.', {
+    status: 401,
+    headers: {
+      'WWW-Authenticate': 'Basic realm="Interactius Clients", charset="UTF-8"',
+    },
+  })
+}
+
+function isAuthorized(req: NextRequest): boolean {
+  const user = process.env.BASIC_AUTH_USER
+  const password = process.env.BASIC_AUTH_PASSWORD
+  // Fail-closed: sin credenciales configuradas, nadie entra.
+  if (!user || !password) return false
+
+  const header = req.headers.get('authorization')
+  if (!header) return false
+
+  // Header esperado reconstruido con btoa (Edge-safe).
+  const expected = `Basic ${btoa(`${user}:${password}`)}`
+  return header === expected
+}
+
 /**
  * Comparación en minúsculas a propósito: los QR impresos y los enlaces que
  * comparte el cliente llegan con mayúsculas (`…-digest-Q2`) y las rutas de Next
@@ -164,6 +207,9 @@ export default function middleware(req: NextRequest) {
       url.pathname = lower
       return NextResponse.redirect(url, 308)
     }
+    // 0.b. Gate de credenciales. Va después de canonicalizar para que el QR
+    //      con mayúsculas resuelva su redirect antes de pedir contraseña.
+    if (!isAuthorized(req)) return unauthorized()
     return NextResponse.next()
   }
 
