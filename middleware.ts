@@ -118,19 +118,25 @@ const LEGACY_PREFIX_FALLBACK: Array<[string, string]> = [
 const intlMiddleware = createMiddleware(routing)
 
 /* ==========================================================================
-   Landing de cliente — bypass de i18n (ruta pública)
+   Landings de cliente — bypass de i18n (rutas públicas)
    --------------------------------------------------------------------------
-   `/proyectos/bershka/future-thinking` y sus subrutas viven FUERA de
-   `app/[locale]/`, así que hay que servirlas con `NextResponse.next()` para
-   saltarnos el rewrite de next-intl (que las mandaría a `/es/...` → 404). Esta
-   página era privada (HTTP Basic Auth); se hizo pública a petición, así que solo
-   queda el bypass de i18n, sin comprobación de credenciales.
+   Todo lo que cuelga de `/proyectos/bershka` vive FUERA de `app/[locale]/`,
+   así que hay que servirlo con `NextResponse.next()` para saltarnos el rewrite
+   de next-intl (que lo mandaría a `/es/...` → 404).
+
+   El prefijo es el cliente entero y no una landing concreta a propósito: cada
+   trimestre es una ruta hermana (`future-thinking`, `future-thinking-digest-q2`,
+   …) y con el prefijo antiguo, más específico, las hermanas caían en el rewrite
+   y devolvían 404. Añadir un trimestre nuevo ya no obliga a tocar este archivo.
+
+   Estas páginas eran privadas (HTTP Basic Auth); se hicieron públicas a
+   petición, así que solo queda el bypass de i18n, sin comprobar credenciales.
 
    Las env vars `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD` ya no se usan aquí; se
    pueden borrar del dashboard de Netlify. Se mantienen en `SECRETS_SCAN_OMIT_KEYS`
    (netlify.toml) de forma inofensiva por si el valor aún estuviera configurado.
    ========================================================================== */
-const APPROOT_BYPASS_PREFIX = '/proyectos/bershka/future-thinking'
+const APPROOT_BYPASS_PREFIX = '/proyectos/bershka'
 
 function isAppRootBypass(pathname: string): boolean {
   return (

@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import {
-  IBM_Plex_Mono,
-  IBM_Plex_Sans,
-  IBM_Plex_Serif,
-} from 'next/font/google'
+
+import { BERSHKA_Q1 } from '@/lib/data/bershka-digests'
+import { ftFontsClass } from '@/lib/fonts/future-thinking'
 
 /* ==========================================================================
    Root layout aislado para la landing de cliente
@@ -14,31 +12,10 @@ import {
    root layouts mientras no exista un `app/layout.tsx` compartido.
    ========================================================================== */
 
-const mono = IBM_Plex_Mono({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500'],
-  variable: '--font-ft-mono',
-  display: 'swap',
-})
-
-const serif = IBM_Plex_Serif({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['300', '400'],
-  variable: '--font-ft-serif',
-  display: 'swap',
-})
-
-const sans = IBM_Plex_Sans({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500'],
-  variable: '--font-ft-sans',
-  display: 'swap',
-})
-
 export const metadata: Metadata = {
-  title: 'Future Thinking — Resultados Q1 · Interactius',
-  description: 'Informe de resultados Q1 para Bershka. Acceso restringido.',
-  // Página protegida: fuera de índices y sin seguir enlaces.
+  title: BERSHKA_Q1.metaTitle,
+  description: BERSHKA_Q1.metaDescription,
+  // Página fuera de índices y sin seguir enlaces.
   robots: { index: false, follow: false },
 }
 
@@ -48,10 +25,7 @@ export default function FutureThinkingLayout({
   children: React.ReactNode
 }) {
   return (
-    <html
-      lang="es"
-      className={`${mono.variable} ${serif.variable} ${sans.variable}`}
-    >
+    <html lang="es" className={ftFontsClass}>
       <body>{children}</body>
     </html>
   )
