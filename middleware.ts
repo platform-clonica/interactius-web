@@ -138,10 +138,16 @@ const intlMiddleware = createMiddleware(routing)
    ========================================================================== */
 const APPROOT_BYPASS_PREFIX = '/proyectos/bershka'
 
+/**
+ * Comparación en minúsculas a propósito: los QR impresos y los enlaces que
+ * comparte el cliente llegan con mayúsculas (`…-digest-Q2`) y las rutas de Next
+ * distinguen mayúsculas. Así la variante entra igualmente en el bypass y el
+ * middleware puede normalizarla en vez de dejarla caer en un 404.
+ */
 function isAppRootBypass(pathname: string): boolean {
+  const p = pathname.toLowerCase()
   return (
-    pathname === APPROOT_BYPASS_PREFIX ||
-    pathname.startsWith(`${APPROOT_BYPASS_PREFIX}/`)
+    p === APPROOT_BYPASS_PREFIX || p.startsWith(`${APPROOT_BYPASS_PREFIX}/`)
   )
 }
 
@@ -149,6 +155,15 @@ export default function middleware(req: NextRequest) {
   // 0. Ruta app-root fuera de i18n → servir directamente, sin rewrite de
   //    next-intl. El resto del middleware queda intacto.
   if (isAppRootBypass(req.nextUrl.pathname)) {
+    // 0.a. Canonicaliza a minúsculas con un 308 permanente. El QR del digest
+    //      Q2 se imprimió apuntando a `…-digest-Q2`, que en el sistema de
+    //      ficheros es `q2`: sin esto, cada escaneo acaba en 404.
+    const lower = req.nextUrl.pathname.toLowerCase()
+    if (lower !== req.nextUrl.pathname) {
+      const url = req.nextUrl.clone()
+      url.pathname = lower
+      return NextResponse.redirect(url, 308)
+    }
     return NextResponse.next()
   }
 
