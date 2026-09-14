@@ -1,25 +1,24 @@
 import type { Metadata } from 'next'
 
-import { BERSHKA_Q1 } from '@/lib/data/bershka-digests'
+import { BERSHKA_Q2 } from '@/lib/data/bershka-digests'
 import { ftFontsClass } from '@/lib/fonts/future-thinking'
 
 /* ==========================================================================
-   Root layout aislado para la landing de cliente
+   Root layout aislado para la landing de cliente (Q2)
    --------------------------------------------------------------------------
-   Esta ruta vive FUERA de `app/[locale]/` (que es el root layout del sitio),
-   por eso necesita su propio `<html>`/`<body>`. No importa `globals.css` ni la
-   cromática del sitio: es una landing autocontenida. Next permite múltiples
-   root layouts mientras no exista un `app/layout.tsx` compartido.
+   Misma razón que en `future-thinking/layout.tsx`: la ruta vive FUERA de
+   `app/[locale]/`, así que necesita su propio `<html>`/`<body>`. Las fuentes
+   se comparten desde `lib/fonts/future-thinking.ts`.
    ========================================================================== */
 
 export const metadata: Metadata = {
-  title: BERSHKA_Q1.metaTitle,
-  description: BERSHKA_Q1.metaDescription,
+  title: BERSHKA_Q2.metaTitle,
+  description: BERSHKA_Q2.metaDescription,
   // Página fuera de índices y sin seguir enlaces.
   robots: { index: false, follow: false },
 }
 
-export default function FutureThinkingLayout({
+export default function FutureThinkingQ2Layout({
   children,
 }: {
   children: React.ReactNode
