@@ -81,7 +81,7 @@ export const BERSHKA_Q2: Digest = {
   year: 2026,
   assetBase: '/proyectos/bershka/future-thinking-digest-q2',
   pdfFile: 'Future Digest Q2 Bershka by Interactius.pdf',
-  pdfSize: '30 MB',
+  pdfSize: '16 MB',
   audioFile: 'Future Digest Q2 Bershka by Interactius.m4a',
   audioType: 'audio/mp4',
   heroFile: 'hero.jpg',
