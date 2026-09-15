@@ -18,7 +18,7 @@ renombras un archivo, actualiza también ese fichero.
 | ----- | ------------------------- | ------------------ |
 | Audio | 40 MB, estéreo 256 kbps   | 10 MB, mono 64 kbps |
 | Hero  | 2,5 MB PNG, 1402×1862     | 160 KB JPEG, 1200 px |
-| PDF   | 35 MB                     | 30 MB (re-exportado desde el origen) |
+| PDF   | 35 MB                     | 16 MB (versión del 15-sep) |
 
 El audio se convirtió con `afconvert` (macOS) en dos pasos: downmix a PCM mono y
 recodificación a AAC 64 kbps. La duración se conservó exacta (21:38). La imagen,
