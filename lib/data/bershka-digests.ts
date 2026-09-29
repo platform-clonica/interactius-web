@@ -106,10 +106,10 @@ export const BERSHKA_Q2: Digest = {
     },
     {
       title: 'Escenarios',
-      audioFile: 'Escenarios-4-Q2.m4a',
+      audioFile: 'Escenarios Q2 Bershka by Interactius.m4a',
       audioType: 'audio/mp4',
       pdfFile: 'Escenarios Q2 Bershka by Interactius.pdf',
-      pdfSize: '10.0MB',
+      pdfSize: '26.0MB',
     },
   ],
   heroFile: 'hero.jpg',

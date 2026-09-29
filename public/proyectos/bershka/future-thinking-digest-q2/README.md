@@ -7,7 +7,7 @@ Archivos estáticos de la landing `/proyectos/bershka/future-thinking-digest-q2`
 | `Future Digest Q2 Bershka by Interactius.pdf` | Descarga del informe (CTA "Descargar informe (PDF)"). |
 | `Future Digest Q2 Bershka by Interactius.m4a` | Audio del resumen (reproductor inline).  |
 | `Escenarios Q2 Bershka by Interactius.pdf`    | Descarga del PDF del bloque "Escenarios". |
-| `Escenarios-4-Q2.m4a`                         | Audio del bloque "Escenarios" (1:50, sin recomprimir). |
+| `Escenarios Q2 Bershka by Interactius.m4a`    | Audio del bloque "Escenarios" (27:11, mono 64 kbps). |
 | `hero.jpg`                                    | Imagen hero de la columna derecha.       |
 
 La landing tiene dos bloques, "Digest" y "Escenarios". Cada uno es una entrada
