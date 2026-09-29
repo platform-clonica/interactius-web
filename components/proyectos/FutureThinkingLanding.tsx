@@ -76,11 +76,25 @@ export default async function FutureThinkingLanding({
   const palette = await getPalette()
 
   // Los nombres de archivo llevan espacios → se codifican en la URL.
-  const pdfUrl = `${digest.assetBase}/${encodeURIComponent(digest.pdfFile)}`
-  const audioUrl = `${digest.assetBase}/${encodeURIComponent(digest.audioFile)}`
-  const heroUrl = `${digest.assetBase}/${encodeURIComponent(digest.heroFile)}`
+  const assetUrl = (file: string) =>
+    `${digest.assetBase}/${encodeURIComponent(file)}`
+  const heroUrl = assetUrl(digest.heroFile)
+
+  // Las palabras con guion ("e-commerce") no se parten: bajan enteras de línea.
+  const title = digest.title.split(/(\S+-\S+)/).map((part, i) =>
+    part.includes('-') ? (
+      <span key={i} className="ft-nowrap">
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  )
 
   const css = `
+    /* El layout no carga globals.css: sin esto el body trae el margen de 8px
+       del navegador y la landing queda con un borde blanco alrededor. */
+    html, body { margin: 0; padding: 0; background: ${palette.bg}; }
     .ft-root {
       --ft-bg: ${palette.bg};
       --ft-fg: ${palette.fg};
@@ -96,8 +110,7 @@ export default async function FutureThinkingLanding({
     .ft-root *::after { box-sizing: border-box; }
     .ft-root {
       margin: 0;
-      height: 100dvh;
-      overflow: hidden;
+      min-height: 100dvh;
       background: var(--ft-bg);
       color: var(--ft-fg);
       font-family: var(--ft-sans);
@@ -107,16 +120,17 @@ export default async function FutureThinkingLanding({
     .ft-grid {
       display: grid;
       grid-template-columns: 1fr;
-      grid-template-rows: auto 1fr;
-      height: 100dvh;
+      grid-template-rows: auto minmax(60vh, 1fr);
+      min-height: 100dvh;
     }
     .ft-content {
       display: flex;
       flex-direction: column;
       min-height: 0;
-      padding: clamp(20px, 4.5vw, 72px);
-      gap: clamp(16px, 3vh, 40px);
-      overflow: hidden;
+      /* El padding vertical escala con la altura para que Digest + Escenarios
+         quepan sin scroll en pantallas de 900px. */
+      padding: clamp(20px, 4vh, 56px) clamp(20px, 4.5vw, 72px);
+      gap: clamp(16px, 2.4vh, 32px);
     }
     .ft-wordmark {
       display: block;
@@ -134,10 +148,11 @@ export default async function FutureThinkingLanding({
       color: var(--ft-muted);
       margin: 0 0 clamp(14px, 3vh, 24px);
     }
+    .ft-nowrap { white-space: nowrap; }
     .ft-title {
       font-family: var(--ft-serif);
       font-weight: 300;
-      font-size: clamp(1.75rem, 3.6vw, 3.2rem);
+      font-size: clamp(1.75rem, min(3.6vw, 5vh), 3.2rem);
       line-height: 1.06;
       letter-spacing: -0.01em;
       margin: 0;
@@ -153,8 +168,26 @@ export default async function FutureThinkingLanding({
     .ft-actions {
       display: flex;
       flex-direction: column;
-      gap: clamp(14px, 2.4vh, 24px);
-      margin-top: clamp(20px, 4vh, 40px);
+      gap: clamp(14px, 2vh, 24px);
+      margin-top: clamp(20px, 3vh, 40px);
+    }
+    .ft-group {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.6vh, 20px);
+    }
+    .ft-group + .ft-group {
+      padding-top: clamp(14px, 2vh, 24px);
+      border-top: 1px solid var(--ft-hairline);
+    }
+    .ft-group-title {
+      font-family: var(--ft-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ft-fg);
+      margin: 0;
     }
     .ft-action { display: flex; flex-direction: column; gap: 10px; }
     .ft-link {
@@ -170,6 +203,32 @@ export default async function FutureThinkingLanding({
     }
     .ft-link:hover,
     .ft-link:focus-visible { text-underline-offset: 8px; }
+    /* Rótulo del reproductor: mismo estilo que un enlace, sin subrayado. */
+    .ft-link--static { text-decoration: none; }
+    .ft-button {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      width: fit-content;
+      padding: 12px 28px;
+      font-family: var(--ft-mono);
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.3;
+      text-align: center;
+      color: #FFFFFF;
+      background: var(--ft-fg);
+      text-decoration: none;
+      transition: opacity 0.2s ease;
+    }
+    /* Peso del archivo: segunda línea, más pequeña y atenuada. */
+    .ft-button-meta { font-size: 12px; opacity: 0.7; }
+    .ft-button:hover { opacity: 0.82; }
+    .ft-button:focus-visible {
+      outline: 2px solid var(--ft-fg);
+      outline-offset: 3px;
+    }
     .ft-note {
       font-family: var(--ft-mono);
       font-size: 11px;
@@ -206,7 +265,10 @@ export default async function FutureThinkingLanding({
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 100dvh;
       }
-      .ft-content { height: 100dvh; }
+      /* En desktop la página no hace scroll: si el texto no cabe en la
+         altura (portátiles bajos), el que scrollea es la columna izquierda. */
+      .ft-root { height: 100dvh; overflow: hidden; }
+      .ft-content { height: 100dvh; overflow-y: auto; }
     }
   `
 
@@ -227,31 +289,55 @@ export default async function FutureThinkingLanding({
             <p className="ft-label">
               <strong>{digest.labelTag}</strong> {digest.labelRest}
             </p>
-            <h1 className="ft-title">{digest.title}</h1>
+            <h1 className="ft-title">{title}</h1>
             <p className="ft-lead">{digest.lead}</p>
 
             <div className="ft-actions">
-              <div className="ft-action">
-                <span className="ft-link" aria-hidden="true">
-                  Escuchar resumen (Podcast)
-                </span>
-                <audio
-                  className="ft-audio"
-                  controls
-                  preload="metadata"
-                  aria-label="Escuchar resumen en podcast"
+              {digest.resources.map((resource) => (
+                <section
+                  key={resource.title}
+                  className="ft-group"
+                  aria-label={resource.title}
                 >
-                  <source src={audioUrl} type={digest.audioType} />
-                  Tu navegador no admite la reproducción de audio.
-                </audio>
-              </div>
+                  {/* Con un solo bloque (Q1) no hace falta título. */}
+                  {digest.resources.length > 1 && (
+                    <h2 className="ft-group-title">{resource.title}</h2>
+                  )}
 
-              <div className="ft-action">
-                <a className="ft-link" href={pdfUrl} download={digest.pdfFile}>
-                  Descargar informe (PDF)
-                </a>
-                <p className="ft-note">El archivo pesa {digest.pdfSize}</p>
-              </div>
+                  <div className="ft-action">
+                    <span className="ft-link ft-link--static" aria-hidden="true">
+                      Escuchar resumen (Podcast)
+                    </span>
+                    <audio
+                      className="ft-audio"
+                      controls
+                      preload="metadata"
+                      aria-label={`Escuchar resumen en podcast: ${resource.title}`}
+                    >
+                      <source
+                        src={assetUrl(resource.audioFile)}
+                        type={resource.audioType}
+                      />
+                      Tu navegador no admite la reproducción de audio.
+                    </audio>
+                  </div>
+
+                  {resource.pdfFile && (
+                    <div className="ft-action">
+                      <a
+                        className="ft-button"
+                        href={assetUrl(resource.pdfFile)}
+                        download={resource.pdfFile}
+                      >
+                        <span>Descargar informe (PDF)</span>
+                        {resource.pdfSize && (
+                          <span className="ft-button-meta">{resource.pdfSize}</span>
+                        )}
+                      </a>
+                    </div>
+                  )}
+                </section>
+              ))}
             </div>
           </div>
 
