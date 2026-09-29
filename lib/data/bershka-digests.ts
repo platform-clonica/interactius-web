@@ -13,6 +13,24 @@
    El middleware ya hace bypass de i18n para todo `/proyectos/bershka`.
    ========================================================================== */
 
+export type Resource = {
+  /** Título del bloque (solo se muestra si el digest tiene más de uno). */
+  title: string
+  /** Nombre exacto del audio dentro de `assetBase`. */
+  audioFile: string
+  /** MIME del audio. `.m4a` → `audio/mp4`; `.mp3` → `audio/mpeg`. */
+  audioType: string
+  /** Nombre exacto del PDF dentro de `assetBase`. Sin él no se pinta el enlace. */
+  pdfFile?: string
+  /**
+   * Peso del PDF tal como se muestra en el botón (formato `16.3MB`, MB
+   * decimales con un decimal). Es literal a propósito:
+   * `public/` no es legible de forma fiable en runtime serverless, así que
+   * se actualiza a mano cuando se reemplaza el archivo.
+   */
+  pdfSize?: string
+}
+
 export type Digest = {
   /** Parte en negrita de la etiqueta superior, p.ej. `[Future Thinking]`. */
   labelTag: string
@@ -28,18 +46,11 @@ export type Digest = {
   year: number
   /** Carpeta de los assets dentro de `public/`, sin barra final. */
   assetBase: string
-  /** Nombre exacto del PDF dentro de `assetBase`. */
-  pdfFile: string
   /**
-   * Peso del PDF tal como se muestra al usuario. Es literal a propósito:
-   * `public/` no es legible de forma fiable en runtime serverless, así que
-   * se actualiza a mano cuando se reemplaza el archivo.
+   * Bloques de recursos (audio + PDF). Con uno solo se pinta sin título, como
+   * en Q1; con varios, cada bloque lleva su `title` encima.
    */
-  pdfSize: string
-  /** Nombre exacto del audio dentro de `assetBase`. */
-  audioFile: string
-  /** MIME del audio. `.m4a` → `audio/mp4`; `.mp3` → `audio/mpeg`. */
-  audioType: string
+  resources: Resource[]
   /** Nombre exacto de la imagen hero dentro de `assetBase`. */
   heroFile: string
   /** Alt de la imagen hero. */
@@ -60,10 +71,15 @@ export const BERSHKA_Q1: Digest = {
   client: 'Bershka',
   year: 2026,
   assetBase: '/proyectos/bershka/future-thinking',
-  pdfFile: 'Future Digest Bershka by Interactius.pdf',
-  pdfSize: '29 MB',
-  audioFile: 'Future Digest Bershka by Interactius.m4a',
-  audioType: 'audio/mp4',
+  resources: [
+    {
+      title: 'Digest',
+      audioFile: 'Future Digest Bershka by Interactius.m4a',
+      audioType: 'audio/mp4',
+      pdfFile: 'Future Digest Bershka by Interactius.pdf',
+      pdfSize: '30.1MB',
+    },
+  ],
   heroFile: 'hero.png',
   heroAlt: 'Composición visual del informe Future Thinking',
   metaTitle: 'Future Thinking — Resultados Q1 · Interactius',
@@ -80,10 +96,22 @@ export const BERSHKA_Q2: Digest = {
   client: 'Bershka',
   year: 2026,
   assetBase: '/proyectos/bershka/future-thinking-digest-q2',
-  pdfFile: 'Future Digest Q2 Bershka by Interactius.pdf',
-  pdfSize: '16 MB',
-  audioFile: 'Future Digest Q2 Bershka by Interactius.m4a',
-  audioType: 'audio/mp4',
+  resources: [
+    {
+      title: 'Digest',
+      audioFile: 'Future Digest Q2 Bershka by Interactius.m4a',
+      audioType: 'audio/mp4',
+      pdfFile: 'Future Digest Q2 Bershka by Interactius.pdf',
+      pdfSize: '16.3MB',
+    },
+    {
+      title: 'Escenarios',
+      audioFile: 'Escenarios Q2 Bershka by Interactius.m4a',
+      audioType: 'audio/mp4',
+      pdfFile: 'Escenarios Q2 Bershka by Interactius.pdf',
+      pdfSize: '26.0MB',
+    },
+  ],
   heroFile: 'hero.jpg',
   heroAlt: 'Composición visual del informe Future Thinking del segundo trimestre',
   metaTitle: 'Future Thinking — Resultados Q2 · Interactius',
