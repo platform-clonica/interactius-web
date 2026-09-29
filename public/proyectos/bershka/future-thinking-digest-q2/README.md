@@ -6,10 +6,13 @@ Archivos estáticos de la landing `/proyectos/bershka/future-thinking-digest-q2`
 | --------------------------------------------- | ---------------------------------------- |
 | `Future Digest Q2 Bershka by Interactius.pdf` | Descarga del informe (CTA "Descargar informe (PDF)"). |
 | `Future Digest Q2 Bershka by Interactius.m4a` | Audio del resumen (reproductor inline).  |
+| `Escenarios Q2 Bershka by Interactius.pdf`    | Descarga del PDF del bloque "Escenarios". |
+| `Escenarios-4-Q2.m4a`                         | Audio del bloque "Escenarios" (1:50, sin recomprimir). |
 | `hero.jpg`                                    | Imagen hero de la columna derecha.       |
 
-Los nombres deben coincidir exactamente con los campos `pdfFile`, `audioFile` y
-`heroFile` de la entrada `BERSHKA_Q2` en `lib/data/bershka-digests.ts`. Si
+La landing tiene dos bloques, "Digest" y "Escenarios". Cada uno es una entrada
+de `resources` en `BERSHKA_Q2`. Los nombres deben coincidir exactamente con sus
+campos `pdfFile` y `audioFile`, y con `heroFile`, de la entrada `BERSHKA_Q2` en `lib/data/bershka-digests.ts`. Si
 renombras un archivo, actualiza también ese fichero.
 
 ## Compresión aplicada
@@ -26,7 +29,7 @@ con `sips` a JPEG calidad 82; es una foto con barrido de movimiento, sin texto n
 bordes duros, así que el JPEG no introduce artefactos visibles.
 
 Si hay que actualizar el peso del PDF que se muestra en pantalla, el valor está
-en `pdfSize` dentro de `lib/data/bershka-digests.ts`.
+en el `pdfSize` de cada bloque dentro de `lib/data/bershka-digests.ts`.
 
 ## Aviso de seguridad
 
