@@ -26,7 +26,8 @@
     "copy2": "En este <strong>taller práctico</strong> para Product, Innovation y Design Leads, dominarás el ciclo completo: prototipar con IA y validar al instante con Clonica, usuarios sintéticos que encarnan emociones reales (con un 93% de similitud). Construir rápido sin validar es velocidad en la dirección equivocada.",
     "copy3": "Apúntate aquí, solo <strong>16 plazas disponibles</strong>.",
     "eventDate": "→ 16 de octubre de 11:30 a 13:30",
-    "eventLocation": "→ Oficinas <u>Interactius</u> (Barcelona)"
+    "eventLocation": "→ Oficinas <u>Interactius</u> (Barcelona)",
+    "soldOut": "Las plazas se han agotado"
   },
   "avisoLegal": {
     "title": "Aviso legal",
