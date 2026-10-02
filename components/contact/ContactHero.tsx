@@ -88,11 +88,11 @@ export async function ContactHero({
             strong: (chunks) => <strong>{chunks}</strong>,
           })}
         </p>
-        <p>
-          {t.rich('bdw.copy3', {
-            strong: (chunks) => <strong>{chunks}</strong>,
-          })}
-        </p>
+        {/* Aquí iba la llamada a la inscripción ("Apúntate aquí, solo 16
+            plazas disponibles"). Retirada al agotarse las plazas: contradecía
+            el aviso de la columna derecha. Si se reabren inscripciones hay que
+            recuperarla junto con el formulario — el texto de las tres locales
+            está en el commit que la quitó. */}
         {/* Detalles del evento — fecha y ubicación, agrupados con gap menor. */}
         <div className="flex flex-col gap-1">
           <p>{t('bdw.eventDate')}</p>
