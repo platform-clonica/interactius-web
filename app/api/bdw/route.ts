@@ -49,6 +49,14 @@ export async function POST(request: Request) {
     console.warn('[bdw] descartado por antispam:', spam)
     return NextResponse.json({ ok: true }, { status: 200 })
   }
+  /* Los envíos que SÍ pasan también se registran. Sin esta línea el filtro
+     sería invisible: como el descarte responde 200 igual que un envío bueno,
+     desde fuera no hay forma de distinguirlos, y un falso positivo —gente real
+     a la que la trampa descartara— se perdería en silencio. Con las dos líneas,
+     el log de Netlify dice cuánto spam se corta y confirma que lo legítimo
+     entra. Sin datos personales: solo el hecho y el tiempo que tardó. */
+  // eslint-disable-next-line no-console
+  console.info('[bdw] antispam ok —', data.elapsedMs, 'ms')
   const formId = process.env.HUBSPOT_FORM_ID_BDW
 
   if (!formId) {
