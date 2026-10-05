@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { newsletterSchema } from '@/lib/schemas/forms'
+import { spamReason } from '@/lib/forms/antispam'
 import { submitToHubspot } from '@/lib/hubspot/submit'
 
 /* ==========================================================================
@@ -34,6 +35,16 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data
+
+  /* Antispam — descarte SILENCIOSO: se responde 200 para que el bot crea que
+     ha colado y no reintente por otra vía. El motivo solo va al log del
+     servidor; devolverlo en la respuesta le enseñaría qué trampa ha pisado. */
+  const spam = spamReason(data)
+  if (spam) {
+    // eslint-disable-next-line no-console
+    console.warn('[newsletter] descartado por antispam:', spam)
+    return NextResponse.json({ ok: true }, { status: 200 })
+  }
   const formId = process.env.HUBSPOT_FORM_ID_NEWSLETTER
 
   if (!formId) {
