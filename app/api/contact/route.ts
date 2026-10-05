@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { contactSchema as contactoSchema } from '@/lib/schemas/forms'
+import { spamReason } from '@/lib/forms/antispam'
 import { submitToHubspot } from '@/lib/hubspot/submit'
 
 /* ==========================================================================
@@ -34,6 +35,24 @@ export async function POST(request: Request) {
   }
 
   const data = parsed.data
+
+  /* Antispam — descarte SILENCIOSO: se responde 200 para que el bot crea que
+     ha colado y no reintente por otra vía. El motivo solo va al log del
+     servidor; devolverlo en la respuesta le enseñaría qué trampa ha pisado. */
+  const spam = spamReason(data)
+  if (spam) {
+    // eslint-disable-next-line no-console
+    console.warn('[contact] descartado por antispam:', spam)
+    return NextResponse.json({ ok: true }, { status: 200 })
+  }
+  /* Los envíos que SÍ pasan también se registran. Sin esta línea el filtro
+     sería invisible: como el descarte responde 200 igual que un envío bueno,
+     desde fuera no hay forma de distinguirlos, y un falso positivo —gente real
+     a la que la trampa descartara— se perdería en silencio. Con las dos líneas,
+     el log de Netlify dice cuánto spam se corta y confirma que lo legítimo
+     entra. Sin datos personales: solo el hecho y el tiempo que tardó. */
+  // eslint-disable-next-line no-console
+  console.info('[contact] antispam ok —', data.elapsedMs, 'ms')
   const formId = process.env.HUBSPOT_FORM_ID_CONTACT
 
   if (!formId) {

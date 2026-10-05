@@ -10,6 +10,7 @@ import { FormField } from '@/components/ui/FormField'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { ButtonPrimary } from '@/components/ui/ButtonPrimary'
 import { Link } from '@/lib/i18n/navigation'
+import { useAntiSpam, HoneypotField } from './useAntiSpam'
 
 /* ==========================================================================
    Types
@@ -133,6 +134,8 @@ export function ContactForm({ variant }: ContactFormProps) {
    ========================================================================== */
 
 interface FormShellProps {
+  /** Ref del campo trampa antispam — ver `useAntiSpam`. */
+  honeypotRef?: React.RefObject<HTMLInputElement | null>
   status: FormStatus
   errorMessage: string | null
   successTitle: string
@@ -155,6 +158,7 @@ function FormShell({
   submitDisabled,
   onSubmit,
   children,
+  honeypotRef,
 }: FormShellProps) {
   if (status === 'success') {
     return (
@@ -192,6 +196,8 @@ function FormShell({
           {status === 'submitting' ? submittingLabel : submitLabel}
         </ButtonPrimary>
       </div>
+
+      {honeypotRef && <HoneypotField inputRef={honeypotRef} />}
     </form>
   )
 }
@@ -272,6 +278,7 @@ interface SubFormProps {
 
 function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormProps) {
   const t = useTranslations('forms')
+  const { honeypotRef, withAntiSpam } = useAntiSpam()
 
   const schema = useMemo(
     () =>
@@ -304,7 +311,7 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
       const res = await fetch(VARIANT_CONFIG.contacto.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(withAntiSpam(data)),
       })
       if (!res.ok) throw new Error('submit_failed')
       setStatus('success')
@@ -316,6 +323,7 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
 
   return (
     <FormShell
+      honeypotRef={honeypotRef}
       status={status}
       errorMessage={errorMessage}
       successTitle={t('success.title')}
@@ -388,6 +396,7 @@ function ContactoForm({ status, setStatus, errorMessage, setErrorMessage }: SubF
 
 function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormProps) {
   const t = useTranslations('forms')
+  const { honeypotRef, withAntiSpam } = useAntiSpam()
 
   const schema = useMemo(
     () =>
@@ -417,7 +426,7 @@ function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormPr
       const res = await fetch(VARIANT_CONFIG.bdw.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(withAntiSpam(data)),
       })
       if (!res.ok) throw new Error('submit_failed')
       setStatus('success')
@@ -429,6 +438,7 @@ function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormPr
 
   return (
     <FormShell
+      honeypotRef={honeypotRef}
       status={status}
       errorMessage={errorMessage}
       successTitle={t('bdwForm.successTitle')}
@@ -536,6 +546,7 @@ function BdwForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormPr
 
 function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormProps) {
   const t = useTranslations('forms')
+  const { honeypotRef, withAntiSpam } = useAntiSpam()
 
   const schema = useMemo(
     () =>
@@ -567,7 +578,7 @@ function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: Su
       const res = await fetch(VARIANT_CONFIG.newsletter.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(withAntiSpam(data)),
       })
       if (!res.ok) throw new Error('submit_failed')
       setStatus('success')
@@ -579,6 +590,7 @@ function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: Su
 
   return (
     <FormShell
+      honeypotRef={honeypotRef}
       status={status}
       errorMessage={errorMessage}
       successTitle={t('success.title')}
@@ -640,6 +652,7 @@ function NewsletterForm({ status, setStatus, errorMessage, setErrorMessage }: Su
 
 function TestersForm({ status, setStatus, errorMessage, setErrorMessage }: SubFormProps) {
   const t = useTranslations('forms')
+  const { honeypotRef, withAntiSpam } = useAntiSpam()
 
   const schema = useMemo(
     () =>
@@ -677,7 +690,7 @@ function TestersForm({ status, setStatus, errorMessage, setErrorMessage }: SubFo
       const res = await fetch(VARIANT_CONFIG.testers.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(withAntiSpam(data)),
       })
       if (!res.ok) throw new Error('submit_failed')
       setStatus('success')
@@ -689,6 +702,7 @@ function TestersForm({ status, setStatus, errorMessage, setErrorMessage }: SubFo
 
   return (
     <FormShell
+      honeypotRef={honeypotRef}
       status={status}
       errorMessage={errorMessage}
       successTitle={t('success.title')}
