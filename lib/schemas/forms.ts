@@ -15,6 +15,8 @@
 
 import { z } from 'zod'
 
+import { antiSpamFields } from '@/lib/forms/antispam'
+
 /* ==========================================================================
    Contacto — /api/contact
    ========================================================================== */
@@ -26,6 +28,7 @@ export const contactSchema = z.object({
   company: z.string().min(2),
   message: z.string().min(10),
   privacy: z.literal(true),
+  ...antiSpamFields,
 })
 
 export type ContactInput = z.infer<typeof contactSchema>
@@ -40,6 +43,7 @@ export const newsletterSchema = z.object({
   company: z.string().min(2),
   email: z.string().email(),
   privacy: z.literal(true),
+  ...antiSpamFields,
 })
 
 export type NewsletterInput = z.infer<typeof newsletterSchema>
@@ -60,6 +64,7 @@ export const testersSchema = z.object({
   state: z.string().min(2),
   country: z.string().min(2),
   privacy: z.literal(true),
+  ...antiSpamFields,
 })
 
 export type TestersInput = z.infer<typeof testersSchema>
@@ -81,6 +86,7 @@ export const bdwSchema = z.object({
   motivation: z.string().min(2),
   /** Opt-in marketing — suscripción Design Tapas (subscription 9792607). */
   subscribe: z.boolean().optional(),
+  ...antiSpamFields,
 })
 
 export type BdwInput = z.infer<typeof bdwSchema>
