@@ -8,6 +8,13 @@
  *     SUB_TO_PARENT[category], filename = slug.
  *   - Image path: si existe, debe seguir el formato /miradas-assets/<slug>/<file>
  *     Y el archivo debe existir realmente en public/.
+ *   - El CUERPO compila como MDX. Esto no estaba y es la razón por la que dos
+ *     artículos llevaban meses devolviendo 500 en producción sin que nadie lo
+ *     supiera: el validador miraba solo el frontmatter, así que un cuerpo con
+ *     sintaxis inválida pasaba la validación y reventaba al renderizarse.
+ *     Caso real: `<label>` escrito como texto plano en una frase — MDX lo
+ *     interpreta como JSX y busca su cierre. La forma correcta de nombrar una
+ *     etiqueta HTML en el texto es entre backticks.
  *
  * Avisos (no bloquean, exit 0):
  *   - description > 160 car. (se trunca en el SERP).
@@ -25,6 +32,7 @@ import { existsSync } from 'node:fs'
 import path from 'node:path'
 import matter from 'gray-matter'
 import { z } from 'zod'
+import { compile as compileMdx } from '@mdx-js/mdx'
 
 const ROOT = process.cwd()
 const CONTENT_DIR = path.join(ROOT, 'content', 'miradas')
@@ -196,8 +204,20 @@ async function main() {
     const rel = path.relative(ROOT, file)
     const localeSegment = rel.replace(/\\/g, '/').split('/')[2]
     const raw = await fs.readFile(file, 'utf-8')
-    const { data } = matter(raw)
+    const { data, content } = matter(raw)
     const errors = []
+
+    /* El cuerpo tiene que compilar. `MDXContent` lo compila en tiempo de
+       petición, así que un error de sintaxis aquí no rompe el build: devuelve
+       un 500 la primera vez que alguien entra al artículo. Mejor saberlo aquí.
+       Ojo: las líneas que reporta el compilador van sobre el contenido SIN
+       frontmatter, así que no coinciden con las del archivo. */
+    try {
+      await compileMdx(content, { outputFormat: 'function-body' })
+    } catch (e) {
+      const sitio = e.line ? ` (línea ${e.line} del cuerpo, sin contar el frontmatter)` : ''
+      errors.push(`mdx no compila${sitio}: ${e.reason ?? e.message}`)
+    }
 
     const parsed = FrontmatterSchema.safeParse(data)
     if (!parsed.success) {
