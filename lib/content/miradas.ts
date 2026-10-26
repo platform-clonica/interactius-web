@@ -316,25 +316,68 @@ export function calculateReadingTime(content: string): number {
   return Math.max(1, Math.round(words / 200))
 }
 
-/** Hash simple para deterministic "random" sin Math.random() (estable en SSG). */
-function hashCode(str: string): number {
-  let h = 0
-  for (let i = 0; i < str.length; i++) {
-    h = ((h << 5) - h + str.charCodeAt(i)) | 0
-  }
-  return h
-}
-
 /**
- * Sugiere el siguiente artículo: random determinístico de la misma categoría
- * (excluyendo el actual). Si no hay otros en la misma categoría, cae a un
- * random determinístico de cualquier categoría.
+ * Sugiere el siguiente artículo, por afinidad real.
+ *
+ * Antes era un random determinístico dentro de la misma subcategoría. Estable,
+ * pero arbitrario: bajo un artículo de 2026 sobre comercio agéntico aparecía uno
+ * de 2017 cuyo único parentesco era compartir subcategoría. Con 40 artículos en
+ * `diseno-ux-ui`, acertar algo afín era cuestión de suerte.
+ *
+ * Ahora se puntúa a cada candidato, y la etiqueta compartida pesa **según lo
+ * rara que sea**: compartir `ux`, que llevan 82 de los 131 artículos, no
+ * significa casi nada; compartir `ecommerce-agentico`, que llevan 3, significa
+ * que hablan exactamente de lo mismo. Contarlas por igual era el error —
+ * emparejaba el artículo de Diana con una guía de accesibilidad en vez de con
+ * la serie agéntica, solo porque ambos llevan `ux` y están en la misma
+ * subcategoría.
+ *
+ *   · 10 / (artículos que usan esa etiqueta), por cada etiqueta en común.
+ *   · +0,5 si comparten subcategoría.
+ *   · +0,25 si comparten madre.
+ *
+ * Los bonus de categoría son deliberadamente pequeños: desempatan, no mandan.
+ * La serie de comercio agéntico vive repartida entre `futuros` y
+ * `diseno-ux-ui`, así que un peso fuerte de subcategoría la partía en dos.
+ *
+ * A igualdad de puntos gana el más reciente; si también empatan, el slug
+ * alfabético. Hace falta un desempate total para que el resultado sea idéntico
+ * entre builds — eso lo garantizaba el hash y no conviene perderlo.
+ *
+ * Un artículo sin etiquetas y sin hermanos de subcategoría sigue recibiendo al
+ * más reciente del sitio en vez de null, así que la sección nunca desaparece.
  */
 export function getNextArticle(cat: string, slug: string): MiradaMeta | null {
   const all = getAllMiradas()
-  const sameCat = all.filter((a) => a.cat === cat && a.slug !== slug)
-  const pool = sameCat.length > 0 ? sameCat : all.filter((a) => a.slug !== slug)
-  if (pool.length === 0) return null
-  const idx = Math.abs(hashCode(`${cat}/${slug}`)) % pool.length
-  return pool[idx]
+  const actual = all.find((a) => a.slug === slug && a.cat === cat)
+  const candidatos = all.filter((a) => a.slug !== slug)
+  if (candidatos.length === 0) return null
+
+  const etiquetas = new Set(actual?.tags ?? [])
+  const madre = actual?.parentCategory
+
+  /* Cuántos artículos usa cada etiqueta, para pesar por rareza. */
+  const frecuencia = new Map<string, number>()
+  for (const a of all) {
+    for (const t of a.tags ?? []) frecuencia.set(t, (frecuencia.get(t) ?? 0) + 1)
+  }
+
+  const puntuar = (a: MiradaMeta): number => {
+    let p = 0
+    for (const t of a.tags ?? []) {
+      if (etiquetas.has(t)) p += 10 / (frecuencia.get(t) ?? 1)
+    }
+    if (a.cat === cat) p += 0.5
+    if (madre && a.parentCategory === madre) p += 0.25
+    return p
+  }
+
+  return candidatos
+    .map((a) => ({ a, p: puntuar(a) }))
+    .sort(
+      (x, y) =>
+        y.p - x.p ||
+        y.a.publishedAt.localeCompare(x.a.publishedAt) ||
+        x.a.slug.localeCompare(y.a.slug),
+    )[0].a
 }
