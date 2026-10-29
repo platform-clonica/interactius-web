@@ -25,6 +25,24 @@ function ImageWithCaption({
   )
 }
 
+/* Fila de imágenes, para cuando varias fotos cuentan algo juntas y por separado
+   solo alargan la página.
+
+   Se mantienen en fila también en móvil, a petición de diseño: a unos 105 px
+   cada una funcionan como tira visual, no como imagen que se vaya a mirar en
+   detalle. El hueco baja a 8 px por debajo de `sm` para no comerse el ancho
+   disponible, que ahí es lo que escasea.
+
+   `items-start` evita que los pies desalineen las imágenes cuando uno ocupa dos
+   líneas y otro una. */
+function ImageRow({ children }: { children?: ReactNode }) {
+  return (
+    <div className="my-12 grid grid-cols-3 gap-2 sm:gap-4 items-start [&_figure]:my-0">
+      {children}
+    </div>
+  )
+}
+
 function PullQuote({ children }: { children?: ReactNode }) {
   return (
     <blockquote className="my-12 border-l-2 border-fg/30 pl-6 lg:pl-8 font-serif font-light italic text-section text-fg leading-tight">
@@ -180,6 +198,7 @@ const components: MDXComponents = {
     <img src={src} alt={alt ?? ''} loading="lazy" className="my-10 w-full h-auto" />
   ),
   ImageWithCaption,
+  ImageRow,
   PullQuote,
   Video,
 }
