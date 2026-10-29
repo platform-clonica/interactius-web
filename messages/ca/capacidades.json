@@ -95,7 +95,7 @@
       },
       {
         "name": "Validació de productes",
-        "description": "<strong>Contrastar per decidir amb seguretat.</strong> Validem productes i serveis en qualsevol fase —des del concepte fins a la producció— per reduir el risc abans d'escalar. Substituïm les suposicions per evidència, optimitzant recursos i assegurant que cada correcció tingui lloc en el moment oportú.",
+        "description": "<strong>Contrastar per decidir amb seguretat.</strong> Validem productes i serveis en qualsevol fase (des del concepte fins a la producció) per reduir el risc abans d'escalar. Substituïm les suposicions per evidència, optimitzant recursos i assegurant que cada correcció tingui lloc en el moment oportú.",
         "deliverables": [
           "Validació de conceptes i prototips",
           "Anàlisi heurística",
