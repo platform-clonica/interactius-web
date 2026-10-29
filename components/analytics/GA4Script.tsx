@@ -50,8 +50,14 @@ export function GA4Script() {
     document.head.appendChild(script)
 
     window.dataLayer = window.dataLayer || []
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function gtag(...args: unknown[]) { (window.dataLayer as any[]).push(args) }
+    /* gtag.js solo interpreta como comando lo que llega al dataLayer como
+       objeto `arguments`. Un Array normal lo ignora en silencio, así que
+       empujar `args` hacía que `js` y `config` no se ejecutaran nunca y no
+       se enviara ni una sola página vista. Verificado contra producción: con
+       Array, cero peticiones a /g/collect; con `arguments`, las esperadas.
+       De ahí el `arguments` en vez del parámetro rest, y el disable del lint. */
+    // eslint-disable-next-line prefer-rest-params, @typescript-eslint/no-unused-vars
+    function gtag(..._args: unknown[]) { (window.dataLayer as unknown[]).push(arguments) }
     gtag('js', new Date())
     gtag('config', ga4Id, { anonymize_ip: true })
   }, [analyticsConsent, isHydrated, ga4Id])
