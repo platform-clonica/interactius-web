@@ -17,7 +17,7 @@ function ImageWithCaption({
     <figure className="my-12">
       <img src={src} alt={alt ?? ''} loading="lazy" className="w-full h-auto border border-fg/20" />
       {caption ? (
-        <figcaption className="mt-3 font-mono text-center text-body-sm text-fg/60 leading-[1.5]">
+        <figcaption className="mt-3 font-mono text-center text-micro text-fg/60 leading-[1.5]">
           {caption}
         </figcaption>
       ) : null}
@@ -107,7 +107,7 @@ function Video({
         />
       )}
       {caption ? (
-        <figcaption className="mt-3 text-center font-mono text-body-sm text-fg/60 leading-[1.5]">
+        <figcaption className="mt-3 text-center font-mono text-micro text-fg/60 leading-[1.5]">
           {caption}
         </figcaption>
       ) : null}
