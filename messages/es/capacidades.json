@@ -95,7 +95,7 @@
       },
       {
         "name": "Validación de productos",
-        "description": "<strong>Contrastar para decidir con seguridad.</strong> Validamos productos y servicios en cualquier fase —desde el concepto hasta la producción— para reducir el riesgo antes de escalar. Sustituimos las suposiciones por evidencia, optimizando recursos y asegurando que cada corrección ocurra en el momento oportuno.",
+        "description": "<strong>Contrastar para decidir con seguridad.</strong> Validamos productos y servicios en cualquier fase (desde el concepto hasta la producción) para reducir el riesgo antes de escalar. Sustituimos las suposiciones por evidencia, optimizando recursos y asegurando que cada corrección ocurra en el momento oportuno.",
         "deliverables": [
           "Validación de conceptos y prototipos",
           "Análisis heurístico",
