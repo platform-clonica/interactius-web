@@ -3,7 +3,7 @@
     "eyebrow": "Dossier",
     "title": "Agentic commerce",
     "edition": "Interactius · October 2026",
-    "contents": "Three articles · Four analyses · One recommendation",
+    "contents": "Three articles · Four analyses · Two recommendations",
     "headline": "To get ahead of future scenarios we do not need omens, we need to understand the present one.",
     "standfirst": "In a context where artificial intelligence is starting to make decisions, designing experiences is no longer only about polishing screens. It is about earning back the trust of the person buying and the business selling, about setting limits nobody had drawn before, and about asking how far AX, the agent's experience, can go.",
     "summary": "Here we gather what we have published on the subject across our channels: what agentic design means for digital commerce, why it pushes the traditional interface towards its end, and what framework an organisation needs in order to decide before the change catches up with it."
@@ -113,7 +113,14 @@
       "close": "Being recommended takes rigour: explaining what the product does, how it is made and the conditions under which it works. People and algorithms both need to understand the proposition.",
       "cta": "If an assistant scanned your catalogue today, would it find clear data?",
       "imageAlt": "A grid of sixteen shop mannequins: fourteen on near-identical beige and grey backgrounds, and only two on saturated colour.",
-      "imageCaption": "Fourteen of sixteen shop windows are the same shop window. To an agent, indistinguishable."
+      "imageCaption": "Fourteen of sixteen shop windows are the same shop window. To an agent, indistinguishable.",
+      "dato": {
+        "prefix": "almost",
+        "figure": "5",
+        "unit": "×",
+        "label": "more web traffic now goes from AI tools to US retail sites than a year ago. Every one of those visits judges your catalogue by reading it, not by looking at it.",
+        "source": "Adobe Digital Insights, 2026"
+      }
     },
     "adopcion": {
       "number": "04",
@@ -125,11 +132,24 @@
     }
   },
   "recommends": {
-    "by": "María recommends",
-    "format": "Podcast",
-    "title": "Historia Ficción",
-    "body": "This episode imagines a twenty-second-century society organised around abundance. It runs through three revolutions, the Neolithic, the Industrial and the Information one, to ask what happens when automation, cheap energy and software stop fitting the economic rules we know. The value is in the exercise: using history to design futures and to question what we take as inevitable. In Spanish.",
-    "cta": "Listen to the episode"
+    "maria": {
+      "by": "María Najarro recommends",
+      "format": "Podcast",
+      "source": "Historia Ficción · Ep. 1 of 5",
+      "title": "Socialismo del futuro: poscapitalismo de la abundancia",
+      "body": "It runs through three revolutions, from the Neolithic to the Information one, to ask what happens when automation stops fitting the economic rules we know. The value is in the exercise: using history to design futures. In Spanish.",
+      "cta": "Listen to the episode",
+      "href": "https://www.ivoox.com/hf-96-8211-socialismo-del-futuro-post-capitalismo-de-audios-mp3_rf_95600291_1.html"
+    },
+    "isaac": {
+      "by": "Isaac Jordana recommends",
+      "format": "Video",
+      "source": "Lo Que No Sabemos",
+      "title": "La IA y la crisis de identidad que estamos viviendo",
+      "body": "Philosophical and technological writing, unhurried and humanist. It argues the clash with AI is neither technical nor about jobs but a blow to the ego: if a machine solves in an instant what took us years to master, what was the effort for? In Spanish.",
+      "cta": "Watch the video",
+      "href": "https://www.youtube.com/watch?v=D95Cw8xJodI"
+    }
   },
   "close": {
     "title": "The buying decision is already moving.",
@@ -162,7 +182,6 @@
         "label": "would let it make the purchase decision"
       }
     ],
-    "note": "People delegate the search and the research, not the act of buying.",
-    "caveat": "And this figure is worth reading next to the one above: 27 % of younger users would let the assistant pay. The answer shifts a great deal depending on who you ask and how. Which is why foresight works with several scenarios rather than one prediction."
+    "note": "People delegate the search and the research, not the act of buying."
   }
 }

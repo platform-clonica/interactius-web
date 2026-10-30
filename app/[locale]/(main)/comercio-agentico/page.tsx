@@ -13,6 +13,7 @@ import { DossierReveal } from '@/components/dossier/DossierReveal'
 import { DossierCoatReveal } from '@/components/dossier/DossierCoatReveal'
 import { DossierStat } from '@/components/dossier/DossierStat'
 import { acento } from '@/components/dossier/accent'
+import { TEAM } from '@/lib/data/team'
 import { getMiradaBySlug } from '@/lib/content/miradas'
 import type { MiradasSubcategory } from '@/lib/content/miradas'
 import { articleHref } from '@/lib/i18n/article-href'
@@ -62,6 +63,19 @@ const PIEZAS = [
 /* Cada clave se pinta con el acento del servicio al que remite su pregunta
    final. No es una elección estética: es el mismo código de color que usa la
    home para decir de qué servicio habla cada cosa. Ver `accent.ts`. */
+/* El MDX guarda solo el nombre de pila ("Sara"). La firma del dossier lleva
+   nombre y apellido, que salen del registro de equipo: así, si alguien cambia
+   ahí, la firma cambia sola. Si un nombre de pila fuera ambiguo (hay dos
+   Elenas en el equipo) se deja el corto antes que arriesgar un apellido
+   equivocado. */
+function firma(corto: string): string {
+  const pila = corto.trim().toLowerCase()
+  const coincidencias = TEAM.filter((m) => m.name.split(' ')[0].toLowerCase() === pila)
+  return coincidencias.length === 1 ? coincidencias[0].name : corto
+}
+
+const RECOMENDACIONES = ['maria', 'isaac'] as const
+
 const CLAVES = [
   { id: 'accesibilidad', servicio: 'diseno-experiencias' },
   { id: 'cero-clics', servicio: 'pensamiento-estrategico' },
@@ -107,7 +121,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
     return {
       id: p.id,
       titulo: art.titleByLocale[locale],
-      autora: art.author,
+      autora: firma(art.author),
       imagen: art.image,
       // El servicio sale del frontmatter, no de una tabla a mano aquí.
       servicio: art.parentCategory,
@@ -234,7 +248,6 @@ export default async function ComercioAgentico({ params }: PageProps) {
                       title={t('stat.title')}
                       rows={estadistica}
                       note={t('stat.note')}
-                      caveat={t('stat.caveat')}
                     />
                   </div>
                 ) : null}
@@ -277,6 +290,17 @@ export default async function ComercioAgentico({ params }: PageProps) {
                   image={conImagen ? FIG_MANIQUIES : undefined}
                   imageAlt={conImagen ? t('insights.invisibilidad.imageAlt') : undefined}
                   imageCaption={conImagen ? t('insights.invisibilidad.imageCaption') : undefined}
+                  dato={
+                    t.has(`insights.${id}.dato`)
+                      ? (t.raw(`insights.${id}.dato`) as {
+                          prefix?: string
+                          figure: string
+                          unit?: string
+                          label: string
+                          source: string
+                        })
+                      : undefined
+                  }
                 />
               </DossierReveal>
             )
@@ -286,18 +310,28 @@ export default async function ComercioAgentico({ params }: PageProps) {
 
       <DossierSection className="mt-section-md lg:mt-section">
         <DossierRule label={t('sections.recommends')} />
-        <div className="mt-8 grid grid-cols-12 gap-x-grid-gutter">
-          <DossierReveal className="col-span-12 lg:col-span-7 lg:col-start-6">
-            <DossierAside
-              by={t('recommends.by')}
-              format={t('recommends.format')}
-              title={t('recommends.title')}
-              body={t('recommends.body')}
-              cta={t('recommends.cta')}
-              href="https://www.ivoox.com/hf-96-8211-socialismo-del-futuro-post-capitalismo-de-audios-mp3_rf_95600291_1.html"
-            />
-          </DossierReveal>
-        </div>
+        {/* Las dos recomendaciones van en paralelo y a la misma altura, no
+            una debajo de otra: son piezas del mismo rango. */}
+        <DossierReveal
+          className="mt-8 grid grid-cols-12 items-stretch gap-x-grid-gutter gap-y-8"
+          stagger={0.14}
+        >
+          {RECOMENDACIONES.map((quien) => (
+            <div key={quien} className="col-span-12 lg:col-span-6">
+              <DossierAside
+                by={t(`recommends.${quien}.by`)}
+                format={t(`recommends.${quien}.format`)}
+                source={
+                  t.has(`recommends.${quien}.source`) ? t(`recommends.${quien}.source`) : undefined
+                }
+                title={t(`recommends.${quien}.title`)}
+                body={t(`recommends.${quien}.body`)}
+                cta={t(`recommends.${quien}.cta`)}
+                href={t(`recommends.${quien}.href`)}
+              />
+            </div>
+          ))}
+        </DossierReveal>
       </DossierSection>
 
       <DossierClose
