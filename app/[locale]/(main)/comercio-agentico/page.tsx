@@ -9,6 +9,9 @@ import { DossierAside } from '@/components/dossier/DossierAside'
 import { DossierClose } from '@/components/dossier/DossierClose'
 import { DossierRule } from '@/components/dossier/DossierRule'
 import { DossierSection } from '@/components/dossier/DossierSection'
+import { DossierReveal } from '@/components/dossier/DossierReveal'
+import { DossierFigure } from '@/components/dossier/DossierFigure'
+import { acento } from '@/components/dossier/accent'
 import { getMiradaBySlug } from '@/lib/content/miradas'
 import type { MiradasSubcategory } from '@/lib/content/miradas'
 import { articleHref } from '@/lib/i18n/article-href'
@@ -55,7 +58,23 @@ const PIEZAS = [
   },
 ] as const
 
-const CLAVES = ['accesibilidad', 'cero-clics', 'invisibilidad', 'adopcion'] as const
+/* Cada clave se pinta con el acento del servicio al que remite su pregunta
+   final. No es una elección estética: es el mismo código de color que usa la
+   home para decir de qué servicio habla cada cosa. Ver `accent.ts`. */
+const CLAVES = [
+  { id: 'accesibilidad', servicio: 'diseno-experiencias' },
+  { id: 'cero-clics', servicio: 'pensamiento-estrategico' },
+  { id: 'invisibilidad', servicio: 'diseno-experiencias' },
+  { id: 'adopcion', servicio: 'pensamiento-estrategico' },
+] as const
+
+/* La imagen del abrigo sale del artículo de Diana y resume la tesis entera del
+   dossier, así que va a todo el ancho justo después de los datos. La de los
+   maniquíes ilustra la clave 03 y ocupa el hueco que quedaba en su columna. */
+const FIG_ABRIGO =
+  '/miradas-assets/de-disenar-pdps-a-disenar-criterio-era-agentica/pdp-dos-lectores.webp'
+const FIG_MANIQUIES =
+  '/miradas-assets/de-disenar-pdps-a-disenar-criterio-era-agentica/maniquies-uniformidad.webp'
 
 interface PageProps {
   params: Promise<{ locale: Locale }>
@@ -89,6 +108,8 @@ export default async function ComercioAgentico({ params }: PageProps) {
       titulo: art.titleByLocale[locale],
       autora: art.author,
       imagen: art.image,
+      // El servicio sale del frontmatter, no de una tabla a mano aquí.
+      servicio: art.parentCategory,
       href: articleHref(p.sub as MiradasSubcategory, art.slugByLocale[locale], locale),
     }
   }).filter((p): p is NonNullable<typeof p> => p !== null)
@@ -117,7 +138,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
       {apertura ? (
         <DossierSection className="mt-14 lg:mt-20">
           <DossierRule label={t('sections.opening')} />
-          <div className="mt-8">
+          <DossierReveal className="mt-8">
             <DossierArticle
               variant="lead"
               kicker={t('articles.ax.kicker')}
@@ -130,8 +151,10 @@ export default async function ComercioAgentico({ params }: PageProps) {
               readLabel={t('read')}
               image={apertura.imagen}
               imageAlt=""
+              acentoFondo={acento(apertura.servicio).fondo}
+              acentoChipTexto={acento(apertura.servicio).chipTexto}
             />
-          </div>
+          </DossierReveal>
         </DossierSection>
       ) : null}
 
@@ -153,13 +176,27 @@ export default async function ComercioAgentico({ params }: PageProps) {
         />
       </div>
 
+      <DossierSection className="mt-section-md lg:mt-section">
+        <DossierReveal>
+          <DossierFigure
+            src={FIG_ABRIGO}
+            alt={t('figure.alt')}
+            caption={t('figure.caption')}
+            credit={t('figure.credit')}
+          />
+        </DossierReveal>
+      </DossierSection>
+
       {/* Las dos columnas del cuerpo. La primera va sin foto y la segunda con
           ella: mismo componente, tratamiento distinto, que es lo que evita
           que la página se lea como una rejilla de fichas iguales. */}
       {columnas.length ? (
         <DossierSection className="mt-section-md lg:mt-section">
           <DossierRule label={t('sections.analysis')} />
-          <div className="mt-8 grid grid-cols-12 gap-x-grid-gutter gap-y-14">
+          <DossierReveal
+            className="mt-8 grid grid-cols-12 gap-x-grid-gutter gap-y-14"
+            stagger={0.14}
+          >
             {columnas.map((c, i) => (
               <div key={c.id} className="col-span-12 lg:col-span-6">
                 <DossierArticle
@@ -174,37 +211,50 @@ export default async function ComercioAgentico({ params }: PageProps) {
                   readLabel={t('read')}
                   image={i === 0 ? undefined : c.imagen}
                   imageAlt=""
+                  acentoFondo={acento(c.servicio).fondo}
+                  acentoChipTexto={acento(c.servicio).chipTexto}
                 />
               </div>
             ))}
-          </div>
+          </DossierReveal>
         </DossierSection>
       ) : null}
 
       <DossierSection className="mt-section-md lg:mt-section">
         <DossierRule label={t('sections.insights')} />
-        <div className="mt-8 flex flex-col gap-12">
-          {CLAVES.map((k) => {
-            const puntos = t.has(`insights.${k}.points`)
-              ? (t.raw(`insights.${k}.points`) as string[])
+        <div className="mt-8 flex flex-col gap-16">
+          {CLAVES.map(({ id, servicio }) => {
+            const puntos = t.has(`insights.${id}.points`)
+              ? (t.raw(`insights.${id}.points`) as string[])
               : undefined
+            const conImagen = id === 'invisibilidad'
             return (
-              <DossierInsight
-                key={k}
-                number={t(`insights.${k}.number`)}
-                kicker={t(`insights.${k}.kicker`)}
-                title={t(`insights.${k}.title`)}
-                body={t(`insights.${k}.body`)}
-                pointsLabel={
-                  t.has(`insights.${k}.pointsLabel`) ? t(`insights.${k}.pointsLabel`) : undefined
-                }
-                points={puntos?.map((_, i) =>
-                  t.rich(`insights.${k}.points.${i}`, richComponents.bold),
-                )}
-                close={t(`insights.${k}.close`)}
-                cta={t(`insights.${k}.cta`)}
-                ctaHref={contacto}
-              />
+              /* Cada clave entra por separado: son bloques largos y revelarlas
+                 todas a la vez obligaría a animar media página fuera de campo. */
+              <DossierReveal key={id} stagger={0.1}>
+                <DossierInsight
+                  number={t(`insights.${id}.number`)}
+                  kicker={t(`insights.${id}.kicker`)}
+                  title={t(`insights.${id}.title`)}
+                  body={t(`insights.${id}.body`)}
+                  pointsLabel={
+                    t.has(`insights.${id}.pointsLabel`)
+                      ? t(`insights.${id}.pointsLabel`)
+                      : undefined
+                  }
+                  points={puntos?.map((_, i) =>
+                    t.rich(`insights.${id}.points.${i}`, richComponents.bold),
+                  )}
+                  close={t(`insights.${id}.close`)}
+                  cta={t(`insights.${id}.cta`)}
+                  ctaHref={contacto}
+                  acentoChipTexto={acento(servicio).chipTexto}
+                  acentoFondo={acento(servicio).fondo}
+                  image={conImagen ? FIG_MANIQUIES : undefined}
+                  imageAlt={conImagen ? t('insights.invisibilidad.imageAlt') : undefined}
+                  imageCaption={conImagen ? t('insights.invisibilidad.imageCaption') : undefined}
+                />
+              </DossierReveal>
             )
           })}
         </div>
@@ -213,7 +263,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
       <DossierSection className="mt-section-md lg:mt-section">
         <DossierRule label={t('sections.recommends')} />
         <div className="mt-8 grid grid-cols-12 gap-x-grid-gutter">
-          <div className="col-span-12 lg:col-span-7 lg:col-start-6">
+          <DossierReveal className="col-span-12 lg:col-span-7 lg:col-start-6">
             <DossierAside
               by={t('recommends.by')}
               format={t('recommends.format')}
@@ -222,7 +272,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
               cta={t('recommends.cta')}
               href="https://www.ivoox.com/hf-96-8211-socialismo-del-futuro-post-capitalismo-de-audios-mp3_rf_95600291_1.html"
             />
-          </div>
+          </DossierReveal>
         </div>
       </DossierSection>
 

@@ -1,5 +1,6 @@
 import { CurtainLink } from '@/components/layout/CurtainLink'
 
+import { DossierReveal } from './DossierReveal'
 import { DossierSection } from './DossierSection'
 import type { IntlHref } from '@/lib/i18n/article-href'
 
@@ -20,7 +21,10 @@ export function DossierClose({
 }) {
   return (
     <DossierSection className="pb-section-md pt-section-md lg:pb-section lg:pt-section">
-      <div className="grid grid-cols-12 gap-x-grid-gutter gap-y-6 border-t-2 border-fg pt-10">
+      <DossierReveal
+        className="grid grid-cols-12 gap-x-grid-gutter gap-y-6 border-t-2 border-fg pt-10"
+        stagger={0.12}
+      >
         <h2 className="col-span-12 font-serif text-title font-light text-fg lg:col-span-6">
           {title}
         </h2>
@@ -34,7 +38,7 @@ export function DossierClose({
             {cta}
           </CurtainLink>
         </div>
-      </div>
+      </DossierReveal>
     </DossierSection>
   )
 }

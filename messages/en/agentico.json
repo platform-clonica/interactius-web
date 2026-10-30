@@ -7,7 +7,6 @@
     "standfirst": "<strong>To get ahead of future scenarios we do not need omens, we need to understand the present one.</strong> In a context where artificial intelligence is starting to make decisions, designing experiences is no longer only about polishing screens. It is about earning back the trust of the person buying and the business selling, about setting limits nobody had drawn before, and about asking how far AX, the agent's experience, can go.",
     "summary": "Here we gather what we have published on the subject across our channels: what agentic design means for digital commerce, why it pushes the traditional interface towards its end, and what framework an organisation needs in order to decide before the change catches up with it."
   },
-
   "sections": {
     "opening": "Opening",
     "data": "The data",
@@ -16,11 +15,9 @@
     "recommends": "We recommend",
     "close": "What now"
   },
-
   "read": "Read the full article",
   "readShort": "Read in full",
   "by": "By",
-
   "articles": {
     "ax": {
       "kicker": "Agentic commerce · Digital product design",
@@ -38,7 +35,6 @@
       "body": "The ones who adapt best will not be those who master the most tools, but those who know what to ask before opening them. A look at the shift running through the craft: what has happened to the internet in recent years, what still holds from the foundations of UX, which new users are landing here, and where the design system sits now."
     }
   },
-
   "data": {
     "eyebrow": "Signals, not predictions",
     "title": "Agentic commerce has already crossed the adoption threshold",
@@ -73,7 +69,6 @@
     },
     "note": "Adoption does not depend on technical capability alone. It depends on how impatient buyers are with friction, on regulation that will force search and purchase apart, and above all on security: nobody delegates a transaction in an environment that has not earned their explicit trust."
   },
-
   "insights": {
     "accesibilidad": {
       "number": "01",
@@ -114,7 +109,9 @@
         "The algorithm will always favour the competitor with the sharper information."
       ],
       "close": "Being recommended takes rigour: explaining what the product does, how it is made and the conditions under which it works. People and algorithms both need to understand the proposition.",
-      "cta": "If an assistant scanned your catalogue today, would it find clear data?"
+      "cta": "If an assistant scanned your catalogue today, would it find clear data?",
+      "imageAlt": "A grid of sixteen shop mannequins: fourteen on near-identical beige and grey backgrounds, and only two on saturated colour.",
+      "imageCaption": "Fourteen of sixteen shop windows are the same shop window. To an agent, indistinguishable."
     },
     "adopcion": {
       "number": "04",
@@ -125,7 +122,6 @@
       "cta": "Is your organisation ready for this new way of buying?"
     }
   },
-
   "recommends": {
     "by": "María recommends",
     "format": "Podcast",
@@ -133,15 +129,18 @@
     "body": "This episode imagines a twenty-second-century society organised around abundance. It runs through three revolutions, the Neolithic, the Industrial and the Information one, to ask what happens when automation, cheap energy and software stop fitting the economic rules we know. The value is in the exercise: using history to design futures and to question what we take as inevitable. In Spanish.",
     "cta": "Listen to the episode"
   },
-
   "close": {
     "title": "The buying decision is already moving.",
     "body": "You do not need to pick the exact scenario to be ready. You need to know what gets automated, where responsibility stays human, and whether your catalogue can be understood by someone who no longer looks at screens.",
     "cta": "Let's talk"
   },
-
   "meta": {
     "title": "Agentic commerce",
     "description": "A dossier on agentic commerce: what changes when an AI agent searches, compares and buys, and what an organisation has to decide before the change catches up with it."
+  },
+  "figure": {
+    "alt": "A single product page split down the middle: on the left, what a person sees, with a photo of a wool coat, its price and the buy button; on the right, the same content as HTML markup with its attributes and labels.",
+    "caption": "What a person sees and what an agent reads are the same product page. Only one of those halves decides whether your product makes the shortlist.",
+    "credit": "From “From designing PDPs to designing judgement”, by Diana Yuste"
   }
 }

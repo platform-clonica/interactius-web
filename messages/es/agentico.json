@@ -109,7 +109,9 @@
         "El algoritmo priorizará siempre al competidor con la información más nítida."
       ],
       "close": "Ser recomendado exige rigor: explicar qué hace el producto, cómo se fabrica y en qué condiciones funciona. Tanto las personas como los algoritmos necesitan entender la propuesta.",
-      "cta": "Si un asistente escaneara hoy vuestro catálogo, ¿encontraría datos nítidos?"
+      "cta": "Si un asistente escaneara hoy vuestro catálogo, ¿encontraría datos nítidos?",
+      "imageAlt": "Cuadrícula de dieciséis maniquíes de tienda: catorce sobre fondos beige y gris casi idénticos, y solo dos sobre fondos de color saturado.",
+      "imageCaption": "Catorce de dieciséis escaparates son el mismo escaparate. Para un agente, indistinguibles."
     },
     "adopcion": {
       "number": "04",
@@ -135,5 +137,10 @@
   "meta": {
     "title": "Comercio agéntico",
     "description": "Dossier sobre comercio agéntico: qué cambia cuando un agente de IA busca, compara y compra, y qué tiene que decidir una organización antes de que el cambio la alcance."
+  },
+  "figure": {
+    "alt": "Una misma ficha de producto partida por la mitad: a la izquierda, lo que ve una persona, con la foto de un abrigo de lana, su precio y el botón de compra; a la derecha, el mismo contenido como marcado HTML con sus atributos y etiquetas.",
+    "caption": "Lo que ve una persona y lo que lee un agente son la misma ficha. Solo una de las dos mitades decide si tu producto entra en la comparación.",
+    "credit": "De «De diseñar PDPs a diseñar criterio», de Diana Yuste"
   }
 }

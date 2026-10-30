@@ -9,13 +9,17 @@ import type { IntlHref } from '@/lib/i18n/article-href'
 
    · `lead`    la apertura. Foto ancha arriba, titular grande y entradilla a
                dos columnas. Ocupa todo el ancho de la mancha.
-   · `column`  una columna del cuerpo. Más estrecha, titular menor y foto
-               opcional, para que dos piezas contiguas no se vean iguales.
+   · `column`  una columna del cuerpo. Más estrecha, titular y texto menores y
+               foto opcional, para que dos piezas contiguas no se vean iguales.
 
    La foto es opcional a propósito: Martina pidió que unas noticias lleven
    imagen y otras no, que es justo lo que rompe la monotonía de una retícula.
-   Cuando no hay foto, la pieza gana una regla superior gruesa para que el
-   hueco no se lea como un olvido. */
+
+   El filete superior va en el color del servicio al que pertenece el artículo
+   (ver `accent.ts`). No es decoración: es el mismo código de color que usa la
+   home para señalar de qué servicio habla cada cosa, y sale del
+   `parentCategory` del MDX. Cuando no hay foto es además lo que impide que el
+   hueco se lea como un olvido. */
 export function DossierArticle({
   variant,
   kicker,
@@ -28,6 +32,8 @@ export function DossierArticle({
   readLabel,
   image,
   imageAlt,
+  acentoFondo,
+  acentoChipTexto,
 }: {
   variant: 'lead' | 'column'
   kicker: string
@@ -40,13 +46,20 @@ export function DossierArticle({
   readLabel: string
   image?: string
   imageAlt?: string
+  /** Clase de fondo del servicio, para el filete y la etiqueta. */
+  acentoFondo: string
+  /** Color del texto sobre ese fondo. Ver la tabla de contraste de `accent.ts`. */
+  acentoChipTexto: string
 }) {
   const esLead = variant === 'lead'
+  const cuerpo = esLead ? 'text-body-sm' : 'text-micro'
 
   return (
     <article className={esLead ? '' : 'flex h-full flex-col'}>
+      <div className={`h-[3px] w-full ${acentoFondo}`} aria-hidden="true" />
+
       {image ? (
-        <CurtainLink href={href} className="group block overflow-hidden">
+        <CurtainLink href={href} className="group mt-5 block overflow-hidden">
           <div
             className={`relative w-full overflow-hidden ${esLead ? 'aspect-[16/7]' : 'aspect-[4/3]'}`}
           >
@@ -59,14 +72,12 @@ export function DossierArticle({
             />
           </div>
         </CurtainLink>
-      ) : (
-        <div className="border-t-2 border-fg" aria-hidden="true" />
-      )}
+      ) : null}
 
+      {/* El rótulo va sobre relleno, no en color de texto: Opal y Esmeralda
+          no llegan al contraste mínimo como tinta sobre el fondo de la web. */}
       <p
-        className={`font-mono text-caption uppercase tracking-[0.14em] text-fg/60 ${
-          image ? 'mt-5' : 'mt-4'
-        }`}
+        className={`mt-5 inline-flex w-fit px-2 py-1 font-mono text-caption uppercase tracking-[0.14em] ${acentoFondo} ${acentoChipTexto}`}
       >
         {kicker}
       </p>
@@ -84,10 +95,10 @@ export function DossierArticle({
       </p>
 
       <div className={esLead ? 'mt-6 lg:columns-2 lg:gap-grid-gutter' : 'mt-5'}>
-        <p className="font-mono text-body-sm leading-[1.6] text-fg break-inside-avoid">
+        <p className={`break-inside-avoid font-mono leading-[1.6] text-fg ${cuerpo}`}>
           {standfirst}
         </p>
-        <p className="mt-4 font-mono text-body-sm leading-[1.6] text-fg/70">{body}</p>
+        <p className={`mt-4 font-mono leading-[1.6] text-fg/70 ${cuerpo}`}>{body}</p>
       </div>
 
       <CurtainLink

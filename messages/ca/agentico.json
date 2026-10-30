@@ -7,7 +7,6 @@
     "standfirst": "<strong>Per anticipar-nos a escenaris futurs no necessitem presagis, necessitem comprendre el nostre entorn present.</strong> En un context on la intel·ligència artificial comença a prendre decisions, dissenyar experiències ja no tracta només de polir pantalles. Tracta de tornar a guanyar-se la confiança de qui compra i de qui ven, de definir límits que abans ningú no havia traçat, i de preguntar-nos fins on pot arribar l'AX, l'experiència de l'agent.",
     "summary": "Aquí reunim el que hem publicat sobre el tema als nostres canals: què implica el disseny agèntic per al comerç digital, per què empeny la interfície tradicional cap al seu final, i quin marc necessita una organització per decidir abans que el canvi l'atrapi."
   },
-
   "sections": {
     "opening": "Obertura",
     "data": "Les dades",
@@ -16,11 +15,9 @@
     "recommends": "Recomanem",
     "close": "I ara què"
   },
-
   "read": "Llegir l'article complet",
   "readShort": "Llegir complet",
   "by": "Per",
-
   "articles": {
     "ax": {
       "kicker": "Comerç agèntic · Disseny de producte digital",
@@ -38,7 +35,6 @@
       "body": "Qui s'hi adapti millor no serà qui domini més eines, sinó qui sàpiga què preguntar abans d'obrir-les. Una mirada al canvi que travessa l'ofici: què li ha passat a internet els darrers anys, què continua sostenint-se de les bases d'UX, quins usuaris nous estan aterrant i quin lloc ocupa ara el design system."
     }
   },
-
   "data": {
     "eyebrow": "Senyals, no prediccions",
     "title": "El comerç agèntic ja ha creuat el llindar d'adopció",
@@ -73,7 +69,6 @@
     },
     "note": "L'adopció no depèn només de la capacitat tècnica. Depèn de la impaciència de qui compra davant la fricció, de marcs reguladors que forçaran a separar cerca i compra, i sobretot de la seguretat: ningú no delega una operació en un entorn que no li genera confiança explícita."
   },
-
   "insights": {
     "accesibilidad": {
       "number": "01",
@@ -114,7 +109,9 @@
         "L'algoritme prioritzarà sempre el competidor amb la informació més nítida."
       ],
       "close": "Ser recomanat exigeix rigor: explicar què fa el producte, com es fabrica i en quines condicions funciona. Tant les persones com els algoritmes necessiten entendre la proposta.",
-      "cta": "Si un assistent escanegés avui el vostre catàleg, hi trobaria dades nítides?"
+      "cta": "Si un assistent escanegés avui el vostre catàleg, hi trobaria dades nítides?",
+      "imageAlt": "Quadrícula de setze maniquins de botiga: catorze sobre fons beix i gris gairebé idèntics, i només dos sobre fons de color saturat.",
+      "imageCaption": "Catorze de setze aparadors són el mateix aparador. Per a un agent, indistingibles."
     },
     "adopcion": {
       "number": "04",
@@ -125,7 +122,6 @@
       "cta": "Està la teva organització preparada per al nou format de compra?"
     }
   },
-
   "recommends": {
     "by": "La María recomana",
     "format": "Podcast",
@@ -133,15 +129,18 @@
     "body": "Aquest episodi imagina una societat del segle XXII organitzada des de l'abundància. Recorre tres revolucions, la neolítica, la industrial i la de la informació, per preguntar-se què passa quan l'automatització, l'energia barata i el programari deixen d'encaixar en les regles econòmiques que coneixem. El que hi ha de valuós és l'exercici: fer servir la història per dissenyar futurs i qüestionar allò que donem per inevitable.",
     "cta": "Escoltar l'episodi"
   },
-
   "close": {
     "title": "La decisió de compra ja s'està movent.",
     "body": "No cal encertar l'escenari exacte per preparar-se. Cal saber què s'automatitza, on la responsabilitat continua sent humana i si el vostre catàleg es deixa entendre per qui ja no mira pantalles.",
     "cta": "Parlem-ne"
   },
-
   "meta": {
     "title": "Comerç agèntic",
     "description": "Dossier sobre comerç agèntic: què canvia quan un agent d'IA busca, compara i compra, i què ha de decidir una organització abans que el canvi l'atrapi."
+  },
+  "figure": {
+    "alt": "Una mateixa fitxa de producte partida per la meitat: a l'esquerra, el que veu una persona, amb la foto d'un abric de llana, el preu i el botó de compra; a la dreta, el mateix contingut com a marcatge HTML amb els seus atributs i etiquetes.",
+    "caption": "El que veu una persona i el que llegeix un agent són la mateixa fitxa. Només una de les dues meitats decideix si el teu producte entra a la comparació.",
+    "credit": "De «De dissenyar PDPs a dissenyar criteri», de Diana Yuste"
   }
 }

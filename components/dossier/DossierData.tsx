@@ -1,3 +1,4 @@
+import { DossierReveal } from './DossierReveal'
 import { DossierSection } from './DossierSection'
 
 /* DossierData — la banda de datos, en negativo.
@@ -51,26 +52,28 @@ export function DossierData({
           </p>
         </div>
 
-        <dl className="mt-14 grid grid-cols-12 gap-x-grid-gutter gap-y-10 border-t border-warm-light/25 pt-10">
-          {items.map((d) => (
-            <div key={d.figure} className="col-span-12 sm:col-span-6 lg:col-span-4">
-              {/* Número y unidad separados: a tamaño display, "760 000 M$"
+        <DossierReveal stagger={0.12}>
+          <dl className="mt-14 grid grid-cols-12 gap-x-grid-gutter gap-y-10 border-t border-warm-light/25 pt-10">
+            {items.map((d) => (
+              <div key={d.figure} className="col-span-12 sm:col-span-6 lg:col-span-4">
+                {/* Número y unidad separados: a tamaño display, "760 000 M$"
                   en una sola pieza parte en dos líneas y descuadra las tres
                   columnas. Con la unidad más pequeña y en su propia caja, las
                   tres cifras se alinean por la base pase lo que pase. */}
-              <dt className="flex items-baseline gap-2 font-serif font-light">
-                <span className="text-display tabular-nums whitespace-nowrap">{d.figure}</span>
-                {d.unit ? <span className="text-title text-warm-light/70">{d.unit}</span> : null}
-              </dt>
-              <dd className="mt-3 font-mono text-body-sm leading-[1.6] text-warm-light/80">
-                {d.label}
-              </dd>
-              <dd className="mt-3 font-mono text-caption uppercase tracking-[0.14em] text-warm-light/40">
-                {d.source}
-              </dd>
-            </div>
-          ))}
-        </dl>
+                <dt className="flex items-baseline gap-2 font-serif font-light">
+                  <span className="text-display tabular-nums whitespace-nowrap">{d.figure}</span>
+                  {d.unit ? <span className="text-title text-warm-light/70">{d.unit}</span> : null}
+                </dt>
+                <dd className="mt-3 font-mono text-body-sm leading-[1.6] text-warm-light/80">
+                  {d.label}
+                </dd>
+                <dd className="mt-3 font-mono text-caption uppercase tracking-[0.14em] text-warm-light/40">
+                  {d.source}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </DossierReveal>
 
         {/* El precedente del teletrabajo: dos barras comparadas. No es el tema
             del dossier, es la analogía que explica por qué una adopción puede
