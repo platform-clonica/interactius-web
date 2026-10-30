@@ -1,3 +1,5 @@
+import { DossierBar } from './DossierBar'
+import { DossierCounter } from './DossierCounter'
 import { DossierReveal } from './DossierReveal'
 import { DossierSection } from './DossierSection'
 
@@ -64,8 +66,15 @@ export function DossierData({
                   columnas. Con la unidad más pequeña y en su propia caja, las
                   tres cifras se alinean por la base pase lo que pase. */}
                 <dt className="flex items-baseline gap-2 font-serif font-light">
-                  <span className="text-display tabular-nums whitespace-nowrap">{d.figure}</span>
-                  {d.unit ? <span className="text-title text-warm-light/70">{d.unit}</span> : null}
+                  {/* `text-title` y no `text-display`: a tamaño display, "760 000"
+                      se comía la columna y descuadraba las tres cifras. */}
+                  <DossierCounter
+                    value={d.figure}
+                    className="whitespace-nowrap text-title tabular-nums"
+                  />
+                  {d.unit ? (
+                    <span className="text-title-sm text-warm-light/70">{d.unit}</span>
+                  ) : null}
                 </dt>
                 <dd className="mt-3 font-mono text-body-sm leading-[1.6] text-warm-light/80">
                   {d.label}
@@ -109,14 +118,12 @@ export function DossierData({
                   <span>{b.l}</span>
                   <span className="tabular-nums text-warm-light">{b.v}</span>
                 </div>
-                {/* La barra es decorativa: el dato ya está en el texto de
-                    arriba, que es lo que lee un lector de pantalla. */}
-                <div className="mt-2 h-3 w-full bg-warm-light/10" aria-hidden="true">
-                  <div
-                    className={`h-full ${b.fuerte ? 'bg-warm-light' : 'bg-warm-light/30'}`}
-                    style={{ width: `${b.pct}%` }}
-                  />
-                </div>
+                <DossierBar
+                  pct={b.pct}
+                  pista="bg-warm-light/10"
+                  relleno={b.fuerte ? 'bg-warm-light' : 'bg-warm-light/30'}
+                  retardo={b.fuerte ? 180 : 0}
+                />
               </div>
             ))}
           </div>

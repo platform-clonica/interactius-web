@@ -1,6 +1,6 @@
-import Image from 'next/image'
-
 import { CurtainLink } from '@/components/layout/CurtainLink'
+
+import { DossierParallaxImage } from './DossierParallaxImage'
 import type { IntlHref } from '@/lib/i18n/article-href'
 
 /* DossierArticle — una pieza del dossier que remite a un artículo de Miradas.
@@ -64,17 +64,13 @@ export function DossierArticle({
 
       {image ? (
         <CurtainLink href={href} className="group mt-5 block overflow-hidden">
-          <div
-            className={`relative w-full overflow-hidden ${esLead ? 'aspect-[16/7]' : 'aspect-[4/3]'}`}
-          >
-            <Image
-              src={image}
-              alt={imageAlt ?? ''}
-              fill
-              sizes={esLead ? '100vw' : '(max-width: 900px) 100vw, 50vw'}
-              className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
-            />
-          </div>
+          <DossierParallaxImage
+            src={image}
+            alt={imageAlt ?? ''}
+            sizes={esLead ? '100vw' : '(max-width: 900px) 100vw, 50vw'}
+            ratio={esLead ? 'aspect-[16/7]' : 'aspect-[4/3]'}
+            conHover
+          />
         </CurtainLink>
       ) : null}
 

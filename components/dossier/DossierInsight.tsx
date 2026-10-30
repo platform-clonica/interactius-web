@@ -1,7 +1,8 @@
-import Image from 'next/image'
 import type { ReactNode } from 'react'
 
 import { CurtainLink } from '@/components/layout/CurtainLink'
+
+import { DossierParallaxImage } from './DossierParallaxImage'
 import type { IntlHref } from '@/lib/i18n/article-href'
 
 /* DossierInsight — una clave, en formato breve.
@@ -83,15 +84,13 @@ export function DossierInsight({
 
           {image ? (
             <figure className="mt-7">
-              <div className={`relative w-full overflow-hidden border border-fg/15 ${imageRatio}`}>
-                <Image
-                  src={image}
-                  alt={imageAlt ?? ''}
-                  fill
-                  sizes="(max-width: 900px) 100vw, 40vw"
-                  className="object-cover object-center"
-                />
-              </div>
+              <DossierParallaxImage
+                src={image}
+                alt={imageAlt ?? ''}
+                sizes="(max-width: 900px) 100vw, 40vw"
+                ratio={imageRatio}
+                className="border border-fg/15"
+              />
               {imageCaption ? (
                 <figcaption className="mt-3 font-mono text-micro leading-[1.5] text-fg/50">
                   {imageCaption}

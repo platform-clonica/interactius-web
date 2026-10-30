@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-
-import { getReducedMotion } from '@/components/motion/useReducedMotion'
+import { DossierBar } from './DossierBar'
+import { DossierCounter } from './DossierCounter'
 
 /* DossierStat — una comparativa corta de dos cifras, sobre fondo claro.
 
@@ -28,37 +27,17 @@ export function DossierStat({
   title,
   rows,
   note,
+  caveat,
 }: {
   eyebrow: string
   title: string
   rows: { figure: string; unit: string; label: string; pct: number }[]
   note: string
+  /** Matiz: el mismo asunto da otra cifra según cómo se pregunte. */
+  caveat: string
 }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [crecer, setCrecer] = useState(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    if (getReducedMotion()) {
-      setCrecer(true)
-      return
-    }
-    const obs = new IntersectionObserver(
-      (entradas) => {
-        if (entradas.some((e) => e.isIntersecting)) {
-          setCrecer(true)
-          obs.disconnect()
-        }
-      },
-      { threshold: 0.4 },
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-
   return (
-    <div ref={ref} className="border-t border-fg/25 pt-6">
+    <div className="border-t border-fg/25 pt-6">
       <p className="font-mono text-caption uppercase tracking-[0.14em] text-fg/50">{eyebrow}</p>
       <h3 className="mt-3 font-serif text-title-sm font-light text-fg">{title}</h3>
 
@@ -66,23 +45,22 @@ export function DossierStat({
         {rows.map((r) => (
           <div key={r.figure}>
             <dt className="flex items-baseline gap-2 font-serif font-light text-fg">
-              <span className="text-title tabular-nums">{r.figure}</span>
+              <DossierCounter value={r.figure} className="text-title tabular-nums" />
               <span className="text-title-sm text-fg/60">{r.unit}</span>
             </dt>
-            {/* La barra es redundante con la cifra y la etiqueta, que es lo que
-                lee un lector de pantalla. De ahí el aria-hidden. */}
-            <div className="mt-2 h-2 w-full bg-fg/10" aria-hidden="true">
-              <div
-                className="h-full bg-fg transition-[width] duration-[1200ms] ease-out motion-reduce:transition-none"
-                style={{ width: crecer ? `${r.pct}%` : '0%' }}
-              />
-            </div>
+            <DossierBar pct={r.pct} pista="bg-fg/10" relleno="bg-fg" alto="h-2" />
             <dd className="mt-3 font-mono text-micro leading-[1.6] text-fg/70">{r.label}</dd>
           </div>
         ))}
       </dl>
 
       <p className="mt-7 font-mono text-micro leading-[1.6] text-fg">{note}</p>
+
+      {/* El matiz va separado por un filete y en gris: no desmiente el dato,
+          lo pone en contexto frente al 27 % de la banda de arriba. */}
+      <p className="mt-5 border-t border-fg/15 pt-5 font-mono text-micro leading-[1.6] text-fg/60">
+        {caveat}
+      </p>
     </div>
   )
 }

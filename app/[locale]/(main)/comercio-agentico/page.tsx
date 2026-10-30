@@ -234,6 +234,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
                       title={t('stat.title')}
                       rows={estadistica}
                       note={t('stat.note')}
+                      caveat={t('stat.caveat')}
                     />
                   </div>
                 ) : null}
