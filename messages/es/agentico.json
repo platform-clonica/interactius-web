@@ -83,7 +83,8 @@
         "<strong>Checkout invisible.</strong> Cuando la transacción ocurre entre interfaces de datos, la pantalla deja de ser necesaria."
       ],
       "close": "Diseñar la experiencia del agente con criterio de accesibilidad es devolver la capacidad de decidir a todas las personas. Human First. Next AI.",
-      "cta": "¿Os ayudamos a diseñar un mundo más accesible?"
+      "cta": "¿Os ayudamos a diseñar un mundo más accesible?",
+      "pointsLabel": "Qué lo hace posible"
     },
     "cero-clics": {
       "number": "02",
@@ -128,7 +129,8 @@
       "title": "De las señales a los escenarios",
       "body": "Ya delegamos el trabajo operativo, la agenda y el análisis de datos. Quien compra está interiorizando que delegar tareas cognitivas reduce la fricción, y la decisión de compra es el siguiente paso lógico. La confianza se traslada de la tienda al algoritmo que filtra.",
       "close": "Con prospectiva estratégica convertimos esas señales en escenarios plausibles. Eso permite reducir la incertidumbre, preparar el cambio cultural y ordenar las decisiones antes de escalar.",
-      "cta": "¿Está tu organización preparada para el nuevo formato de compra?"
+      "cta": "¿Está tu organización preparada para el nuevo formato de compra?",
+      "pointsLabel": "Qué hacemos con esas señales"
     }
   },
   "recommends": {
