@@ -131,7 +131,8 @@ export default async function ComercioAgentico({ params }: PageProps) {
         title={t('masthead.title')}
         edition={t('masthead.edition')}
         contents={t('masthead.contents')}
-        standfirst={t.rich('masthead.standfirst', richComponents.bold)}
+        headline={t('masthead.headline')}
+        standfirst={t('masthead.standfirst')}
         summary={t('masthead.summary')}
       />
 

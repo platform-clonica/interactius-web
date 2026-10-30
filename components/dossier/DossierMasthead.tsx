@@ -1,22 +1,26 @@
-import type { ReactNode } from 'react'
-
 import { DossierReveal } from './DossierReveal'
 import { DossierSection } from './DossierSection'
 
 /* DossierMasthead — la cabecera, construida como la mancheta de un diario.
 
    Orden de lectura: rótulo de sección, nombre del dossier en serif grande,
-   línea de edición entre dos filetes, y entradilla a dos columnas.
+   línea de edición entre dos filetes, la frase tesis como titular, y el
+   cuerpo de la entradilla repartido en dos columnas parejas.
 
-   La entradilla va a dos columnas en pantallas anchas porque es el gesto que
-   más dice "periódico" sin pedir ningún recurso gráfico nuevo. Usa columnas
-   CSS en vez de rejilla para que el texto fluya solo: si Martina alarga o
-   acorta el texto, las columnas se reequilibran sin tocar nada. */
+   Por qué la frase va fuera de las columnas: es la tesis del dossier y, metida
+   dentro del cuerpo en negrita, desequilibraba el reparto (una columna se
+   comía a la otra). Sacándola arriba hace de titular, que es lo que es, y deja
+   las dos columnas de debajo con una longitud parecida.
+
+   Las columnas se montan con rejilla y no con `columns-2` de CSS: aquí los dos
+   textos son piezas distintas (el cuerpo y el sumario de contenidos), no un
+   único texto que deba fluir de una a otra. */
 export function DossierMasthead({
   eyebrow,
   title,
   edition,
   contents,
+  headline,
   standfirst,
   summary,
 }: {
@@ -24,7 +28,9 @@ export function DossierMasthead({
   title: string
   edition: string
   contents: string
-  standfirst: ReactNode
+  /** La frase tesis, destacada como titular bajo la mancheta. */
+  headline: string
+  standfirst: string
   summary: string
 }) {
   return (
@@ -44,11 +50,15 @@ export function DossierMasthead({
             </span>
           </div>
 
-          <div className="mt-10 lg:columns-2 lg:gap-grid-gutter">
-            <div className="font-mono text-body-sm leading-[1.6] text-fg [&>strong]:font-semibold break-inside-avoid">
+          <p className="mt-10 max-w-[22ch] font-serif text-title font-light leading-tight text-fg sm:max-w-[26ch] lg:max-w-[34ch]">
+            {headline}
+          </p>
+
+          <div className="mt-10 grid grid-cols-12 gap-x-grid-gutter gap-y-6">
+            <p className="col-span-12 font-mono text-body-sm leading-[1.6] text-fg lg:col-span-6">
               {standfirst}
-            </div>
-            <p className="mt-6 font-mono text-body-sm leading-[1.6] text-fg/70 lg:mt-0">
+            </p>
+            <p className="col-span-12 font-mono text-body-sm leading-[1.6] text-fg/70 lg:col-span-5 lg:col-start-8">
               {summary}
             </p>
           </div>
