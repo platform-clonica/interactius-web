@@ -1,0 +1,139 @@
+{
+  "masthead": {
+    "eyebrow": "Dossier",
+    "title": "Comercio agéntico",
+    "edition": "Interactius · Octubre de 2026",
+    "contents": "Tres artículos · Cuatro análisis · Una recomendación",
+    "standfirst": "<strong>Para anticiparnos a escenarios futuros no necesitamos presagios, necesitamos comprender nuestro entorno presente.</strong> En un contexto donde la inteligencia artificial empieza a tomar decisiones, diseñar experiencias ya no trata solo de pulir pantallas. Trata de volver a ganarse la confianza de quien compra y de quien vende, de definir límites que antes nadie había trazado, y de preguntarnos hasta dónde puede llegar la AX, la experiencia del agente.",
+    "summary": "Aquí reunimos lo que hemos publicado sobre el tema en nuestros canales: qué implica el diseño agéntico para el comercio digital, por qué empuja a la interfaz tradicional hacia su final, y qué marco necesita una organización para decidir antes de que el cambio la alcance."
+  },
+  "sections": {
+    "opening": "Apertura",
+    "data": "Los datos",
+    "analysis": "Análisis",
+    "insights": "Claves",
+    "recommends": "Recomendamos",
+    "close": "Y ahora qué"
+  },
+  "read": "Leer el artículo completo",
+  "readShort": "Leer completo",
+  "by": "Por",
+  "articles": {
+    "ax": {
+      "kicker": "Comercio agéntico · Diseño de producto digital",
+      "standfirst": "Durante dos décadas hemos perseguido el embudo perfecto: estudiar el comportamiento de quien compra y rediseñar la interfaz una y otra vez para que compre mejor. La AX rompe esos cimientos.",
+      "body": "El comercio digital desplaza su foco. El reto ya no es diseñar la interfaz, sino orquestar la decisión de compra: decidir qué delega la persona en el agente, con qué límites y bajo qué reglas. Cuando el agente busca, compara y paga, el escaparate deja de ser el lugar donde se gana la venta."
+    },
+    "prospectiva": {
+      "kicker": "Prospectiva estratégica · Pensamiento estratégico",
+      "standfirst": "Durante años, las organizaciones han reaccionado al ruido y a las tendencias. Hoy la tensión está en prepararse para posibilidades que todavía no han ocurrido.",
+      "body": "Anticipar escenarios no es adivinar: es construir un marco que permita actuar hoy con claridad. Cuando se delega la ejecución en sistemas de IA, el reto deja de ser la eficiencia y pasa a ser el control. Prepararse significa decidir con criterio qué se automatiza y dónde la responsabilidad humana es innegociable."
+    },
+    "criterio": {
+      "kicker": "Design system · Accesibilidad · UX",
+      "standfirst": "Si una IA genera una ficha de producto decente en segundos y un agente compra sin llegar a verla, la interfaz por sí sola ya no nos diferencia.",
+      "body": "Quienes mejor se adapten no serán quienes dominen más herramientas, sino quienes sepan qué preguntar antes de abrirlas. Una mirada al cambio que atraviesa el oficio: qué le ha pasado a internet en los últimos años, qué sigue sosteniéndose de las bases de UX, qué usuarios nuevos están aterrizando y qué lugar ocupa ahora el design system."
+    }
+  },
+  "data": {
+    "eyebrow": "Señales, no predicciones",
+    "title": "El comercio agéntico ya ha cruzado el umbral de adopción",
+    "intro": "Estos datos no predicen el futuro de la compra. Señalan comportamientos que ya están ocurriendo.",
+    "items": [
+      {
+        "figure": "51",
+        "unit": "%",
+        "label": "de las personas ya usa asistentes de IA para descubrir, evaluar y seleccionar",
+        "source": "NielsenIQ, 2026"
+      },
+      {
+        "figure": "27",
+        "unit": "%",
+        "label": "de los usuarios jóvenes prefiere que un asistente evalúe las opciones y complete el pago bajo reglas que ellos fijan",
+        "source": "Mastercard, 2026"
+      },
+      {
+        "figure": "760 000",
+        "unit": "M$",
+        "label": "previstos este año en inversión en IA por las mayores tecnológicas de EE. UU., frente a los 413 000 M$ del año pasado",
+        "source": "Amazon, Alphabet, Microsoft y Meta"
+      }
+    ],
+    "precedent": {
+      "title": "Un precedente de lo rápido que cambia un hábito",
+      "body": "En 2020 el teletrabajo en España pasó del 5 % al 37 % en cuestión de meses. No porque la tecnología fuera nueva, sino porque desapareció la fricción que lo frenaba.",
+      "fromLabel": "Antes de 2020",
+      "fromValue": "5 %",
+      "toLabel": "Durante 2020",
+      "toValue": "37 %"
+    },
+    "note": "La adopción no depende solo de la capacidad técnica. Depende de la impaciencia de quien compra frente a la fricción, de marcos regulatorios que forzarán a separar búsqueda y compra, y sobre todo de la seguridad: nadie delega una operación en un entorno que no le genera confianza explícita."
+  },
+  "insights": {
+    "accesibilidad": {
+      "number": "01",
+      "kicker": "Accesibilidad",
+      "title": "La pantalla invisible puede ser la arquitectura más accesible jamás diseñada",
+      "body": "Durante dos décadas, la compra digital ha dependido de la retina. Para una persona con discapacidad visual, eso ha significado lectores de pantalla, código mal etiquetado y capas de fricción. El comercio agéntico puede eliminar esas barreras de raíz.",
+      "points": [
+        "<strong>Traducción semántica.</strong> La IA convierte elementos gráficos caóticos en datos estructurados que un lector de pantalla interpreta sin ambigüedad.",
+        "<strong>Voz y lenguaje natural.</strong> El sistema entiende el contexto, las restricciones y las preferencias sin necesidad de navegar visualmente.",
+        "<strong>Checkout invisible.</strong> Cuando la transacción ocurre entre interfaces de datos, la pantalla deja de ser necesaria."
+      ],
+      "close": "Diseñar la experiencia del agente con criterio de accesibilidad es devolver la capacidad de decidir a todas las personas. Human First. Next AI.",
+      "cta": "¿Os ayudamos a diseñar un mundo más accesible?"
+    },
+    "cero-clics": {
+      "number": "02",
+      "kicker": "El embudo",
+      "title": "Las compras en cero clics no eliminan la decisión: la trasladan",
+      "body": "No es especulación sobre un futuro lejano, es la consecuencia técnica de delegar búsqueda, comparación y pago. Durante veinte años medimos el éxito en clics, tiempo en página y embudos visuales. En este modelo, la persona ya no recorre la interfaz para comprar.",
+      "pointsLabel": "Dónde se decide ahora",
+      "points": [
+        "En la configuración de reglas, presupuestos y preferencias.",
+        "En la definición de hasta dónde puede actuar el agente por su cuenta.",
+        "En el nivel de confianza que se le concede."
+      ],
+      "close": "La mayoría de los comercios digitales siguen construidos sobre la inercia del escaparate visual. Si los atributos de tu catálogo y tus condiciones de oferta no son legibles para un agente, tu tienda queda fuera del flujo de compra delegada.",
+      "cta": "¿Está tu negocio listo para ese traslado?"
+    },
+    "invisibilidad": {
+      "number": "03",
+      "kicker": "Identidad verbal",
+      "title": "La invisibilidad de los productos bajo la mirada agéntica",
+      "body": "Cambia quién evalúa y selecciona. Cuando se delega la búsqueda en un asistente autónomo, la recomendación ya no depende del escaparate, sino de la precisión de la información.",
+      "pointsLabel": "Por qué un producto desaparece",
+      "points": [
+        "Los modelos de lenguaje no interpretan metáforas ni consignas corporativas: las ignoran.",
+        "La ambigüedad es un punto ciego. Sin atributos concretos ni límites claros, el sistema descarta la oferta.",
+        "El algoritmo priorizará siempre al competidor con la información más nítida."
+      ],
+      "close": "Ser recomendado exige rigor: explicar qué hace el producto, cómo se fabrica y en qué condiciones funciona. Tanto las personas como los algoritmos necesitan entender la propuesta.",
+      "cta": "Si un asistente escaneara hoy vuestro catálogo, ¿encontraría datos nítidos?"
+    },
+    "adopcion": {
+      "number": "04",
+      "kicker": "Prospectiva",
+      "title": "De las señales a los escenarios",
+      "body": "Ya delegamos el trabajo operativo, la agenda y el análisis de datos. Quien compra está interiorizando que delegar tareas cognitivas reduce la fricción, y la decisión de compra es el siguiente paso lógico. La confianza se traslada de la tienda al algoritmo que filtra.",
+      "close": "Con prospectiva estratégica convertimos esas señales en escenarios plausibles. Eso permite reducir la incertidumbre, preparar el cambio cultural y ordenar las decisiones antes de escalar.",
+      "cta": "¿Está tu organización preparada para el nuevo formato de compra?"
+    }
+  },
+  "recommends": {
+    "by": "María recomienda",
+    "format": "Podcast",
+    "title": "Historia Ficción",
+    "body": "Este episodio imagina una sociedad del siglo XXII organizada desde la abundancia. Recorre tres revoluciones, la neolítica, la industrial y la de la información, para preguntarse qué pasa cuando la automatización, la energía barata y el software dejan de encajar en las reglas económicas que conocemos. Lo valioso es el ejercicio: usar la historia para diseñar futuros y cuestionar lo que damos por inevitable.",
+    "cta": "Escuchar el episodio"
+  },
+  "close": {
+    "title": "La decisión de compra ya se está moviendo.",
+    "body": "No hace falta acertar con el escenario exacto para prepararse. Hace falta saber qué se automatiza, dónde la responsabilidad sigue siendo humana y si vuestro catálogo se deja entender por quien ya no mira pantallas.",
+    "cta": "Hablemos"
+  },
+  "meta": {
+    "title": "Comercio agéntico",
+    "description": "Dossier sobre comercio agéntico: qué cambia cuando un agente de IA busca, compara y compra, y qué tiene que decidir una organización antes de que el cambio la alcance."
+  }
+}
