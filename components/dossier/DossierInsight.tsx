@@ -105,24 +105,26 @@ export function DossierInsight({
         </div>
 
         <div className="col-span-12 lg:col-span-4 lg:col-start-9">
+          {/* El rótulo encabeza la columna haya puntos o no. La clave 04 no
+              los tiene, y sin rótulo esa columna arrancaba en seco mientras
+              las otras tres entraban por un titulillo. */}
+          {pointsLabel ? (
+            <p className="font-mono text-caption uppercase tracking-[0.14em] text-fg/50">
+              {pointsLabel}
+            </p>
+          ) : null}
+
           {points?.length ? (
-            <>
-              {pointsLabel ? (
-                <p className="font-mono text-caption uppercase tracking-[0.14em] text-fg/50">
-                  {pointsLabel}
-                </p>
-              ) : null}
-              <ul className={`flex flex-col gap-3 ${pointsLabel ? 'mt-3' : ''}`}>
-                {points.map((p, i) => (
-                  <li
-                    key={i}
-                    className="border-l border-fg/25 pl-4 font-mono text-micro leading-[1.6] text-fg"
-                  >
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            </>
+            <ul className={`flex flex-col gap-3 ${pointsLabel ? 'mt-3' : ''}`}>
+              {points.map((p, i) => (
+                <li
+                  key={i}
+                  className="border-l border-fg/25 pl-4 font-mono text-micro leading-[1.6] text-fg"
+                >
+                  {p}
+                </li>
+              ))}
+            </ul>
           ) : null}
 
           {/* El dato de apoyo va justo bajo los puntos, separado por un
@@ -147,7 +149,7 @@ export function DossierInsight({
           ) : null}
 
           <p
-            className={`font-mono text-micro leading-[1.6] text-fg/70 ${points?.length || dato ? 'mt-5' : ''}`}
+            className={`font-mono text-micro leading-[1.6] text-fg/70 ${points?.length || dato || pointsLabel ? 'mt-5' : ''}`}
           >
             {close}
           </p>

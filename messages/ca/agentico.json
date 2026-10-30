@@ -83,7 +83,8 @@
         "<strong>Checkout invisible.</strong> Quan la transacció passa entre interfícies de dades, la pantalla deixa de ser necessària."
       ],
       "close": "Dissenyar l'experiència de l'agent amb criteri d'accessibilitat és tornar la capacitat de decidir a totes les persones. Human First. Next AI.",
-      "cta": "Us ajudem a dissenyar un món més accessible?"
+      "cta": "Us ajudem a dissenyar un món més accessible?",
+      "pointsLabel": "Què ho fa possible"
     },
     "cero-clics": {
       "number": "02",
@@ -128,7 +129,8 @@
       "title": "Dels senyals als escenaris",
       "body": "Ja deleguem la feina operativa, l'agenda i l'anàlisi de dades. Qui compra està interioritzant que delegar tasques cognitives redueix la fricció, i la decisió de compra és el pas següent lògic. La confiança es trasllada de la botiga a l'algoritme que filtra.",
       "close": "Amb prospectiva estratègica convertim aquests senyals en escenaris plausibles. Això permet reduir la incertesa, preparar el canvi cultural i ordenar les decisions abans d'escalar.",
-      "cta": "Està la teva organització preparada per al nou format de compra?"
+      "cta": "Està la teva organització preparada per al nou format de compra?",
+      "pointsLabel": "Què fem amb aquests senyals"
     }
   },
   "recommends": {

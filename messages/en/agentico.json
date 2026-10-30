@@ -83,7 +83,8 @@
         "<strong>Invisible checkout.</strong> When the transaction happens between data interfaces, the screen stops being necessary."
       ],
       "close": "Designing the agent's experience with accessibility in mind means giving everyone back the ability to decide. Human First. Next AI.",
-      "cta": "Shall we help you design a more accessible world?"
+      "cta": "Shall we help you design a more accessible world?",
+      "pointsLabel": "What makes it possible"
     },
     "cero-clics": {
       "number": "02",
@@ -128,7 +129,8 @@
       "title": "From signals to scenarios",
       "body": "We already delegate operational work, our calendars and data analysis. Buyers are internalising that delegating cognitive tasks reduces friction, and the buying decision is the logical next step. Trust moves from the shop to the algorithm doing the filtering.",
       "close": "With strategic foresight we turn those signals into plausible scenarios. That lets an organisation reduce uncertainty, prepare the cultural shift and order its decisions before scaling.",
-      "cta": "Is your organisation ready for this new way of buying?"
+      "cta": "Is your organisation ready for this new way of buying?",
+      "pointsLabel": "What we do with those signals"
     }
   },
   "recommends": {
