@@ -3,7 +3,7 @@
     "eyebrow": "Dossier",
     "title": "Comercio agéntico",
     "edition": "Interactius · Octubre de 2026",
-    "contents": "Tres artículos · Cuatro análisis · Una recomendación",
+    "contents": "Tres artículos · Cuatro análisis · Dos recomendaciones",
     "headline": "Para anticiparnos a escenarios futuros no necesitamos presagios, necesitamos comprender nuestro entorno presente.",
     "standfirst": "En un contexto donde la inteligencia artificial empieza a tomar decisiones, diseñar experiencias ya no trata solo de pulir pantallas. Trata de volver a ganarse la confianza de quien compra y de quien vende, de definir límites que antes nadie había trazado, y de preguntarnos hasta dónde puede llegar la AX, la experiencia del agente.",
     "summary": "Aquí reunimos lo que hemos publicado sobre el tema en nuestros canales: qué implica el diseño agéntico para el comercio digital, por qué empuja a la interfaz tradicional hacia su final, y qué marco necesita una organización para decidir antes de que el cambio la alcance."
@@ -132,11 +132,24 @@
     }
   },
   "recommends": {
-    "by": "María recomienda",
-    "format": "Podcast",
-    "title": "Historia Ficción",
-    "body": "Este episodio imagina una sociedad del siglo XXII organizada desde la abundancia. Recorre tres revoluciones, la neolítica, la industrial y la de la información, para preguntarse qué pasa cuando la automatización, la energía barata y el software dejan de encajar en las reglas económicas que conocemos. Lo valioso es el ejercicio: usar la historia para diseñar futuros y cuestionar lo que damos por inevitable.",
-    "cta": "Escuchar el episodio"
+    "maria": {
+      "by": "María recomienda",
+      "format": "Podcast",
+      "source": "Historia Ficción · Ep. 1 de 5",
+      "title": "Socialismo del futuro: poscapitalismo de la abundancia",
+      "body": "Recorre tres revoluciones, de la neolítica a la de la información, para preguntar qué pasa cuando la automatización deja de encajar en las reglas económicas que conocemos. El valor está en el ejercicio: usar la historia para diseñar futuros.",
+      "cta": "Escuchar el episodio",
+      "href": "https://www.ivoox.com/hf-96-8211-socialismo-del-futuro-post-capitalismo-de-audios-mp3_rf_95600291_1.html"
+    },
+    "isaac": {
+      "by": "Isaac Jordana recomienda",
+      "format": "Vídeo",
+      "source": "Lo Que No Sabemos",
+      "title": "La IA y la crisis de identidad que estamos viviendo",
+      "body": "Divulgación filosófica y tecnológica, pausada y humanista. Defiende que el choque con la IA no es técnico ni laboral, sino un golpe al ego: si una máquina resuelve en un instante lo que a nosotros nos costó años dominar, ¿qué sentido tiene nuestro esfuerzo?",
+      "cta": "Ver el vídeo",
+      "href": "https://www.youtube.com/watch?v=D95Cw8xJodI"
+    }
   },
   "close": {
     "title": "La decisión de compra ya se está moviendo.",

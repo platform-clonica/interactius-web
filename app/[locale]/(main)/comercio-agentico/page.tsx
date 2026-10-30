@@ -74,6 +74,8 @@ function firma(corto: string): string {
   return coincidencias.length === 1 ? coincidencias[0].name : corto
 }
 
+const RECOMENDACIONES = ['maria', 'isaac'] as const
+
 const CLAVES = [
   { id: 'accesibilidad', servicio: 'diseno-experiencias' },
   { id: 'cero-clics', servicio: 'pensamiento-estrategico' },
@@ -308,18 +310,28 @@ export default async function ComercioAgentico({ params }: PageProps) {
 
       <DossierSection className="mt-section-md lg:mt-section">
         <DossierRule label={t('sections.recommends')} />
-        <div className="mt-8 grid grid-cols-12 gap-x-grid-gutter">
-          <DossierReveal className="col-span-12 lg:col-span-7 lg:col-start-6">
-            <DossierAside
-              by={t('recommends.by')}
-              format={t('recommends.format')}
-              title={t('recommends.title')}
-              body={t('recommends.body')}
-              cta={t('recommends.cta')}
-              href="https://www.ivoox.com/hf-96-8211-socialismo-del-futuro-post-capitalismo-de-audios-mp3_rf_95600291_1.html"
-            />
-          </DossierReveal>
-        </div>
+        {/* Las dos recomendaciones van en paralelo y a la misma altura, no
+            una debajo de otra: son piezas del mismo rango. */}
+        <DossierReveal
+          className="mt-8 grid grid-cols-12 items-stretch gap-x-grid-gutter gap-y-8"
+          stagger={0.14}
+        >
+          {RECOMENDACIONES.map((quien) => (
+            <div key={quien} className="col-span-12 lg:col-span-6">
+              <DossierAside
+                by={t(`recommends.${quien}.by`)}
+                format={t(`recommends.${quien}.format`)}
+                source={
+                  t.has(`recommends.${quien}.source`) ? t(`recommends.${quien}.source`) : undefined
+                }
+                title={t(`recommends.${quien}.title`)}
+                body={t(`recommends.${quien}.body`)}
+                cta={t(`recommends.${quien}.cta`)}
+                href={t(`recommends.${quien}.href`)}
+              />
+            </div>
+          ))}
+        </DossierReveal>
       </DossierSection>
 
       <DossierClose
