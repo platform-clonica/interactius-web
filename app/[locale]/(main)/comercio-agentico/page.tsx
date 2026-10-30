@@ -11,6 +11,7 @@ import { DossierRule } from '@/components/dossier/DossierRule'
 import { DossierSection } from '@/components/dossier/DossierSection'
 import { DossierReveal } from '@/components/dossier/DossierReveal'
 import { DossierCoatReveal } from '@/components/dossier/DossierCoatReveal'
+import { DossierStat } from '@/components/dossier/DossierStat'
 import { acento } from '@/components/dossier/accent'
 import { getMiradaBySlug } from '@/lib/content/miradas'
 import type { MiradasSubcategory } from '@/lib/content/miradas'
@@ -122,6 +123,12 @@ export default async function ComercioAgentico({ params }: PageProps) {
     label: string
     source: string
   }[]
+  const estadistica = t.raw('stat.rows') as {
+    figure: string
+    unit: string
+    label: string
+    pct: number
+  }[]
   const contacto = { pathname: '/contacto' as const }
 
   return (
@@ -216,6 +223,20 @@ export default async function ComercioAgentico({ params }: PageProps) {
                   acentoFondo={acento(c.servicio).fondo}
                   acentoChipTexto={acento(c.servicio).chipTexto}
                 />
+
+                {/* El dato de Gartner cae bajo la pieza de prospectiva, que es de
+                    donde sale, y además es la columna sin foto: el hueco que le
+                    quedaba debajo era justo este. */}
+                {c.id === 'prospectiva' ? (
+                  <div className="mt-10">
+                    <DossierStat
+                      eyebrow={t('stat.eyebrow')}
+                      title={t('stat.title')}
+                      rows={estadistica}
+                      note={t('stat.note')}
+                    />
+                  </div>
+                ) : null}
               </div>
             ))}
           </DossierReveal>

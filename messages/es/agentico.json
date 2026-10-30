@@ -144,5 +144,24 @@
     "alt": "Una misma ficha de producto partida por la mitad: a la izquierda, lo que ve una persona, con la foto de un abrigo de lana, su precio y el botón de compra; a la derecha, el mismo contenido como marcado HTML con sus atributos y etiquetas.",
     "caption": "Lo que ve una persona y lo que lee un agente son la misma ficha. Solo una de las dos mitades decide si tu producto entra en la comparación.",
     "credit": "De «De diseñar PDPs a diseñar criterio», de Diana Yuste"
+  },
+  "stat": {
+    "eyebrow": "Encuesta Gartner · mayo de 2026",
+    "title": "Ayudar a elegir, sí. Elegir por ti, no.",
+    "rows": [
+      {
+        "figure": "31",
+        "unit": "%",
+        "pct": 31,
+        "label": "aceptaría que una IA le acotara las opciones en categorías cotidianas"
+      },
+      {
+        "figure": "11",
+        "unit": "%",
+        "pct": 11,
+        "label": "le dejaría tomar la decisión de compra"
+      }
+    ],
+    "note": "Las personas delegan la búsqueda y la investigación de un producto, no el acto de comprar."
   }
 }

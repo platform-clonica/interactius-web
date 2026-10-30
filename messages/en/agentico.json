@@ -144,5 +144,24 @@
     "alt": "A single product page split down the middle: on the left, what a person sees, with a photo of a wool coat, its price and the buy button; on the right, the same content as HTML markup with its attributes and labels.",
     "caption": "What a person sees and what an agent reads are the same product page. Only one of those halves decides whether your product makes the shortlist.",
     "credit": "From “From designing PDPs to designing judgement”, by Diana Yuste"
+  },
+  "stat": {
+    "eyebrow": "Gartner survey · May 2026",
+    "title": "Help me choose, yes. Choose for me, no.",
+    "rows": [
+      {
+        "figure": "31",
+        "unit": "%",
+        "pct": 31,
+        "label": "would accept an AI narrowing their options in everyday categories"
+      },
+      {
+        "figure": "11",
+        "unit": "%",
+        "pct": 11,
+        "label": "would let it make the purchase decision"
+      }
+    ],
+    "note": "People delegate the search and the research, not the act of buying."
   }
 }

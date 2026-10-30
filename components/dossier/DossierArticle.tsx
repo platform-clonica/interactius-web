@@ -55,7 +55,11 @@ export function DossierArticle({
   const cuerpo = esLead ? 'text-body-sm' : 'text-micro'
 
   return (
-    <article className={esLead ? '' : 'flex h-full flex-col'}>
+    /* Sin `h-full`: con él, el artículo tomaba toda la altura de la fila de
+       la rejilla y cualquier hermano que se le pusiera debajo (como la
+       infografía de Gartner) se salía de la caja sin que la fila creciera.
+       Medido: la sección daba 884 px de alto con 1380 px de contenido. */
+    <article className={esLead ? '' : 'flex flex-col'}>
       <div className={`h-[3px] w-full ${acentoFondo}`} aria-hidden="true" />
 
       {image ? (

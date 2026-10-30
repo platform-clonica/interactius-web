@@ -144,5 +144,24 @@
     "alt": "Una mateixa fitxa de producte partida per la meitat: a l'esquerra, el que veu una persona, amb la foto d'un abric de llana, el preu i el botó de compra; a la dreta, el mateix contingut com a marcatge HTML amb els seus atributs i etiquetes.",
     "caption": "El que veu una persona i el que llegeix un agent són la mateixa fitxa. Només una de les dues meitats decideix si el teu producte entra a la comparació.",
     "credit": "De «De dissenyar PDPs a dissenyar criteri», de Diana Yuste"
+  },
+  "stat": {
+    "eyebrow": "Enquesta Gartner · maig de 2026",
+    "title": "Ajudar a triar, sí. Triar per tu, no.",
+    "rows": [
+      {
+        "figure": "31",
+        "unit": "%",
+        "pct": 31,
+        "label": "acceptaria que una IA li acotés les opcions en categories quotidianes"
+      },
+      {
+        "figure": "11",
+        "unit": "%",
+        "pct": 11,
+        "label": "li deixaria prendre la decisió de compra"
+      }
+    ],
+    "note": "Les persones deleguen la cerca i la investigació d'un producte, no l'acte de comprar."
   }
 }
