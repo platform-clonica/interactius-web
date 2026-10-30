@@ -6,13 +6,7 @@ import type { ReactNode } from 'react'
    línea de 1px y una etiqueta en mono pequeño, como los rótulos de sección de
    un diario. Todo el dossier lo usa, así que el ritmo vertical queda igual en
    todas las secciones sin repetir medidas a mano. */
-export function DossierRule({
-  label,
-  children,
-}: {
-  label: string
-  children?: ReactNode
-}) {
+export function DossierRule({ label, children }: { label: string; children?: ReactNode }) {
   return (
     <div className="flex items-baseline gap-4 border-t border-fg/25 pt-3">
       <span className="font-mono text-caption uppercase tracking-[0.14em] text-fg/60 whitespace-nowrap">

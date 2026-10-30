@@ -8,6 +8,7 @@ import { DossierInsight } from '@/components/dossier/DossierInsight'
 import { DossierAside } from '@/components/dossier/DossierAside'
 import { DossierClose } from '@/components/dossier/DossierClose'
 import { DossierRule } from '@/components/dossier/DossierRule'
+import { DossierSection } from '@/components/dossier/DossierSection'
 import { getMiradaBySlug } from '@/lib/content/miradas'
 import type { MiradasSubcategory } from '@/lib/content/miradas'
 import { articleHref } from '@/lib/i18n/article-href'
@@ -37,9 +38,21 @@ const RUTA = '/comercio-agentico'
 /* Los tres artículos del dossier, en orden de portada. `sub` y `slug` son las
    coordenadas canónicas del MDX, no de la URL: el helper localiza la URL. */
 const PIEZAS = [
-  { id: 'ax', sub: 'futuros', slug: 'ecommerce-agentico-ax-fin-de-la-interfaz-tradicional' },
-  { id: 'prospectiva', sub: 'futuros', slug: 'prospectiva-estrategica-prepararse-para-la-era-agentica' },
-  { id: 'criterio', sub: 'diseno-ux-ui', slug: 'de-disenar-pdps-a-disenar-criterio-era-agentica' },
+  {
+    id: 'ax',
+    sub: 'futuros',
+    slug: 'ecommerce-agentico-ax-fin-de-la-interfaz-tradicional',
+  },
+  {
+    id: 'prospectiva',
+    sub: 'futuros',
+    slug: 'prospectiva-estrategica-prepararse-para-la-era-agentica',
+  },
+  {
+    id: 'criterio',
+    sub: 'diseno-ux-ui',
+    slug: 'de-disenar-pdps-a-disenar-criterio-era-agentica',
+  },
 ] as const
 
 const CLAVES = ['accesibilidad', 'cero-clics', 'invisibilidad', 'adopcion'] as const
@@ -83,7 +96,11 @@ export default async function ComercioAgentico({ params }: PageProps) {
   const apertura = piezas.find((p) => p.id === 'ax')
   const columnas = piezas.filter((p) => p.id !== 'ax')
 
-  const datos = t.raw('data.items') as { figure: string; label: string; source: string }[]
+  const datos = t.raw('data.items') as {
+    figure: string
+    label: string
+    source: string
+  }[]
   const contacto = { pathname: '/contacto' as const }
 
   return (
@@ -98,7 +115,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
       />
 
       {apertura ? (
-        <div className="section-inner mt-14 lg:mt-20">
+        <DossierSection className="mt-14 lg:mt-20">
           <DossierRule label={t('sections.opening')} />
           <div className="mt-8">
             <DossierArticle
@@ -115,7 +132,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
               imageAlt=""
             />
           </div>
-        </div>
+        </DossierSection>
       ) : null}
 
       <div className="mt-section-md lg:mt-section">
@@ -140,7 +157,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
           ella: mismo componente, tratamiento distinto, que es lo que evita
           que la página se lea como una rejilla de fichas iguales. */}
       {columnas.length ? (
-        <div className="section-inner mt-section-md lg:mt-section">
+        <DossierSection className="mt-section-md lg:mt-section">
           <DossierRule label={t('sections.analysis')} />
           <div className="mt-8 grid grid-cols-12 gap-x-grid-gutter gap-y-14">
             {columnas.map((c, i) => (
@@ -161,10 +178,10 @@ export default async function ComercioAgentico({ params }: PageProps) {
               </div>
             ))}
           </div>
-        </div>
+        </DossierSection>
       ) : null}
 
-      <div className="section-inner mt-section-md lg:mt-section">
+      <DossierSection className="mt-section-md lg:mt-section">
         <DossierRule label={t('sections.insights')} />
         <div className="mt-8 flex flex-col gap-12">
           {CLAVES.map((k) => {
@@ -191,9 +208,9 @@ export default async function ComercioAgentico({ params }: PageProps) {
             )
           })}
         </div>
-      </div>
+      </DossierSection>
 
-      <div className="section-inner mt-section-md lg:mt-section">
+      <DossierSection className="mt-section-md lg:mt-section">
         <DossierRule label={t('sections.recommends')} />
         <div className="mt-8 grid grid-cols-12 gap-x-grid-gutter">
           <div className="col-span-12 lg:col-span-7 lg:col-start-6">
@@ -207,7 +224,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
             />
           </div>
         </div>
-      </div>
+      </DossierSection>
 
       <DossierClose
         title={t('close.title')}

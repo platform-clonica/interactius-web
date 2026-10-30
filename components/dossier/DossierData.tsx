@@ -1,3 +1,5 @@
+import { DossierSection } from './DossierSection'
+
 /* DossierData — la banda de datos, en negativo.
 
    Es la única sección del dossier sobre fondo oscuro. Funciona como el panel
@@ -37,7 +39,7 @@ export function DossierData({
 }) {
   return (
     <section className="bg-dark text-warm-light">
-      <div className="section-inner py-section-md lg:py-section">
+      <DossierSection className="py-section-md lg:py-section">
         <p className="font-mono text-caption uppercase tracking-[0.2em] text-warm-light/50">
           {eyebrow}
         </p>
@@ -83,8 +85,18 @@ export function DossierData({
 
           <div className="col-span-12 flex flex-col justify-center gap-6 lg:col-span-6 lg:col-start-7">
             {[
-              { l: precedent.fromLabel, v: precedent.fromValue, pct: 5, fuerte: false },
-              { l: precedent.toLabel, v: precedent.toValue, pct: 37, fuerte: true },
+              {
+                l: precedent.fromLabel,
+                v: precedent.fromValue,
+                pct: 5,
+                fuerte: false,
+              },
+              {
+                l: precedent.toLabel,
+                v: precedent.toValue,
+                pct: 37,
+                fuerte: true,
+              },
             ].map((b) => (
               <div key={b.l}>
                 <div className="flex items-baseline justify-between font-mono text-caption uppercase tracking-[0.14em] text-warm-light/60">
@@ -107,7 +119,7 @@ export function DossierData({
         <p className="mt-12 max-w-[58ch] border-t border-warm-light/25 pt-6 font-mono text-body-sm leading-[1.6] text-warm-light/70">
           {note}
         </p>
-      </div>
+      </DossierSection>
     </section>
   )
 }

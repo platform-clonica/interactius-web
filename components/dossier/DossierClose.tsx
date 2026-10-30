@@ -1,4 +1,6 @@
 import { CurtainLink } from '@/components/layout/CurtainLink'
+
+import { DossierSection } from './DossierSection'
 import type { IntlHref } from '@/lib/i18n/article-href'
 
 /* DossierClose — el pie del dossier: una afirmación y una puerta.
@@ -17,7 +19,7 @@ export function DossierClose({
   href: IntlHref
 }) {
   return (
-    <section className="section-inner pb-section-md pt-section-md lg:pb-section lg:pt-section">
+    <DossierSection className="pb-section-md pt-section-md lg:pb-section lg:pt-section">
       <div className="grid grid-cols-12 gap-x-grid-gutter gap-y-6 border-t-2 border-fg pt-10">
         <h2 className="col-span-12 font-serif text-title font-light text-fg lg:col-span-6">
           {title}
@@ -33,6 +35,6 @@ export function DossierClose({
           </CurtainLink>
         </div>
       </div>
-    </section>
+    </DossierSection>
   )
 }
