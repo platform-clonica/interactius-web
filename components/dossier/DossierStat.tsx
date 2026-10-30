@@ -27,14 +27,11 @@ export function DossierStat({
   title,
   rows,
   note,
-  caveat,
 }: {
   eyebrow: string
   title: string
   rows: { figure: string; unit: string; label: string; pct: number }[]
   note: string
-  /** Matiz: el mismo asunto da otra cifra según cómo se pregunte. */
-  caveat: string
 }) {
   return (
     <div className="border-t border-fg/25 pt-6">
@@ -55,12 +52,6 @@ export function DossierStat({
       </dl>
 
       <p className="mt-7 font-mono text-micro leading-[1.6] text-fg">{note}</p>
-
-      {/* El matiz va separado por un filete y en gris: no desmiente el dato,
-          lo pone en contexto frente al 27 % de la banda de arriba. */}
-      <p className="mt-5 border-t border-fg/15 pt-5 font-mono text-micro leading-[1.6] text-fg/60">
-        {caveat}
-      </p>
     </div>
   )
 }

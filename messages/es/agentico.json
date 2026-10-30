@@ -113,7 +113,14 @@
       "close": "Ser recomendado exige rigor: explicar qué hace el producto, cómo se fabrica y en qué condiciones funciona. Tanto las personas como los algoritmos necesitan entender la propuesta.",
       "cta": "Si un asistente escaneara hoy vuestro catálogo, ¿encontraría datos nítidos?",
       "imageAlt": "Cuadrícula de dieciséis maniquíes de tienda: catorce sobre fondos beige y gris casi idénticos, y solo dos sobre fondos de color saturado.",
-      "imageCaption": "Catorce de dieciséis escaparates son el mismo escaparate. Para un agente, indistinguibles."
+      "imageCaption": "Catorce de dieciséis escaparates son el mismo escaparate. Para un agente, indistinguibles.",
+      "dato": {
+        "prefix": "casi",
+        "figure": "5",
+        "unit": "×",
+        "label": "más tráfico web envía hoy la IA a las webs de retail de EE. UU. que hace un año. Cada visita de esas juzga tu catálogo leyendo, no mirando.",
+        "source": "Adobe Digital Insights, 2026"
+      }
     },
     "adopcion": {
       "number": "04",
@@ -162,7 +169,6 @@
         "label": "le dejaría tomar la decisión de compra"
       }
     ],
-    "note": "Las personas delegan la búsqueda y la investigación de un producto, no el acto de comprar.",
-    "caveat": "Y conviene leer esta cifra junto a la de más arriba: un 27 % de los usuarios jóvenes sí dejaría pagar al asistente. La respuesta cambia mucho según a quién se pregunte y cómo. Por eso la prospectiva trabaja con varios escenarios y no con una predicción."
+    "note": "Las personas delegan la búsqueda y la investigación de un producto, no el acto de comprar."
   }
 }

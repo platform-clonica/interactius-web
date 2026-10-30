@@ -113,7 +113,14 @@
       "close": "Being recommended takes rigour: explaining what the product does, how it is made and the conditions under which it works. People and algorithms both need to understand the proposition.",
       "cta": "If an assistant scanned your catalogue today, would it find clear data?",
       "imageAlt": "A grid of sixteen shop mannequins: fourteen on near-identical beige and grey backgrounds, and only two on saturated colour.",
-      "imageCaption": "Fourteen of sixteen shop windows are the same shop window. To an agent, indistinguishable."
+      "imageCaption": "Fourteen of sixteen shop windows are the same shop window. To an agent, indistinguishable.",
+      "dato": {
+        "prefix": "almost",
+        "figure": "5",
+        "unit": "×",
+        "label": "more web traffic now goes from AI tools to US retail sites than a year ago. Every one of those visits judges your catalogue by reading it, not by looking at it.",
+        "source": "Adobe Digital Insights, 2026"
+      }
     },
     "adopcion": {
       "number": "04",
@@ -162,7 +169,6 @@
         "label": "would let it make the purchase decision"
       }
     ],
-    "note": "People delegate the search and the research, not the act of buying.",
-    "caveat": "And this figure is worth reading next to the one above: 27 % of younger users would let the assistant pay. The answer shifts a great deal depending on who you ask and how. Which is why foresight works with several scenarios rather than one prediction."
+    "note": "People delegate the search and the research, not the act of buying."
   }
 }

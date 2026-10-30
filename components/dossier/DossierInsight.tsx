@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 
 import { CurtainLink } from '@/components/layout/CurtainLink'
 
+import { DossierCounter } from './DossierCounter'
 import { DossierParallaxImage } from './DossierParallaxImage'
 import type { IntlHref } from '@/lib/i18n/article-href'
 
@@ -41,6 +42,7 @@ export function DossierInsight({
   imageAlt,
   imageCaption,
   imageRatio = 'aspect-[4/5]',
+  dato,
 }: {
   number: string
   kicker: string
@@ -59,6 +61,8 @@ export function DossierInsight({
   imageAlt?: string
   imageCaption?: string
   imageRatio?: string
+  /** Cifra de apoyo que cierra la columna de la derecha, bajo los puntos. */
+  dato?: { prefix?: string; figure: string; unit?: string; label: string; source: string }
 }) {
   return (
     <article>
@@ -121,8 +125,29 @@ export function DossierInsight({
             </>
           ) : null}
 
+          {/* El dato de apoyo va justo bajo los puntos, separado por un
+              filete: cierra el argumento con una cifra antes de pasar al
+              texto de conclusión. */}
+          {dato ? (
+            <div className="mt-6 border-t border-fg/25 pt-5">
+              <p className="flex items-baseline gap-2 font-serif font-light text-fg">
+                {dato.prefix ? (
+                  <span className="font-mono text-caption uppercase tracking-[0.14em] text-fg/50">
+                    {dato.prefix}
+                  </span>
+                ) : null}
+                <DossierCounter value={dato.figure} className="text-title tabular-nums" />
+                {dato.unit ? <span className="text-title-sm text-fg/60">{dato.unit}</span> : null}
+              </p>
+              <p className="mt-2 font-mono text-micro leading-[1.6] text-fg/70">{dato.label}</p>
+              <p className="mt-2 font-mono text-caption uppercase tracking-[0.14em] text-fg/40">
+                {dato.source}
+              </p>
+            </div>
+          ) : null}
+
           <p
-            className={`font-mono text-micro leading-[1.6] text-fg/70 ${points?.length ? 'mt-5' : ''}`}
+            className={`font-mono text-micro leading-[1.6] text-fg/70 ${points?.length || dato ? 'mt-5' : ''}`}
           >
             {close}
           </p>

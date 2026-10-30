@@ -113,7 +113,14 @@
       "close": "Ser recomanat exigeix rigor: explicar què fa el producte, com es fabrica i en quines condicions funciona. Tant les persones com els algoritmes necessiten entendre la proposta.",
       "cta": "Si un assistent escanegés avui el vostre catàleg, hi trobaria dades nítides?",
       "imageAlt": "Quadrícula de setze maniquins de botiga: catorze sobre fons beix i gris gairebé idèntics, i només dos sobre fons de color saturat.",
-      "imageCaption": "Catorze de setze aparadors són el mateix aparador. Per a un agent, indistingibles."
+      "imageCaption": "Catorze de setze aparadors són el mateix aparador. Per a un agent, indistingibles.",
+      "dato": {
+        "prefix": "gairebé",
+        "figure": "5",
+        "unit": "×",
+        "label": "més trànsit web envia avui la IA als webs de retail dels EUA que fa un any. Cadascuna d'aquestes visites jutja el teu catàleg llegint, no mirant.",
+        "source": "Adobe Digital Insights, 2026"
+      }
     },
     "adopcion": {
       "number": "04",
@@ -162,7 +169,6 @@
         "label": "li deixaria prendre la decisió de compra"
       }
     ],
-    "note": "Les persones deleguen la cerca i la investigació d'un producte, no l'acte de comprar.",
-    "caveat": "I convé llegir aquesta xifra al costat de la de més amunt: un 27 % dels usuaris joves sí que deixaria pagar l'assistent. La resposta canvia molt segons a qui es pregunti i com. Per això la prospectiva treballa amb diversos escenaris i no amb una predicció."
+    "note": "Les persones deleguen la cerca i la investigació d'un producte, no l'acte de comprar."
   }
 }
