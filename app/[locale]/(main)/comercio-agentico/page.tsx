@@ -10,7 +10,7 @@ import { DossierClose } from '@/components/dossier/DossierClose'
 import { DossierRule } from '@/components/dossier/DossierRule'
 import { DossierSection } from '@/components/dossier/DossierSection'
 import { DossierReveal } from '@/components/dossier/DossierReveal'
-import { DossierFigure } from '@/components/dossier/DossierFigure'
+import { DossierCoatReveal } from '@/components/dossier/DossierCoatReveal'
 import { acento } from '@/components/dossier/accent'
 import { getMiradaBySlug } from '@/lib/content/miradas'
 import type { MiradasSubcategory } from '@/lib/content/miradas'
@@ -180,7 +180,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
 
       <DossierSection className="mt-section-md lg:mt-section">
         <DossierReveal>
-          <DossierFigure
+          <DossierCoatReveal
             src={FIG_ABRIGO}
             alt={t('figure.alt')}
             caption={t('figure.caption')}
