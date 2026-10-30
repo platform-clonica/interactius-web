@@ -68,7 +68,8 @@
       "toLabel": "During 2020",
       "toValue": "37 %"
     },
-    "note": "Adoption does not depend on technical capability alone. It depends on how impatient buyers are with friction, on regulation that will force search and purchase apart, and above all on security: nobody delegates a transaction in an environment that has not earned their explicit trust."
+    "note": "Adoption does not depend on technical capability alone. It depends on how impatient buyers are with friction, on regulation that will force search and purchase apart, and above all on security.",
+    "noteHighlight": "Nobody delegates a transaction in an environment that has not earned their explicit trust."
   },
   "insights": {
     "accesibilidad": {

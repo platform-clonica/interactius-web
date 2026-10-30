@@ -23,6 +23,7 @@ export function DossierData({
   items,
   precedent,
   note,
+  noteHighlight,
 }: {
   eyebrow: string
   title: string
@@ -37,6 +38,8 @@ export function DossierData({
     toValue: string
   }
   note: string
+  /** La conclusión de la nota, sacada aparte para ir como titular. */
+  noteHighlight: string
 }) {
   return (
     <section className="bg-dark text-warm-light">
@@ -119,9 +122,18 @@ export function DossierData({
           </div>
         </div>
 
-        <p className="mt-12 max-w-[58ch] border-t border-warm-light/25 pt-6 font-mono text-body-sm leading-[1.6] text-warm-light/70">
-          {note}
-        </p>
+        {/* La nota de cierre va a dos cajas: el razonamiento a la izquierda en
+            mono, y su conclusión a la derecha en serif grande. La conclusión
+            es la frase que más pesa de toda la sección y dentro del párrafo
+            quedaba enterrada al final; además la derecha estaba vacía. */}
+        <div className="mt-12 grid grid-cols-12 items-center gap-x-grid-gutter gap-y-8 border-t border-warm-light/25 pt-8">
+          <p className="col-span-12 font-mono text-body-sm leading-[1.6] text-warm-light/70 lg:col-span-6">
+            {note}
+          </p>
+          <p className="col-span-12 font-serif text-title-sm font-light leading-tight text-warm-light lg:col-span-5 lg:col-start-8">
+            {noteHighlight}
+          </p>
+        </div>
       </DossierSection>
     </section>
   )

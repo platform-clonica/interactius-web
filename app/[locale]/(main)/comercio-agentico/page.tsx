@@ -174,6 +174,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
             toValue: t('data.precedent.toValue'),
           }}
           note={t('data.note')}
+          noteHighlight={t('data.noteHighlight')}
         />
       </div>
 
