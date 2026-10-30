@@ -1,0 +1,168 @@
+{
+  "masthead": {
+    "eyebrow": "Dossier",
+    "title": "Comerç agèntic",
+    "edition": "Interactius · Octubre de 2026",
+    "contents": "Tres articles · Quatre anàlisis · Una recomanació",
+    "headline": "Per anticipar-nos a escenaris futurs no necessitem presagis, necessitem comprendre el nostre entorn present.",
+    "standfirst": "En un context on la intel·ligència artificial comença a prendre decisions, dissenyar experiències ja no tracta només de polir pantalles. Tracta de tornar a guanyar-se la confiança de qui compra i de qui ven, de definir límits que abans ningú no havia traçat, i de preguntar-nos fins on pot arribar l'AX, l'experiència de l'agent.",
+    "summary": "Aquí reunim el que hem publicat sobre el tema als nostres canals: què implica el disseny agèntic per al comerç digital, per què empeny la interfície tradicional cap al seu final, i quin marc necessita una organització per decidir abans que el canvi l'atrapi."
+  },
+  "sections": {
+    "opening": "Obertura",
+    "data": "Les dades",
+    "analysis": "Anàlisi",
+    "insights": "Claus",
+    "recommends": "Recomanem",
+    "close": "I ara què"
+  },
+  "read": "Llegir l'article complet",
+  "readShort": "Llegir complet",
+  "by": "Per",
+  "articles": {
+    "ax": {
+      "kicker": "Comerç agèntic · Disseny de producte digital",
+      "standfirst": "Durant dues dècades hem perseguit l'embut perfecte: estudiar el comportament de qui compra i redissenyar la interfície una vegada i una altra perquè compri millor. L'AX trenca aquests fonaments.",
+      "body": "El comerç digital desplaça el seu focus. El repte ja no és dissenyar la interfície, sinó orquestrar la decisió de compra: decidir què delega la persona en l'agent, amb quins límits i sota quines regles. Quan l'agent busca, compara i paga, l'aparador deixa de ser el lloc on es guanya la venda."
+    },
+    "prospectiva": {
+      "kicker": "Prospectiva estratègica · Pensament estratègic",
+      "standfirst": "Durant anys, les organitzacions han reaccionat al soroll i a les tendències. Avui la tensió és preparar-se per a possibilitats que encara no han passat.",
+      "body": "Anticipar escenaris no és endevinar: és construir un marc que permeti actuar avui amb claredat. Quan es delega l'execució en sistemes d'IA, el repte deixa de ser l'eficiència i passa a ser el control. Preparar-se vol dir decidir amb criteri què s'automatitza i on la responsabilitat humana és innegociable."
+    },
+    "criterio": {
+      "kicker": "Design system · Accessibilitat · UX",
+      "standfirst": "Si una IA genera una fitxa de producte decent en segons i un agent compra sense arribar a veure-la, la interfície per si sola ja no ens diferencia.",
+      "body": "Qui s'hi adapti millor no serà qui domini més eines, sinó qui sàpiga què preguntar abans d'obrir-les. Una mirada al canvi que travessa l'ofici: què li ha passat a internet els darrers anys, què continua sostenint-se de les bases d'UX, quins usuaris nous estan aterrant i quin lloc ocupa ara el design system."
+    }
+  },
+  "data": {
+    "eyebrow": "Senyals, no prediccions",
+    "title": "El comerç agèntic ja ha creuat el llindar d'adopció",
+    "intro": "Aquestes dades no prediuen el futur de la compra. Assenyalen comportaments que ja estan passant.",
+    "items": [
+      {
+        "figure": "51",
+        "unit": "%",
+        "label": "de les persones ja fa servir assistents d'IA per descobrir, avaluar i seleccionar",
+        "source": "NielsenIQ, 2026"
+      },
+      {
+        "figure": "27",
+        "unit": "%",
+        "label": "dels usuaris joves prefereix que un assistent avaluï les opcions i completi el pagament sota regles que ells fixen",
+        "source": "Mastercard, 2026"
+      },
+      {
+        "figure": "760 000",
+        "unit": "M$",
+        "label": "previstos aquest any en inversió en IA per les grans tecnològiques dels EUA, davant dels 413 000 M$ de l'any passat",
+        "source": "Amazon, Alphabet, Microsoft i Meta"
+      }
+    ],
+    "precedent": {
+      "title": "Un precedent de la rapidesa amb què canvia un hàbit",
+      "body": "El 2020 el teletreball a Espanya va passar del 5 % al 37 % en qüestió de mesos. No perquè la tecnologia fos nova, sinó perquè va desaparèixer la fricció que el frenava.",
+      "fromLabel": "Abans del 2020",
+      "fromValue": "5 %",
+      "toLabel": "Durant el 2020",
+      "toValue": "37 %"
+    },
+    "note": "L'adopció no depèn només de la capacitat tècnica. Depèn de la impaciència de qui compra davant la fricció, de marcs reguladors que forçaran a separar cerca i compra, i sobretot de la seguretat.",
+    "noteHighlight": "Ningú no delega una operació en un entorn que no li genera confiança explícita."
+  },
+  "insights": {
+    "accesibilidad": {
+      "number": "01",
+      "kicker": "Accessibilitat",
+      "title": "La pantalla invisible pot ser l'arquitectura més accessible mai dissenyada",
+      "body": "Durant dues dècades, la compra digital ha depès de la retina. Per a una persona amb discapacitat visual, això ha significat lectors de pantalla, codi mal etiquetat i capes de fricció. El comerç agèntic pot eliminar aquestes barreres d'arrel.",
+      "points": [
+        "<strong>Traducció semàntica.</strong> La IA converteix elements gràfics caòtics en dades estructurades que un lector de pantalla interpreta sense ambigüitat.",
+        "<strong>Veu i llenguatge natural.</strong> El sistema entén el context, les restriccions i les preferències sense necessitat de navegar visualment.",
+        "<strong>Checkout invisible.</strong> Quan la transacció passa entre interfícies de dades, la pantalla deixa de ser necessària."
+      ],
+      "close": "Dissenyar l'experiència de l'agent amb criteri d'accessibilitat és tornar la capacitat de decidir a totes les persones. Human First. Next AI.",
+      "cta": "Us ajudem a dissenyar un món més accessible?"
+    },
+    "cero-clics": {
+      "number": "02",
+      "kicker": "L'embut",
+      "title": "Les compres en zero clics no eliminen la decisió: la traslladen",
+      "body": "No és especulació sobre un futur llunyà, és la conseqüència tècnica de delegar cerca, comparació i pagament. Durant vint anys vam mesurar l'èxit en clics, temps en pàgina i embuts visuals. En aquest model, la persona ja no recorre la interfície per comprar.",
+      "pointsLabel": "On es decideix ara",
+      "points": [
+        "En la configuració de regles, pressupostos i preferències.",
+        "En la definició de fins on pot actuar l'agent pel seu compte.",
+        "En el nivell de confiança que se li concedeix."
+      ],
+      "close": "La majoria dels comerços digitals continuen construïts sobre la inèrcia de l'aparador visual. Si els atributs del teu catàleg i les teves condicions d'oferta no són llegibles per a un agent, la teva botiga queda fora del flux de compra delegada.",
+      "cta": "Està el teu negoci llest per a aquest trasllat?"
+    },
+    "invisibilidad": {
+      "number": "03",
+      "kicker": "Identitat verbal",
+      "title": "La invisibilitat dels productes sota la mirada agèntica",
+      "body": "Canvia qui avalua i selecciona. Quan es delega la cerca en un assistent autònom, la recomanació ja no depèn de l'aparador, sinó de la precisió de la informació.",
+      "pointsLabel": "Per què un producte desapareix",
+      "points": [
+        "Els models de llenguatge no interpreten metàfores ni consignes corporatives: les ignoren.",
+        "L'ambigüitat és un punt cec. Sense atributs concrets ni límits clars, el sistema descarta l'oferta.",
+        "L'algoritme prioritzarà sempre el competidor amb la informació més nítida."
+      ],
+      "close": "Ser recomanat exigeix rigor: explicar què fa el producte, com es fabrica i en quines condicions funciona. Tant les persones com els algoritmes necessiten entendre la proposta.",
+      "cta": "Si un assistent escanegés avui el vostre catàleg, hi trobaria dades nítides?",
+      "imageAlt": "Quadrícula de setze maniquins de botiga: catorze sobre fons beix i gris gairebé idèntics, i només dos sobre fons de color saturat.",
+      "imageCaption": "Catorze de setze aparadors són el mateix aparador. Per a un agent, indistingibles."
+    },
+    "adopcion": {
+      "number": "04",
+      "kicker": "Prospectiva",
+      "title": "Dels senyals als escenaris",
+      "body": "Ja deleguem la feina operativa, l'agenda i l'anàlisi de dades. Qui compra està interioritzant que delegar tasques cognitives redueix la fricció, i la decisió de compra és el pas següent lògic. La confiança es trasllada de la botiga a l'algoritme que filtra.",
+      "close": "Amb prospectiva estratègica convertim aquests senyals en escenaris plausibles. Això permet reduir la incertesa, preparar el canvi cultural i ordenar les decisions abans d'escalar.",
+      "cta": "Està la teva organització preparada per al nou format de compra?"
+    }
+  },
+  "recommends": {
+    "by": "La María recomana",
+    "format": "Podcast",
+    "title": "Historia Ficción",
+    "body": "Aquest episodi imagina una societat del segle XXII organitzada des de l'abundància. Recorre tres revolucions, la neolítica, la industrial i la de la informació, per preguntar-se què passa quan l'automatització, l'energia barata i el programari deixen d'encaixar en les regles econòmiques que coneixem. El que hi ha de valuós és l'exercici: fer servir la història per dissenyar futurs i qüestionar allò que donem per inevitable.",
+    "cta": "Escoltar l'episodi"
+  },
+  "close": {
+    "title": "La decisió de compra ja s'està movent.",
+    "body": "No cal encertar l'escenari exacte per preparar-se. Cal saber què s'automatitza, on la responsabilitat continua sent humana i si el vostre catàleg es deixa entendre per qui ja no mira pantalles.",
+    "cta": "Parlem-ne"
+  },
+  "meta": {
+    "title": "Comerç agèntic",
+    "description": "Dossier sobre comerç agèntic: què canvia quan un agent d'IA busca, compara i compra, i què ha de decidir una organització abans que el canvi l'atrapi."
+  },
+  "figure": {
+    "alt": "Una mateixa fitxa de producte partida per la meitat: a l'esquerra, el que veu una persona, amb la foto d'un abric de llana, el preu i el botó de compra; a la dreta, el mateix contingut com a marcatge HTML amb els seus atributs i etiquetes.",
+    "caption": "El que veu una persona i el que llegeix un agent són la mateixa fitxa. Només una de les dues meitats decideix si el teu producte entra a la comparació.",
+    "credit": "De «De dissenyar PDPs a dissenyar criteri», de Diana Yuste"
+  },
+  "stat": {
+    "eyebrow": "Enquesta Gartner · maig de 2026",
+    "title": "Ajudar a triar, sí. Triar per tu, no.",
+    "rows": [
+      {
+        "figure": "31",
+        "unit": "%",
+        "pct": 31,
+        "label": "acceptaria que una IA li acotés les opcions en categories quotidianes"
+      },
+      {
+        "figure": "11",
+        "unit": "%",
+        "pct": 11,
+        "label": "li deixaria prendre la decisió de compra"
+      }
+    ],
+    "note": "Les persones deleguen la cerca i la investigació d'un producte, no l'acte de comprar.",
+    "caveat": "I convé llegir aquesta xifra al costat de la de més amunt: un 27 % dels usuaris joves sí que deixaria pagar l'assistent. La resposta canvia molt segons a qui es pregunti i com. Per això la prospectiva treballa amb diversos escenaris i no amb una predicció."
+  }
+}

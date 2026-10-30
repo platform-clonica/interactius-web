@@ -1,0 +1,168 @@
+{
+  "masthead": {
+    "eyebrow": "Dossier",
+    "title": "Agentic commerce",
+    "edition": "Interactius · October 2026",
+    "contents": "Three articles · Four analyses · One recommendation",
+    "headline": "To get ahead of future scenarios we do not need omens, we need to understand the present one.",
+    "standfirst": "In a context where artificial intelligence is starting to make decisions, designing experiences is no longer only about polishing screens. It is about earning back the trust of the person buying and the business selling, about setting limits nobody had drawn before, and about asking how far AX, the agent's experience, can go.",
+    "summary": "Here we gather what we have published on the subject across our channels: what agentic design means for digital commerce, why it pushes the traditional interface towards its end, and what framework an organisation needs in order to decide before the change catches up with it."
+  },
+  "sections": {
+    "opening": "Opening",
+    "data": "The data",
+    "analysis": "Analysis",
+    "insights": "Key points",
+    "recommends": "We recommend",
+    "close": "What now"
+  },
+  "read": "Read the full article",
+  "readShort": "Read in full",
+  "by": "By",
+  "articles": {
+    "ax": {
+      "kicker": "Agentic commerce · Digital product design",
+      "standfirst": "For two decades we have chased the perfect funnel: studying how people buy and redesigning the interface again and again so they buy better. AX breaks those foundations.",
+      "body": "Digital commerce is shifting its focus. The challenge is no longer designing the interface but orchestrating the buying decision: what a person delegates to the agent, within which limits and under which rules. Once the agent searches, compares and pays, the shop window stops being where the sale is won."
+    },
+    "prospectiva": {
+      "kicker": "Strategic foresight · Strategic thinking",
+      "standfirst": "For years, organisations have reacted to noise and to trends. Today the tension lies in preparing for possibilities that have not happened yet.",
+      "body": "Anticipating scenarios is not guessing: it is building a framework that lets you act today with clarity. Once execution is delegated to AI systems, the challenge stops being efficiency and becomes control. Preparing means deciding, with judgement, what gets automated and where human responsibility is non-negotiable."
+    },
+    "criterio": {
+      "kicker": "Design system · Accessibility · UX",
+      "standfirst": "If an AI can generate a decent product page in seconds and an agent can buy without ever seeing it, the interface alone no longer sets us apart.",
+      "body": "The ones who adapt best will not be those who master the most tools, but those who know what to ask before opening them. A look at the shift running through the craft: what has happened to the internet in recent years, what still holds from the foundations of UX, which new users are landing here, and where the design system sits now."
+    }
+  },
+  "data": {
+    "eyebrow": "Signals, not predictions",
+    "title": "Agentic commerce has already crossed the adoption threshold",
+    "intro": "These figures do not predict the future of buying. They point to behaviour that is already happening.",
+    "items": [
+      {
+        "figure": "51",
+        "unit": "%",
+        "label": "of people already use AI assistants to discover, evaluate and select",
+        "source": "NielsenIQ, 2026"
+      },
+      {
+        "figure": "27",
+        "unit": "%",
+        "label": "of younger users would rather an assistant weighed up the options and completed payment under rules they set",
+        "source": "Mastercard, 2026"
+      },
+      {
+        "figure": "760bn",
+        "unit": "USD",
+        "label": "expected in AI investment this year from the largest US tech companies, against 413bn last year",
+        "source": "Amazon, Alphabet, Microsoft and Meta"
+      }
+    ],
+    "precedent": {
+      "title": "A precedent for how fast a habit can change",
+      "body": "In 2020 remote work in Spain went from 5 % to 37 % in a matter of months. Not because the technology was new, but because the friction holding it back disappeared.",
+      "fromLabel": "Before 2020",
+      "fromValue": "5 %",
+      "toLabel": "During 2020",
+      "toValue": "37 %"
+    },
+    "note": "Adoption does not depend on technical capability alone. It depends on how impatient buyers are with friction, on regulation that will force search and purchase apart, and above all on security.",
+    "noteHighlight": "Nobody delegates a transaction in an environment that has not earned their explicit trust."
+  },
+  "insights": {
+    "accesibilidad": {
+      "number": "01",
+      "kicker": "Accessibility",
+      "title": "The invisible screen may be the most accessible architecture ever designed",
+      "body": "For two decades, digital shopping has depended on the retina. For a person with a visual impairment, that has meant screen readers, badly labelled code and layers of friction. Agentic commerce can remove those barriers at the root.",
+      "points": [
+        "<strong>Semantic translation.</strong> AI turns messy graphic elements into structured data a screen reader can read without ambiguity.",
+        "<strong>Voice and natural language.</strong> The system understands context, constraints and preferences with no visual navigation needed.",
+        "<strong>Invisible checkout.</strong> When the transaction happens between data interfaces, the screen stops being necessary."
+      ],
+      "close": "Designing the agent's experience with accessibility in mind means giving everyone back the ability to decide. Human First. Next AI.",
+      "cta": "Shall we help you design a more accessible world?"
+    },
+    "cero-clics": {
+      "number": "02",
+      "kicker": "The funnel",
+      "title": "Zero-click purchases do not remove the decision: they move it",
+      "body": "This is not speculation about a distant future, it is the technical consequence of delegating search, comparison and payment. For twenty years we measured success in clicks, time on page and visual funnels. In this model, the person no longer walks through the interface to buy.",
+      "pointsLabel": "Where the decision happens now",
+      "points": [
+        "In setting rules, budgets and preferences.",
+        "In defining how far the agent may act on its own.",
+        "In how much trust it is granted."
+      ],
+      "close": "Most digital shops are still built on the inertia of the visual shop window. If your catalogue attributes and your offer conditions are not legible to an agent, your shop falls outside the delegated purchase flow.",
+      "cta": "Is your business ready for that shift?"
+    },
+    "invisibilidad": {
+      "number": "03",
+      "kicker": "Verbal identity",
+      "title": "How products turn invisible under an agent's gaze",
+      "body": "Who evaluates and selects has changed. Once search is delegated to an autonomous assistant, the recommendation no longer rests on the shop window but on how precise the information is.",
+      "pointsLabel": "Why a product disappears",
+      "points": [
+        "Language models do not read metaphors or corporate slogans: they ignore them.",
+        "Ambiguity is a blind spot. With no concrete attributes or clear limits, the system drops the offer.",
+        "The algorithm will always favour the competitor with the sharper information."
+      ],
+      "close": "Being recommended takes rigour: explaining what the product does, how it is made and the conditions under which it works. People and algorithms both need to understand the proposition.",
+      "cta": "If an assistant scanned your catalogue today, would it find clear data?",
+      "imageAlt": "A grid of sixteen shop mannequins: fourteen on near-identical beige and grey backgrounds, and only two on saturated colour.",
+      "imageCaption": "Fourteen of sixteen shop windows are the same shop window. To an agent, indistinguishable."
+    },
+    "adopcion": {
+      "number": "04",
+      "kicker": "Foresight",
+      "title": "From signals to scenarios",
+      "body": "We already delegate operational work, our calendars and data analysis. Buyers are internalising that delegating cognitive tasks reduces friction, and the buying decision is the logical next step. Trust moves from the shop to the algorithm doing the filtering.",
+      "close": "With strategic foresight we turn those signals into plausible scenarios. That lets an organisation reduce uncertainty, prepare the cultural shift and order its decisions before scaling.",
+      "cta": "Is your organisation ready for this new way of buying?"
+    }
+  },
+  "recommends": {
+    "by": "María recommends",
+    "format": "Podcast",
+    "title": "Historia Ficción",
+    "body": "This episode imagines a twenty-second-century society organised around abundance. It runs through three revolutions, the Neolithic, the Industrial and the Information one, to ask what happens when automation, cheap energy and software stop fitting the economic rules we know. The value is in the exercise: using history to design futures and to question what we take as inevitable. In Spanish.",
+    "cta": "Listen to the episode"
+  },
+  "close": {
+    "title": "The buying decision is already moving.",
+    "body": "You do not need to pick the exact scenario to be ready. You need to know what gets automated, where responsibility stays human, and whether your catalogue can be understood by someone who no longer looks at screens.",
+    "cta": "Let's talk"
+  },
+  "meta": {
+    "title": "Agentic commerce",
+    "description": "A dossier on agentic commerce: what changes when an AI agent searches, compares and buys, and what an organisation has to decide before the change catches up with it."
+  },
+  "figure": {
+    "alt": "A single product page split down the middle: on the left, what a person sees, with a photo of a wool coat, its price and the buy button; on the right, the same content as HTML markup with its attributes and labels.",
+    "caption": "What a person sees and what an agent reads are the same product page. Only one of those halves decides whether your product makes the shortlist.",
+    "credit": "From “From designing PDPs to designing judgement”, by Diana Yuste"
+  },
+  "stat": {
+    "eyebrow": "Gartner survey · May 2026",
+    "title": "Help me choose, yes. Choose for me, no.",
+    "rows": [
+      {
+        "figure": "31",
+        "unit": "%",
+        "pct": 31,
+        "label": "would accept an AI narrowing their options in everyday categories"
+      },
+      {
+        "figure": "11",
+        "unit": "%",
+        "pct": 11,
+        "label": "would let it make the purchase decision"
+      }
+    ],
+    "note": "People delegate the search and the research, not the act of buying.",
+    "caveat": "And this figure is worth reading next to the one above: 27 % of younger users would let the assistant pay. The answer shifts a great deal depending on who you ask and how. Which is why foresight works with several scenarios rather than one prediction."
+  }
+}
