@@ -30,7 +30,7 @@ const STATIC_ROUTES: RouteId[] = [
   '/identidad',
   '/contacto',
   '/miradas',
-  '/comercio-agentico',
+  '/miradas/comercio-agentico',
 ]
 
 const ROUTE_PRIORITY: Partial<Record<RouteId, number>> = {
@@ -43,7 +43,7 @@ const ROUTE_PRIORITY: Partial<Record<RouteId, number>> = {
   '/miradas': 0.7,
   // El dossier existe para posicionar a Interactius en una temática concreta,
   // así que pesa como una capacidad y no como una página secundaria.
-  '/comercio-agentico': 0.8,
+  '/miradas/comercio-agentico': 0.8,
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
