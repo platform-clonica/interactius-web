@@ -30,8 +30,8 @@ interface Dossier {
 /* Los dossiers publicados y su ruta. Lo que no está aquí se pinta como
    próximo, aunque tenga texto en el JSON. Así no hay forma de enlazar por
    error a una página que todavía no existe. */
-const RUTAS: Record<string, '/comercio-agentico'> = {
-  'comercio-agentico': '/comercio-agentico',
+const RUTAS: Record<string, '/miradas/comercio-agentico'> = {
+  'comercio-agentico': '/miradas/comercio-agentico',
 }
 
 export async function MiradasDossiers({ locale }: { locale: Locale }) {

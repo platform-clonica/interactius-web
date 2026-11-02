@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 
+import { dossierRedirects } from './config/dossier-redirects.mjs'
 import { miradasRedirects } from './config/miradas-redirects.mjs'
 import { rootSlugRedirects } from './config/root-slug-redirects.mjs'
 import { routing } from './lib/i18n/routing'
@@ -23,9 +24,12 @@ import { routing } from './lib/i18n/routing'
  * El Map se construye una sola vez en cold-start de la edge function.
  * 244 entries × ~80 bytes = ~20 kB en memoria, irrelevante.
  */
-const REDIRECT_MAP = new Map<string, string>(
-  miradasRedirects.map((r) => [r.source, r.destination]),
-)
+/* Los de dossier van después de los generados: si alguna vez chocaran, manda
+   el movimiento reciente y no el snapshot de WordPress de 2026. */
+const REDIRECT_MAP = new Map<string, string>([
+  ...miradasRedirects.map((r): [string, string] => [r.source, r.destination]),
+  ...dossierRedirects.map((r): [string, string] => [r.source, r.destination]),
+])
 
 /**
  * Mapa de slugs WP servidos a nivel raíz (`/<slug>`) → `/miradas/<cat>/<slug>`.
