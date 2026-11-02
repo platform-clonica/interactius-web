@@ -38,7 +38,7 @@ import { type Locale } from '@/lib/i18n/config'
    datos en negativo, dos columnas con tratamientos distintos (una con foto y
    otra sin), claves numeradas y un recuadro de recomendación. */
 
-const RUTA = '/comercio-agentico'
+const RUTA = '/miradas/comercio-agentico'
 
 /* Los tres artículos del dossier, en orden de portada. `sub` y `slug` son las
    coordenadas canónicas del MDX, no de la URL: el helper localiza la URL. */

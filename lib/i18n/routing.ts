@@ -57,13 +57,6 @@ const PATHNAMES = {
     en: '/cultural-transformation',
   },
 
-  // Dossiers — landings temáticas que recopilan contenido de varios canales
-  '/comercio-agentico': {
-    es: '/comercio-agentico',
-    ca: '/comerc-agentic',
-    en: '/agentic-commerce',
-  },
-
   // Identidad
   '/identidad': {
     es: '/identidad',
@@ -100,6 +93,18 @@ const PATHNAMES = {
     ca: '/mirades',
     en: '/thoughts',
   },
+  /* Dossiers — recopilan en una página lo publicado sobre un tema. Cuelgan
+     de Miradas porque es ahí donde viven y desde donde se entra a ellos.
+
+     Van declarados como segmento estático, así que ganan al dinámico
+     `[parentOrSub]` de abajo. El precio es que su slug queda reservado: no
+     podrá existir nunca una categoría de Miradas llamada igual. */
+  '/miradas/comercio-agentico': {
+    es: '/miradas/comercio-agentico',
+    ca: '/mirades/comerc-agentic',
+    en: '/thoughts/agentic-commerce',
+  },
+
   // Listing de madre o sub — el segmento [parentOrSub] recibe el slug
   // **localizado** (decisión D). Resolución a canónica via
   // `parseParentOrSubSlug()` en server-side.
