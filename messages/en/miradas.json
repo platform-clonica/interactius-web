@@ -54,5 +54,23 @@
     "backToListing": "Back to Thoughts",
     "continueReading": "Continue reading",
     "aiTranslationBanner": "This article was originally written in Spanish and translated with the help of AI. Here is the <link>original article</link>."
+  },
+  "dossiers": {
+    "label": "Dossiers",
+    "intro": "Everything we have published on a subject, gathered into a single page.",
+    "items": [
+      {
+        "id": "comercio-agentico",
+        "title": "Agentic commerce",
+        "summary": "What changes when an AI agent searches, compares and buys, and what an organisation has to decide before the change catches up with it.",
+        "cta": "Open the dossier"
+      },
+      {
+        "id": "organizaciones-aumentadas",
+        "title": "Augmented organisations",
+        "summary": "",
+        "soon": "Coming soon"
+      }
+    ]
   }
 }

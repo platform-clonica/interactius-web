@@ -57,6 +57,13 @@ const PATHNAMES = {
     en: '/cultural-transformation',
   },
 
+  // Dossiers — landings temáticas que recopilan contenido de varios canales
+  '/comercio-agentico': {
+    es: '/comercio-agentico',
+    ca: '/comerc-agentic',
+    en: '/agentic-commerce',
+  },
+
   // Identidad
   '/identidad': {
     es: '/identidad',
