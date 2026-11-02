@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import { CurtainLink } from '@/components/layout/CurtainLink'
 import { Link } from '@/lib/i18n/navigation'
 import { ArticleCardSimple } from '@/components/miradas/ArticleCardSimple'
+import { MiradasDossiers } from '@/components/miradas/MiradasDossiers'
 import { MiradasHero } from '@/components/miradas/MiradasHero'
 import { SuperTitleReveal } from '@/components/ui/SuperTitleReveal'
 import { parentListingHref } from '@/lib/i18n/article-href'
@@ -51,6 +52,10 @@ export async function MiradasGlobalHome({ articles, locale }: MiradasGlobalHomeP
         </h2>
       </div>
       <div aria-hidden="true" className="pb-section" />
+
+      {/* Los dossiers van entre el titular y las categorías: recopilan varias
+          piezas, así que no pertenecen a la rejilla de artículos. */}
+      <MiradasDossiers locale={locale} />
 
       {MIRADAS_PARENT_CATEGORIES.map((parent) => {
         const childSubs = SUBS_BY_PARENT[parent]
