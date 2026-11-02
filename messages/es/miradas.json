@@ -54,5 +54,23 @@
     "backToListing": "Volver a Miradas",
     "continueReading": "Continúa leyendo",
     "aiTranslationBanner": "Este artículo fue escrito originalmente en castellano y traducido con ayuda de IA. Aquí tienes el <link>artículo original</link>."
+  },
+  "dossiers": {
+    "label": "Dossiers",
+    "intro": "Recopilaciones de todo lo que hemos publicado sobre un tema, reunido en una sola página.",
+    "items": [
+      {
+        "id": "comercio-agentico",
+        "title": "Comercio agéntico",
+        "summary": "Qué cambia cuando un agente de IA busca, compara y compra, y qué tiene que decidir una organización antes de que el cambio la alcance.",
+        "cta": "Abrir el dossier"
+      },
+      {
+        "id": "organizaciones-aumentadas",
+        "title": "Organizaciones aumentadas",
+        "summary": "",
+        "soon": "Próximamente"
+      }
+    ]
   }
 }

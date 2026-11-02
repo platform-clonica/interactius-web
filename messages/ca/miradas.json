@@ -54,5 +54,23 @@
     "backToListing": "Tornar a Mirades",
     "continueReading": "Continua llegint",
     "aiTranslationBanner": "Aquest article es va escriure originalment en castellà i ha estat traduït amb l''ajuda d''IA. Aquí tens l''<link>article original</link>."
+  },
+  "dossiers": {
+    "label": "Dossiers",
+    "intro": "Reculls de tot el que hem publicat sobre un tema, aplegat en una sola pàgina.",
+    "items": [
+      {
+        "id": "comercio-agentico",
+        "title": "Comerç agèntic",
+        "summary": "Què canvia quan un agent d'IA busca, compara i compra, i què ha de decidir una organització abans que el canvi l'atrapi.",
+        "cta": "Obrir el dossier"
+      },
+      {
+        "id": "organizaciones-aumentadas",
+        "title": "Organitzacions augmentades",
+        "summary": "",
+        "soon": "Properament"
+      }
+    ]
   }
 }
