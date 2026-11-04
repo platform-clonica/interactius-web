@@ -61,29 +61,30 @@ export function AuthorAvatar({ author, size }: AuthorAvatarProps) {
           className="object-cover object-center"
         />
       ) : (
-        /* Sin foto va el imagotipo, no la inicial. La inicial dejaba una letra
-           suelta que no decía nada y se leía como un hueco por llenar; el
-           imagotipo dice lo que de verdad pasa, que la pieza la firma la casa
-           y no una persona con retrato.
+        /* Sin foto va el isotipo de marca, no la inicial. La inicial dejaba
+           una letra suelta que no decía nada y se leía como un hueco por
+           llenar; el isotipo dice lo que de verdad pasa, que la pieza la
+           firma la casa y no una persona con retrato.
 
-           Va sobre blanco y no sobre el fondo oscuro de marca: el SVG no trae
-           relleno propio, así que se pinta en negro y sobre oscuro no se
-           vería. Además el blanco lo une con la etiqueta de la firma, que
-           está justo debajo y también es blanca.
+           Llena la caja a sangre y sin fondo propio: el SVG ya trae el suyo
+           en el oscuro de marca. El isotipo es cuadrado y el avatar mide
+           60×63, así que `object-cover` recorta metro y medio de píxel a los
+           lados, sin tocar la composición.
+
+           Se pinta con <img> y no con next/image: el optimizador rechaza los
+           SVG salvo que se active `dangerouslyAllowSVG`, y activarlo abriría
+           la puerta a SVG remotos en todo el sitio por un archivo local de
+           1 KB.
 
            Decidido con Martina el 4/11/2026, al unificar bajo "Interactius"
            las firmas de quienes ya no están en el equipo. */
-        <span
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src="/logo/isotipo-positivo.svg"
+          alt=""
           aria-label={author}
-          className="absolute inset-0 flex items-center justify-center bg-pure-white px-[20%]"
-        >
-          {/* Etiqueta <img> y no next/image: el optimizador rechaza los SVG
-              salvo que se active `dangerouslyAllowSVG`, y activarlo en la
-              configuración abriría la puerta a SVG remotos en todo el sitio.
-              Un SVG local de 1 KB no necesita optimización de todos modos. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo/ius_imago.svg" alt="" className="block h-auto w-full" />
-        </span>
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       )}
     </div>
   )
