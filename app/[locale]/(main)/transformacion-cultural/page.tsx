@@ -10,7 +10,8 @@ import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
 import type { CapacityTabItem } from '@/components/capacity/CapacityOthers'
 import type { RouteId } from '@/lib/i18n/navigation'
-import { buildPageMetadata } from '@/lib/seo/metadata.config'
+import { buildPageMetadata, PAGE_COPY } from '@/lib/seo/metadata.config'
+import { buildCapabilitySchema } from '@/lib/seo/schema'
 import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
@@ -37,8 +38,22 @@ export default async function TransformacionCultural({ params }: PageProps) {
 
   const capacityTitle = t('transformacion.hero.title')
 
+  /* Dato estructurado de la capacidad. Los servicios salen del mismo JSON que
+     pinta la página, así que no hay una segunda lista que mantener. */
+  const esquema = buildCapabilitySchema({
+    name: PAGE_COPY['/transformacion-cultural'][locale].title,
+    description: PAGE_COPY['/transformacion-cultural'][locale].description,
+    url: localizedPath('/transformacion-cultural', locale),
+    services,
+  })
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(esquema) }}
+      />
+
       <CapacityHeroSequence
         title={capacityTitle}
         lead={t.rich('transformacion.hero.lead', {
@@ -71,7 +86,13 @@ export default async function TransformacionCultural({ params }: PageProps) {
       />
 
       <CapacityOthers
-        tabs={tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityTabItem, CapacityTabItem, CapacityTabItem]}
+        tabs={
+          tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [
+            CapacityTabItem,
+            CapacityTabItem,
+            CapacityTabItem,
+          ]
+        }
         currentHref="/transformacion-cultural"
         sectionLabel={t('sections.otherCapacities')}
       />
