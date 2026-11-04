@@ -22,6 +22,7 @@ import { MDXContent } from '@/components/miradas/MDXContent'
 import { ShareRow } from '@/components/miradas/article/ShareRow'
 import { ArticleNext } from '@/components/miradas/article/ArticleNext'
 import { AuthorAvatar } from '@/components/miradas/AuthorAvatar'
+import { AuthorByline } from '@/components/miradas/AuthorByline'
 import { AITranslationBanner } from '@/components/miradas/AITranslationBanner'
 import { Breadcrumb, absoluteUrl as toAbsoluteUrl } from '@/components/miradas/Breadcrumb'
 import {
@@ -126,11 +127,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   for (const loc of LOCALES) {
     if (loc === 'es') continue
     if (!hasTranslation(sub, slugEs, loc)) continue
-    alternates[loc] = `${SITE_CONFIG.baseUrl}${localizedPath(
-      '/miradas/[parentOrSub]/[slug]',
-      loc,
-      { params: { parentOrSub: localizeSubSlug(sub, loc), slug: article.slugByLocale[loc] } },
-    )}`
+    alternates[loc] = `${SITE_CONFIG.baseUrl}${localizedPath('/miradas/[parentOrSub]/[slug]', loc, {
+      params: { parentOrSub: localizeSubSlug(sub, loc), slug: article.slugByLocale[loc] },
+    })}`
   }
 
   // Canonical:
@@ -141,11 +140,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   //   (slug-locale en esta locale). El redirect 308 hará el resto.
   let pathnameForCanonical: string
   if (locale === 'es' || !hasLocaleTranslation) {
-    pathnameForCanonical = locale === 'es'
-      ? localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
-          params: { parentOrSub, slug: slugEs },
-        })
-      : esPath
+    pathnameForCanonical =
+      locale === 'es'
+        ? localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
+            params: { parentOrSub, slug: slugEs },
+          })
+        : esPath
   } else {
     pathnameForCanonical = localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
       params: {
@@ -200,11 +200,7 @@ export default async function ArticlePage({ params }: PageProps) {
     // válida en OTRA locale, redirigimos al canónico de la locale actual
     // preservando el slug del artículo (que es invariante ES).
     const crossLocale = parseParentOrSubSlugAnyLocale(parentOrSub)
-    if (
-      crossLocale &&
-      crossLocale.kind === 'sub' &&
-      crossLocale.foundInLocale !== locale
-    ) {
+    if (crossLocale && crossLocale.kind === 'sub' && crossLocale.foundInLocale !== locale) {
       const canonicalSub = localizeSubSlug(crossLocale.canonical, locale)
       permanentRedirect(
         localizedPath('/miradas/[parentOrSub]/[slug]', locale, {
@@ -388,9 +384,10 @@ export default async function ArticlePage({ params }: PageProps) {
               <div className="absolute inset-x-0 bottom-0 flex flex-col">
                 <div className="lg:hidden ml-[var(--grid-margin)] w-fit flex flex-col items-start">
                   <AuthorAvatar author={article.author} size="sm" />
-                  <span className="inline-flex bg-pure-white px-1.5 py-0.5 font-mono text-card-sm text-fg whitespace-nowrap">
-                    {article.author}, {formatDate(article.publishedAt, locale)}
-                  </span>
+                  <AuthorByline
+                    author={article.author}
+                    date={formatDate(article.publishedAt, locale)}
+                  />
                 </div>
                 <div className="w-full lg:w-1/2 bg-pure-white p-5 lg:p-6 flex items-center min-h-[88px]">
                   <h1 className="font-serif font-light text-subtitle text-fg leading-tight">
@@ -413,9 +410,10 @@ export default async function ArticlePage({ params }: PageProps) {
               <AuthorAvatar author={article.author} size="lg" />
             </div>
             <div className="absolute left-0 top-full min-[1920px]:left-auto min-[1920px]:right-0 pointer-events-auto">
-              <span className="block bg-pure-white px-1.5 py-1 font-mono text-card-sm text-fg whitespace-nowrap leading-none">
-                {article.author}, {formatDate(article.publishedAt, locale)}
-              </span>
+              <AuthorByline
+                author={article.author}
+                date={formatDate(article.publishedAt, locale)}
+              />
             </div>
           </div>
 
@@ -468,7 +466,9 @@ export default async function ArticlePage({ params }: PageProps) {
           <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
             <div className="border-y border-fg/20 py-6 flex flex-wrap items-center justify-between gap-x-10 gap-y-3 font-mono text-body-sm text-fg">
               <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-                <span>{readingTime} {t('article.minRead')}</span>
+                <span>
+                  {readingTime} {t('article.minRead')}
+                </span>
                 {article.modifiedAt && article.modifiedAt > article.publishedAt ? (
                   <span className="text-fg/60">
                     {t('article.updatedOn')} {formatDate(article.modifiedAt, locale)}
@@ -493,10 +493,7 @@ export default async function ArticlePage({ params }: PageProps) {
       </section>
 
       {article.translatedBy === 'ai' && locale !== 'es' && (
-        <section
-          className="section-inner pt-10 lg:pt-12"
-          aria-label="AI translation notice"
-        >
+        <section className="section-inner pt-10 lg:pt-12" aria-label="AI translation notice">
           <div className="grid grid-cols-12 gap-grid-gutter">
             <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
               <AITranslationBanner sub={sub} slug={slugEs} locale={locale} />

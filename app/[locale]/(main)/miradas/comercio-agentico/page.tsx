@@ -13,7 +13,7 @@ import { DossierReveal } from '@/components/dossier/DossierReveal'
 import { DossierCoatReveal } from '@/components/dossier/DossierCoatReveal'
 import { DossierStat } from '@/components/dossier/DossierStat'
 import { acento } from '@/components/dossier/accent'
-import { TEAM } from '@/lib/data/team'
+import { resolveAuthor } from '@/lib/data/author'
 import { getMiradaBySlug } from '@/lib/content/miradas'
 import type { MiradasSubcategory } from '@/lib/content/miradas'
 import { articleHref } from '@/lib/i18n/article-href'
@@ -65,17 +65,6 @@ const PIEZAS = [
 /* Cada clave se pinta con el acento del servicio al que remite su pregunta
    final. No es una elección estética: es el mismo código de color que usa la
    home para decir de qué servicio habla cada cosa. Ver `accent.ts`. */
-/* El MDX guarda solo el nombre de pila ("Sara"). La firma del dossier lleva
-   nombre y apellido, que salen del registro de equipo: así, si alguien cambia
-   ahí, la firma cambia sola. Si un nombre de pila fuera ambiguo (hay dos
-   Elenas en el equipo) se deja el corto antes que arriesgar un apellido
-   equivocado. */
-function firma(corto: string): string {
-  const pila = corto.trim().toLowerCase()
-  const coincidencias = TEAM.filter((m) => m.name.split(' ')[0].toLowerCase() === pila)
-  return coincidencias.length === 1 ? coincidencias[0].name : corto
-}
-
 /* Las fuentes de los datos del dossier, para declararlas como citas. Van aquí
    y no en el JSON porque no son texto traducible: son nombres de informes. */
 const FUENTES = [
@@ -132,7 +121,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
     return {
       id: p.id,
       titulo: art.titleByLocale[locale],
-      autora: firma(art.author),
+      autora: resolveAuthor(art.author).name,
       imagen: art.image,
       // El servicio sale del frontmatter, no de una tabla a mano aquí.
       servicio: art.parentCategory,

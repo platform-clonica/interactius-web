@@ -1,4 +1,5 @@
 import { LOCALE_META, type Locale } from '@/lib/i18n/config'
+import { resolveAuthor } from '@/lib/data/author'
 import { SITE_CONFIG } from '@/lib/seo/metadata.config'
 
 /* ==========================================================================
@@ -181,10 +182,16 @@ export function buildArticleSchema(article: ArticleInput, locale: Locale): Schem
     inLanguage: LOCALE_META[locale].htmlLang,
     articleSection: article.section,
     keywords: article.keywords?.join(', '),
+    /* El autor se resuelve contra el registro de equipo para declarar su
+       nombre completo y su cargo. `jobTitle` es lo que convierte "un texto
+       firmado por Sara" en "un texto firmado por una Design Strategist": para
+       un buscador de respuestas, esa es la señal de autoría. Quien ya no está
+       en el equipo conserva su nombre, sin cargo. */
     author: article.author
       ? {
           '@type': 'Person',
-          name: article.author,
+          name: resolveAuthor(article.author).name,
+          jobTitle: resolveAuthor(article.author).role,
         }
       : { '@id': ORG_ID },
     publisher: { '@id': ORG_ID },
