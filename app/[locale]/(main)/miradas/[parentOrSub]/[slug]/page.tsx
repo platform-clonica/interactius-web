@@ -480,11 +480,21 @@ export default async function ArticlePage({ params }: PageProps) {
                     {readingTime} {t('article.minRead')}
                   </span>
                 </span>
-                {article.modifiedAt && article.modifiedAt > article.publishedAt ? (
-                  <span className="text-fg/60">
-                    {t('article.updatedOn')} {formatDate(article.modifiedAt, locale)}
-                  </span>
-                ) : null}
+                {/* Aquí iba "Actualizado el …". Se retira porque el dato no
+                    significa lo que el lector entiende.
+
+                    Medido sobre los 132 artículos: 110 mostraban el aviso, y
+                    la fecha de "actualizado" de cada uno coincide con la de
+                    publicación del siguiente. Es decir, marca que alguien
+                    tocó el archivo al publicar la pieza posterior, casi
+                    siempre para enlazarlos. Además 43 de esas fechas caen en
+                    solo tres días, que son ediciones masivas.
+
+                    Nada de eso es una revisión del contenido, que es lo que
+                    el lector entiende al leer "actualizado". `modifiedAt`
+                    sigue viajando en el dato estructurado como
+                    `dateModified`, donde sirve a los buscadores sin engañar
+                    a nadie. */}
               </div>
               <div className="flex flex-wrap items-center gap-x-[10px] gap-y-[10px]">
                 {tags.map((tag, i) => (
