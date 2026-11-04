@@ -9,7 +9,8 @@ import { richComponents } from '@/lib/i18n/rich-text'
 import type { CapacityService } from '@/components/capacity/CapacityServices'
 import type { CapacityTabItem } from '@/components/capacity/CapacityOthers'
 import type { RouteId } from '@/lib/i18n/navigation'
-import { buildPageMetadata } from '@/lib/seo/metadata.config'
+import { buildPageMetadata, PAGE_COPY } from '@/lib/seo/metadata.config'
+import { buildCapabilitySchema } from '@/lib/seo/schema'
 import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
@@ -36,8 +37,22 @@ export default async function DisenoDeExperiencias({ params }: PageProps) {
 
   const capacityTitle = t('experiencias.hero.title')
 
+  /* Dato estructurado de la capacidad. Los servicios salen del mismo JSON que
+     pinta la página, así que no hay una segunda lista que mantener. */
+  const esquema = buildCapabilitySchema({
+    name: PAGE_COPY['/diseno-de-experiencias'][locale].title,
+    description: PAGE_COPY['/diseno-de-experiencias'][locale].description,
+    url: localizedPath('/diseno-de-experiencias', locale),
+    services,
+  })
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(esquema) }}
+      />
+
       <CapacityHeroSequence
         title={capacityTitle}
         lead={t.rich('experiencias.hero.lead', {
@@ -62,7 +77,13 @@ export default async function DisenoDeExperiencias({ params }: PageProps) {
       <ClientsMarquee clients={t('experiencias.intro.clients')} bottomSpacing="large" />
 
       <CapacityOthers
-        tabs={tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [CapacityTabItem, CapacityTabItem, CapacityTabItem]}
+        tabs={
+          tabs.map((o) => ({ ...o, href: o.href as RouteId })) as [
+            CapacityTabItem,
+            CapacityTabItem,
+            CapacityTabItem,
+          ]
+        }
         currentHref="/diseno-de-experiencias"
         sectionLabel={t('sections.otherCapacities')}
       />
