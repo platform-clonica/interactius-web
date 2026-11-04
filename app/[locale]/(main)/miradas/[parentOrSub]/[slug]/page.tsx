@@ -384,10 +384,7 @@ export default async function ArticlePage({ params }: PageProps) {
               <div className="absolute inset-x-0 bottom-0 flex flex-col">
                 <div className="lg:hidden ml-[var(--grid-margin)] w-fit flex flex-col items-start">
                   <AuthorAvatar author={article.author} size="sm" />
-                  <AuthorByline
-                    author={article.author}
-                    date={formatDate(article.publishedAt, locale)}
-                  />
+                  <AuthorByline author={article.author} />
                 </div>
                 <div className="w-full lg:w-1/2 bg-pure-white p-5 lg:p-6 flex items-center min-h-[88px]">
                   <h1 className="font-serif font-light text-subtitle text-fg leading-tight">
@@ -410,10 +407,7 @@ export default async function ArticlePage({ params }: PageProps) {
               <AuthorAvatar author={article.author} size="lg" />
             </div>
             <div className="absolute left-0 top-full min-[1920px]:left-auto min-[1920px]:right-0 pointer-events-auto">
-              <AuthorByline
-                author={article.author}
-                date={formatDate(article.publishedAt, locale)}
-              />
+              <AuthorByline author={article.author} />
             </div>
           </div>
 
@@ -466,6 +460,14 @@ export default async function ArticlePage({ params }: PageProps) {
           <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
             <div className="border-y border-fg/20 py-6 flex flex-wrap items-center justify-between gap-x-10 gap-y-3 font-mono text-body-sm text-fg">
               <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                {/* La fecha vive aquí y no bajo la foto: ahí la firma responde
+                    a quién escribe, y cuándo se publicó es un dato de la
+                    pieza, no de la persona. Va antes del tiempo de lectura
+                    porque es lo que más se mira al decidir si un artículo
+                    sigue vigente. */}
+                <time dateTime={article.publishedAt}>
+                  {formatDate(article.publishedAt, locale)}
+                </time>
                 <span>
                   {readingTime} {t('article.minRead')}
                 </span>
