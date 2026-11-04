@@ -33,14 +33,9 @@ function resolvePhoto(author: string): string | null {
   return file ? `/identidad/fotos-team/${file}.webp` : null
 }
 
-function initial(author: string): string {
-  const trimmed = author.trim()
-  return trimmed ? trimmed.charAt(0).toUpperCase() : '·'
-}
-
-const SIZE_PX: Record<'sm' | 'lg', { w: number; h: number; sizes: string; letter: string }> = {
-  sm: { w: 60, h: 63, sizes: '60px', letter: 'text-[40px]' },
-  lg: { w: 120, h: 126, sizes: '120px', letter: 'text-[80px]' },
+const SIZE_PX: Record<'sm' | 'lg', { w: number; h: number; sizes: string }> = {
+  sm: { w: 60, h: 63, sizes: '60px' },
+  lg: { w: 120, h: 126, sizes: '120px' },
 }
 
 interface AuthorAvatarProps {
@@ -66,12 +61,30 @@ export function AuthorAvatar({ author, size }: AuthorAvatarProps) {
           className="object-cover object-center"
         />
       ) : (
-        <span
+        /* Sin foto va el isotipo de marca, no la inicial. La inicial dejaba
+           una letra suelta que no decía nada y se leía como un hueco por
+           llenar; el isotipo dice lo que de verdad pasa, que la pieza la
+           firma la casa y no una persona con retrato.
+
+           Llena la caja a sangre y sin fondo propio: el SVG ya trae el suyo
+           en el oscuro de marca. El isotipo es cuadrado y el avatar mide
+           60×63, así que `object-cover` recorta metro y medio de píxel a los
+           lados, sin tocar la composición.
+
+           Se pinta con <img> y no con next/image: el optimizador rechaza los
+           SVG salvo que se active `dangerouslyAllowSVG`, y activarlo abriría
+           la puerta a SVG remotos en todo el sitio por un archivo local de
+           1 KB.
+
+           Decidido con Martina el 4/11/2026, al unificar bajo "Interactius"
+           las firmas de quienes ya no están en el equipo. */
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src="/logo/isotipo-positivo.svg"
+          alt=""
           aria-label={author}
-          className={`absolute inset-0 flex items-center justify-center font-serif font-light text-fg leading-none ${dims.letter}`}
-        >
-          {initial(author)}
-        </span>
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       )}
     </div>
   )
