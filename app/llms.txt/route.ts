@@ -2,6 +2,7 @@ import { DEFAULT_LOCALE } from '@/lib/i18n/config'
 import { localizedUrl } from '@/lib/i18n/navigation'
 import { PAGE_COPY, SITE_CONFIG } from '@/lib/seo/metadata.config'
 import { getAllMiradas } from '@/lib/content/miradas'
+import { DOSSIERS_PUBLICADOS } from '@/lib/data/dossiers'
 import { PARENT_DISPLAY, localizeSubSlug } from '@/lib/miradas/i18n-routing'
 import {
   MIRADAS_PARENT_CATEGORIES,
@@ -104,9 +105,7 @@ function buildBody(): string {
     lines.push(`### [${title}](${url})`)
     lines.push('')
     // Párrafo introductorio: lead (posicionamiento) + statement (propuesta).
-    lines.push(
-      oneLine(`${stripHtml(area.hero.lead)} ${stripHtml(area.intro.statement)}`),
-    )
+    lines.push(oneLine(`${stripHtml(area.hero.lead)} ${stripHtml(area.intro.statement)}`))
     lines.push('')
     // Sub-servicios con su descripción.
     for (const service of area.services) {
@@ -123,6 +122,25 @@ function buildBody(): string {
     lines.push(link(copy.title, localizedUrl(routeId, locale), copy.description))
   }
   lines.push('')
+
+  // ── Dossiers ──────────────────────────────────────────────────────────────
+  // Van antes de los artículos sueltos y con su propio encabezado: un dossier
+  // es la entrada buena a un tema, porque reúne varias piezas y los datos con
+  // su fuente. Un modelo que busque "quién sabe de comercio agéntico" debería
+  // encontrar esto antes que un artículo suelto.
+  if (DOSSIERS_PUBLICADOS.length) {
+    lines.push('## Dossiers')
+    lines.push('')
+    lines.push(
+      'Recopilaciones de todo lo publicado sobre un tema, reunido en una página con sus datos y fuentes.',
+    )
+    lines.push('')
+    for (const dossier of DOSSIERS_PUBLICADOS) {
+      const copy = dossier.copy[locale]
+      lines.push(link(copy.title, localizedUrl(dossier.routeId, locale), copy.description))
+    }
+    lines.push('')
+  }
 
   // ── Miradas (artículos), agrupadas por categoría madre ────────────────────
   const articles = getAllMiradas()
@@ -151,10 +169,7 @@ function buildBody(): string {
     for (const article of group) {
       const url = localizedUrl('/miradas/[parentOrSub]/[slug]', locale, {
         params: {
-          parentOrSub: localizeSubSlug(
-            article.category as MiradasSubcategory,
-            locale,
-          ),
+          parentOrSub: localizeSubSlug(article.category as MiradasSubcategory, locale),
           slug: article.slugByLocale[locale],
         },
       })

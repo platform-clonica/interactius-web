@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 
 import { CurtainLink } from '@/components/layout/CurtainLink'
+import { DOSSIERS_PUBLICADOS } from '@/lib/data/dossiers'
 import type { Locale } from '@/lib/i18n/config'
 
 /* MiradasDossiers — la banda de dossiers, bajo el titular de Miradas.
@@ -27,12 +28,11 @@ interface Dossier {
   soon?: string
 }
 
-/* Los dossiers publicados y su ruta. Lo que no está aquí se pinta como
-   próximo, aunque tenga texto en el JSON. Así no hay forma de enlazar por
+/* Las rutas salen del registro de `lib/data/dossiers.ts`, que es la única
+   lista de dossiers del proyecto. Lo que no esté publicado ahí se pinta como
+   próximo aunque tenga texto en el JSON, así que no hay forma de enlazar por
    error a una página que todavía no existe. */
-const RUTAS: Record<string, '/miradas/comercio-agentico'> = {
-  'comercio-agentico': '/miradas/comercio-agentico',
-}
+const RUTAS = Object.fromEntries(DOSSIERS_PUBLICADOS.map((d) => [d.id, d.routeId]))
 
 export async function MiradasDossiers({ locale }: { locale: Locale }) {
   const t = await getTranslations({ locale, namespace: 'miradas' })
