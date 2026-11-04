@@ -33,14 +33,9 @@ function resolvePhoto(author: string): string | null {
   return file ? `/identidad/fotos-team/${file}.webp` : null
 }
 
-function initial(author: string): string {
-  const trimmed = author.trim()
-  return trimmed ? trimmed.charAt(0).toUpperCase() : '·'
-}
-
-const SIZE_PX: Record<'sm' | 'lg', { w: number; h: number; sizes: string; letter: string }> = {
-  sm: { w: 60, h: 63, sizes: '60px', letter: 'text-[40px]' },
-  lg: { w: 120, h: 126, sizes: '120px', letter: 'text-[80px]' },
+const SIZE_PX: Record<'sm' | 'lg', { w: number; h: number; sizes: string }> = {
+  sm: { w: 60, h: 63, sizes: '60px' },
+  lg: { w: 120, h: 126, sizes: '120px' },
 }
 
 interface AuthorAvatarProps {
@@ -66,11 +61,28 @@ export function AuthorAvatar({ author, size }: AuthorAvatarProps) {
           className="object-cover object-center"
         />
       ) : (
+        /* Sin foto va el imagotipo, no la inicial. La inicial dejaba una letra
+           suelta que no decía nada y se leía como un hueco por llenar; el
+           imagotipo dice lo que de verdad pasa, que la pieza la firma la casa
+           y no una persona con retrato.
+
+           Va sobre blanco y no sobre el fondo oscuro de marca: el SVG no trae
+           relleno propio, así que se pinta en negro y sobre oscuro no se
+           vería. Además el blanco lo une con la etiqueta de la firma, que
+           está justo debajo y también es blanca.
+
+           Decidido con Martina el 4/11/2026, al unificar bajo "Interactius"
+           las firmas de quienes ya no están en el equipo. */
         <span
           aria-label={author}
-          className={`absolute inset-0 flex items-center justify-center font-serif font-light text-fg leading-none ${dims.letter}`}
+          className="absolute inset-0 flex items-center justify-center bg-pure-white px-[20%]"
         >
-          {initial(author)}
+          {/* Etiqueta <img> y no next/image: el optimizador rechaza los SVG
+              salvo que se active `dangerouslyAllowSVG`, y activarlo en la
+              configuración abriría la puerta a SVG remotos en todo el sitio.
+              Un SVG local de 1 KB no necesita optimización de todos modos. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo/ius_imago.svg" alt="" className="block h-auto w-full" />
         </span>
       )}
     </div>
