@@ -465,11 +465,20 @@ export default async function ArticlePage({ params }: PageProps) {
                     pieza, no de la persona. Va antes del tiempo de lectura
                     porque es lo que más se mira al decidir si un artículo
                     sigue vigente. */}
-                <time dateTime={article.publishedAt}>
-                  {formatDate(article.publishedAt, locale)}
-                </time>
-                <span>
-                  {readingTime} {t('article.minRead')}
+                {/* Fecha y lectura van juntas, separadas por una barra, y no
+                    como dos bloques con el hueco normal: son dos datos de la
+                    misma pieza y se leen de un vistazo. El hueco mayor queda
+                    para separarlos de "actualizado el". */}
+                <span className="flex flex-wrap items-center gap-x-2">
+                  <time dateTime={article.publishedAt}>
+                    {formatDate(article.publishedAt, locale)}
+                  </time>
+                  <span aria-hidden="true" className="text-fg/40">
+                    /
+                  </span>
+                  <span>
+                    {readingTime} {t('article.minRead')}
+                  </span>
                 </span>
                 {article.modifiedAt && article.modifiedAt > article.publishedAt ? (
                   <span className="text-fg/60">
