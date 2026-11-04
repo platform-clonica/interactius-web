@@ -9,13 +9,7 @@ import { SITE_CONFIG } from '@/lib/seo/metadata.config'
    <script type="application/ld+json">.
    ========================================================================== */
 
-type JsonValue =
-  | string
-  | number
-  | boolean
-  | JsonObject
-  | JsonValue[]
-  | null
+type JsonValue = string | number | boolean | JsonObject | JsonValue[] | null
 
 interface JsonObject {
   [key: string]: JsonValue | undefined
@@ -74,16 +68,10 @@ export function buildOrganizationSchema(locale: Locale): SchemaBase {
         contactType: 'customer service',
         email: SITE_CONFIG.email,
         telephone: SITE_CONFIG.phone,
-        availableLanguage: Object.values(LOCALE_META).map(
-          (m) => m.displayName,
-        ),
+        availableLanguage: Object.values(LOCALE_META).map((m) => m.displayName),
       },
     ],
-    sameAs: [
-      SITE_CONFIG.social.linkedin,
-      SITE_CONFIG.social.instagram,
-      SITE_CONFIG.social.youtube,
-    ],
+    sameAs: [SITE_CONFIG.social.linkedin, SITE_CONFIG.social.instagram, SITE_CONFIG.social.youtube],
   }) as SchemaBase
 }
 
@@ -175,10 +163,7 @@ interface ArticleInput {
   url: string
 }
 
-export function buildArticleSchema(
-  article: ArticleInput,
-  locale: Locale,
-): SchemaBase {
+export function buildArticleSchema(article: ArticleInput, locale: Locale): SchemaBase {
   const imageUrl = resolveUrl(article.image)
 
   return cleanObject({
@@ -216,6 +201,77 @@ export function buildArticleSchema(
 function resolveUrl(url: string): string {
   if (url.startsWith('http://') || url.startsWith('https://')) return url
   return `${SITE_CONFIG.baseUrl}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
+/* ==========================================================================
+   buildCapabilitySchema(input)
+   --------------------------------------------------------------------------
+   Las tres páginas de capacidad no declaraban nada propio: solo llevaban el
+   `Organization` + `WebSite` que el layout pone a todas. Es decir, las páginas
+   que existen para vender no le decían a Google ni a un buscador de
+   respuestas qué servicios ofrecemos. Los artículos del blog sí lo hacían.
+
+   Se modela como `Service` con `hasOfferCatalog`, que es el patrón estándar
+   para "una capacidad que agrupa varios servicios concretos". Cada servicio
+   del catálogo sale del mismo JSON que pinta la página, así que no hay una
+   segunda lista que mantener: si alguien edita un servicio, el dato
+   estructurado cambia con él.
+
+   `provider` apunta al `@id` de la Organization en vez de repetir sus datos.
+   Esa organización ya está declarada en el layout de todas las páginas, así
+   que el buscador une las dos piezas en una sola entidad.
+   ========================================================================== */
+
+interface CapabilityServiceInput {
+  name: string
+  /** Puede traer <strong> del JSON de la página; se limpia aquí. */
+  description?: string
+}
+
+interface CapabilityInput {
+  /** Nombre de la capacidad. Ej. 'Pensamiento estratégico'. */
+  name: string
+  /** Descripción corta de la capacidad (la meta description de la página). */
+  description: string
+  /** Ruta localizada de la página, con o sin dominio. */
+  url: string
+  services: CapabilityServiceInput[]
+}
+
+/** Quita etiquetas HTML y normaliza espacios. Las descripciones del JSON de
+    capacidades llevan <strong> para el render, que en JSON-LD sobra. */
+function stripTags(text: string): string {
+  return text
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+export function buildCapabilitySchema(input: CapabilityInput): SchemaBase {
+  const url = resolveUrl(input.url)
+
+  return cleanObject({
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': `${url}#service`,
+    name: input.name,
+    serviceType: input.name,
+    description: input.description,
+    url,
+    provider: { '@id': ORG_ID },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: input.name,
+      itemListElement: input.services.map((service) => ({
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: service.name,
+          description: service.description ? stripTags(service.description) : undefined,
+        },
+      })),
+    },
+  }) as SchemaBase
 }
 
 /**
