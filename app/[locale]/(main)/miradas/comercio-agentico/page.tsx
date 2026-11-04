@@ -17,8 +17,10 @@ import { TEAM } from '@/lib/data/team'
 import { getMiradaBySlug } from '@/lib/content/miradas'
 import type { MiradasSubcategory } from '@/lib/content/miradas'
 import { articleHref } from '@/lib/i18n/article-href'
+import { localizeSubSlug } from '@/lib/miradas/i18n-routing'
 import { richComponents } from '@/lib/i18n/rich-text'
-import { buildPageMetadata } from '@/lib/seo/metadata.config'
+import { buildPageMetadata, SITE_CONFIG } from '@/lib/seo/metadata.config'
+import { buildBreadcrumbSchema } from '@/lib/seo/schema'
 import { getAlternates, localizedPath } from '@/lib/i18n/navigation'
 import { type Locale } from '@/lib/i18n/config'
 
@@ -74,6 +76,15 @@ function firma(corto: string): string {
   return coincidencias.length === 1 ? coincidencias[0].name : corto
 }
 
+/* Las fuentes de los datos del dossier, para declararlas como citas. Van aquí
+   y no en el JSON porque no son texto traducible: son nombres de informes. */
+const FUENTES = [
+  'NielsenIQ, 2026',
+  'Mastercard, 2026',
+  'Gartner Survey, mayo de 2026',
+  'Adobe Digital Insights, 2026',
+] as const
+
 const RECOMENDACIONES = ['maria', 'isaac'] as const
 
 const CLAVES = [
@@ -126,6 +137,7 @@ export default async function ComercioAgentico({ params }: PageProps) {
       // El servicio sale del frontmatter, no de una tabla a mano aquí.
       servicio: art.parentCategory,
       href: articleHref(p.sub as MiradasSubcategory, art.slugByLocale[locale], locale),
+      rutaAbsoluta: `${localizedPath('/miradas', locale)}/${localizeSubSlug(p.sub as MiradasSubcategory, locale)}/${art.slugByLocale[locale]}`,
     }
   }).filter((p): p is NonNullable<typeof p> => p !== null)
 
@@ -145,8 +157,54 @@ export default async function ComercioAgentico({ params }: PageProps) {
   }[]
   const contacto = { pathname: '/contacto' as const }
 
+  /* Datos estructurados.
+
+     `CollectionPage` y no `Article`: esto no es una pieza de autor, es una
+     recopilación de varias. Lo que declara `hasPart` son los tres artículos
+     que reúne, con su autora y su URL real, para que un buscador de
+     respuestas pueda atribuir cada afirmación a quien la firma en vez de a
+     la página entera.
+
+     `citation` lista las fuentes de las cifras. Es lo que separa "una web lo
+     dice" de "una web lo dice citando a NielsenIQ". Para AEO esa diferencia
+     es la que decide si te citan a ti o a la fuente directamente. */
+  const urlDossier = `${SITE_CONFIG.baseUrl}${localizedPath(RUTA, locale)}`
+
+  const esquema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: t('meta.title'),
+    description: t('meta.description'),
+    url: urlDossier,
+    inLanguage: locale,
+    isPartOf: { '@type': 'WebSite', url: SITE_CONFIG.baseUrl },
+    publisher: { '@type': 'Organization', name: SITE_CONFIG.name, url: SITE_CONFIG.baseUrl },
+    about: { '@type': 'Thing', name: t('masthead.title') },
+    hasPart: piezas.map((p) => ({
+      '@type': 'Article',
+      headline: p.titulo,
+      author: { '@type': 'Person', name: p.autora },
+      url: `${SITE_CONFIG.baseUrl}${p.rutaAbsoluta}`,
+    })),
+    citation: FUENTES.map((f) => ({ '@type': 'CreativeWork', name: f })),
+  }
+
+  const migas = buildBreadcrumbSchema([
+    { name: 'Miradas', url: localizedPath('/miradas', locale) },
+    { name: t('masthead.title'), url: localizedPath(RUTA, locale) },
+  ])
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(esquema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(migas) }}
+      />
+
       <DossierMasthead
         eyebrow={t('masthead.eyebrow')}
         title={t('masthead.title')}
