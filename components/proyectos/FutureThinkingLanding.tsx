@@ -250,6 +250,19 @@ export default async function FutureThinkingLanding({
       height: 100%;
       object-fit: cover;
     }
+    /* Logo del cliente centrado sobre el hero. Doble clase para ganar a
+       \`.ft-media img\`. brightness(0) + invert(1) lo deja en blanco puro. */
+    .ft-media .ft-media-logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(60%, 22rem);
+      height: auto;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      pointer-events: none;
+    }
     .ft-footer {
       font-family: var(--ft-mono);
       font-size: 11px;
@@ -341,16 +354,26 @@ export default async function FutureThinkingLanding({
             </div>
           </div>
 
-          <footer className="ft-footer">
-            ©{digest.year} Interactius · Acceso restringido a{' '}
-            <strong>{digest.client}</strong>
-          </footer>
+          {digest.showFooter !== false && (
+            <footer className="ft-footer">
+              ©{digest.year} Interactius · Acceso restringido a{' '}
+              <strong>{digest.client}</strong>
+            </footer>
+          )}
         </section>
 
         {/* En móvil (una columna) la imagen queda al final; en desktop, a la derecha. */}
         <aside className="ft-media">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={heroUrl} alt={digest.heroAlt} />
+          {digest.heroLogo && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              className="ft-media-logo"
+              src={assetUrl(digest.heroLogo.file)}
+              alt={digest.heroLogo.alt}
+            />
+          )}
         </aside>
       </div>
     </div>
