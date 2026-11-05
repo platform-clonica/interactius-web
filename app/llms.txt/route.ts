@@ -55,15 +55,15 @@ function buildBody(): string {
   const home = PAGE_COPY['/'][locale]
 
   // ── Cabecera (título + resumen en blockquote, según el estándar) ──────────
-  lines.push(`# ${SITE_CONFIG.name}`)
+  lines.push(`# ${SITE_CONFIG.name}` + `. Pensamiento Liminal.`)
   lines.push('')
   lines.push(`> ${oneLine(home.description)}`)
   lines.push('')
   lines.push(
     oneLine(
-      `Interactius es una consultora de diseño estratégico con sede en ` +
-        `${SITE_CONFIG.address.city} (fundada en 2012). Trabajamos en la ` +
-        `intersección de estrategia, diseño de experiencias, transformación ` +
+      `Somos una organización fundada en 2012 con sede en ` +
+        `${SITE_CONFIG.address.city}. Trabajamos en la ` +
+        `intersección de la Estrategia, el Diseño de experiencias y la Transformación ` +
         `cultural e inteligencia artificial aplicada, ayudando a las ` +
         `organizaciones a tomar mejores decisiones en contextos de incertidumbre.`,
     ),
@@ -91,8 +91,8 @@ function buildBody(): string {
   lines.push('')
   lines.push(
     oneLine(
-      `Interactius estructura su trabajo en tres áreas de servicio ` +
-        `complementarias. Cada una agrupa varios servicios concretos.`,
+      `Interactius estructura su trabajo en tres territorios ` +
+        `complementarios. Cada uno agrupa los distintos servicios.`,
     ),
   )
   lines.push('')
