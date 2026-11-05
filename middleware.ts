@@ -122,38 +122,57 @@ const LEGACY_PREFIX_FALLBACK: Array<[string, string]> = [
 const intlMiddleware = createMiddleware(routing)
 
 /* ==========================================================================
-   Landings de cliente — bypass de i18n (rutas públicas)
+   Landings de cliente — bypass de i18n
    --------------------------------------------------------------------------
-   Todo lo que cuelga de `/proyectos/bershka` vive FUERA de `app/[locale]/`,
-   así que hay que servirlo con `NextResponse.next()` para saltarnos el rewrite
-   de next-intl (que lo mandaría a `/es/...` → 404).
+   Todo lo que cuelga de estos prefijos vive FUERA de `app/[locale]/`, así que
+   hay que servirlo con `NextResponse.next()` para saltarnos el rewrite de
+   next-intl (que lo mandaría a `/es/...` → 404).
 
-   El prefijo es el cliente entero y no una landing concreta a propósito: cada
-   trimestre es una ruta hermana (`future-thinking`, `future-thinking-digest-q2`,
-   …) y con el prefijo antiguo, más específico, las hermanas caían en el rewrite
-   y devolvían 404. Añadir un trimestre nuevo ya no obliga a tocar este archivo.
-
-   Estas páginas eran privadas (HTTP Basic Auth); se hicieron públicas a
-   petición, así que solo queda el bypass de i18n, sin comprobar credenciales.
-
-   Las env vars `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD` ya no se usan aquí; se
-   pueden borrar del dashboard de Netlify. Se mantienen en `SECRETS_SCAN_OMIT_KEYS`
-   (netlify.toml) de forma inofensiva por si el valor aún estuviera configurado.
+   Cada prefijo es un cliente entero y no una landing concreta a propósito: cada
+   entrega es una ruta hermana (`future-thinking`, `future-thinking-digest-q2`,
+   …) y con un prefijo más específico las hermanas caían en el rewrite y
+   devolvían 404. Añadir una landing a un cliente existente no obliga a tocar
+   este archivo; un cliente nuevo, sí: hay que añadir su entrada aquí.
    ========================================================================== */
-const APPROOT_BYPASS_PREFIX = '/proyectos/bershka'
+
+type Credentials = { user?: string; password?: string }
+
+/**
+ * Una entrada por cliente: prefijo de sus landings y, si están protegidas,
+ * sus credenciales. Sin `credentials`, la landing es pública.
+ *
+ * Si se protege otro cliente, que tenga sus propias env vars: el usuario de
+ * Bershka es literalmente `bershka` y no debe recibirlo nadie más.
+ *
+ * Los `process.env.X` van escritos tal cual a propósito: Next solo pasa al
+ * middleware (Edge) las env vars que encuentra referenciadas de forma literal;
+ * con un acceso dinámico (`process.env[name]`) llegarían `undefined`.
+ */
+const CLIENT_LANDINGS: { prefix: string; credentials?: () => Credentials }[] = [
+  {
+    prefix: '/proyectos/bershka',
+    credentials: () => ({
+      user: process.env.BASIC_AUTH_USER,
+      password: process.env.BASIC_AUTH_PASSWORD,
+    }),
+  },
+  // Pública: solo necesita el bypass de i18n.
+  { prefix: '/proyectos/caixabank' },
+]
 
 /* ==========================================================================
    HTTP Basic Auth — landings de cliente
    --------------------------------------------------------------------------
-   Protege todo lo que cuelga de `/proyectos/bershka` (Q1, Q2 y los trimestres
-   que vengan). El resto del sitio no se ve afectado: la comprobación está
-   condicionada al prefijo y se ejecuta antes que los redirects y el i18n.
+   Protege lo que cuelga de cada prefijo de `CLIENT_LANDINGS` que declare
+   `credentials` (hoy, solo Bershka). El resto del sitio no se ve afectado: la
+   comprobación está condicionada al prefijo y se ejecuta antes que los
+   redirects y el i18n.
 
    Edge-compatible: sin `node:crypto`. Se reconstruye el header completo
    `Basic <base64>` con `btoa` y se compara. **Fail-closed**: si faltan las env
-   vars, nadie entra. Las credenciales viven en `BASIC_AUTH_USER` y
-   `BASIC_AUTH_PASSWORD` (Netlify → Site configuration → Environment variables);
-   si se borran de allí, la landing devuelve 401 a todo el mundo.
+   vars de un cliente protegido, nadie entra en sus landings. Las de Bershka
+   son `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD` (Netlify → Site configuration
+   → Environment variables).
 
    OJO — los archivos estáticos (PDF, audio, hero) viven en `public/` y NO pasan
    por el middleware: el matcher excluye las rutas con extensión. Siguen siendo
@@ -171,9 +190,7 @@ function unauthorized(): NextResponse {
   })
 }
 
-function isAuthorized(req: NextRequest): boolean {
-  const user = process.env.BASIC_AUTH_USER
-  const password = process.env.BASIC_AUTH_PASSWORD
+function isAuthorized(req: NextRequest, { user, password }: Credentials): boolean {
   // Fail-closed: sin credenciales configuradas, nadie entra.
   if (!user || !password) return false
 
@@ -191,17 +208,18 @@ function isAuthorized(req: NextRequest): boolean {
  * distinguen mayúsculas. Así la variante entra igualmente en el bypass y el
  * middleware puede normalizarla en vez de dejarla caer en un 404.
  */
-function isAppRootBypass(pathname: string): boolean {
+function findClientLanding(pathname: string) {
   const p = pathname.toLowerCase()
-  return (
-    p === APPROOT_BYPASS_PREFIX || p.startsWith(`${APPROOT_BYPASS_PREFIX}/`)
+  return CLIENT_LANDINGS.find(
+    ({ prefix }) => p === prefix || p.startsWith(`${prefix}/`),
   )
 }
 
 export default function middleware(req: NextRequest) {
   // 0. Ruta app-root fuera de i18n → servir directamente, sin rewrite de
   //    next-intl. El resto del middleware queda intacto.
-  if (isAppRootBypass(req.nextUrl.pathname)) {
+  const clientLanding = findClientLanding(req.nextUrl.pathname)
+  if (clientLanding) {
     // 0.a. Canonicaliza a minúsculas con un 308 permanente. El QR del digest
     //      Q2 se imprimió apuntando a `…-digest-Q2`, que en el sistema de
     //      ficheros es `q2`: sin esto, cada escaneo acaba en 404.
@@ -213,7 +231,13 @@ export default function middleware(req: NextRequest) {
     }
     // 0.b. Gate de credenciales. Va después de canonicalizar para que el QR
     //      con mayúsculas resuelva su redirect antes de pedir contraseña.
-    if (!isAuthorized(req)) return unauthorized()
+    //      Las landings públicas (sin `credentials`) se lo saltan.
+    if (
+      clientLanding.credentials &&
+      !isAuthorized(req, clientLanding.credentials())
+    ) {
+      return unauthorized()
+    }
     return NextResponse.next()
   }
 

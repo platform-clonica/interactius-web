@@ -44,6 +44,8 @@ export type Digest = {
   client: string
   /** Año del copyright del footer. */
   year: number
+  /** `false` quita el footer ("Acceso restringido a …"). Por defecto se pinta. */
+  showFooter?: boolean
   /** Carpeta de los assets dentro de `public/`, sin barra final. */
   assetBase: string
   /**
@@ -55,6 +57,11 @@ export type Digest = {
   heroFile: string
   /** Alt de la imagen hero. */
   heroAlt: string
+  /**
+   * Logo opcional centrado sobre la imagen hero, pintado en blanco. Tiene que
+   * tener fondo transparente: el filtro que lo blanquea afecta a todo lo opaco.
+   */
+  heroLogo?: { file: string; alt: string }
   /** Título de la pestaña del navegador. */
   metaTitle: string
   /** Meta description. */
