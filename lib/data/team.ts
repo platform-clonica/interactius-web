@@ -45,7 +45,7 @@ export const TEAM: readonly TeamMember[] = [
   { src: '/identidad/fotos-team/Ramon.webp',    name: 'Ramon Riera',        role: 'Product Designer' },
   { src: '/identidad/fotos-team/Riccardo.webp', name: 'Riccardo Fresco',    role: 'Product Designer' },
   { src: '/identidad/fotos-team/Sara.webp',     name: 'Sara Suárez',        role: 'Design Strategist' },
-  { src: '/identidad/fotos-team/Silvia.webp',   name: 'Silvia Calvet',      role: 'Strategic Project Manager' },
+  { src: '/identidad/fotos-team/Silvia.webp',   name: 'Silvia Calvet',      role: 'Project Manager' },
   { src: '/identidad/fotos-team/Tom.webp',      name: 'Tomás Modroño',      role: 'Product Specialist' },
   { src: '/identidad/fotos-team/Yolanda.webp',  name: 'Yolanda Delgado',    role: 'Product Designer' },
 ]
