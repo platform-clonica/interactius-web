@@ -27,7 +27,6 @@ export const TEAM: readonly TeamMember[] = [
   { src: '/identidad/fotos-team/Carlos.webp',   name: 'Carlos Ruiz',        role: 'CEO / Cofounder' },
   { src: '/identidad/fotos-team/Diana.webp',    name: 'Diana Yuste',        role: 'UI Designer' },
   { src: '/identidad/fotos-team/Diego.webp',    name: 'Diego Richtenberg',  role: 'Product Designer' },
-  { src: '/identidad/fotos-team/Edmond.webp',   name: 'Edmond Pérez',       role: 'PMO' },
   { src: '/identidad/fotos-team/ElenaS.webp',   name: 'Elena Santos',       role: 'Design Strategist' },
   { src: '/identidad/fotos-team/EleneC.webp',   name: 'Elena Campo',        role: 'Design Strategist' },
   { src: '/identidad/fotos-team/Eli.webp',      name: 'Elisabeth López',    role: 'Admin Manager' },
@@ -43,8 +42,10 @@ export const TEAM: readonly TeamMember[] = [
   { src: '/identidad/fotos-team/PamC.webp',     name: 'Pamela Campbell',    role: 'Design Strategist' },
   { src: '/identidad/fotos-team/Pamela B.webp', name: 'Pamela Bolaños',     role: 'Design Strategist' },
   { src: '/identidad/fotos-team/Pol.webp',      name: 'Pol Pascual',        role: 'Growth Manager' },
+  { src: '/identidad/fotos-team/Ramon.webp',    name: 'Ramon Riera',        role: 'Product Designer' },
   { src: '/identidad/fotos-team/Riccardo.webp', name: 'Riccardo Fresco',    role: 'Product Designer' },
   { src: '/identidad/fotos-team/Sara.webp',     name: 'Sara Suárez',        role: 'Design Strategist' },
+  { src: '/identidad/fotos-team/Silvia.webp',   name: 'Silvia Calvet',      role: 'Strategic Project Manager' },
   { src: '/identidad/fotos-team/Tom.webp',      name: 'Tomás Modroño',      role: 'Product Specialist' },
   { src: '/identidad/fotos-team/Yolanda.webp',  name: 'Yolanda Delgado',    role: 'Product Designer' },
 ]
