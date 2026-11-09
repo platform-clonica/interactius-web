@@ -25,6 +25,6 @@ Pol Pascual - Growth Manager - Pol.webp
 Ramon Riera - Product Designer - Ramon.webp
 Riccardo Fresco - Product Designer - Riccardo.webp
 Sara Suárez - Design Strategist - Sara.webp
-Silvia Calvet - Strategic Project Manager - Silvia.webp
+Silvia Calvet - Project Manager - Silvia.webp
 Tomás Modroño - Product Specialist - Tom.webp
 Yolanda Delgado - Product Designer - Yolanda.webp
