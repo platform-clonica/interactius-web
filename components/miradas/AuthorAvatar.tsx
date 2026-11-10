@@ -1,6 +1,7 @@
 import Image from 'next/image'
 
 const AUTHOR_PHOTOS: Record<string, string> = {
+  adrian: 'Adrian',
   aleix: 'Aleix',
   alex: 'Alex',
   alexandra: 'Alexandra',
