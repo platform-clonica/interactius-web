@@ -107,6 +107,13 @@ export const MiradaFrontmatterSchema = z.object({
     .regex(imagePathRe, 'image must match /miradas-assets/<slug>/<file>.<ext>')
     .optional(),
   tags: z.array(z.string()).optional(),
+  // Override manual del artículo sugerido al final de la página. Slug-ES
+  // canónico de otro artículo. Si está presente y resuelve, gana a la
+  // puntuación por etiquetas de `getNextArticle`.
+  nextSlug: z
+    .string()
+    .regex(slugRe, 'nextSlug must contain only [a-zA-Z0-9_.-]')
+    .optional(),
   // Translation metadata — presente solo en archivos `{slug}.{locale}.mdx`
   // generados por scripts/translate-miradas.mjs. La página del artículo
   // muestra `<AITranslationBanner>` cuando `translatedBy === 'ai'`.
