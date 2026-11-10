@@ -14,7 +14,6 @@ interface BackLink {
 }
 
 interface ShareRowProps {
-  title: string
   /** URL absoluta del artículo. */
   url: string
   /** Mostrado a la izquierda de la fila si no se pasa `backLink`. */
@@ -27,11 +26,14 @@ interface ShareRowProps {
 /**
  * Fila de share del artículo: a la izquierda minutos de lectura O un
  * back-link (según props); a la derecha "Compartir" (label) + Copiar enlace
- * (clipboard) + LinkedIn / Facebook / Twitter intents. Líneas separadoras
- * top/bottom canónicas (border-fg/20).
+ * (clipboard) + intent de LinkedIn. Líneas separadoras top/bottom canónicas
+ * (border-fg/20).
+ *
+ * Solo LinkedIn: es donde está la audiencia de Miradas. Facebook y Twitter
+ * estuvieron aquí y se retiraron — cada intent extra es ruido en la fila y
+ * una red que no mueve tráfico a estos artículos.
  */
 export function ShareRow({
-  title,
   url,
   readingTimeMinutes,
   backLink,
@@ -49,11 +51,7 @@ export function ShareRow({
     }
   }
 
-  const encUrl = encodeURIComponent(url)
-  const encTitle = encodeURIComponent(title)
-  const linkedin = `https://www.linkedin.com/sharing/share-offsite/?url=${encUrl}`
-  const facebook = `https://www.facebook.com/sharer/sharer.php?u=${encUrl}`
-  const twitter = `https://twitter.com/intent/tweet?url=${encUrl}&text=${encTitle}`
+  const linkedin = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
 
   return (
     <div className="border-y border-fg/20 py-6">
@@ -85,22 +83,6 @@ export function ShareRow({
             className="hover-wipe-underline w-fit text-fg"
           >
             Linkedin
-          </a>
-          <a
-            href={facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover-wipe-underline w-fit text-fg"
-          >
-            Facebook
-          </a>
-          <a
-            href={twitter}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover-wipe-underline w-fit text-fg"
-          >
-            Twitter
           </a>
         </div>
       </div>

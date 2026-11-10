@@ -541,7 +541,6 @@ export default async function ArticlePage({ params }: PageProps) {
         <div className="grid grid-cols-12 gap-grid-gutter">
           <div className="col-span-12 lg:col-start-2 lg:col-span-10 min-[1920px]:col-start-1 min-[1920px]:col-span-12 min-[1920px]:w-full min-[1920px]:max-w-[1280px] min-[1920px]:justify-self-center">
             <ShareRow
-              title={article.title}
               url={absoluteUrl}
               backLink={{ href: '/miradas', label: t('article.backToListing') }}
             />
