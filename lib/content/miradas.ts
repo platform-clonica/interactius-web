@@ -50,6 +50,8 @@ export interface MiradaFrontmatter {
   slug: string
   image?: string
   tags?: string[]
+  /** Fija a mano el artículo sugerido del final (slug-ES). Ver `getNextArticle`. */
+  nextSlug?: string
   /** Solo en MDX traducidos por `scripts/translate-miradas.mjs`. */
   translatedBy?: 'ai' | 'human'
   translatedAt?: string
@@ -346,12 +348,22 @@ export function calculateReadingTime(content: string): number {
  *
  * Un artículo sin etiquetas y sin hermanos de subcategoría sigue recibiendo al
  * más reciente del sitio en vez de null, así que la sección nunca desaparece.
+ *
+ * El frontmatter puede saltarse todo esto con `nextSlug`: cuando se quiere
+ * encadenar dos artículos a mano (una serie, una pieza que remata a otra), la
+ * puntuación no debe mandar. Si el slug no resuelve se ignora y vuelve al
+ * cálculo, para que un typo degrade en vez de vaciar la sección.
  */
 export function getNextArticle(cat: string, slug: string): MiradaMeta | null {
   const all = getAllMiradas()
   const actual = all.find((a) => a.slug === slug && a.cat === cat)
   const candidatos = all.filter((a) => a.slug !== slug)
   if (candidatos.length === 0) return null
+
+  if (actual?.nextSlug) {
+    const fijado = candidatos.find((a) => a.slug === actual.nextSlug)
+    if (fijado) return fijado
+  }
 
   const etiquetas = new Set(actual?.tags ?? [])
   const madre = actual?.parentCategory

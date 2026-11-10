@@ -124,6 +124,8 @@ const FrontmatterSchema = z.object({
   slug: z.string().regex(slugRe),
   image: z.string().regex(imagePathRe).optional(),
   tags: z.array(z.string()).optional(),
+  // Override manual del artículo sugerido al final (slug-ES canónico).
+  nextSlug: z.string().regex(slugRe).optional(),
   // Translation metadata (solo en MDX bajo content/miradas/{ca,en}/).
   translatedBy: z.enum(['ai', 'human']).optional(),
   translatedAt: z.string().regex(dateRe).optional(),
@@ -199,6 +201,7 @@ async function main() {
   for (const sub of MIRADAS_SUBCATEGORIES) distBySub[sub] = 0
   const distByParent = {}
   for (const p of MIRADAS_PARENT_CATEGORIES) distByParent[p] = 0
+  const nextRefs = []
 
   for (const file of files) {
     const rel = path.relative(ROOT, file)
@@ -250,6 +253,13 @@ async function main() {
       if (localeSegment === 'es') {
         ;(slugToCats[fm.slug] ??= new Set()).add(fm.category)
       }
+      // `nextSlug` fija a mano el artículo sugerido del final. Si apunta a
+      // un slug que no existe, getNextArticle lo ignora y vuelve al cálculo
+      // por etiquetas: no rompe nada, pero el override deja de aplicarse sin
+      // avisar. Se resuelve después del bucle, cuando ya están todos los slugs.
+      if (localeSegment === 'es' && fm.nextSlug) {
+        nextRefs.push({ slug: fm.slug, rel, target: fm.nextSlug })
+      }
     }
 
     if (errors.length) {
@@ -259,6 +269,20 @@ async function main() {
       okCount++
       distBySub[parsed.data.category]++
       distByParent[parsed.data.parentCategory]++
+    }
+  }
+
+  for (const ref of nextRefs) {
+    if (ref.target === ref.slug) {
+      warnings.push({
+        slug: ref.slug,
+        msg: `${ref.rel}: nextSlug apunta al propio artículo; se ignora`,
+      })
+    } else if (!slugToCats[ref.target]) {
+      warnings.push({
+        slug: ref.slug,
+        msg: `${ref.rel}: nextSlug "${ref.target}" no existe; se ignora y vuelve al cálculo por etiquetas`,
+      })
     }
   }
 
