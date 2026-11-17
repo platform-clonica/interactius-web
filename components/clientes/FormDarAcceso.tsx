@@ -1,19 +1,47 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useState, type FormEvent } from 'react'
 
-import { darAccesoAccion } from '@/app/clientes/admin/acciones'
+import type { ResultadoDarAcceso } from '@/lib/clientes/panel'
 
 import { BotonCopiar } from './CopiarEnlace'
 import { BOTON_PRINCIPAL, CAJA } from './estilos'
 
+const FALLO: ResultadoDarAcceso = {
+  ok: false,
+  mensaje: 'No se pudo completar. Comprueba la conexión e inténtalo de nuevo.',
+}
+
 /** Formulario «Dar acceso» de una tarjeta del panel admin. */
 export function FormDarAcceso({ id }: { id: string }) {
-  const [resultado, accion, enviando] = useActionState(darAccesoAccion, null)
+  const router = useRouter()
+  const [resultado, setResultado] = useState<ResultadoDarAcceso | null>(null)
+  const [enviando, setEnviando] = useState(false)
+
+  async function enviar(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const form = e.currentTarget
+    setEnviando(true)
+    setResultado(null)
+    try {
+      const res = await fetch('/clientes/admin/dar-acceso', { method: 'POST', body: new FormData(form) })
+      const r = (await res.json().catch(() => FALLO)) as ResultadoDarAcceso
+      setResultado(r)
+      if (r.ok) {
+        form.reset()
+        router.refresh() // actualiza la tabla de accesos sin perder este recuadro
+      }
+    } catch {
+      setResultado(FALLO)
+    } finally {
+      setEnviando(false)
+    }
+  }
 
   return (
     <div className="mt-6">
-      <form action={accion} className="flex flex-wrap items-center gap-2">
+      <form onSubmit={enviar} className="flex flex-wrap items-center gap-2">
         <input type="hidden" name="id" value={id} />
         <label className="sr-only" htmlFor={`email-${id}`}>Correo de la persona</label>
         <input
