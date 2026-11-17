@@ -1,12 +1,23 @@
 import { getStore, type Store } from '@netlify/blobs'
 
+import { leerConConfirmacion } from './lectura'
 import type { AlmacenBlobs, Almacenes } from './store'
 import type { Entorno } from './types'
 
-function adaptar(store: Store): AlmacenBlobs {
+/** Tope de la lectura estricta (ver `lectura.ts`). */
+const TOPE_LECTURA_ESTRICTA_MS = 3000
+
+function adaptar(store: Store, estricta: boolean): AlmacenBlobs {
+  const leer = async <T>(clave: string, consistency?: 'strong') =>
+    ((await store.get(clave, { type: 'json', ...(consistency ? { consistency } : {}) })) as T | null) ?? null
   return {
     async leerJSON<T>(clave: string) {
-      return ((await store.get(clave, { type: 'json' })) as T | null) ?? null
+      if (!estricta) return leer<T>(clave)
+      return leerConConfirmacion(
+        () => leer<T>(clave),
+        () => leer<T>(clave, 'strong'),
+        TOPE_LECTURA_ESTRICTA_MS,
+      )
     },
     async escribirJSON(clave, valor) {
       await store.setJSON(clave, valor)
@@ -40,11 +51,13 @@ export interface OpcionesNetlify {
 }
 
 /**
- * En runtime (funciones de Netlify) el contexto de Blobs llega solo y pedimos
- * consistencia fuerte para que una revocación se note al instante. Desde la
- * CLI se accede por API con siteID + token, que ya es consistente; ahí no se
- * pasa `consistency` porque exige un `uncachedEdgeURL` que solo existe en
- * runtime.
+ * En runtime (funciones de Netlify) el contexto de Blobs llega solo. Las
+ * fichas y usuarios se leen en dos pasos (`lectura.ts`): normal y, si existen,
+ * estricta, para que una revocación se note al instante sin colgarse con
+ * claves inexistentes. Archivos y listados usan la lectura normal (los
+ * archivos de una versión no cambian). Desde la CLI se accede por API con
+ * siteID + token, que ya es consistente; ahí no se pide lectura estricta
+ * porque exige un `uncachedEdgeURL` que solo existe en runtime.
  */
 export function crearAlmacenesNetlify(
   entorno: Entorno,
@@ -55,7 +68,8 @@ export function crearAlmacenesNetlify(
     adaptar(
       porApi
         ? getStore({ name: `${base}-${entorno}`, siteID: opciones.siteID!, token: opciones.token! })
-        : getStore({ name: `${base}-${entorno}`, consistency: 'strong' }),
+        : getStore({ name: `${base}-${entorno}` }),
+      !porApi,
     )
   return {
     artefactos: crear('clientes-artefactos'),
