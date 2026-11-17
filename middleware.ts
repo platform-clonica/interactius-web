@@ -216,6 +216,18 @@ function findClientLanding(pathname: string) {
 }
 
 export default function middleware(req: NextRequest) {
+  // Zona privada de clientes (`app/clientes/`): fuera de i18n y SIN pasar a
+  // minúsculas (los tokens de archivo distinguen mayúsculas). La autenticación
+  // la hacen las propias rutas; aquí solo cabeceras de privacidad.
+  const p = req.nextUrl.pathname
+  if (p === '/clientes' || p.startsWith('/clientes/')) {
+    const res = NextResponse.next()
+    res.headers.set('X-Robots-Tag', 'noindex, nofollow')
+    res.headers.set('Cache-Control', 'private, no-store')
+    res.headers.set('Referrer-Policy', 'no-referrer')
+    return res
+  }
+
   // 0. Ruta app-root fuera de i18n → servir directamente, sin rewrite de
   //    next-intl. El resto del middleware queda intacto.
   const clientLanding = findClientLanding(req.nextUrl.pathname)
