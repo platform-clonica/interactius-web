@@ -3,20 +3,24 @@
 import { useState } from 'react'
 
 export function CopiarEnlace({ url }: { url: string }) {
-  const [copiado, setCopiado] = useState(false)
+  const [estado, setEstado] = useState<'listo' | 'copiado' | 'error'>('listo')
   return (
     <span className="flex flex-wrap items-center gap-3">
-      <code className="break-all text-micro">{url}</code>
+      <code className="min-w-0 break-all border border-solid border-fg/15 bg-bg px-3 py-2 text-micro">{url}</code>
       <button
         type="button"
-        className="text-label underline underline-offset-4"
+        className="h-8 border border-solid border-fg/30 px-3 text-micro uppercase tracking-[0.08em] transition-colors hover:border-fg hover:bg-dark hover:text-warm-light"
         onClick={async () => {
-          await navigator.clipboard.writeText(url)
-          setCopiado(true)
-          setTimeout(() => setCopiado(false), 2000)
+          try {
+            await navigator.clipboard.writeText(url)
+            setEstado('copiado')
+          } catch {
+            setEstado('error')
+          }
+          setTimeout(() => setEstado('listo'), 2000)
         }}
       >
-        {copiado ? 'Copiado' : 'Copiar enlace'}
+        {estado === 'copiado' ? 'Copiado' : estado === 'error' ? 'Cópialo a mano' : 'Copiar enlace'}
       </button>
     </span>
   )
