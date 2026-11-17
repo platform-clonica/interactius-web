@@ -224,7 +224,7 @@ export default function middleware(req: NextRequest) {
     const res = NextResponse.next()
     res.headers.set('X-Robots-Tag', 'noindex, nofollow')
     res.headers.set('Cache-Control', 'private, no-store')
-    res.headers.set('Referrer-Policy', 'no-referrer')
+    res.headers.set('Referrer-Policy', 'same-origin')
     return res
   }
 

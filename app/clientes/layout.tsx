@@ -13,7 +13,9 @@ import { ftFontsClass } from '@/lib/fonts/future-thinking'
 export const metadata: Metadata = {
   title: 'Interactius · Área de clientes',
   robots: { index: false, follow: false, nocache: true },
-  referrer: 'no-referrer',
+  // same-origin: nada de Referer hacia otros sitios, pero los formularios
+  // propios conservan su Origin (con no-referrer Chrome envía Origin: null).
+  referrer: 'same-origin',
 }
 
 export default function ClientesLayout({ children }: { children: React.ReactNode }) {

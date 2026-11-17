@@ -58,7 +58,7 @@ const nextConfig = {
         // archivos llevan un token). Va después de la regla general para que
         // este valor prevalezca sobre `origin-when-cross-origin`.
         source: '/clientes/:path*',
-        headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }],
+        headers: [{ key: 'Referrer-Policy', value: 'same-origin' }],
       },
     ]
   },
