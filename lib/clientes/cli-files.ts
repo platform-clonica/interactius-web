@@ -33,6 +33,7 @@ const MIME: Record<string, string> = {
   '.mp3': 'audio/mpeg',
   '.m4a': 'audio/mp4',
   '.pdf': 'application/pdf',
+  '.md': 'text/markdown; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
   '.csv': 'text/csv; charset=utf-8',
 }
