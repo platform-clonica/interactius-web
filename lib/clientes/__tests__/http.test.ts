@@ -12,6 +12,18 @@ describe('origenValido', () => {
     expect(origenValido(req({ host: 'www.interactius.com' }))).toBe(false)
     expect(origenValido(req({ origin: 'null', host: 'www.interactius.com' }))).toBe(false)
   })
+
+  it('con Origin "null" o ausente acepta solo si el navegador declara same-origin', () => {
+    // Chrome envía `Origin: null` en POST de formulario si la página tiene
+    // Referrer-Policy no-referrer; Sec-Fetch-Site sigue diciendo de dónde viene.
+    expect(origenValido(req({ origin: 'null', host: 'www.interactius.com', 'sec-fetch-site': 'same-origin' }))).toBe(true)
+    expect(origenValido(req({ host: 'www.interactius.com', 'sec-fetch-site': 'same-origin' }))).toBe(true)
+    // Un iframe sandbox (origen opaco) u otra web: cross-site → rechazado.
+    expect(origenValido(req({ origin: 'null', host: 'www.interactius.com', 'sec-fetch-site': 'cross-site' }))).toBe(false)
+    expect(origenValido(req({ origin: 'null', host: 'www.interactius.com', 'sec-fetch-site': 'same-site' }))).toBe(false)
+    // Un Origin real distinto manda aunque Sec-Fetch-Site diga otra cosa.
+    expect(origenValido(req({ origin: 'https://evil.io', host: 'www.interactius.com', 'sec-fetch-site': 'same-origin' }))).toBe(false)
+  })
 })
 
 describe('destinoSeguro', () => {

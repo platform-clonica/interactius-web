@@ -1,8 +1,19 @@
-/** Protección CSRF: el POST debe venir de una página de nuestro mismo host. */
+/**
+ * Protección CSRF: el POST debe venir de una página de nuestro mismo host.
+ *
+ * Si hay un Origin real, manda: debe coincidir con el host. Si el navegador lo
+ * envía como "null" (p. ej. Chrome con Referrer-Policy no-referrer) o no lo
+ * envía, se acepta solo con `Sec-Fetch-Site: same-origin`, que el navegador
+ * fija y una página no puede falsificar. Un iframe sandbox (origen opaco) u
+ * otra web llegan como cross-site y se rechazan.
+ */
 export function origenValido(req: Request): boolean {
   const origin = req.headers.get('origin')
   const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host')
-  if (!origin || !host) return false
+  if (!host) return false
+  if (!origin || origin === 'null') {
+    return req.headers.get('sec-fetch-site') === 'same-origin'
+  }
   try {
     return new URL(origin).host === host
   } catch {
