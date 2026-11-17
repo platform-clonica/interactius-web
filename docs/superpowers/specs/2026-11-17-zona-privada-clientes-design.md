@@ -97,7 +97,7 @@ base32 sin ambigüedades (minúsculas, sin `0/o/1/l`).
   "entrada": "index.html",
   "avisos": ["usa window.claude: funciones de Claude no disponibles"],
   "accesos": {
-    "ana@cliente.com": { "concedidoEn": "…", "ultimoAcceso": "…" }
+    "ana@cliente.com": { "concedidoEn": "…" }
   }
 }
 ```
@@ -133,8 +133,13 @@ base32 sin ambigüedades (minúsculas, sin `0/o/1/l`).
   republicación o revocación es una sola escritura. Para "artefactos de un
   usuario" la vista admin recorre los artefactos (volumen esperado: decenas).
 
-**Índice** — `clientes-registro`, clave `indice`: lista de `{id, cliente,
-titulo}` para la vista admin. Se reescribe en cada alta y baja.
+**Último acceso** — `clientes-registro`, clave
+`ultimos-accesos/<id>/<email>`: `{ "en": "<ISO>" }`. Va separado de la ficha
+para que una visita nunca reescriba el artefacto (y no pueda pisar una
+revocación concurrente).
+
+**Listado** — no hay índice: la vista admin y la CLI listan con
+`list({ prefix: "artefactos/" })` (volumen esperado: decenas).
 
 ## 5. Rutas
 
