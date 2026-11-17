@@ -7,22 +7,23 @@ import type { Entorno } from './types'
 /** Tope de la lectura estricta (ver `lectura.ts`). */
 const TOPE_LECTURA_ESTRICTA_MS = 3000
 
-function adaptar(store: Store, estricta: boolean): AlmacenBlobs {
-  const leer = async <T>(clave: string, consistency?: 'strong') =>
-    ((await store.get(clave, { type: 'json', ...(consistency ? { consistency } : {}) })) as T | null) ?? null
+function adaptar(store: Store, enRuntime: boolean): AlmacenBlobs {
+  const leer = async <T>(clave: string) => ((await store.get(clave, { type: 'json' })) as T | null) ?? null
+  /** Existencia por listado: en runtime, leer una clave inexistente se cuelga.
+   *  En runtime el store es `strong`, así que el listado ve al momento lo
+   *  recién escrito (un usuario creado hace un segundo puede entrar). */
+  const existe = async (clave: string) =>
+    (await store.list({ prefix: clave })).blobs.some((b) => b.key === clave)
   return {
     async leerJSON<T>(clave: string) {
-      if (!estricta) return leer<T>(clave)
-      return leerConConfirmacion(
-        () => leer<T>(clave),
-        () => leer<T>(clave, 'strong'),
-        TOPE_LECTURA_ESTRICTA_MS,
-      )
+      if (!enRuntime) return leer<T>(clave)
+      return leerConConfirmacion(() => existe(clave), () => leer<T>(clave), TOPE_LECTURA_ESTRICTA_MS)
     },
     async escribirJSON(clave, valor) {
       await store.setJSON(clave, valor)
     },
     async leerArchivo(clave) {
+      if (enRuntime && !(await existe(clave))) return null
       const r = await store.getWithMetadata(clave, { type: 'arrayBuffer' })
       if (!r) return null
       const contentType =
@@ -51,11 +52,10 @@ export interface OpcionesNetlify {
 }
 
 /**
- * En runtime (funciones de Netlify) el contexto de Blobs llega solo. Las
- * fichas y usuarios se leen en dos pasos (`lectura.ts`): normal y, si existen,
- * estricta, para que una revocación se note al instante sin colgarse con
- * claves inexistentes. Archivos y listados usan la lectura normal (los
- * archivos de una versión no cambian). Desde la CLI se accede por API con
+ * En runtime (funciones de Netlify) el contexto de Blobs llega solo. Antes
+ * de leer cualquier clave se comprueba que existe con un listado (leer una
+ * clave inexistente se cuelga, ver `lectura.ts`); fichas y usuarios se leen
+ * después en modo estricto, para que una revocación se note al instante. Desde la CLI se accede por API con
  * siteID + token, que ya es consistente; ahí no se pide lectura estricta
  * porque exige un `uncachedEdgeURL` que solo existe en runtime.
  */
@@ -68,7 +68,7 @@ export function crearAlmacenesNetlify(
     adaptar(
       porApi
         ? getStore({ name: `${base}-${entorno}`, siteID: opciones.siteID!, token: opciones.token! })
-        : getStore({ name: `${base}-${entorno}` }),
+        : getStore({ name: `${base}-${entorno}`, consistency: 'strong' }),
       !porApi,
     )
   return {
