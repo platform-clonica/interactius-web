@@ -11,6 +11,7 @@
    ========================================================================== */
 
 import { parseArgs } from 'node:util'
+import { fileURLToPath } from 'node:url'
 
 import { URL_BASE, leerDirectorioArtefacto } from '../lib/clientes/cli-files'
 import { crearAlmacenesNetlify } from '../lib/clientes/netlify-store'
@@ -82,7 +83,9 @@ async function main() {
   const publicadoPor = 'claude-code'
 
   async function archivosConAvisos() {
-    const archivos = await leerDirectorioArtefacto(requerir('dir'), process.cwd())
+    // scripts/ está un nivel por debajo de la raíz del repo.
+    const raizRepo = fileURLToPath(new URL('..', import.meta.url))
+    const archivos = await leerDirectorioArtefacto(requerir('dir'), raizRepo)
     const avisos = detectarAvisos(archivos)
     if (avisos.length && !values['aceptar-avisos']) {
       throw new ErrorOperacion(

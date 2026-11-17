@@ -50,10 +50,16 @@ export async function leerDirectorioArtefacto(
   raizRepo: string,
 ): Promise<ArchivoArtefacto[]> {
   const real = await realpath(dir)
-  const repo = await realpath(raizRepo).catch(() => raizRepo)
+  let repo: string
+  try {
+    repo = await realpath(raizRepo)
+  } catch {
+    // Fail closed: sin raíz resuelta no podemos garantizar que la carpeta esté fuera.
+    throw new ErrorOperacion(`No se pudo resolver la raíz del repo: ${raizRepo}.`)
+  }
   const rel = relative(repo, real)
-  const dentroDelRepo = rel === '' || (!rel.startsWith('..') && !isAbsolute(rel))
-  if (dentroDelRepo) {
+  const fueraDelRepo = rel === '..' || rel.startsWith('..' + sep) || isAbsolute(rel)
+  if (!fueraDelRepo) {
     throw new ErrorOperacion(
       `La carpeta ${real} está dentro del repo. Copia el artefacto a un directorio temporal fuera del repo (p. ej. el scratchpad).`,
     )
