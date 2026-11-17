@@ -9,8 +9,11 @@ export function Visor({
       {/* Barra mínima en negro: deja todo el protagonismo al artefacto. */}
       <header className="flex h-8 shrink-0 items-center justify-between gap-4 bg-dark px-4 font-[family-name:var(--font-ft-mono)] text-[11px] text-warm-light">
         <span className="flex min-w-0 items-center gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element -- SVG estático; el logo es oscuro y se invierte a claro */}
-          <img src="/logo/interactius.svg" alt="interactius" className="h-[11px] w-auto shrink-0 brightness-0 invert" />
+          {/* Isotipo (el del favicon y la cortina de carga), no el logotipo:
+              los artefactos ya llevan el logotipo en su propia cabecera.
+              Mitad superior oscura: un filo claro lo separa del fondo negro. */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- SVG estático */}
+          <img src="/logo/isotipo-positivo.svg" alt="interactius" className="h-4 w-4 shrink-0 outline outline-1 outline-warm-light/40" />
           <span className="opacity-40">/</span>
           <span className="truncate">{titulo}</span>
         </span>
