@@ -53,6 +53,13 @@ const nextConfig = {
           },
         ],
       },
+      {
+        // Zona privada de clientes: sin Referer hacia fuera (las URLs de
+        // archivos llevan un token). Va después de la regla general para que
+        // este valor prevalezca sobre `origin-when-cross-origin`.
+        source: '/clientes/:path*',
+        headers: [{ key: 'Referrer-Policy', value: 'no-referrer' }],
+      },
     ]
   },
   // Redirects 301 legacy SEO: ahora se aplican en `middleware.ts` antes
