@@ -26,7 +26,7 @@ export function Login({ next, error }: { next: string; error?: string }) {
       >
         <input type="hidden" name="next" value={next} />
         <label className="flex flex-col gap-2">
-          <span className={ETIQUETA}>Usuario (tu correo)</span>
+          <span className={ETIQUETA}>Usuario</span>
           <input name="email" type="email" required autoComplete="username" className={CAMPO} />
         </label>
         <label className="flex flex-col gap-2">
