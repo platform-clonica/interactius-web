@@ -2,26 +2,41 @@
 
 import { useState } from 'react'
 
-export function CopiarEnlace({ url }: { url: string }) {
+import { BOTON, CAJA } from './estilos'
+
+/** Copia `texto` al portapapeles; avisa si el navegador no lo permite. */
+export function BotonCopiar({ texto, etiqueta }: { texto: string; etiqueta: string }) {
   const [estado, setEstado] = useState<'listo' | 'copiado' | 'error'>('listo')
   return (
-    <span className="flex flex-wrap items-center gap-3">
-      <code className="min-w-0 break-all border border-solid border-fg/15 bg-bg px-3 py-2 text-micro">{url}</code>
-      <button
-        type="button"
-        className="h-8 border border-solid border-fg/30 px-3 text-micro uppercase tracking-[0.08em] transition-colors hover:border-fg hover:bg-dark hover:text-warm-light"
-        onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(url)
-            setEstado('copiado')
-          } catch {
-            setEstado('error')
-          }
-          setTimeout(() => setEstado('listo'), 2000)
-        }}
-      >
-        {estado === 'copiado' ? 'Copiado' : estado === 'error' ? 'Cópialo a mano' : 'Copiar enlace'}
-      </button>
-    </span>
+    <button
+      type="button"
+      className={BOTON}
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(texto)
+          setEstado('copiado')
+        } catch {
+          setEstado('error')
+        }
+        setTimeout(() => setEstado('listo'), 2000)
+      }}
+    >
+      {estado === 'copiado' ? 'Copiado' : estado === 'error' ? 'Cópialo a mano' : etiqueta}
+    </button>
+  )
+}
+
+/** Enlace en una caja + Copiar + Ver, todo con el mismo alto. */
+export function CopiarEnlace({ url, ruta }: { url: string; ruta: string }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <code className={`${CAJA} flex flex-1 items-center overflow-hidden whitespace-nowrap`}>
+        <span className="truncate">{url}</span>
+      </code>
+      <BotonCopiar texto={url} etiqueta="Copiar enlace" />
+      <a href={ruta} target="_blank" rel="noopener" className={BOTON}>
+        Ver
+      </a>
+    </div>
   )
 }
