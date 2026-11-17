@@ -6,11 +6,13 @@ export function Visor({
 }: { titulo: string; src: string; expira: number; email: string; volver: string }) {
   return (
     <div className="flex h-dvh flex-col">
-      <header className="flex h-12 shrink-0 items-center justify-between gap-4 border-b border-fg/15 px-4 text-sm">
-        <span className="truncate">
-          <span className="font-[family-name:var(--font-ft-mono)] uppercase tracking-widest">interactius</span>
-          <span className="mx-2 opacity-40">/</span>
-          {titulo}
+      {/* Barra mínima en negro: deja todo el protagonismo al artefacto. */}
+      <header className="flex h-8 shrink-0 items-center justify-between gap-4 bg-dark px-4 font-[family-name:var(--font-ft-mono)] text-[11px] text-warm-light">
+        <span className="flex min-w-0 items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element -- SVG estático; el logo es oscuro y se invierte a claro */}
+          <img src="/logo/interactius.svg" alt="interactius" className="h-[11px] w-auto shrink-0 brightness-0 invert" />
+          <span className="opacity-40">/</span>
+          <span className="truncate">{titulo}</span>
         </span>
         <span className="flex shrink-0 items-center gap-4">
           <span className="hidden opacity-60 sm:inline">{email}</span>
