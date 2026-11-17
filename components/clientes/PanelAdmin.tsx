@@ -3,6 +3,8 @@ import { SITE_CONFIG } from '@/lib/seo/metadata.config'
 
 import { BotonSalir } from './BotonSalir'
 import { CopiarEnlace } from './CopiarEnlace'
+import { BOTON } from './estilos'
+import { FormDarAcceso } from './FormDarAcceso'
 
 /* ==========================================================================
    Panel admin — vista (sin datos ni sesión: los recibe por props)
@@ -24,8 +26,6 @@ const fecha = (iso: string | null) =>
     : '—'
 
 const CAPTION = 'text-micro uppercase tracking-[0.12em] text-fg/60'
-const ACCION =
-  'h-8 border border-solid border-fg/30 px-3 text-micro uppercase tracking-[0.08em] transition-colors hover:border-fg hover:bg-dark hover:text-warm-light'
 
 export function PanelAdmin({
   emailAdmin,
@@ -65,8 +65,8 @@ export function PanelAdmin({
       <main className="mx-auto max-w-[1024px] px-6 pb-24 pt-16">
         <h1 className="font-[family-name:var(--font-ft-serif)] text-section font-light">Artefactos de clientes</h1>
         <p className="mt-4 max-w-prose text-label text-fg/70">
-          Para publicar, actualizar o dar acceso, pídeselo a Claude. Aquí puedes copiar los enlaces, ver quién
-          ha entrado y revocar accesos.
+          Para publicar o actualizar un artefacto, pídeselo a Claude. Desde aquí puedes dar acceso a personas,
+          copiar los enlaces, ver quién ha entrado y revocar accesos.
         </p>
 
         {mensaje && (
@@ -95,7 +95,10 @@ export function PanelAdmin({
                   </div>
 
                   <div className="mt-4">
-                    <CopiarEnlace url={`${SITE_CONFIG.baseUrl}/clientes/${art.cliente}/${art.id}`} />
+                    <CopiarEnlace
+                      url={`${SITE_CONFIG.baseUrl}/clientes/${art.cliente}/${art.id}`}
+                      ruta={`/clientes/${art.cliente}/${art.id}`}
+                    />
                   </div>
 
                   {art.avisos.map((av) => (
@@ -135,7 +138,7 @@ export function PanelAdmin({
                               <form method="post" action="/clientes/admin/revocar">
                                 <input type="hidden" name="id" value={art.id} />
                                 <input type="hidden" name="email" value={p.email} />
-                                <button type="submit" className={ACCION}>Revocar</button>
+                                <button type="submit" className={BOTON}>Revocar</button>
                               </form>
                             </td>
                           </tr>
@@ -143,6 +146,8 @@ export function PanelAdmin({
                       </tbody>
                     </table>
                   </div>
+
+                  <FormDarAcceso id={art.id} />
                 </li>
               ))}
             </ul>
@@ -171,7 +176,7 @@ export function PanelAdmin({
                       {u.activo && u.email !== emailAdmin && (
                         <form method="post" action="/clientes/admin/usuarios/desactivar">
                           <input type="hidden" name="email" value={u.email} />
-                          <button type="submit" className={ACCION}>Desactivar</button>
+                          <button type="submit" className={BOTON}>Desactivar</button>
                         </form>
                       )}
                     </td>
