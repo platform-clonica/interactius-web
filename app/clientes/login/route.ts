@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { autenticar } from '@/lib/clientes/auth'
 import { almacenes, secretoSesion } from '@/lib/clientes/config'
 import { destinoSeguro, noDisponible, origenValido } from '@/lib/clientes/http'
+import { redirigir } from '@/lib/clientes/redirect'
 import { COOKIE_SESION, DURACION_SESION_MS, crearTokenSesion } from '@/lib/clientes/session'
 
 export const dynamic = 'force-dynamic'
@@ -20,11 +21,10 @@ export async function POST(req: NextRequest) {
     const ahora = Date.now()
     const r = await autenticar(almacenes(), email, password, ahora)
     if (!r.ok) {
-      const url = new URL(next, req.url)
-      url.searchParams.set('error', r.motivo)
-      return NextResponse.redirect(url, 303)
+      // `next` ya viene validado por destinoSeguro (sin query).
+      return redirigir(`${next}?error=${r.motivo}`)
     }
-    const res = NextResponse.redirect(new URL(next, req.url), 303)
+    const res = redirigir(next)
     res.cookies.set(COOKIE_SESION, crearTokenSesion(r.usuario.email, ahora, secreto), {
       httpOnly: true,
       secure: true,
