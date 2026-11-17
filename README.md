@@ -229,6 +229,19 @@ interactius-web/
 - **GA4** → Realtime + Reports.
 - **Google Search Console** → Coverage + Core Web Vitals.
 
+### Zona privada de clientes (`/clientes`)
+
+Artefactos de claude.ai confidenciales, uno por enlace, con usuario y contraseña
+por persona y artefacto. Diseño: `docs/superpowers/specs/2026-11-17-zona-privada-clientes-design.md`.
+
+- **Datos:** Netlify Blobs (`clientes-{artefactos,registro,usuarios}-{production,staging}`). Nada en el repo.
+- **Netlify env:** `CLIENTES_SESSION_SECRET` (≥32 caracteres aleatorios; valor distinto en Production y en Deploy previews/Branch deploys). Sin ella, la zona responde "Servicio no disponible".
+- **Gestión:** `npm run clientes -- <comando> --entorno production|staging` con `NETLIFY_SITE_ID` y `NETLIFY_AUTH_TOKEN` en el entorno local. Comandos: `publicar`, `republicar`, `dar-acceso`, `quitar-acceso`, `regenerar-password`, `crear-admin`, `listar`, `borrar`. La carpeta del artefacto debe estar fuera del repo.
+- **Vista admin:** `/clientes/admin` (solo cuentas admin `@interactius.com`): enlaces, personas con acceso, último acceso, revocar y desactivar.
+- **Recomendación:** enviar la contraseña por un canal distinto al enlace.
+- **Acceso a los datos desde deploys:** Netlify Blobs es de todo el sitio: cualquier deploy (también previews de PR y branch deploys) puede leer los stores de producción. Antes de publicar datos reales, desactivar en Netlify los deploy previews de PRs desde forks o exigir aprobación, y tratar los permisos de push/merge del repo como acceso a datos de clientes. Motivo adicional para poner el repo en privado.
+- **Revocación:** cortar un acceso impide cargar el visor al instante; los archivos ya cargados en una pestaña abierta pueden seguir sirviéndose hasta 15 minutos (caducidad del token de archivo).
+
 ---
 
 ## Consent + Analytics

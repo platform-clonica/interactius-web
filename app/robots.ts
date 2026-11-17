@@ -68,13 +68,13 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         // Evitar indexar las rutas de API
-        disallow: ['/api/'],
+        disallow: ['/api/', '/clientes'],
       },
       {
         // Misma política para todos los agentes de IA, declarada por nombre.
         userAgent: AI_USER_AGENTS,
         allow: '/',
-        disallow: ['/api/'],
+        disallow: ['/api/', '/clientes'],
       },
     ],
     sitemap: `${SITE_CONFIG.baseUrl}/sitemap.xml`,

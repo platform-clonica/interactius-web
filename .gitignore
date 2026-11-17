@@ -46,3 +46,6 @@ next-env.d.ts
 !.vscode/launch.json
 !.vscode/extensions.json
 .idea/
+
+# Zona privada de clientes: copias locales de artefactos. Nunca al repo.
+/.clientes-tmp/

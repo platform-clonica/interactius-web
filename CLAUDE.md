@@ -10,9 +10,10 @@ npm run build       # Production build
 npm run start       # Serve production build
 npm run lint        # next lint (ESLint)
 npm run type-check  # tsc --noEmit
+npm test            # Vitest (solo lib/clientes/)
 ```
 
-No test runner is configured. Verify changes with `npm run type-check && npm run lint` and visually in the browser.
+Vitest covers only `lib/clientes/` (private client area security logic): `npm test`. Everything else: verify with `npm run type-check && npm run lint` and visually in the browser.
 
 ## Stack
 
