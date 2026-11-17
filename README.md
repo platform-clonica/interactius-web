@@ -229,6 +229,17 @@ interactius-web/
 - **GA4** → Realtime + Reports.
 - **Google Search Console** → Coverage + Core Web Vitals.
 
+### Zona privada de clientes (`/clientes`)
+
+Artefactos de claude.ai confidenciales, uno por enlace, con usuario y contraseña
+por persona y artefacto. Diseño: `docs/superpowers/specs/2026-11-17-zona-privada-clientes-design.md`.
+
+- **Datos:** Netlify Blobs (`clientes-{artefactos,registro,usuarios}-{production,staging}`). Nada en el repo.
+- **Netlify env:** `CLIENTES_SESSION_SECRET` (≥32 caracteres aleatorios; valor distinto en Production y en Deploy previews/Branch deploys). Sin ella, la zona responde "Servicio no disponible".
+- **Gestión:** `npm run clientes -- <comando> --entorno production|staging` con `NETLIFY_SITE_ID` y `NETLIFY_AUTH_TOKEN` en el entorno local. Comandos: `publicar`, `republicar`, `dar-acceso`, `quitar-acceso`, `regenerar-password`, `crear-admin`, `listar`, `borrar`. La carpeta del artefacto debe estar fuera del repo.
+- **Vista admin:** `/clientes/admin` (solo cuentas admin `@interactius.com`): enlaces, personas con acceso, último acceso, revocar y desactivar.
+- **Recomendación:** enviar la contraseña por un canal distinto al enlace.
+
 ---
 
 ## Consent + Analytics

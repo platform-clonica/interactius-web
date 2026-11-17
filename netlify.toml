@@ -19,6 +19,10 @@
   # el build output → falso positivo inevitable del scanner. El password se lee
   # solo en runtime (Edge middleware), nunca se hornea en el bundle. Ambos van
   # solo en Netlify env vars; no se commitean valores reales al repo.
+  #
+  # CLIENTES_SESSION_SECRET NO va en esta lista: es un secreto real (firma las
+  # sesiones de /clientes) que solo se lee en runtime; debe seguir siendo
+  # detectable por el scanner. Un hallazgo suyo en el build output es una alerta real.
   SECRETS_SCAN_OMIT_KEYS = "HUBSPOT_PORTAL_ID,HUBSPOT_FORM_ID_NEWSLETTER,HUBSPOT_FORM_ID_CONTACT,HUBSPOT_FORM_ID_TESTERS,HUBSPOT_FORM_ID_BDW,BASIC_AUTH_USER,BASIC_AUTH_PASSWORD"
 
 # ─── Next.js plugin ──────────────────────────────────────────────────────────
