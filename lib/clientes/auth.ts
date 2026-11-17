@@ -25,6 +25,9 @@ export async function autenticar(
   }
 
   if (usuario.bloqueadoHasta && Date.parse(usuario.bloqueadoHasta) > ahora) {
+    // Gasta el mismo tiempo que una verificación real para que la cuenta bloqueada
+    // no responda más deprisa que un correo desconocido.
+    await verificarPassword(password, HASH_FICTICIO)
     return { ok: false, motivo: 'bloqueado' }
   }
 
