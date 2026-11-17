@@ -14,7 +14,7 @@ export function Visor({
               Mitad superior oscura: un filo claro lo separa del fondo negro. */}
           {/* eslint-disable-next-line @next/next/no-img-element -- SVG estático */}
           <img src="/logo/isotipo-positivo.svg" alt="interactius" className="h-4 w-4 shrink-0 outline outline-1 outline-warm-light/40" />
-          <span className="opacity-40">/</span>
+          <span className="opacity-40">|</span>
           <span className="truncate">{titulo}</span>
         </span>
         <span className="flex shrink-0 items-center gap-4">
