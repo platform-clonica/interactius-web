@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function ClientesLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={ftFontsClass}>
-      <body className="min-h-dvh bg-warm-light text-fg font-[family-name:var(--font-ft-sans)]">
+      <body className="min-h-dvh bg-warm-light text-fg font-[family-name:var(--font-ft-mono)]">
         {children}
       </body>
     </html>

@@ -27,7 +27,7 @@ export function Visor({
         title={titulo}
         sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms allow-modals allow-downloads"
         referrerPolicy="no-referrer"
-        className="block w-full flex-1 border-0 bg-white"
+        className="block w-full flex-1 border-0 bg-surface"
       />
       <RecargaAlCaducar expira={expira} />
     </div>

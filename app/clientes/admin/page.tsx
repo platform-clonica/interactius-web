@@ -66,20 +66,20 @@ export default async function AdminPage({
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
+    <main className="mx-auto max-w-[1024px] px-6 py-10">
       <header className="mb-10 flex flex-wrap items-baseline justify-between gap-4">
-        <h1 className="font-[family-name:var(--font-ft-serif)] text-3xl">Artefactos de clientes</h1>
-        <span className="flex items-center gap-4 text-sm">
+        <h1 className="font-[family-name:var(--font-ft-serif)] text-section font-light">Artefactos de clientes</h1>
+        <span className="flex items-center gap-4 text-label">
           <span className="opacity-60">{emailAdmin}</span>
           <BotonSalir next="/clientes/admin" />
         </span>
       </header>
 
       {hecho && Object.hasOwn(MENSAJES, hecho) && (
-        <p role="status" className="mb-6 text-sm">{MENSAJES[hecho]}</p>
+        <p role="status" className="mb-6 text-label">{MENSAJES[hecho]}</p>
       )}
 
-      <p className="mb-10 max-w-prose text-sm opacity-70">
+      <p className="mb-10 max-w-prose text-label opacity-70">
         Para publicar, actualizar o dar acceso, pídeselo a Claude. Aquí puedes consultar y revocar.
       </p>
 
@@ -87,19 +87,19 @@ export default async function AdminPage({
 
       {[...porCliente].map(([cliente, filas]) => (
         <section key={cliente} className="mb-12">
-          <h2 className="mb-4 font-[family-name:var(--font-ft-mono)] text-sm uppercase tracking-widest">{cliente}</h2>
+          <h2 className="mb-4 font-[family-name:var(--font-ft-mono)] text-label uppercase tracking-[0.12em]">{cliente}</h2>
           <ul className="flex flex-col gap-6">
             {filas.map(({ artefacto: art, personas }) => (
-              <li key={art.id} className="border-t border-fg/15 pt-4">
-                <p className="text-lg">{art.titulo}</p>
-                <p className="mb-2 text-xs opacity-60">
+              <li key={art.id} className="border-t border-solid border-fg/15 pt-4">
+                <p className="text-body">{art.titulo}</p>
+                <p className="mb-2 text-micro opacity-60">
                   v{art.version} · publicado {fecha(art.publicadoEn)}
                 </p>
                 <CopiarEnlace url={`${SITE_CONFIG.baseUrl}/clientes/${art.cliente}/${art.id}`} />
                 {art.avisos.map((av) => (
-                  <p key={av} className="mt-2 text-xs">⚠ {av}</p>
+                  <p key={av} className="mt-2 text-micro">⚠ {av}</p>
                 ))}
-                <table className="mt-4 w-full text-sm">
+                <table className="mt-4 w-full text-label">
                   <tbody>
                     {personas.length === 0 && (
                       <tr><td className="py-1 opacity-60">Nadie tiene acceso todavía.</td></tr>
@@ -126,11 +126,11 @@ export default async function AdminPage({
       ))}
 
       <section className="mt-16">
-        <h2 className="mb-4 font-[family-name:var(--font-ft-mono)] text-sm uppercase tracking-widest">Usuarios</h2>
-        <table className="w-full text-sm">
+        <h2 className="mb-4 font-[family-name:var(--font-ft-mono)] text-label uppercase tracking-[0.12em]">Usuarios</h2>
+        <table className="w-full text-label">
           <tbody>
             {datos.usuarios.map((u) => (
-              <tr key={u.email} className="border-t border-fg/15">
+              <tr key={u.email} className="border-t border-solid border-fg/15">
                 <td className="py-2 pr-4">{u.email}{u.admin && ' · admin'}</td>
                 <td className="py-2 pr-4 opacity-60">{u.activo ? 'activo' : 'desactivado'}</td>
                 <td className="py-2 text-right">
