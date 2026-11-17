@@ -99,20 +99,51 @@ describe('usuarios', () => {
     const a = crearAlmacenesEnMemoria()
     const x = await publicar(a, { ...datosBase, archivos: [html('x')] }, T0)
     const { password } = await darAcceso(a, x.id, 'ana@cliente.com', T0)
-    const nueva = await regenerarPassword(a, 'ana@cliente.com', T0 + 5)
+    const { password: nueva } = await regenerarPassword(a, 'ana@cliente.com', T0 + 5)
     expect((await autenticar(a, 'ana@cliente.com', password!, T0 + 6)).ok).toBe(false)
     expect((await autenticar(a, 'ana@cliente.com', nueva, T0 + 6)).ok).toBe(true)
     expect((await leerUsuario(a, 'ana@cliente.com'))?.credencialesEn).toBe(new Date(T0 + 5).toISOString())
   })
 
-  it('desactivar impide entrar; dar acceso de nuevo lo reactiva con contraseña nueva', async () => {
+  it('desactivar impide entrar y dar acceso no reactiva sin --reactivar', async () => {
+    const a = crearAlmacenesEnMemoria()
+    const x = await publicar(a, { ...datosBase, archivos: [html('x')] }, T0)
+    const { password } = await darAcceso(a, x.id, 'ana@cliente.com', T0)
+    await desactivarUsuario(a, 'ana@cliente.com', T0 + 1)
+    expect((await leerUsuario(a, 'ana@cliente.com'))?.hash).toBeNull()
+    expect((await autenticar(a, 'ana@cliente.com', password!, T0 + 2)).ok).toBe(false)
+    await expect(darAcceso(a, x.id, 'ana@cliente.com', T0 + 2)).rejects.toThrow(/desactivado/)
+    expect((await leerUsuario(a, 'ana@cliente.com'))?.hash).toBeNull()
+  })
+
+  it('darAcceso con reactivar devuelve contraseña y los artefactos que recupera', async () => {
+    const a = crearAlmacenesEnMemoria()
+    const x = await publicar(a, { ...datosBase, titulo: 'Primero', archivos: [html('x')] }, T0)
+    const y = await publicar(a, { ...datosBase, titulo: 'Segundo', archivos: [html('y')] }, T0)
+    await darAcceso(a, x.id, 'ana@cliente.com', T0)
+    await desactivarUsuario(a, 'ana@cliente.com', T0 + 1)
+    const r = await darAcceso(a, y.id, 'ana@cliente.com', T0 + 2, { reactivar: true })
+    expect(r.password).not.toBeNull()
+    expect([...r.reactivados].sort()).toEqual(['Primero', 'Segundo'])
+    expect((await autenticar(a, 'ana@cliente.com', r.password!, T0 + 3)).ok).toBe(true)
+  })
+
+  it('darAcceso a usuario activo no marca reactivados', async () => {
+    const a = crearAlmacenesEnMemoria()
+    const x = await publicar(a, { ...datosBase, archivos: [html('x')] }, T0)
+    const r = await darAcceso(a, x.id, 'ana@cliente.com', T0)
+    expect(r.reactivados).toEqual([])
+  })
+
+  it('regenerarPassword de un desactivado exige reactivar', async () => {
     const a = crearAlmacenesEnMemoria()
     const x = await publicar(a, { ...datosBase, archivos: [html('x')] }, T0)
     await darAcceso(a, x.id, 'ana@cliente.com', T0)
     await desactivarUsuario(a, 'ana@cliente.com', T0 + 1)
-    expect((await leerUsuario(a, 'ana@cliente.com'))?.hash).toBeNull()
-    const r = await darAcceso(a, x.id, 'ana@cliente.com', T0 + 2)
-    expect(r.password).not.toBeNull()
+    await expect(regenerarPassword(a, 'ana@cliente.com', T0 + 2)).rejects.toThrow(/desactivado/)
+    const r = await regenerarPassword(a, 'ana@cliente.com', T0 + 3, { reactivar: true })
+    expect(r.reactivados).toEqual(['PoC'])
+    expect((await autenticar(a, 'ana@cliente.com', r.password, T0 + 4)).ok).toBe(true)
   })
 
   it('admin solo con correo de Interactius', async () => {

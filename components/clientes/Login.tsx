@@ -7,7 +7,7 @@ const ERRORES: Record<string, string> = {
 
 /** Formulario HTML puro: funciona sin JavaScript. */
 export function Login({ next, error }: { next: string; error?: string }) {
-  const mensaje = error ? ERRORES[error] : undefined
+  const mensaje = error && Object.hasOwn(ERRORES, error) ? ERRORES[error] : undefined
   return (
     <Marco>
       <h1 className="mb-8 font-[family-name:var(--font-ft-serif)] text-3xl">Acceso privado</h1>

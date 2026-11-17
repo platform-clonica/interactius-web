@@ -7,7 +7,7 @@ import { Login } from '@/components/clientes/Login'
 import { ServicioNoDisponible } from '@/components/clientes/ServicioNoDisponible'
 import { usuarioDeSesion } from '@/lib/clientes/access'
 import { almacenes, secretoSesion } from '@/lib/clientes/config'
-import { resumenAdmin } from '@/lib/clientes/operations'
+import { resumenAdmin, type FilaAdmin } from '@/lib/clientes/operations'
 import { COOKIE_SESION } from '@/lib/clientes/session'
 import { SITE_CONFIG } from '@/lib/seo/metadata.config'
 
@@ -17,6 +17,7 @@ const MENSAJES: Record<string, string> = {
   revocado: 'Acceso revocado.',
   desactivado: 'Usuario desactivado.',
   'no-a-ti-mismo': 'No puedes desactivar tu propia cuenta.',
+  error: 'No se pudo completar la acción (el artefacto o el usuario ya no existe).',
 }
 
 type Carga =
@@ -57,7 +58,12 @@ export default async function AdminPage({
   if (c.estado === 'no-admin') notFound()
   const { datos, emailAdmin } = c
 
-  const porCliente = Map.groupBy(datos.artefactos, (f) => f.artefacto.cliente)
+  const porCliente = new Map<string, FilaAdmin[]>()
+  for (const fila of datos.artefactos) {
+    const lista = porCliente.get(fila.artefacto.cliente)
+    if (lista) lista.push(fila)
+    else porCliente.set(fila.artefacto.cliente, [fila])
+  }
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-10">
@@ -69,7 +75,9 @@ export default async function AdminPage({
         </span>
       </header>
 
-      {hecho && MENSAJES[hecho] && <p role="status" className="mb-6 text-sm">{MENSAJES[hecho]}</p>}
+      {hecho && Object.hasOwn(MENSAJES, hecho) && (
+        <p role="status" className="mb-6 text-sm">{MENSAJES[hecho]}</p>
+      )}
 
       <p className="mb-10 max-w-prose text-sm opacity-70">
         Para publicar, actualizar o dar acceso, pídeselo a Claude. Aquí puedes consultar y revocar.

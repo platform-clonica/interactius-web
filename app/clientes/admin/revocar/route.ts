@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import { adminDeLaPeticion } from '@/lib/clientes/admin-request'
 import { noDisponible } from '@/lib/clientes/http'
-import { quitarAcceso } from '@/lib/clientes/operations'
+import { ErrorOperacion, quitarAcceso } from '@/lib/clientes/operations'
 
 export async function POST(req: NextRequest) {
   const r = await adminDeLaPeticion(req)
@@ -11,6 +11,9 @@ export async function POST(req: NextRequest) {
   try {
     await quitarAcceso(r.a, String(form.get('id') ?? ''), String(form.get('email') ?? ''))
   } catch (e) {
+    if (e instanceof ErrorOperacion) {
+      return NextResponse.redirect(new URL('/clientes/admin?hecho=error', req.url), 303)
+    }
     console.error('[clientes] revocar', e)
     return noDisponible()
   }

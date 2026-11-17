@@ -33,9 +33,9 @@ const AYUDA = `Uso: npm run clientes -- <comando> --entorno production|staging [
 
   publicar           --cliente <slug> --titulo "<t>" --origen <url> --dir <carpeta> [--entrada index.html] [--aceptar-avisos]
   republicar         --id <id> --dir <carpeta> [--entrada <ruta>] [--aceptar-avisos]
-  dar-acceso         --id <id> --email <correo>
+  dar-acceso         --id <id> --email <correo> [--reactivar]
   quitar-acceso      --id <id> --email <correo>
-  regenerar-password --email <correo>
+  regenerar-password --email <correo> [--reactivar]
   crear-admin        --email <correo@interactius.com>
   listar             [--cliente <slug>]
   borrar             --id <id> --si`
@@ -52,6 +52,7 @@ const { values, positionals } = parseArgs({
     id: { type: 'string' },
     email: { type: 'string' },
     'aceptar-avisos': { type: 'boolean', default: false },
+    reactivar: { type: 'boolean', default: false },
     si: { type: 'boolean', default: false },
   },
 })
@@ -127,7 +128,10 @@ async function main() {
       break
     }
     case 'dar-acceso': {
-      const r = await darAcceso(a, requerir('id'), requerir('email'), ahora)
+      const r = await darAcceso(a, requerir('id'), requerir('email'), ahora, {
+        reactivar: values.reactivar,
+      })
+      if (r.reactivados.length) console.log(`Reactivado. Recupera acceso a: ${r.reactivados.join(', ')}`)
       console.log(`Acceso concedido a "${r.artefacto.titulo}".`)
       console.log(`Enlace:     ${enlace(entorno, r.artefacto)}`)
       console.log(`Usuario:    ${r.email}`)
@@ -144,8 +148,9 @@ async function main() {
       break
     }
     case 'regenerar-password': {
-      const pw = await regenerarPassword(a, requerir('email'), ahora)
-      console.log(`Nueva contraseña: ${pw}\nLas sesiones abiertas de esta persona quedan cerradas.`)
+      const r = await regenerarPassword(a, requerir('email'), ahora, { reactivar: values.reactivar })
+      if (r.reactivados.length) console.log(`Reactivado. Recupera acceso a: ${r.reactivados.join(', ')}`)
+      console.log(`Nueva contraseña: ${r.password}\nLas sesiones abiertas de esta persona quedan cerradas.`)
       break
     }
     case 'crear-admin': {

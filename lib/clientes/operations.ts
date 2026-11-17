@@ -171,18 +171,50 @@ async function nuevasCredenciales(
   }
 }
 
-/** Crea o reactiva al usuario si hace falta; solo entonces devuelve contraseña. */
+export interface OpcionesReactivar {
+  /** Confirma que un usuario desactivado recupere el acceso a sus artefactos. */
+  reactivar?: boolean
+}
+
+/** Títulos de los artefactos cuya ACL incluye a `email` (más `extra` si se le va a añadir). */
+async function titulosConAcceso(a: Almacenes, email: string, extra?: Artefacto): Promise<string[]> {
+  const todos = await listarArtefactos(a)
+  const conAcceso = todos.filter((art) => Object.hasOwn(art.accesos, email))
+  if (extra && !conAcceso.some((art) => art.id === extra.id)) conAcceso.push(extra)
+  return conAcceso.map((art) => art.titulo)
+}
+
+/** Un usuario desactivado no se reactiva en silencio: reabriría todo lo que aún tiene en las ACL. */
+async function exigirReactivacion(
+  a: Almacenes,
+  email: string,
+  opciones: OpcionesReactivar,
+  extra?: Artefacto,
+): Promise<string[]> {
+  const titulos = await titulosConAcceso(a, email, extra)
+  if (!opciones.reactivar) {
+    throw new ErrorOperacion(
+      `El usuario ${email} está desactivado. Repite con --reactivar si quieres reactivarlo: recuperará el acceso a ${titulos.length} artefacto(s): ${titulos.join(', ')}.`,
+    )
+  }
+  return titulos
+}
+
+/** Crea al usuario si hace falta (o lo reactiva con --reactivar); solo entonces devuelve contraseña. */
 export async function darAcceso(
   a: Almacenes,
   id: string,
   email: string,
   ahora: number,
-): Promise<{ artefacto: Artefacto; email: string; password: string | null }> {
+  opciones: OpcionesReactivar = {},
+): Promise<{ artefacto: Artefacto; email: string; password: string | null; reactivados: string[] }> {
   const e = exigirEmail(email)
   const art = await exigirArtefacto(a, id)
 
   let password: string | null = null
+  let reactivados: string[] = []
   const existente = await leerUsuario(a, e)
+  if (existente && !existente.hash) reactivados = await exigirReactivacion(a, e, opciones, art)
   if (!existente || !existente.hash) {
     const r = await nuevasCredenciales(
       { email: e, admin: existente?.admin ?? false, creadoEn: existente?.creadoEn ?? iso(ahora) },
@@ -197,7 +229,7 @@ export async function darAcceso(
     accesos: { ...art.accesos, [e]: art.accesos[e] ?? { concedidoEn: iso(ahora) } },
   }
   await guardarArtefacto(a, actualizado)
-  return { artefacto: actualizado, email: e, password }
+  return { artefacto: actualizado, email: e, password, reactivados }
 }
 
 export async function quitarAcceso(a: Almacenes, id: string, email: string): Promise<boolean> {
@@ -209,15 +241,21 @@ export async function quitarAcceso(a: Almacenes, id: string, email: string): Pro
   return true
 }
 
-export async function regenerarPassword(a: Almacenes, email: string, ahora: number): Promise<string> {
+export async function regenerarPassword(
+  a: Almacenes,
+  email: string,
+  ahora: number,
+  opciones: OpcionesReactivar = {},
+): Promise<{ password: string; reactivados: string[] }> {
   const existente = await leerUsuario(a, email)
   if (!existente) throw new ErrorOperacion(`No existe el usuario ${normalizarEmail(email)}.`)
+  const reactivados = existente.hash ? [] : await exigirReactivacion(a, existente.email, opciones)
   const r = await nuevasCredenciales(
     { email: existente.email, admin: existente.admin, creadoEn: existente.creadoEn },
     ahora,
   )
   await guardarUsuario(a, r.usuario)
-  return r.password
+  return { password: r.password, reactivados }
 }
 
 export async function crearAdmin(a: Almacenes, email: string, ahora: number): Promise<string> {
